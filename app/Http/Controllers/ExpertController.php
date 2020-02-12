@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Expert;
+use App\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
@@ -32,9 +33,14 @@ class ExpertController extends Controller
      */
     public function create()
     {
-        $mode = 'recruiter';
-        if(!Auth::check()) $mode = 'new-expert';
-        return view('experts.create',compact('mode'))->with('technologies',Expert::getTechnologies());
+        if(!Auth::check()) return redirect('login');
+        return view('experts.create')->with('technologies',Expert::getTechnologies());
+    }
+
+    public function apply($positionId = null){
+        if(empty($positionId)) return redirect('login');
+        $position = Position::find($positionId);
+        return view('experts.create',compact('position'))->with('technologies',Expert::getTechnologies());
     }
 
     /**
@@ -48,8 +54,13 @@ class ExpertController extends Controller
         //
         $request->validate([]);
   
-        Expert::create($request->all());
-   
+        $expert = Expert::create($request->all());
+
+        $positionId = $request->input('position','');
+        if(!empty($positionId)){
+            $position = Position::find($positionId);
+            $expert->positions()->attach($position);
+        }
         return redirect()->route('experts.index')
                         ->with('success','Expert created successfully.');
     }
@@ -108,6 +119,7 @@ class ExpertController extends Controller
     public function destroy(Expert $expert)
     {
         //
+        $expert->positions()->detach();
         $expert->delete();
   
         return redirect()->route('experts.index')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Position;
 use Illuminate\Http\Request;
 use App\Expert;
+use Illuminate\Support\Facades\Auth;
 
 class PositionController extends Controller
 {
@@ -16,7 +17,6 @@ class PositionController extends Controller
     public function index()
     {
         //
-        if(!Auth::check()) return redirect('login');
         $positions = Position::latest()->paginate(5);
         return view('positions.index',compact('positions'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
@@ -30,6 +30,8 @@ class PositionController extends Controller
     public function create()
     {
         //
+        if(!Auth::check()) return redirect('login');
+        return view('positions.create');
     }
 
     /**
@@ -41,6 +43,12 @@ class PositionController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([]);
+  
+        Position::create($request->all());
+   
+        return redirect()->route('positions.index')
+                        ->with('success','Expert created successfully.');
     }
 
     /**
@@ -52,6 +60,8 @@ class PositionController extends Controller
     public function show(Position $position)
     {
         //
+        if(!Auth::check()) return redirect('login');
+        return view('positions.show',compact('position'));
     }
 
     /**
@@ -63,6 +73,8 @@ class PositionController extends Controller
     public function edit(Position $position)
     {
         //
+        if(!Auth::check()) return redirect('login');
+        return view('positions.edit')->with('position',$position);
     }
 
     /**
@@ -75,6 +87,13 @@ class PositionController extends Controller
     public function update(Request $request, Position $position)
     {
         //
+        if(!Auth::check()) return redirect('login');
+        $request->validate([]);
+  
+        $position->update($request->all());
+  
+        return redirect()->route('positions.index')
+                        ->with('success','Expert updated successfully');
     }
 
     /**
@@ -86,5 +105,7 @@ class PositionController extends Controller
     public function destroy(Position $position)
     {
         //
+        $position->experts()->detach();
+        
     }
 }

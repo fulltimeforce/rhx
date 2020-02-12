@@ -231,6 +231,11 @@ class Expert extends Model
         return self::$technologies;
     }
 
+    public function positions()
+    {
+        return $this->belongsToMany('App\Position')->withTimestamps();
+    }
+
     public function setLastInfoUpdateAttribute($value)
     {
         if(!empty($value))

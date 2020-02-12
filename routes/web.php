@@ -14,7 +14,11 @@
 
 Route::get('/','ExpertController@index');
 Route::post('/', 'ExpertController@filter');
+
+Route::get('apply/{positionId}','ExpertController@apply')->name('experts.apply');
 Route::resource('experts','ExpertController');
+
+Route::resource('positions','PositionController',['except'=>['destroy']]);
 
 Route::get('/developer/edit/{expertId}','ExpertController@developerEdit')->name('developer.edit')->middleware('signed');
 Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSigned')->name('developer.edit.signed');

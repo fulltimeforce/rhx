@@ -7,7 +7,7 @@
                 <h2>Edit Position</h2>
             </div>
             <div class="float-right">
-                <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
+                <a class="btn btn-primary" href="{{ url('/positions') }}"> Back</a>
             </div>
         </div>
     </div>
@@ -24,7 +24,6 @@
     @endif
   
     <form action="{{ route('positions.update',$position->id) }}" method="POST">
-        <button type="submit" class="btn btn-primary">Edit</button>
         @csrf
         @method('PUT')
         <div class="form-row">
@@ -32,15 +31,17 @@
                 <label for="name">Name</label>
                 <input type="text" name="name" id="name" class="form-control" value="{{$position->name}}">
             </div>
-            <div class="form-group col">
-                <label for="status">Status</label>
-                <input type="checkbox" name="status" id="status" class="form-control" value="enabled" {{!! ($position->status=='enabled')?'checked':'' !!}}>
-            </div>
         </div>
         <div class="form-row">
             <div class="form-group col">
                 <label for="description">Description</label>
-                <textarea name="description" class="form-control" id="description">{{$position->description}}</textarea>
+                <textarea name="description" class="form-control" rows="15" id="description">{{$position->description}}</textarea>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-check form-group">
+                <input type="checkbox" name="status" id="status" class="form-check-input" value="enabled" {{!! ($position->status=='enabled')?'checked':'' !!}}>
+                <label for="status" class="form-check-label">Enabled</label>
             </div>
         </div>
     

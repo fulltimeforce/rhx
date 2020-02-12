@@ -3,8 +3,8 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <h1>RHX</h1>
-            <a class="btn btn-secondary float-right" href="{{ route('experts.create') }}">Nuevo Experto</a>
+            <h1>Experts</h1>
+            <a class="btn btn-secondary float-right" href="{{ route('experts.create') }}">New Expert</a>
         </div>
     </div>
    
@@ -42,7 +42,7 @@
             <select multiple type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
         </div>
         <div class="form-group text-right">
-            <button type="submit" class="btn btn-primary">Buscar</button>
+            <button type="submit" class="btn btn-primary">Search</button>
         </div>
     
     </form>

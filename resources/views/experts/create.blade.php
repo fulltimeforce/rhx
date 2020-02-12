@@ -4,7 +4,11 @@
 <div class="row">
     <div class="col-lg-12 mt-5 mb-5">
         <div class="float-left">
-            <h2>Nuevo Experto</h2>
+            @auth
+            <h2>New Expert</h2>
+            @else
+            <h2>{{$position->name}}</h2>
+            @endauth
         </div>
         <div class="float-right">
             <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
@@ -28,7 +32,7 @@
     <h3 class="mb-6">Información General</h3>
     <div class="form-row">
         <div class="form-group col">
-            <label for="fullname">Nombre</label>
+            <label for="fullname">Nombre completo</label>
             <input type="text" name="fullname" id="fullname" class="form-control">
         </div>
         <div class="form-group col">
@@ -46,12 +50,12 @@
         
     </div>
     <div class="form-row">
-        <div class="form-group col">
-            <label for="education">Universidad/Instituto</label>
+        <div class="form-group col-4">
+            <label for="education">Universidad/Instituto - Carrera</label>
             <input type="text" name="education" class="form-control" id="education">
         </div>
-        <div class="form-group col">
-            <label for="english_education">¿Donde aprendió inglés?</label>
+        <div class="form-group col-4">
+            <label for="english_education">¿Donde aprendiste inglés?</label>
             <select name="english_education" class="form-control" id="english_education">
                 <option value=""></option> 
                 <option value="self">Independiente</option> 
@@ -59,17 +63,17 @@
                 <option value="university">Universidad o instituto</option>
             </select>
         </div>
-        <div class="form-group col-2">
+        <div class="form-group col">
             <label for="phone">Teléfono/Celular</label>
             <input type="text" name="phone" class="form-control" id="phone">
         </div>
-        <div class="form-group col-2">
+        <div class="form-group col">
             <label for="last_info_update">Última actualización</label>
-            @if($mode == 'new-expert')
+            @auth
             {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date','disabled'=>'disabled']) !!}
             @else
             {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date']) !!}
-            @endif
+            @endauth
         </div>
     </div>
     <div class="form-row"> 
@@ -86,6 +90,7 @@
             <input type="text" name="availability" class="form-control date" id="availability">
         </div>
     </div>
+    @auth
     <div class="form-row">
         <div class="form-group col">
             <label for="linkedin">Linkedin</label>
@@ -108,17 +113,18 @@
             <input type="text" name="twitter" class="form-control" id="twitter">
         </div>
     </div>
+    @endauth
     <div class="form-row">
         <div class="form-group col">
-            <label for="other_knowledge">¿Qué otros conocimientos tiene?</label>
+            <label for="other_knowledge">¿Qué otros conocimientos tienes?</label>
             <input type="text" name="other_knowledge" class="form-control" id="other_knowledge">
         </div>
         <div class="form-group col">
-            <label for="wish_knowledge">¿Qué le gustaría aprender?</label>
+            <label for="wish_knowledge">¿Qué te gustaría aprender?</label>
             <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge">
         </div>
         <div class="form-group col">
-            <label for="focus">¿En qué se especializa?</label>
+            <label for="focus">¿En qué te especializas?</label>
             <select name="focus" class="form-control" id="focus">
                 <option value=""></option> 
                 <option value="fullstack">Fullstack</option>
@@ -129,7 +135,7 @@
             </select>
         </div>
     </div>
-    @if($mode == 'recruiter')
+    @auth
     <h3>Evaluaciones</h3>
     <div class="form-row">
         <div class="form-group col-3">
@@ -161,7 +167,7 @@
             <input type="text" name="result3" class="form-control" id="result3">
         </div>
     </div>
-    @endif
+    @endauth
     @foreach($technologies as $categoryid => $category)
         <h3>{{$category[0]}}</h3>
         <br>
@@ -192,6 +198,9 @@
         @endforeach
     @endforeach
     
+    @guest
+    <input type="hidden" name="position" value="{{$position->id}}">
+    @endguest
     <button type="submit" class="btn btn-primary">Submit</button>
     </div>
    
