@@ -7,7 +7,7 @@
                 <h2>Show Position</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('positions.index') }}"> Back</a>
+                <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
             </div>
         </div>
     </div>

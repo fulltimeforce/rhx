@@ -6,6 +6,7 @@ use App\Position;
 use Illuminate\Http\Request;
 use App\Expert;
 use Illuminate\Support\Facades\Auth;
+use Vinkla\Hashids\Facades\Hashids;
 
 class PositionController extends Controller
 {
@@ -44,8 +45,10 @@ class PositionController extends Controller
     {
         //
         $request->validate([]);
-  
-        Position::create($request->all());
+        $input = $request->all();
+        
+        $input['id'] = Hashids::encode(time());
+        $position = Position::create($input);
    
         return redirect()->route('positions.index')
                         ->with('success','Expert created successfully.');

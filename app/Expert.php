@@ -7,9 +7,11 @@ use Carbon\Carbon;
 
 class Expert extends Model
 {
+    public $incrementing = false;
+    protected $keyType = 'string';
     //
     protected $fillable = [
-        'last_info_update','email_address','fullname','identification_number','birthday','phone','education','address',
+        'id','last_info_update','email_address','fullname','identification_number','birthday','phone','education','address',
         'github','linkedin','facebook','instagram','twitter','english_education','other_knowledge','wish_knowledge',
         'availability','salary','focus',
         //assessment

@@ -14,7 +14,7 @@
         </div>
     @endif
     <br>
-    <form action="{{ action('ExpertController@filter') }}" method="POST">
+    <form action="{{ route('experts.filter') }}" method="POST">
         @csrf
         <!--<div class="form-row">
         @foreach($technologies as $categoryid => $category)

@@ -7,7 +7,7 @@
             <h2>New Position</h2>
         </div>
         <div class="float-right">
-            <a class="btn btn-primary" href="{{ url('/positions') }}"> Back</a>
+            <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
         </div>
     </div>
 </div>

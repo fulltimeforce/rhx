@@ -7,6 +7,7 @@ use App\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ExpertController extends Controller
 {
@@ -40,6 +41,7 @@ class ExpertController extends Controller
     public function apply($positionId = null){
         if(empty($positionId)) return redirect('login');
         $position = Position::find($positionId);
+        if(is_null($position)) return redirect('login');
         return view('experts.create',compact('position'))->with('technologies',Expert::getTechnologies());
     }
 
@@ -53,8 +55,9 @@ class ExpertController extends Controller
     {
         //
         $request->validate([]);
-  
-        $expert = Expert::create($request->all());
+        $input = $request->all();
+        $input['id'] = Hashids::encode(time());
+        $expert = Expert::create($input);
 
         $positionId = $request->input('position','');
         if(!empty($positionId)){

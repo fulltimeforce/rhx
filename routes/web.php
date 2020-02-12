@@ -12,18 +12,20 @@
 */
 
 
-Route::get('/','ExpertController@index');
-Route::post('/', 'ExpertController@filter');
 
-Route::get('apply/{positionId}','ExpertController@apply')->name('experts.apply');
+//Route::get('/experts','ExpertController@index');
+
 Route::resource('experts','ExpertController');
-
-Route::resource('positions','PositionController',['except'=>['destroy']]);
-
+Route::get('/apply/{positionId}','ExpertController@apply')->name('experts.apply');
+Route::post('/experts', 'ExpertController@filter')->name('experts.filter');
+Route::post('/experts/store', 'ExpertController@store')->name('experts.store');
 Route::get('/developer/edit/{expertId}','ExpertController@developerEdit')->name('developer.edit')->middleware('signed');
 Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSigned')->name('developer.edit.signed');
 
-Route::get('get_techs', 'ExpertController@techs');
-Auth::routes(['register' => false]);
+Route::resource('positions','PositionController',['except'=>['destroy']]);
+Route::get('/','PositionController@index');
 
-//Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::get('/get_techs', 'ExpertController@techs');
+Auth::routes(['register' => false]);
