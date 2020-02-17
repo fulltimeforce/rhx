@@ -13,7 +13,7 @@ class CreateExpertsTable extends Migration
      */
     public function up()
     {
-        /*
+        
         Schema::dropIfExists('experts');
         Schema::create('experts', function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -83,7 +83,7 @@ class CreateExpertsTable extends Migration
             }
             $table->timestamps();
         });
-        */
+        
     }
 
     /**

@@ -34,7 +34,7 @@ class ExpertController extends Controller
      */
     public function create()
     {
-        if(!Auth::check()) return redirect('login');
+        // if(!Auth::check()) return redirect('login');
         return view('experts.create')->with('technologies',Expert::getTechnologies());
     }
 
@@ -51,6 +51,22 @@ class ExpertController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    public function validateEmail(Request $request ){
+        $email = $request->input('email');
+
+        // return $email;
+        if( Expert::where("email_address" , $email)->count() > 0 ){
+            // return view('experts.edit')->with('expert', Expert::where("email_address" , $email)->firts() )->with('technologies',Expert::getTechnologies());
+
+            return route( 'experts.edit' , [ 'expert' =>  Expert::where("email_address" , $email)->first() , 'technologies' => Expert::getTechnologies() ] );
+        }else{
+
+            return route( 'experts.create' , [ 'technologies' => Expert::getTechnologies() ] );
+            // return view('experts.create')->with('technologies',Expert::getTechnologies());
+        }
+    }
+
     public function store(Request $request)
     {
         //
@@ -90,7 +106,7 @@ class ExpertController extends Controller
     public function edit(Expert $expert)
     {
         //
-        if(!Auth::check()) return redirect('login');
+        // if(!Auth::check()) return redirect('login');
         return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
     }
 

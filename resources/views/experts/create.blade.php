@@ -6,9 +6,8 @@
         <div class="float-left">
             @auth
             <h2>New Expert</h2>
-            @else
-            <h2>{{$position->name}}</h2>
             @endauth
+            
         </div>
         <div class="float-right">
             <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
@@ -37,7 +36,7 @@
         </div>
         <div class="form-group col">
             <label for="email_address">Email</label>
-            <input type="text" name="email_address" class="form-control" id="email_address">
+            <input type="text" name="email_address" class="form-control" id="email_address" required >
         </div>
         <div class="form-group col-2">
             <label for="identification_number">DNI/CE/Pasaporte</label>
@@ -198,9 +197,9 @@
         @endforeach
     @endforeach
     
-    @guest
+    @auth
     <input type="hidden" name="position" value="{{$position->id}}">
-    @endguest
+    @endauth
     <button type="submit" class="btn btn-primary">Submit</button>
     </div>
    

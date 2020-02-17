@@ -23,9 +23,13 @@ Route::get('/developer/edit/{expertId}','ExpertController@developerEdit')->name(
 Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSigned')->name('developer.edit.signed');
 
 Route::resource('positions','PositionController',['except'=>['destroy']]);
+
+Route::get('positions/{positionId}/experts','PositionController@relations')->name('positions.experts');
+
+Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
+
+
 Route::get('/','PositionController@index');
-
-
 
 Route::get('/get_techs', 'ExpertController@techs');
 Auth::routes(['register' => false]);

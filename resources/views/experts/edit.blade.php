@@ -37,7 +37,7 @@
             </div>
             <div class="form-group col">
                 <label for="email_address">Email</label>
-                <input type="text" name="email_address" class="form-control" id="email_address" value="{{$expert->email_address}}">
+                <input type="text" name="email_address" class="form-control" id="email_address" value="{{$expert->email_address}}" required>
             </div>
             <div class="form-group col-2">
                 <label for="identification_number">DNI/CE/Pasaporte</label>

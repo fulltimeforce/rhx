@@ -13,15 +13,15 @@ class Update2ExpertsTable extends Migration
      */
     public function up()
     {
-        Schema::table('experts', function (Blueprint $table) {
-            $table->dropColumn('keroku');
-            $techs = array(
-                'heroku',
-            );
-            foreach($techs as $tech){
-                $table->enum($tech,['unknown','basic','intermediate','advanced'])->nullable();
-            }
-        });
+        // Schema::table('experts', function (Blueprint $table) {
+        //     $table->dropColumn('keroku');
+        //     $techs = array(
+        //         'heroku',
+        //     );
+        //     foreach($techs as $tech){
+        //         $table->enum($tech,['unknown','basic','intermediate','advanced'])->nullable();
+        //     }
+        // });
     }
 
     /**

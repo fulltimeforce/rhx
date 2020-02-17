@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Expert;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Facades\DB;
 
 class PositionController extends Controller
 {
@@ -54,6 +55,14 @@ class PositionController extends Controller
                         ->with('success','Expert created successfully.');
     }
 
+    public function validateEmail($email){
+        if( Expert::where("email_address" , $email)->count() > 0 ){
+            return view('experts.edit')->with('expert', Expert::where("email_address" , $email)->firts() )->with('technologies',Expert::getTechnologies());
+        }else{
+            return view('experts.create')->with('technologies',Expert::getTechnologies());
+        }
+    }
+
     /**
      * Display the specified resource.
      *
@@ -79,6 +88,27 @@ class PositionController extends Controller
         if(!Auth::check()) return redirect('login');
         return view('positions.edit')->with('position',$position);
     }
+    
+
+    /**
+     * 
+     *
+     * @param  \App\Position  $position
+     * @return \Illuminate\Http\Response
+     */
+    public function relations($positionId)
+    {
+        //
+        if(!Auth::check()) return redirect('login');
+
+        $experts = DB::table('experts')->whereIn('id', function($query) use ($positionId){
+            $query->select('expert_id')
+            ->from('expert_position')
+            ->where('position_id' , $positionId);
+        })->get();
+        return view('positions.experts')->with('experts',$experts)->with('technologies',Expert::getTechnologies());
+    }
+
 
     /**
      * Update the specified resource in storage.

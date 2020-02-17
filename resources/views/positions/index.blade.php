@@ -17,6 +17,7 @@
     @endif
     <br>
     <div class="row row-cols-1 ">
+    
     @foreach($positions as $pid => $position)
     <div class="col mb-4">
         <div class="card">
@@ -28,17 +29,62 @@
             </div>
             <div class="card-footer">
                 @guest
-                <a href="{{ route('experts.apply',$position->id) }}" class="btn btn-primary float-right">Apply!</a>
+                <div class="row">
+                    <div class="offset-sm-8 col-sm-4 offset-4 col-8">
+                        <div class="input-group">
+                            <input type="email" name="email_{{$pid}}"  placeholder="Enter your email to apply" class="form-control d-inline">
+                            <div class="input-group-append">
+                                <a href="#" data-position="{{$pid}}" class="btn btn-outline-primary float-right btn-apply-expert">Apply!</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @else
                 <a href="{{ route('positions.edit', $position->id) }}" class="card-link">Edit</a>
+                <a href="{{ route('positions.experts', $position->id) }}" class="card-link">Show applicants</a>
                 @endguest
             </div>
         </div>
     </div>
     @endforeach
+    
     </div>
 @endsection
 
 @section('javascript')
+
+<script type="text/javascript">
+    $(document).ready(function (ev) {
+
+        $(".btn-apply-expert").on('click',function(ev){
+            ev.preventDefault();
+            var position = $(this).data("position")
+            var email = $("input[name='email_"+position+"']").val();
+            $.ajax({
+
+                type:'POST',
+
+                url:'/expert/validate',
+                
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+
+                data:{email:email},
+
+                success:function(data){
+
+                    window.location = data;
+
+                }
+
+            });
+
+        })
+        
+
+    });
+</script>
 
 @endsection
