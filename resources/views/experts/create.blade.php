@@ -79,10 +79,16 @@
         <div class="form-group col">
             <label for="address">País - Ciudad</label>
             <input type="text" name="address" class="form-control" id="address" value="{{ $expert->address }}">
+            
         </div>
         <div class="form-group col-3">
             <label for="salary">Expectativa salarial</label>
-            <input type="text" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="validationTooltipUsernamePrepend">S/.</span>
+            </div>
+            <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
+            </div>
         </div>
         <div class="form-group col-3">
             <label for="availability">Disponibilidad</label>
@@ -123,7 +129,7 @@
             <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{ $expert->wish_knowledge }}">
         </div>
         <div class="form-group col">
-            <label for="focus">¿En qué te especializas?</label>
+            <label for="focus">¿En cuál de las siguientes áreas tienes mayor experiencia?</label>
             <select name="focus" class="form-control" id="focus" value="{{ $expert->focus }}">
                 <option value=""></option> 
                 <option value="fullstack">Fullstack</option>
@@ -197,9 +203,9 @@
         @endforeach
     @endforeach
     
-    @auth
-    <input type="hidden" name="position" value="{{$position->id}}">
-    @endauth
+    
+    <input type="hidden" name="position" value="{{$positionId}}">
+    
     <button type="submit" class="btn btn-primary">Submit</button>
     </div>
    

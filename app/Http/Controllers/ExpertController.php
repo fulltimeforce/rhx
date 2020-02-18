@@ -45,8 +45,10 @@ class ExpertController extends Controller
             $expert = $this->getModelFormat();
         }
 
+        $positionId = !empty($request->query('positionId')) ? $request->query('positionId') : "";
+
         $expert->email_address = $request->query('e') !== "" ? base64_decode( $request->query('e') ) : "";
-        return view('experts.create')->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+        return view('experts.create' )->with('positionId', $positionId )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
     }
 
     private function getModelFormat(){
@@ -74,18 +76,17 @@ class ExpertController extends Controller
 
     public function validateEmail(Request $request ){
         $email = $request->input('email');
-
-        // return $email;
+        $positionId = $request->input('positionId'); 
+        
         if( Expert::where("email_address" , $email)->count() > 0 ){
-            // return view('experts.edit')->with('expert', Expert::where("email_address" , $email)->firts() )->with('technologies',Expert::getTechnologies());
-
+            
             $expert = Expert::where("email_address" , $email)->first();
 
-            return route( 'experts.create' , [ 'expertId' => $expert->id , "e" => base64_encode($email)] );
+            return route( 'experts.create' , [ 'expertId' => $expert->id , "positionId" => $positionId ,"e" => base64_encode($email)] );
         }else{
 
-            return route( 'experts.create' , [ 'expertId' => "" , "e" => base64_encode($email)] );
-            // return view('experts.create')->with('technologies',Expert::getTechnologies());
+            return route( 'experts.create' , [ 'expertId' => "" , "positionId" => $positionId , "e" => base64_encode($email)] );
+            
         }
     }
 
@@ -97,7 +98,7 @@ class ExpertController extends Controller
 
         if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
             unset( $input["_token"] );
-
+            unset( $input["position"] );
             $input['last_info_update'] = date("Y-m-d H:i:s" , strtotime($input['last_info_update']));
             $input['availability'] = date("Y-m-d H:i:s" , strtotime($input['availability']));
             $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));

@@ -34,14 +34,14 @@
                         <div class="input-group">
                             <input type="email" name="email_{{$pid}}"  placeholder="Enter your email to apply" class="form-control d-inline">
                             <div class="input-group-append">
-                                <a href="#" data-position="{{$pid}}" class="btn btn-outline-primary float-right btn-apply-expert">Apply!</a> 
+                                <a href="#" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn btn-outline-primary float-right btn-apply-expert">Apply!</a> 
                             </div>
                         </div>
                     </div>
                 </div>
                 @else
-                <a href="{{ route('positions.edit', $position->id) }}" class="card-link">Edit</a>
-                <a href="{{ route('positions.experts', $position->id) }}" class="card-link">Show applicants</a>
+                <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
+                <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
                 @endguest
             </div>
         </div>
@@ -58,30 +58,38 @@
 
         $(".btn-apply-expert").on('click',function(ev){
             ev.preventDefault();
-            var position = $(this).data("position")
+            var position = $(this).data("position");
+            var positionId = $(this).data("positionid");
+            console.log(positionId , "sssssssssssss");
             var email = $("input[name='email_"+position+"']").val();
-            $.ajax({
+            if( !isEmail(email) ){
+                $("input[name='email_"+position+"']").focus();
+                $("input[name='email_"+position+"']").addClass('is-invalid');
+            }else{
+                $("input[name='email_"+position+"']").removeClass('is-invalid');
+                $.ajax({
+                    type:'POST',
+                    url:'/expert/validate',
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{email:email,positionId: positionId},
+                    success:function(data){
+                        
+                        window.location = data;
 
-                type:'POST',
-
-                url:'/expert/validate',
-                
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-
-                data:{email:email},
-
-                success:function(data){
-                    
-                    window.location = data;
-
-                }
-
-            });
+                    }
+                });
+            }
+            
 
         })
+
+        function isEmail(email) {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            return regex.test(email);
+        }
         
 
     });

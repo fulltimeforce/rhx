@@ -117,7 +117,7 @@
                 <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{$expert->wish_knowledge}}">
             </div>
             <div class="form-group col">
-                <label for="focus">¿En qué se especializa?</label>
+                <label for="focus">¿En cuál de las siguientes áreas tienes mayor experiencia?</label>
                 <select name="focus" class="form-control" id="focus">
                     <option value=""></option> 
                     <option value="fullstack" {{ ($expert->focus=="fullstack")? "selected" : "" }}>Fullstack</option>

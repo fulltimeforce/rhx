@@ -8,6 +8,7 @@ use App\Expert;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class PositionController extends Controller
 {
@@ -98,7 +99,17 @@ class PositionController extends Controller
             ->from('expert_position')
             ->where('position_id' , $positionId);
         })->get();
-        return view('positions.experts')->with('experts',$experts)->with('technologies',Expert::getTechnologies());
+
+        $n_experts = array();
+        foreach ($experts as $k => $expert) {
+            
+            $date = new DateTime($expert->birthday);
+            $now = new DateTime();
+            $interval = $now->diff($date);
+            $expert->birthday = $interval->y;
+            $n_experts[] = $expert;
+        }
+        return view('positions.experts')->with('experts' , $n_experts)->with('technologies',Expert::getTechnologies());
     }
 
 
