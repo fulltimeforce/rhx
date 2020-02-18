@@ -55,14 +55,6 @@ class PositionController extends Controller
                         ->with('success','Expert created successfully.');
     }
 
-    public function validateEmail($email){
-        if( Expert::where("email_address" , $email)->count() > 0 ){
-            return view('experts.edit')->with('expert', Expert::where("email_address" , $email)->firts() )->with('technologies',Expert::getTechnologies());
-        }else{
-            return view('experts.create')->with('technologies',Expert::getTechnologies());
-        }
-    }
-
     /**
      * Display the specified resource.
      *

@@ -74,7 +74,7 @@
                 data:{email:email},
 
                 success:function(data){
-
+                    
                     window.location = data;
 
                 }

@@ -32,10 +32,30 @@ class ExpertController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         // if(!Auth::check()) return redirect('login');
-        return view('experts.create')->with('technologies',Expert::getTechnologies());
+        // return $request->query('expertId');
+        $expert = (object) array();
+        if( $request->query('expertId') != "" ){
+            
+            $expert = Expert::where("id" , $request->query('expertId') )->first();
+        }else{
+            
+            $expert = $this->getModelFormat();
+        }
+
+        $expert->email_address = $request->query('e') !== "" ? base64_decode( $request->query('e') ) : "";
+        return view('experts.create')->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+    }
+
+    private function getModelFormat(){
+        $expert = new Expert();
+        $a = [];
+        foreach ($expert->getFillable() as $k => $f) {
+            $a[$f] = "";
+        }
+        return (object) $a;
     }
 
     public function apply($positionId = null){
@@ -59,10 +79,12 @@ class ExpertController extends Controller
         if( Expert::where("email_address" , $email)->count() > 0 ){
             // return view('experts.edit')->with('expert', Expert::where("email_address" , $email)->firts() )->with('technologies',Expert::getTechnologies());
 
-            return route( 'experts.edit' , [ 'expert' =>  Expert::where("email_address" , $email)->first() , 'technologies' => Expert::getTechnologies() ] );
+            $expert = Expert::where("email_address" , $email)->first();
+
+            return route( 'experts.create' , [ 'expertId' => $expert->id , "e" => base64_encode($email)] );
         }else{
 
-            return route( 'experts.create' , [ 'technologies' => Expert::getTechnologies() ] );
+            return route( 'experts.create' , [ 'expertId' => "" , "e" => base64_encode($email)] );
             // return view('experts.create')->with('technologies',Expert::getTechnologies());
         }
     }
@@ -72,16 +94,35 @@ class ExpertController extends Controller
         //
         $request->validate([]);
         $input = $request->all();
-        $input['id'] = Hashids::encode(time());
-        $expert = Expert::create($input);
 
+        if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
+            unset( $input["_token"] );
+
+            $input['last_info_update'] = date("Y-m-d H:i:s" , strtotime($input['last_info_update']));
+            $input['availability'] = date("Y-m-d H:i:s" , strtotime($input['availability']));
+            $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));
+           
+
+            Expert::where("email_address" , $input['email_address'])->update($input);
+        }else{
+            $input['id'] = Hashids::encode(time());
+            $expert = Expert::create($input);
+        }
+        
         $positionId = $request->input('position','');
         if(!empty($positionId)){
             $position = Position::find($positionId);
             $expert->positions()->attach($position);
         }
-        return redirect()->route('experts.index')
+
+        if(Auth::check()){
+            return redirect()->route('experts.index')
                         ->with('success','Expert created successfully.');
+        }else{
+            return redirect()->route('positions.index')
+                        ->with('success','Expert created successfully.');
+        }
+        
     }
 
     /**
@@ -106,7 +147,7 @@ class ExpertController extends Controller
     public function edit(Expert $expert)
     {
         //
-        // if(!Auth::check()) return redirect('login');
+        if(!Auth::check()) return redirect('login');
         return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
     }
 
