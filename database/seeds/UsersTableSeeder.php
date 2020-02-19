@@ -13,15 +13,32 @@ class UsersTableSeeder extends Seeder
     {
         //
         DB::table('users')->insert([
-        [
-            'name' => "Gerson",
-            'email' => 'gerzon.tazza@fulltimeforce.com',
-            'password' => bcrypt('bestcamp19'),
-        ],[
-            'name' => "Shenia",
-            'email' => 'shenia.gordillo@fulltimeforce.com',
-            'password' => bcrypt('freshgrass28'),
-        ]
+            [
+                'name' => "Kevin",
+                'email' => 'ceo@fulltimeforce.com',
+                'password' => bcrypt('3mptyShape10'),
+                // 'created_at' => date(),
+            ],[
+                'name' => "Vanessa",
+                'email' => 'vanessa.canchanya@fulltimeforce.com',
+                'password' => bcrypt('sweetfawn94'),
+                // 'created_at' => date(),
+            ],[
+                'name' => "Gerzon",
+                'email' => 'gerzon.tazza@fulltimeforce.com',
+                'password' => bcrypt('bestcamp19'),
+                // 'created_at' => date(),
+            ],[
+                'name' => "Shenia",
+                'email' => 'shenia.gordillo@fulltimeforce.com',
+                'password' => bcrypt('freshgrass28'),
+                // 'created_at' => date(),
+            ],[
+                'name' => "Edwin",
+                'email' => 'edwin.soria@fulltimeforce.com',
+                'password' => bcrypt('me$sySnail21'),
+                // 'created_at' => date(),
+            ]
         ]);
     }
 }
