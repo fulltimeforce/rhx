@@ -223,4 +223,12 @@
             });
         });
     </script>
+    <script>
+        $('#file_cv').on('change',function(ev){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(ev.target.files[0].name);
+        })
+    </script>
 @endsection
