@@ -97,7 +97,7 @@ class ExpertController extends Controller
             //code...
 
             $request->validate( [
-                'file_cv' => 'mimes:pdf,doc,docx,txt|max:20148',
+                'file_cv' => 'mimes:pdf,doc,docx|max:2048',
                 'email_address' => 'required|email:rfc,dns'
             ]);
 
@@ -193,12 +193,44 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
-        $request->validate([]);
-  
-        $expert->update($request->all());
-  
-        return redirect()->route('experts.index')
-                        ->with('success','Expert updated successfully');
+        try {
+            $request->validate([
+                'file_cv' => 'mimes:pdf,doc,docx|max:2048',
+                'email_address' => 'required|email:rfc,dns'
+            ]);
+
+            $file = $request->file("file_cv");
+
+            $destinationPath = 'uploads/cv';
+        
+            $input = $request->all();
+            
+            $newNameFile = '';
+
+            $input["file_path"] = '';
+            if( $file ){
+
+                $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $input["file_path"] = $newNameFile;
+
+            }
+
+            unset( $input["_token"] );
+            unset( $input["file_cv"] );
+      
+            $expert->update( $input );
+
+            if( $file ){
+                $file->move( $destinationPath, $newNameFile );
+            }
+      
+            return redirect()->route('experts.index')
+                            ->with('success','Expert updated successfully');
+
+        } catch (Exception $exception) {
+            return back()->withError($exception->getMessage())->withInput();
+        }
+        
     }
 
     /**
