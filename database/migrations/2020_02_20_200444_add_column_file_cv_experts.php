@@ -15,7 +15,7 @@ class AddColumnFileCvExperts extends Migration
     {
         Schema::table('experts', function (Blueprint $table) {
             //
-            $table->string('file_path')->default('')->change();
+            $table->string('file_path');
         });
     }
 
