@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['controller' => 'expert-create'])
   
 @section('content')
 <div class="row">
@@ -26,9 +26,20 @@
     </div>
 @endif
 
-<form action="{{ route('experts.store') }}" method="POST">
+<form action="{{ route('experts.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    <h3 class="mb-6">Información General</h3>
+    <div class="row">
+        <div class="col">
+            <h3 class="mb-5">Información General</h3>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="file_cv" id="file_cv">
+                <label class="custom-file-label" for="file_cv">UPLOAD CV</label>
+            </div>
+        </div>
+    </div>
+    
     <div class="form-row">
         <div class="form-group col">
             <label for="fullname">Nombre completo</label>
@@ -220,5 +231,14 @@
                 locale: "en"
             });
         });
+    </script>
+
+    <script>
+        $('#file_cv').on('change',function(ev){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(ev.target.files[0].name);
+        })
     </script>
 @endsection

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app' , ['controller' => 'position'])
  
 @section('content')
     <div class="row">

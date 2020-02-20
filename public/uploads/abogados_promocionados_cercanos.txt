@@ -1,0 +1,86 @@
+SELECT pe.nombre, u.foto, pe.ProfesionaleId as id,
+                    pe.id as ProfesionalesEstadisticaId,
+                p.telefono,
+                p.tipo, p.consultas,
+                p.visualizacion_perfil,
+                p.visualizacion_rating,
+                pe.antiguedad,
+                pe.anonymous_id,
+                pe.provincia,
+                pe.comunidad,
+                p.localidad,
+                pd.porcentajeEspecializacion,
+                pd.ratingCategoria,
+                pe.tipo as PEtipo,
+                d.nombre as nombreDerechoPrincipal,
+                pd.DerechoId,
+                pd.isPrincipal AS rightIsPrincipal,
+                pd.bloqueado ,
+                pd.isVisible AS visible,
+                COALESCE(PP.isPremium, 0) AS isPremium,
+                pd.rating AS rightRating ,
+
+                    ( 6371 * Acos(Cos(Radians(@lat)) * Cos(
+                        Radians(p.cplat)) * Cos(
+                        Radians(p.cplon) -
+                                 Radians(@lon)) +
+                        Sin(Radians(@lat)) * Sin(
+                        Radians(p.cplat))
+                     ) ) AS distance
+                     FROM ProfesionalesEstadisticas pe  JOIN ProfesionalesDerechos pd on pd.ProfesionalesEstadisticaId = pe.id LEFT JOIN (
+                            (SELECT @lat := ip.cplat AS cplat,
+                                    @lon := ip.cplon AS cplon,
+                                    ip.cp            AS cp,
+                                    ip.telefono,
+                                    ip.tipo,
+                                    ip.consultas,
+                                    ip.visualizacion_perfil,
+                                    ip.id,
+                                    ip.visualizacion_rating,
+                                    ip.localidad,
+                                    ip.ejerciente ,
+                                    '-1' AS distance
+                            FROM   Profesionales ip
+                            WHERE  ip.localidad = 'Madrid'
+                                    AND ip.cp IS NOT NULL
+                                    AND ip.cplat IS NOT NULL
+                                    AND ip.cplon IS NOT NULL
+                                    AND ip.cp = (SELECT Min(cp)
+                                                FROM   Profesionales ip
+                                                WHERE  ip.localidad = 'Madrid')
+                            ORDER  BY ip.cp ASC
+                            LIMIT  1)
+                            UNION
+                            SELECT cplat AS cplat,
+                                    cplon AS cplon,
+                                    ip.cp,
+                                    ip.telefono,
+                                    ip.tipo,
+                                    ip.consultas,
+                                    ip.visualizacion_perfil,
+                                    ip.id,
+                                    ip.visualizacion_rating,
+                                    ip.localidad,
+                                    ip.ejerciente ,
+                                    ( 6367 * Acos(Cos(Radians( @lat )) * Cos(Radians(ip.cplat)) *
+                                                        Cos(Radians(ip.cplon) -
+                                                            Radians( @lon )) +
+                                        Sin(Radians( @lat )) * Sin(
+                                        Radians(ip.cplat))) )  AS distance
+                            FROM   Profesionales ip
+                            WHERE  ip.localidad IN (SELECT localidad FROM Profesionales  WHERE localidad != 'Madrid')
+                                    AND ip.cp IS NOT NULL
+                                    AND ip.cplat IS NOT NULL
+                                    AND ip.cplon IS NOT NULL
+                            ORDER BY distance
+                            ) p
+                        ON pe.profesionaleid = p.id
+                            AND ejerciente = 1
+                left join (select id, foto, PlanPricingId from Usuarios) as u on u.id = p.id
+                left JOIN PlanPricings AS PP on u.PlanPricingId = PP.Id
+               join Derechos as d on d.id = pd.DerechoId and d.mostrar = 1 AND d.nombreCorto = 'familia'
+                WHERE
+                pe.tipo = 0
+                 AND (pd.rating >= 70 or pe.is_registered = 1) AND eliminado = 0 AND ((pd.bloqueado = 0 and PP.isPremium = 0) OR (pd.isVisible = 1 and PP.isPremium = 1 and pd.rating >= 60))
+AND PP.isPremium = 1 AND pd.rating >= 60
+                    ORDER BY RAND()
