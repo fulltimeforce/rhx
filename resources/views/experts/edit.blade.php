@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app' , ['controller' => 'experts-edit'])
    
 @section('content')
     <div class="row">
@@ -24,12 +24,31 @@
     @endif
   
     <form action="{{ route('experts.update',$expert->id) }}" method="POST">
-        <button type="submit" class="btn btn-primary">Editar</button>
-        <a href="{{ route('developer.edit.signed',$expert->id) }}" target="_blank" class="btn btn-primary">Link</a>
+        <button type="submit" class="btn btn-success">Editar</button>
+        <a href="{{ route('developer.edit.signed',$expert->id) }}" target="_blank" class="btn btn-info">Link</a>
         @csrf
         @method('PUT')
    
-        <h3 class="mb-6">Información General</h3>
+        <div class="row">
+            <div class="col">
+                <h3 class="mb-5">Información General</h3>
+            </div>
+            
+            <div class="col-12 col-sm-6 col-md-5">
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="file_cv" id="file_cv">
+                        <label class="custom-file-label" for="file_cv">UPLOAD CV</label>
+                    </div>
+                    @if( $expert->file_path != '' )
+                    <div class="input-group-append">
+                        <a href="{{ $expert->file_path }}" download class="btn btn-outline-secondary">DOWNLOAD</a>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            
+        </div>
         <div class="form-row">
             <div class="form-group col">
                 <label for="fullname">Nombre</label>

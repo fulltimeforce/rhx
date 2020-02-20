@@ -29,7 +29,7 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
 
-Route::get('/','PositionController@index');
+Route::get('/','PositionController@index')->name('home');
 
 Route::get('/get_techs', 'ExpertController@techs');
 Auth::routes(['register' => false]);

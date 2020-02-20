@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app' , ['controller' => 'experts'])
  
 @section('content')
     <div class="row">
@@ -55,6 +55,7 @@
                     <th>Email</th>
                     <th>Edad</th>
                     <th>Teléfono</th>
+                    <th>CV</th>
                     <th>Disponibilidad</th>
                     <th>Salario</th>
                     @foreach($technologies as $categoryid => $category)
@@ -82,6 +83,11 @@
                     <td>{{ $expert->email_address }}</td>
                     <td>{{ $expert->birthday }}</td>
                     <td>{{ $expert->phone }}</td>
+                    <td>
+                        @if($expert->file_path != '')
+                            <a href="{{ $expert->file_path }}" download class="btn btn-dark text-light">DOWNLOAD</a>
+                        @endif
+                    </td>
                     <td>{{ $expert->availability }}</td>
                     <td>{{ $expert->salary }}</td>
                     @foreach($technologies as $categoryid => $category)

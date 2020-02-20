@@ -46,7 +46,7 @@ class Expert extends Model
         //ci/cd
         'docker','kubernetes','jenkins','gitlab','travis','spinnaker','screwdriver',
         //Others
-        'git','svn',
+        'git','svn', 'file_path'
     ];
 
     protected static $technologies = array(
