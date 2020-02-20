@@ -23,7 +23,7 @@
         </div>
     @endif
   
-    <form action="{{ route('experts.update',$expert->id) }}" method="POST">
+    <form action="{{ route('experts.update',$expert->id) }}" method="POST" enctype="multipart/form-data">
         <button type="submit" class="btn btn-success">Editar</button>
         <a href="{{ route('developer.edit.signed',$expert->id) }}" target="_blank" class="btn btn-info">Link</a>
         @csrf
