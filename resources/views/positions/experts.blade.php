@@ -68,7 +68,7 @@
         responsive: true,
         rows_counter: true,
         popup_filters: true,
-        base_path: '/rhx/public/tablefilter/'
+        base_path: '/tablefilter/'
     };
     var tf = new TableFilter('allexperts',tfConfig);
     tf.init();
