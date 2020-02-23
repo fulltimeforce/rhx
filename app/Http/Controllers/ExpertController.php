@@ -21,7 +21,7 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
-        $experts = Expert::latest()->paginate(5);
+        $experts = Expert::latest()->get();
   
         return view('experts.index',compact('experts'))
             ->with('i', (request()->input('page', 1) - 1) * 5)->with('technologies',Expert::getTechnologies());
@@ -351,4 +351,17 @@ class ExpertController extends Controller
 
         return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
     }
+
+    public function applicantRegisterSigned() {
+        return URL::temporarySignedRoute(
+            'applicant.register', now()->addDays(7)
+        );
+        
+    }
+
+    public function applicantRegister(){
+        $expert = $this->getModelFormat();
+        return view('experts.create')->with('positionId', '' )->with('expert', $expert)->with('technologies',Expert::getTechnologies());
+    }
+
 }

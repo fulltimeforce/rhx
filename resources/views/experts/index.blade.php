@@ -1,13 +1,48 @@
 @extends('layouts.app' , ['controller' => 'experts'])
- 
+
+@section('styles')
+<style>
+caption{
+    caption-side: top !important;
+    width: max-content !important;
+    border: 1px solid;
+    margin-bottom: 1.5rem;
+}
+#showURL{
+    word-break: break-all;
+}
+</style>
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col">
             <h1>Experts</h1>
-            <a class="btn btn-secondary float-right" href="{{ route('experts.create') }}">New Expert</a>
+        </div>
+        <div class="col text-right">
+            <a class="btn btn-primary" href="{{ route('experts.create') }}">New Expert</a>
+            <a class="btn btn-info" id="url-generate" href="#">Generate URL</a>
         </div>
     </div>
-   
+   <!-- Modal -->
+    <div class="modal fade" id="urlGeneration" tabindex="-1" role="dialog" aria-labelledby="urlGenerationLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="urlGenerationLabel">URL Generation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="showURL"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
@@ -42,7 +77,7 @@
             <select multiple type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
         </div>
         <div class="form-group text-right">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" class="btn btn-success">Search</button>
         </div>
     
     </form>
@@ -125,13 +160,39 @@
                 @endforeach
             @endif
 
+            $('#url-generate').on('click', function (ev) {
+
+                ev.preventDefault();
+                $.ajax({
+                    type:'GET',
+                    url:'/applicant/register/signed',
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        $('#showURL').html(data);
+                        $("#urlGeneration").modal();
+                    }
+                });
+            })
+
         });
+        $('#urlGeneration').on('hidden.bs.modal', function (e) {
+            $('#showURL').html('');
+        })
         var tfConfig = {
             alternate_rows: true,
             highlight_keywords: true,
             responsive: true,
             rows_counter: true,
             popup_filters: true,
+            paging: {
+                results_per_page: ['Records: ', [10, 25, 50, 100]]
+            },
+            themes: [{
+                name: 'transparent'
+            }]
         };
         var tf = new TableFilter('allexperts',tfConfig);
         tf.init();
