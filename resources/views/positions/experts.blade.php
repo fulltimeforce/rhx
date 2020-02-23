@@ -1,4 +1,16 @@
 @extends('layouts.app' , ['controller' => 'positions-expert'])
+
+@section('styles')
+<style>
+caption{
+    caption-side: top !important;
+    width: max-content !important;
+    border: 1px solid;
+    margin-bottom: 1.5rem;
+}
+
+</style>
+@endsection
  
 @section('content')
 
@@ -68,7 +80,13 @@
         responsive: true,
         rows_counter: true,
         popup_filters: true,
-        base_path: '/tablefilter/'
+        base_path: '/tablefilter/',
+        paging: {
+            results_per_page: ['Records: ', [10, 25, 50, 100]]
+        },
+        themes: [{
+            name: 'transparent'
+        }]
     };
     var tf = new TableFilter('allexperts',tfConfig);
     tf.init();
