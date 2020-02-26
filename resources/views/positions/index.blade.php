@@ -69,7 +69,7 @@
                 $("input[name='email_"+position+"']").removeClass('is-invalid');
                 $.ajax({
                     type:'POST',
-                    url:'/expert/validate',
+                    url:'/rhx/public/expert/validate',
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
