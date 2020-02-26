@@ -34,7 +34,7 @@ class ExpertController extends Controller
      */
     public function create(Request $request)
     {
-        if(!Auth::check()) return redirect('login');
+        // if(!Auth::check()) return redirect('login');
         // return $request->query('expertId');
         $expert = (object) array();
         if( $request->query('expertId') != "" ){
