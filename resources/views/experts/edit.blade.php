@@ -1,4 +1,12 @@
 @extends('layouts.app' , ['controller' => 'experts-edit'])
+
+@section('styles')
+<style>
+#showURL{
+    word-break: break-all;
+}
+</style>
+@endsection
    
 @section('content')
     <div class="row">
@@ -25,11 +33,16 @@
   
     <form action="{{ route('experts.update',$expert->id) }}" method="POST" enctype="multipart/form-data">
         <button type="submit" class="btn btn-success">Editar</button>
-        <a href="{{ route('developer.edit.signed',$expert->id) }}" target="_blank" class="btn btn-info">Link</a>
+        <a href="#" data-expert="{{ $expert->id }}" id="url-generate"  class="btn btn-info ">Link</a>
+        <div class="alert alert-warning alert-dismissible mt-3" role="alert" style="display: none;">
+            <b>Copy successful!!!!</b>
+            <p id="showURL"></p>
+        </div>
+
         @csrf
         @method('PUT')
    
-        <div class="row">
+        <div class="row mt-4">
             <div class="col">
                 <h3 class="mb-5">Información General</h3>
             </div>
@@ -229,6 +242,49 @@
             var fileName = $(this).val();
             //replace the "Choose a file" label
             $(this).next('.custom-file-label').html(ev.target.files[0].name);
-        })
+        });
+        // $('[data-toggle="tooltip"]').tooltip({ trigger : 'click' });
+
+        $('#url-generate').on('click', function (ev) {
+            ev.preventDefault();
+            $.ajax({
+                type:'GET',
+                url:'/developer/edit/signed/'+ $(this).data("expert"),
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    $('#showURL').html(data);
+                    
+                    var el = document.createElement("textarea");
+                    el.value = data;
+                    el.style.position = 'absolute';                 
+                    el.style.left = '-9999px';
+                    el.style.top = '0';
+                    el.setSelectionRange(0, 99999);
+                    el.setAttribute('readonly', ''); 
+                    document.body.appendChild(el);
+                    
+                    el.focus();
+                    el.select();
+
+                    var success = document.execCommand('copy')
+                    if(success){
+                        $(".alert").slideDown(200, function() {
+                                
+                        });
+                    }
+                    setTimeout(() => {
+                        $(".alert").slideUp(500, function() {
+                            document.body.removeChild(el);
+                        });
+                    }, 4000);
+
+                    // $("#urlGeneration").modal();
+                }
+            });
+        });
+
     </script>
 @endsection
