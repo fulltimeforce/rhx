@@ -29,8 +29,11 @@
 <form action="{{ route('experts.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="row">
-        <div class="col">
-            <h3 class="mb-5">Información General</h3>
+        <div class="col mb-5">
+            <h3 class="">Información General</h3>
+            @if ($expert->id != '')
+            <span>Actualiza tu información</span> 
+            @endif
         </div>
         <div class="col-12 col-sm-6 col-md-4">
             <div class="custom-file">

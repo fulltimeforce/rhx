@@ -110,10 +110,16 @@ class ExpertController extends Controller
             $newNameFile = '';
 
             $input["file_path"] = '';
+            $isCreated = true;
             if( $file ){
 
                 $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $input["file_path"] = $newNameFile;
+            }
+
+            if( Auth::check() ){
+                $input["user_id"] = Auth::id();
+                $input["user_name"] = Auth::user()->name;
             }
     
             if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
@@ -126,9 +132,11 @@ class ExpertController extends Controller
                 if( isset($input['birthday']) ) $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));
                
                 Expert::where("email_address" , $input['email_address'])->update($input);
+                $isCreated = false;
             }else{
                 $input['id'] = Hashids::encode(time());
                 $expert = Expert::create($input);
+                $isCreated = true;
             }
 
             if( $file ){
@@ -136,17 +144,17 @@ class ExpertController extends Controller
             }
             
             $positionId = $request->input('position','');
-            if(!empty($positionId)){
+            if(!empty($positionId) && $isCreated){
                 $position = Position::find($positionId);
                 $expert->positions()->attach($position);
             }
     
             if(Auth::check()){
                 return redirect()->route('experts.index')
-                            ->with('success','Expert created successfully.');
+                            ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
             }else{
                 return redirect()->route('positions.index')
-                            ->with('success','Expert created successfully.');
+                            ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
             }
 
         } catch (Exception $exception) {
