@@ -36,4 +36,9 @@ Route::post('expert/validate','ExpertController@validateEmail')->name('experts.v
 Route::get('/','PositionController@index')->name('home');
 
 Route::get('/get_techs', 'ExpertController@techs');
+
+// LOGS
+Route::get('/logs', 'LogController@index')->name('logs.index');
+Route::post('/logs/store', 'LogController@store')->name('logs.store');
+
 Auth::routes(['register' => false]);

@@ -20,4 +20,8 @@ class Position extends Model
     {
         return $this->belongToMany('App\Expert')->withTimestamps();
     }
+
+    public function fk_log() {
+        return $this->hasMany('App\Product', 'product_type_id', 'product_type_id');
+    }
 }
