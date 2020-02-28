@@ -128,6 +128,10 @@ class ExpertController extends Controller
             $input['address'] = substr( $input['address'] , 0 , 244);
             $input['identification_number'] = substr( $input['identification_number'] , 0 , 244);
             $input['phone'] = substr( $input['phone'] , 0 , 244);
+
+            $input['result1'] = substr( $input['result1'] , 0 , 244);
+            $input['result2'] = substr( $input['result2'] , 0 , 244);
+            $input['result3'] = substr( $input['result3'] , 0 , 244);
     
             if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
                 unset( $input["_token"] );
@@ -239,6 +243,9 @@ class ExpertController extends Controller
             $input['address'] = substr( $input['address'] , 0 , 244);
             $input['identification_number'] = substr( $input['identification_number'] , 0 , 244);
             $input['phone'] = substr( $input['phone'] , 0 , 244);
+            $input['result1'] = substr( $input['result1'] , 0 , 244);
+            $input['result2'] = substr( $input['result2'] , 0 , 244);
+            $input['result3'] = substr( $input['result3'] , 0 , 244);
       
             $expert->update( $input );
 
