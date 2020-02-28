@@ -76,9 +76,13 @@
     $(document).ready(function(){
         $("#add-requirement").on('click' , function(ev){
             ev.preventDefault();
-            $("#list-requirements").append( " <li class='list-group-item d-flex justify-content-between align-items-center'>"+ $("#requirement").val() +"<input type='hidden' name='req[]' value='"+$("#requirement").val()+"' /> <span class='badge badge-primary badge-pill'>R</span></li>" )
+            $("#list-requirements").append( " <li class='list-group-item d-flex justify-content-between align-items-center'>"+ $("#requirement").val() +"<input type='hidden' name='req[]' value='"+$("#requirement").val()+"' /> <span class='badge badge-primary badge-pill requirement-remove'>R</span></li>" )
             $("#requirement").val('');
         });
+        $("#list-requirements").on('click', '.requirement-remove' , function(ev){
+            $(this).parent().slideUp(400 , () => { $(this).parent().remove(); });
+        });
+
     });
 </script>
 

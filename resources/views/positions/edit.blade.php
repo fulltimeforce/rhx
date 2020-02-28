@@ -63,7 +63,7 @@
             <div class="col-12">
                 <ul class="list-group" id="list-requirements">
                     @foreach($position->requirements as $epid => $requirement)
-                    <li class="list-group-item d-flex justify-content-between align-items-center">{{ $requirement->name }} <input type="hidden" value="{{ $requirement->name }}" name="req[]">  <span class='badge badge-primary badge-pill'>R</span> </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">{{ $requirement->name }} <input type="hidden" value="{{ $requirement->name }}" name="req[]">  <span class='badge badge-primary badge-pill requirement-remove'>R</span> </li>
                     @endforeach
                 </ul>
             </div>
@@ -85,7 +85,13 @@
             $("#list-requirements").append( " <li class='list-group-item d-flex justify-content-between align-items-center'>"+ $("#requirement").val() +"<input type='hidden' name='req[]' value='"+$("#requirement").val()+"' /> <span class='badge badge-primary badge-pill'>R</span></li>" )
             $("#requirement").val('');
         });
+
+        $("#list-requirements").on('click', '.requirement-remove' , function(ev){
+            $(this).parent().slideUp(400 , () => { $(this).parent().remove(); });
+        });
     });
+
+    
 </script>
 
 @endsection
