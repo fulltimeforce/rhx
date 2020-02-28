@@ -32,7 +32,7 @@
     <div class="form-row">
         <div class="form-group col">
             <label for="fullname">Nombre completo</label>
-            <input type="text" name="fullname" id="fullname" class="form-control" value="{{ $expert->fullname }}">
+            <input type="text" name="fullname" id="fullname" class="form-control" value="{{ $expert->fullname }}"> 
         </div>
         <div class="form-group col">
             <label for="email_address">Email</label>
