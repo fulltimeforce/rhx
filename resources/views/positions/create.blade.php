@@ -52,16 +52,15 @@
         <div class="col-6">
             <div class="form-group">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="requirement" placeholder="Username" name="requirement">
+                    <input type="text" class="form-control" id="requirement" placeholder="Username">
                     <div class="input-group-append">
-                        <a href="#" class="btn btn-outline-primary float-right">Add</a>
+                        <a href="#" class="btn btn-outline-primary float-right" id="add-requirement">Add</a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12">
-            <ul class="list-group">
-                <li class="list-group-item">Cras justo odio</li>
+            <ul class="list-group" id="list-requirements">
             </ul>
         </div>
     </div>
@@ -72,5 +71,15 @@
 @endsection
 
 @section('javascript')
+
+<script>
+    $(document).ready(function(){
+        $("#add-requirement").on('click' , function(ev){
+            ev.preventDefault();
+            $("#list-requirements").append( " <li class='list-group-item d-flex justify-content-between align-items-center'>"+ $("#requirement").val() +"<input type='hidden' name='req[]' value='"+$("#requirement").val()+"' /> <span class='badge badge-primary badge-pill'>R</span></li>" )
+            $("#requirement").val('');
+        });
+    });
+</script>
 
 @endsection

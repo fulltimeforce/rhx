@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Position;
 use Illuminate\Http\Request;
 use App\Expert;
+use App\Requirement;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\DB;
@@ -49,11 +50,23 @@ class PositionController extends Controller
         $request->validate([]);
         $input = $request->all();
         
-        $input['id'] = Hashids::encode(time());
+        $input['id'] = Hashids::encode( time() );
+
+        if(isset( $input['req'] )){
+            foreach ($input['req'] as $key => $req) {
+                Requirement::create(
+                    array(
+                        'name' => $req,
+                        'position_id' => $input['id']
+                    )
+                    );
+            }
+        }
+        
         $position = Position::create($input);
    
         return redirect()->route('positions.index')
-                        ->with('success','Expert created successfully.');
+                        ->with('success','Position created successfully.');
     }
 
     /**
@@ -125,11 +138,24 @@ class PositionController extends Controller
         //
         if(!Auth::check()) return redirect('login');
         $request->validate([]);
-  
-        $position->update($request->all());
+        $input = $request->all();
+        Requirement::where('position_id' , $position->id)->delete();
+        if(isset( $input['req'] )){
+            
+            foreach ($input['req'] as $key => $req) {
+                Requirement::create(
+                    array(
+                        'name' => $req,
+                        'position_id' => $position->id
+                    )
+                );
+            }
+        }
+        unset($input['req']);
+        $position->update( $input );
   
         return redirect()->route('positions.index')
-                        ->with('success','Expert updated successfully');
+                        ->with('success','Position updated successfully');
     }
 
     /**
