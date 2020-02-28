@@ -21,7 +21,7 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
-        $experts = Expert::latest()->paginate(5);
+        $experts = Expert::latest()->get();
   
         return view('experts.index',compact('experts'))
             ->with('i', (request()->input('page', 1) - 1) * 5)->with('technologies',Expert::getTechnologies());
@@ -93,36 +93,74 @@ class ExpertController extends Controller
     public function store(Request $request)
     {
         //
-        $request->validate([]);
-        $input = $request->all();
+        try {
+            //code...
 
-        if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
-            unset( $input["_token"] );
-            unset( $input["position"] );
-            $input['last_info_update'] = date("Y-m-d H:i:s" , strtotime($input['last_info_update']));
-            $input['availability'] = date("Y-m-d H:i:s" , strtotime($input['availability']));
-            $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));
-           
+            $request->validate( [
+                'file_cv' => 'mimes:pdf,doc,docx|max:2048',
+                // 'email_address' => 'required|email:rfc,dns'
+            ]);
 
-            Expert::where("email_address" , $input['email_address'])->update($input);
-        }else{
-            $input['id'] = Hashids::encode(time());
-            $expert = Expert::create($input);
+            $file = $request->file("file_cv");
+
+            $destinationPath = 'uploads/cv';
+        
+            $input = $request->all();
+            
+            $newNameFile = '';
+
+            $input["file_path"] = '';
+            $isCreated = true;
+            if( $file ){
+
+                $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $input["file_path"] = $newNameFile;
+            }
+
+            if( Auth::check() ){
+                $input["user_id"] = Auth::id();
+                $input["user_name"] = Auth::user()->name;
+            }
+    
+            if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
+                unset( $input["_token"] );
+                unset( $input["position"] );
+                unset( $input["file_cv"] );
+                
+                if( isset($input['last_info_update']) ) $input['last_info_update'] = date("Y-m-d H:i:s" , strtotime($input['last_info_update']));
+                if( isset($input['availability']) ) $input['availability'] = date("Y-m-d H:i:s" , strtotime($input['availability']));
+                if( isset($input['birthday']) ) $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));
+               
+                Expert::where("email_address" , $input['email_address'])->update($input);
+                $isCreated = false;
+            }else{
+                $input['id'] = Hashids::encode(time());
+                $expert = Expert::create($input);
+                $isCreated = true;
+            }
+
+            if( $file ){
+                $file->move( $destinationPath, $newNameFile );
+            }
+            
+            $positionId = $request->input('position','');
+            if(!empty($positionId) && $isCreated){
+                $position = Position::find($positionId);
+                $expert->positions()->attach($position);
+            }
+    
+            if(Auth::check()){
+                return redirect()->route('experts.index')
+                            ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
+            }else{
+                return redirect()->route('positions.index')
+                            ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
+            }
+
+        } catch (Exception $exception) {
+            return back()->withError($exception->getMessage())->withInput();
         }
         
-        $positionId = $request->input('position','');
-        if(!empty($positionId)){
-            $position = Position::find($positionId);
-            $expert->positions()->attach($position);
-        }
-
-        if(Auth::check()){
-            return redirect()->route('experts.index')
-                        ->with('success','Expert created successfully.');
-        }else{
-            return redirect()->route('positions.index')
-                        ->with('success','Expert created successfully.');
-        }
         
     }
 
@@ -163,12 +201,44 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
-        $request->validate([]);
-  
-        $expert->update($request->all());
-  
-        return redirect()->route('experts.index')
-                        ->with('success','Expert updated successfully');
+        try {
+            $request->validate([
+                'file_cv' => 'mimes:pdf,doc,docx|max:2048',
+                // 'email_address' => 'required|email:rfc,dns'
+            ]);
+
+            $file = $request->file("file_cv");
+
+            $destinationPath = 'uploads/cv';
+        
+            $input = $request->all();
+            
+            $newNameFile = '';
+
+            $input["file_path"] = '';
+            if( $file ){
+
+                $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $input["file_path"] = $newNameFile;
+
+            }
+
+            unset( $input["_token"] );
+            unset( $input["file_cv"] );
+      
+            $expert->update( $input );
+
+            if( $file ){
+                $file->move( $destinationPath, $newNameFile );
+            }
+      
+            return redirect()->route('experts.index')
+                            ->with('success','Expert updated successfully');
+
+        } catch (Exception $exception) {
+            return back()->withError($exception->getMessage())->withInput();
+        }
+        
     }
 
     /**
@@ -289,4 +359,17 @@ class ExpertController extends Controller
 
         return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
     }
+
+    public function applicantRegisterSigned() {
+        return URL::temporarySignedRoute(
+            'applicant.register', now()->addDays(7)
+        );
+        
+    }
+
+    public function applicantRegister(){
+        $expert = $this->getModelFormat();
+        return view('experts.create')->with('positionId', '' )->with('expert', $expert)->with('technologies',Expert::getTechnologies());
+    }
+
 }

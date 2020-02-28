@@ -22,6 +22,10 @@ Route::post('/experts/store', 'ExpertController@store')->name('experts.store');
 Route::get('/developer/edit/{expertId}','ExpertController@developerEdit')->name('developer.edit')->middleware('signed');
 Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSigned')->name('developer.edit.signed');
 
+// signed
+Route::get('/applicant/register/signed' , 'ExpertController@applicantRegisterSigned')->name('applicant.register.signed');
+Route::get('/applicant/register' , 'ExpertController@applicantRegister')->name('applicant.register')->middleware('signed');
+
 Route::resource('positions','PositionController',['except'=>['destroy']]);
 
 Route::get('positions/{positionId}/experts','PositionController@relations')->name('positions.experts');
@@ -29,7 +33,7 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
 
-Route::get('/','PositionController@index');
+Route::get('/','PositionController@index')->name('home');
 
 Route::get('/get_techs', 'ExpertController@techs');
 Auth::routes(['register' => false]);

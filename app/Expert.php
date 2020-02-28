@@ -11,7 +11,7 @@ class Expert extends Model
     protected $keyType = 'string';
     //
     protected $fillable = [
-        'id','last_info_update','email_address','fullname','identification_number','birthday','phone','education','address',
+        'id','last_info_update','user_id','user_name','email_address','fullname','identification_number','birthday','phone','education','address',
         'github','linkedin','facebook','instagram','twitter','english_education','other_knowledge','wish_knowledge',
         'availability','salary','focus',
         //assessment
@@ -46,7 +46,7 @@ class Expert extends Model
         //ci/cd
         'docker','kubernetes','jenkins','gitlab','travis','spinnaker','screwdriver',
         //Others
-        'git','svn',
+        'git','svn', 'file_path'
     ];
 
     protected static $technologies = array(

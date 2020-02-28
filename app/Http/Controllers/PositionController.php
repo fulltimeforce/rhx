@@ -20,7 +20,7 @@ class PositionController extends Controller
     public function index()
     {
         //
-        $positions = Position::latest()->paginate(5);
+        $positions = Position::latest()->get();
         return view('positions.index',compact('positions'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }

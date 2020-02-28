@@ -1,11 +1,32 @@
-@extends('layouts.app')
- 
+@extends('layouts.app' , ['controller' => 'experts'])
+
+@section('styles')
+<style>
+caption{
+    caption-side: top !important;
+    width: max-content !important;
+    border: 1px solid;
+    margin-bottom: 1.5rem;
+}
+#showURL{
+    word-break: break-all;
+}
+</style>
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col">
             <h1>Experts</h1>
-            <a class="btn btn-secondary float-right" href="{{ route('experts.create') }}">New Expert</a>
         </div>
+        <div class="col text-right">
+            <a class="btn btn-primary" href="{{ route('experts.create') }}">New Expert</a>
+            <a class="btn btn-info" id="url-generate" href="#">Generate URL</a>
+        </div>
+    </div>
+    <div class="alert alert-warning alert-dismissible mt-3" role="alert" style="display: none;">
+        <b>Copy successful!!!!</b>
+        <p id="showURL"></p>
     </div>
    
     @if ($message = Session::get('success'))
@@ -42,10 +63,11 @@
             <select multiple type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
         </div>
         <div class="form-group text-right">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" class="btn btn-success">Search</button>
         </div>
     
     </form>
+
     <div class="row">
         <div class="col">
             <table class="table table-bordered" id="allexperts">
@@ -71,7 +93,11 @@
                             <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a>
             
                             <a class="badge badge-primary" href="{{ route('experts.edit',$expert->id) }}">Edit</a>
-        
+
+                            @if($expert->file_path != '')
+                                <a href="{{ $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
+                            @endif
+
                             @csrf
                             @method('DELETE')
             
@@ -99,7 +125,9 @@
 @section('javascript')
 <script type="text/javascript" src="{{ asset('/tokenize2/tokenize2.min.js') }}"></script>
 <script type="text/javascript">
+        
         $(document).ready(function () {
+
             jQuery(".search-level").tokenize2({
                 dataSource: "{{ action('ExpertController@techs') }}",
             });
@@ -119,15 +147,97 @@
                 @endforeach
             @endif
 
+            $('#url-generate').on('click', function (ev) {
+
+                ev.preventDefault();
+                $.ajax({
+                    type:'GET',
+                    url:'/applicant/register/signed',
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        $('#showURL').html(data);
+
+                        var el = document.createElement("textarea");
+                        el.value = data;
+                        el.style.position = 'absolute';                 
+                        el.style.left = '-9999px';
+                        el.style.top = '0';
+                        el.setSelectionRange(0, 99999);
+                        el.setAttribute('readonly', ''); 
+                        document.body.appendChild(el);
+                        
+                        el.focus();
+                        el.select();
+
+                        var success = document.execCommand('copy')
+                        if(success){
+                            $(".alert").slideDown(200, function() {
+                                
+                            });
+                        }
+                        
+                        setTimeout(() => {
+                            $(".alert").slideUp(500, function() {
+                                document.body.removeChild(el);
+                            });
+                        }, 4000);
+
+                        
+                        
+                    }
+                });
+            });
+
+            
+
         });
+
+        
+        var count_cols = $("#allexperts tr:first th").length;
+        var cols_filter = {};
+        var labels_filter = [];
+        var values_filter = [];
+        for (let index = 0; index < count_cols ; index++) {
+            cols_filter['col_'+index] = '';
+            if( index > 6) {
+                cols_filter['col_'+index] = 'select'
+                labels_filter.push(['basic', 'intermediate', 'advanced']);
+                values_filter.push(['basic', 'intermediate', 'advanced']);
+            }
+        }
         var tfConfig = {
             alternate_rows: true,
-            highlight_keywords: true,
             responsive: true,
             rows_counter: true,
-            popup_filters: true,
+            loader: true,
+            filters_row_index: 1,
+            paging: {
+                results_per_page: ['Records: ', [10, 25, 50, 100]]
+            },
+            
+            themes: [{
+                name: 'transparent'
+            }],
+            col_types: ['string']
+            
         };
-        var tf = new TableFilter('allexperts',tfConfig);
+        var new_tfConfig = Object.assign(tfConfig , cols_filter);
+        new_tfConfig = Object.assign( new_tfConfig , { 
+            custom_options : {
+                cols : [ ...Array(count_cols).keys() ].filter( f => f>6) ,
+                texts : labels_filter,
+                values : labels_filter,
+                sorts: [false]
+            }
+        })
+        
+        
+        var tf = new TableFilter('allexperts',new_tfConfig);
         tf.init();
+
+        
     </script>   
 @endsection

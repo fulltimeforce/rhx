@@ -10,12 +10,7 @@
     <title>{{ config('app.name', 'Fulltimeforce') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <!--<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="{{ asset('/tablefilter/tablefilter.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -27,6 +22,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="{{ asset('/tokenize2/tokenize2.min.css') }}" rel="stylesheet" />
+
+    @yield('styles')
 </head>
 <body>
     <div id="app">
@@ -48,9 +45,15 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         @auth
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('experts.index') }}">{{ __('Experts') }}</a>
-                        </li>
+                        @if ( $controller == 'position' )
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('experts.index') }}">{{ __('Experts') }}</a>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
+                            </li>
+                        @endif
                         @endauth
                         <!-- Authentication Links -->
                         @guest
@@ -90,8 +93,17 @@
             <div class="container">
                 @yield('content')
             </div>
-            @yield('javascript')
+            
         </main>
+
+        <script src="{{ asset('js/app.js') }}"></script>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+        <script type="text/javascript" src="{{ asset('/tablefilter/tablefilter.js') }}"></script>
+
+        @yield('javascript')
     </div>
 </body>
 </html>

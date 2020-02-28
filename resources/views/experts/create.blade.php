@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['controller' => 'expert-create'])
   
 @section('content')
 <div class="row">
@@ -26,9 +26,23 @@
     </div>
 @endif
 
-<form action="{{ route('experts.store') }}" method="POST">
+<form action="{{ route('experts.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    <h3 class="mb-6">Información General</h3>
+    <div class="row">
+        <div class="col mb-5">
+            <h3 class="">Información General</h3>
+            @if ($expert->id != '')
+            <span>Actualiza tu información</span> 
+            @endif
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="file_cv" id="file_cv">
+                <label class="custom-file-label" for="file_cv">UPLOAD CV</label>
+            </div>
+        </div>
+    </div>
+    
     <div class="form-row">
         <div class="form-group col-12 col-sm-4">
             <label for="fullname">Nombre completo</label>
@@ -128,7 +142,7 @@
             <label for="wish_knowledge">¿Qué te gustaría aprender?</label>
             <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{ $expert->wish_knowledge }}">
         </div>
-        <div class="form-group col-12 col-sm-4">
+        <div class="form-group col">
             <label for="focus">Has tenido mayor experience en:</label>
             <select name="focus" class="form-control" id="focus" value="{{ $expert->focus }}">
                 <option value=""></option> 
@@ -220,5 +234,14 @@
                 locale: "en"
             });
         });
+    </script>
+
+    <script>
+        $('#file_cv').on('change',function(ev){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(ev.target.files[0].name);
+        })
     </script>
 @endsection

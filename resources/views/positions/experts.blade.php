@@ -1,7 +1,29 @@
-@extends('layouts.app')
+@extends('layouts.app' , ['controller' => 'positions-expert'])
+
+@section('styles')
+<style>
+caption{
+    caption-side: top !important;
+    width: max-content !important;
+    border: 1px solid;
+    margin-bottom: 1.5rem;
+}
+
+</style>
+@endsection
  
 @section('content')
-    <h1 class="mb-5">Show applicants</h1>
+
+    <div class="row">
+        <div class="col-lg-12 mt-5 mb-5">
+            <div class="float-left">
+                <h2>Show applicants</h2>
+            </div>
+            <div class="float-right">
+                <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
+            </div>
+        </div>
+    </div>
    
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
@@ -58,7 +80,13 @@
         responsive: true,
         rows_counter: true,
         popup_filters: true,
-        base_path: '/tablefilter/'
+        base_path: '/tablefilter/',
+        paging: {
+            results_per_page: ['Records: ', [10, 25, 50, 100]]
+        },
+        themes: [{
+            name: 'transparent'
+        }]
     };
     var tf = new TableFilter('allexperts',tfConfig);
     tf.init();
