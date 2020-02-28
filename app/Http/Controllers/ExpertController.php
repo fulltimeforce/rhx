@@ -129,7 +129,7 @@ class ExpertController extends Controller
             $input['identification_number'] = substr( $input['identification_number'] , 0 , 244);
             $input['phone'] = substr( $input['phone'] , 0 , 244);
 
-             $input['result1'] = substr( $input['result1'] , 0 , 244);
+            if(isset($input['result1']) ) $input['result1'] = substr( $input['result1'] , 0 , 244);
             if(isset($input['result2']) ) $input['result2'] = substr( $input['result2'] , 0 , 244);
             if(isset($input['result3']) ) $input['result3'] = substr( $input['result3'] , 0 , 244);
     
