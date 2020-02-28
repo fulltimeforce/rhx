@@ -90,7 +90,7 @@ caption{
                     <td>
                         <form action="{{ route('experts.destroy',$expert->id) }}" method="POST">
         
-                            <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a>
+                            <!-- <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a> -->
             
                             <a class="badge badge-primary" href="{{ route('experts.edit',$expert->id) }}">Edit</a>
 
@@ -215,7 +215,7 @@ caption{
             loader: true,
             filters_row_index: 1,
             paging: {
-                results_per_page: ['Records: ', [10, 25, 50, 100]]
+                results_per_page: ['Records: ', [50, 100,150]]
             },
             
             themes: [{
