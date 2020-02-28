@@ -44,6 +44,27 @@
             <label for="status" class="form-check-label">Enabled</label>
         </div>
     </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4>Requirements</h4>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="requirement" placeholder="Username" name="requirement">
+                    <div class="input-group-append">
+                        <a href="#" class="btn btn-outline-primary float-right">Add</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <ul class="list-group">
+                <li class="list-group-item">Cras justo odio</li>
+            </ul>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
     </div>
    

@@ -18,7 +18,7 @@ class CreateRequirementsTable extends Migration
             
             $table->text('name')->nullable();
 
-            $table->integer('position_id')->unsigned();
+            $table->char('position_id' , 16);
 
             $table->foreign('position_id')->references('id')->on('positions');
 

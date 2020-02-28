@@ -3,7 +3,7 @@
 use Illuminate\Database\Seeder;
 use Vinkla\Hashids\Facades\Hashids;
 
-class LogsTableSeeder extends Seeder
+class RequirementsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,39 +12,17 @@ class LogsTableSeeder extends Seeder
      */
     public function run()
     {
-        $platform = array('linkedin', 
-        'computrabajo',
-        'indeed', 
-        'getonboard' , 
-        'bumeran' ,
-        'catolica' , 
-        'upc' , 
-        'ulima' , 
-        'ricardopalma', 
-        'utp' , 
-        'fb');
-        for ($i=0; $i < 50 ; $i++) { 
-            DB::table('logs')->insert([
+        //
+        for ($i=0; $i < 10 ; $i++) { 
+            DB::table('requirements')->insert([
                 array(
-                    'id' => Hashids::encode(time() + $i*123),
                     'name' => $this->randomName(),
-                    'positions' => 'qEj0wVkJYR4LylxV',
-                    'platform' => $platform[ rand( 0 , 10) ],
-                    'link' => 'URLRLRRLRLRLRLLRRLRLLRLRLRLRLR',
-                    'form' => 0,
-                    'filter' => '-',
-                    'called' => 'no',
-                    'scheduled' => 'does not apply',
-                    'attended' => 'yes',
-                    'approve' => 'no',
-                    'user_id' => 5
+                    'position_id' => 'qEj0wVkJYR4LylxV'
                 ),
 
             ]);
         }
-
     }
-
 
     private function randomName() {
         $firstname = array(

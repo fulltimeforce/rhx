@@ -24,4 +24,8 @@ class Position extends Model
     public function fk_log() {
         return $this->hasMany('App\Product', 'product_type_id', 'product_type_id');
     }
+
+    public function requirements(){
+        return $this->hasMany('App\Requirement', 'position_id');
+    } 
 }
