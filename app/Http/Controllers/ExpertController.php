@@ -121,6 +121,13 @@ class ExpertController extends Controller
                 $input["user_id"] = Auth::id();
                 $input["user_name"] = Auth::user()->name;
             }
+
+            $input['fullname'] = substr( $input['fullname'] , 0 , 244);
+            $input['email_address'] = substr( $input['email_address'] , 0 , 244);
+            $input['education'] = substr( $input['education'] , 0 , 244);
+            $input['address'] = substr( $input['address'] , 0 , 244);
+            $input['identification_number'] = substr( $input['identification_number'] , 0 , 244);
+            $input['phone'] = substr( $input['phone'] , 0 , 244);
     
             if( Expert::where("email_address" , $input['email_address'])->count() > 0 ){
                 unset( $input["_token"] );
@@ -225,6 +232,13 @@ class ExpertController extends Controller
 
             unset( $input["_token"] );
             unset( $input["file_cv"] );
+
+            $input['fullname'] = substr( $input['fullname'] , 0 , 244);
+            $input['email_address'] = substr( $input['email_address'] , 0 , 244);
+            $input['education'] = substr( $input['education'] , 0 , 244);
+            $input['address'] = substr( $input['address'] , 0 , 244);
+            $input['identification_number'] = substr( $input['identification_number'] , 0 , 244);
+            $input['phone'] = substr( $input['phone'] , 0 , 244);
       
             $expert->update( $input );
 
