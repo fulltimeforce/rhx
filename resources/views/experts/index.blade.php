@@ -1,6 +1,7 @@
 @extends('layouts.app' , ['controller' => 'experts'])
 
 @section('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <style>
 caption{
     caption-side: top !important;
@@ -35,7 +36,7 @@ caption{
         </div>
     @endif
     <br>
-    <form action="{{ route('experts.filter') }}" method="POST">
+    <form action="" method="POST">
         @csrf
         <!--<div class="form-row">
         @foreach($technologies as $categoryid => $category)
@@ -63,7 +64,7 @@ caption{
             <select multiple type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
         </div>
         <div class="form-group text-right">
-            <button type="submit" class="btn btn-success">Search</button>
+            <button type="button" id="filter-btn" class="btn btn-success">Search</button>
         </div>
     
     </form>
@@ -124,28 +125,100 @@ caption{
 
 @section('javascript')
 <script type="text/javascript" src="{{ asset('/tokenize2/tokenize2.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script type="text/javascript">
         
         $(document).ready(function () {
 
-            jQuery(".search-level").tokenize2({
-                dataSource: "{{ action('ExpertController@techs') }}",
+            // jQuery(".search-level").tokenize2({
+            //     dataSource: "{{ action('ExpertController@techs') }}",
+            // });
+            // @if(isset($basic))
+            //     @foreach ($basic as $techid => $techlabel)
+            //         $(".search-level.basic").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+            //     @endforeach
+            // @endif
+            // @if(isset($intermediate))
+            //     @foreach ($intermediate as $techid => $techlabel)
+            //         $(".search-level.intermediate").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+            //     @endforeach
+            // @endif
+            // @if(isset($advanced))
+            //     @foreach ($advanced as $techid => $techlabel)
+            //         $(".search-level.advanced").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+            //     @endforeach
+            // @endif
+
+            $(".search-level").select2({
+                ajax: {
+                    url : "{{ action('ExpertController@techs') }}",
+                    dataType: 'json',
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                        }
+                        return query;
+                    },
+                    processResults: function (data) {
+                        return { results: data };
+                    }
+                }
+            })
+
+
+            $('.search-level').on('change', function (e) {
+
+                console.log( $('.search-level.basic').select2('data') );
+                var basic = $('.search-level.basic').select2('data');
+                var intermediate = $('.search-level.intermediate').select2('data');
+                var advanced = $('.search-level.advanced').select2('data');
+
+
+                console.log( basic.map(f => f.id) , intermediate.map(f => f.id) , advanced.map(f => f.id) );
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ action('ExpertController@filter') }}",
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{
+                        basic_level : basic.map(f => f.id) ,
+                        intermediate_level :  intermediate.map(f => f.id),
+                        advanced_level : advanced.map(f => f.id)
+                    },
+                    success:function(data){
+                        console.log(data, "dfsssssssssssssssssssssssssssss");
+                    }
+                });
+
             });
-            @if(isset($basic))
-                @foreach ($basic as $techid => $techlabel)
-                    $(".search-level.basic").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
-                @endforeach
-            @endif
-            @if(isset($intermediate))
-                @foreach ($intermediate as $techid => $techlabel)
-                    $(".search-level.intermediate").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
-                @endforeach
-            @endif
-            @if(isset($advanced))
-                @foreach ($advanced as $techid => $techlabel)
-                    $(".search-level.advanced").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
-                @endforeach
-            @endif
+
+            $("#filter-btn").on('click' , function(){
+                console.log("asdddddddddddd");
+                var basic = $('.search-level.basic').select2('data');
+                var intermediate = $('.search-level.intermediate').select2('data');
+                var advanced = $('.search-level.advanced').select2('data');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ action('ExpertController@filter') }}",
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{
+                        basic_level : basic.map(f => f.id) ,
+                        intermediate_level :  intermediate.map(f => f.id),
+                        advanced_level : advanced.map(f => f.id)
+                    },
+                    success:function(data){
+                        console.log(data);
+                    }
+
+                });
+            })
 
             $('#url-generate').on('click', function (ev) {
 

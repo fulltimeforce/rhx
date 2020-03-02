@@ -24,7 +24,7 @@ class ExpertController extends Controller
         $experts = Expert::latest()->get();
   
         return view('experts.index',compact('experts'))
-            ->with('i', (request()->input('page', 1) - 1) * 5)->with('technologies',Expert::getTechnologies());
+            ->with('technologies',Expert::getTechnologies());
     }
 
     /**
@@ -301,7 +301,7 @@ class ExpertController extends Controller
                     $query->where($techid,'basic')->orWhere($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }
-            $basic_array[$techid] = self::getTechLabel($techid);
+            // $basic_array[$techid] = self::getTechLabel($techid);
         }   
         foreach($intermediate as $techid){
             if(empty($thewholequery)) {
@@ -313,7 +313,7 @@ class ExpertController extends Controller
                     $query->where($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }
-            $intermediate_array[$techid] = self::getTechLabel($techid);
+            // $intermediate_array[$techid] = self::getTechLabel($techid);
         }
         foreach($advanced as $techid){
             if(empty($thewholequery)) {
@@ -325,18 +325,20 @@ class ExpertController extends Controller
                     $query->where($techid,'advanced');  
                 });
             }
-            $advanced_array[$techid] = self::getTechLabel($techid);
+            // $advanced_array[$techid] = self::getTechLabel($techid);
         }
 
         $experts = array();
-        if(!empty($thewholequery)) $experts = $thewholequery->paginate(10);
+        if(!empty($thewholequery)) $experts = $thewholequery->get();
 
-        return view('experts.index')->with('experts',$experts)
-            ->with('i', (request()->input('page', 1) - 1) * 10)
-            ->with('technologies',Expert::getTechnologies())
-            ->with('basic',$basic_array)
-            ->with('intermediate',$intermediate_array)
-            ->with('advanced',$advanced_array);
+        // return view('experts.index')->with('experts',$experts)
+        //     ->with('i', (request()->input('page', 1) - 1) * 10)
+        //     ->with('technologies',Expert::getTechnologies())
+        //     ->with('basic',$basic_array)
+        //     ->with('intermediate',$intermediate_array)
+        //     ->with('advanced',$advanced_array);
+
+        return $experts;
     }
 
     public function techs(Request $request){
@@ -347,7 +349,7 @@ class ExpertController extends Controller
         foreach(Expert::getTechnologies() as $catid => $cat){
             foreach($cat[1] as $techid => $techlabel){
                 if(preg_match('/' . ($start ? '^' : '') . $search . '/i', $techlabel) || preg_match('/' . ($start ? '^' : '') . $search . '/i', $techid)){
-                    $techs[] = array ('value'=>$techid,'text'=>$techlabel);
+                    $techs[] = array ('id'=>$techid,'text'=>$techlabel);
                 }                
             }
         }
