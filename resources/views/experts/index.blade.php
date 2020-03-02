@@ -1,15 +1,35 @@
 @extends('layouts.app' , ['controller' => 'experts'])
 
 @section('styles')
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
+
+
 <style>
 caption{
-    caption-side: top !important;
+    /* caption-side: top !important; */
     width: max-content !important;
     border: 1px solid;
     margin-bottom: 1.5rem;
 }
 #showURL{
     word-break: break-all;
+}
+#allexperts tbody tr td:nth-child(2){
+    text-transform: capitalize;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+    border: 1px solid #007bff;
+    color: #FFF !important;
+    background: #007bff;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+    background-color: #e9ecef;
+    background: #e9ecef;
+    border: 1px solid #dee2e6;
+    color: #0056b3;
 }
 </style>
 @endsection
@@ -70,27 +90,30 @@ caption{
 
     <div class="row">
         <div class="col">
-            <table class="table table-bordered" id="allexperts">
+            <table class="table row-border order-column" id="allexperts">
+            <thead class="thead-dark">
                 <tr>
-                    <th>Acción</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Edad</th>
-                    <th>Teléfono</th>
-                    <th>Disponibilidad</th>
-                    <th>Salario</th>
+                    <th data-col="action" >Acción</th>
+                    <th data-col="name" style="width: 200px;">Nombre</th>
+                    <th data-col="email">Email</th>
+                    <th data-col="age">Edad</th>
+                    <th data-col="phone">Teléfono</th>
+                    <th data-col="availability">Disponibilidad</th>
+                    <th data-col="salary">Salario</th>
                     @foreach($technologies as $categoryid => $category)
                         @foreach($category[1] as $techid => $techlabel)
-                            <th>{{$techlabel}}</th>
+                            <th data-col="{{ $techid }}">{{$techlabel}}</th>
                         @endforeach
                     @endforeach
                 </tr>
+            </thead>
+            <tbody>
                 @foreach ($experts as $expert)
                 <tr>
                     <td>
                         <form action="{{ route('experts.destroy',$expert->id) }}" method="POST">
         
-                            <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a>
+                            <!-- <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a> -->
             
                             <a class="badge badge-primary" href="{{ route('experts.edit',$expert->id) }}">Edit</a>
 
@@ -104,7 +127,7 @@ caption{
                             <button type="submit" class="badge badge-danger">Delete</button>
                         </form>
                     </td>
-                    <td>{{ $expert->fullname }}</td>
+                    <td style="background-color: #fafafa;">{{ $expert->fullname }}</td>
                     <td>{{ $expert->email_address }}</td>
                     <td>{{ $expert->birthday }}</td>
                     <td>{{ $expert->phone }}</td>
@@ -117,6 +140,7 @@ caption{
                     @endforeach
                 </tr>
                 @endforeach
+            <tbody>
             </table>
         </div>
     </div>
@@ -124,6 +148,11 @@ caption{
 
 @section('javascript')
 <script type="text/javascript" src="{{ asset('/tokenize2/tokenize2.min.js') }}"></script>
+
+<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
+
+
 <script type="text/javascript">
         
         $(document).ready(function () {
@@ -183,61 +212,32 @@ caption{
                             $(".alert").slideUp(500, function() {
                                 document.body.removeChild(el);
                             });
-                        }, 4000);
-
-                        
-                        
+                        }, 4000);  
                     }
                 });
             });
-
-            
-
         });
 
-        
-        var count_cols = $("#allexperts tr:first th").length;
-        var cols_filter = {};
-        var labels_filter = [];
-        var values_filter = [];
-        for (let index = 0; index < count_cols ; index++) {
-            cols_filter['col_'+index] = '';
-            if( index > 6) {
-                cols_filter['col_'+index] = 'select'
-                labels_filter.push(['basic', 'intermediate', 'advanced']);
-                values_filter.push(['basic', 'intermediate', 'advanced']);
-            }
-        }
-        var tfConfig = {
-            alternate_rows: true,
-            responsive: true,
-            rows_counter: true,
-            loader: true,
-            filters_row_index: 1,
-            paging: {
-                results_per_page: ['Records: ', [10, 25, 50, 100]]
+        var options = {
+            
+            lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
+            
+            scrollY: "500px",
+            scrollX: true,
+            scrollCollapse: true,
+            fixedColumns: {
+                leftColumns: 2
             },
-            
-            themes: [{
-                name: 'transparent'
-            }],
-            col_types: ['string']
-            
-        };
-        var new_tfConfig = Object.assign(tfConfig , cols_filter);
-        new_tfConfig = Object.assign( new_tfConfig , { 
-            custom_options : {
-                cols : [ ...Array(count_cols).keys() ].filter( f => f>6) ,
-                texts : labels_filter,
-                values : labels_filter,
-                sorts: [false]
-            }
-        })
-        
-        
-        var tf = new TableFilter('allexperts',new_tfConfig);
-        tf.init();
+            searching: false
+            // dom: "Bfrtip",
+        }
 
+        var table = $("#allexperts").DataTable( options );
+
+        $( table.table().container() ).on( 'click', 'tbody td:not(:first-child)', function (e) {
+            console.log("ddddddddddd");
+            // editor.inline( this );
+        } );
         
     </script>   
 @endsection

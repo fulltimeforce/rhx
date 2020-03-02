@@ -49,15 +49,12 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs') }}</a>
                             </li>
-                        @if ( $controller == 'position' )
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.index') }}">{{ __('Experts') }}</a>
-                            </li>
-                        @else
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
-                        @endif
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('experts.index') }}">{{ __('Experts') }}</a>
+                            </li>
                         @endauth
                         <!-- Authentication Links -->
                         @guest
