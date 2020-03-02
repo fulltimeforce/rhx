@@ -42,6 +42,8 @@
                 @else
                 <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
                 <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
+                <a href="#" class="btn btn-warning card-link">Filter</a>
+                <a href="#" class="btn btn-dark card-link">Call</a>
                 @endguest
             </div>
         </div>

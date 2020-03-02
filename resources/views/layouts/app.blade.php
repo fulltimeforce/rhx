@@ -45,15 +45,13 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         @auth
-                        @if ( $controller == 'position' )
+                        
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.index') }}">{{ __('Experts') }}</a>
                             </li>
-                        @else
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
-                        @endif
                         @endauth
                         <!-- Authentication Links -->
                         @guest
