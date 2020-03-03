@@ -48,6 +48,32 @@ caption{
         <b>Copy successful!!!!</b>
         <p id="showURL"></p>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="positionsExpert" tabindex="-1" role="dialog" aria-labelledby="positionsExpertLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="positionsExpertLabel">ASSIGNED POSITIONS</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">Cras justo odio <div ><input type="checkbox"></div></li>
+                    
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            
+        </div>
+    </div>
+    </div>
    
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
@@ -72,15 +98,15 @@ caption{
         </div>-->
         <div class="form-group">
             <label for="basic_level">Basic</label>
-            <select multiple type="text" id="basic_level" name="basic_level[]" class="form-control search-level basic"></select>
+            <select type="text" id="basic_level" name="basic_level[]" class="form-control search-level basic"></select>
         </div>
         <div class="form-group">
             <label for="intermediate_level">Intermediate</label>
-            <select multiple type="text" id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate"></select>
+            <select type="text" id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate"></select>
         </div>
         <div class="form-group">
             <label for="advanced_level">Advanced</label>
-            <select multiple type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
+            <select type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
         </div>
         <div class="form-group text-right">
             <button type="submit" class="btn btn-success">Search</button>
@@ -120,6 +146,8 @@ caption{
                             @if($expert->file_path != '')
                                 <a href="{{ $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
                             @endif
+
+                            <button type="button" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</button>
 
                             @csrf
                             @method('DELETE')
@@ -216,6 +244,24 @@ caption{
                     }
                 });
             });
+
+            $(".btn-position").on('click' , function(){
+                var id = $(this).data("id");
+                $.ajax({
+                    type:'GET',
+                    url:'/rhx/public/position/enabled/',
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        console.log(data);
+                        $("#positionsExpert").modal();
+                    }
+                });
+                
+            });
+
         });
 
         var options = {
@@ -237,6 +283,8 @@ caption{
         $( table.table().container() ).on( 'click', 'tbody td:not(:first-child)', function (e) {
             console.log("ddddddddddd");
             // editor.inline( this );
+            
+            
         } );
         
     </script>   

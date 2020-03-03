@@ -50,6 +50,9 @@ class PositionController extends Controller
         $input = $request->all();
         
         $input['id'] = Hashids::encode(time());
+
+        $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
+
         $position = Position::create($input);
    
         return redirect()->route('positions.index')
@@ -125,8 +128,10 @@ class PositionController extends Controller
         //
         if(!Auth::check()) return redirect('login');
         $request->validate([]);
-  
-        $position->update($request->all());
+        $input = $request->all();
+
+        $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
+        $position->update($input);
   
         return redirect()->route('positions.index')
                         ->with('success','Expert updated successfully');
@@ -143,5 +148,27 @@ class PositionController extends Controller
         //
         $position->experts()->detach();
         
+    }
+
+    public function enabled($expertId){
+        $new_a_positions = array();
+        $expert_enableds = DB::table('expert_position')
+            ->leftJoin('experts', 'expert_position.expert_id', '=', 'experts.id')
+            ->select('expert_position.position_id')
+            ->get();
+
+        $positions = Position::where('status' , 'enabled')->get();
+
+
+        // $positions = DB::table('positions')
+        //     ->leftJoin('expert_position' , )
+        //     ->select('positions.*' , DB::table('') )
+
+
+        foreach ($positions as $key => $position) {
+            
+        }
+        
+        return response()->json( [] );
     }
 }
