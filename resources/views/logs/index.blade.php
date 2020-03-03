@@ -1,6 +1,10 @@
 @extends('layouts.app' , ['controller' => 'position'])
 
 @section('styles')
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/dataTables.bootstrap4.min.css') }}"/>
+
 <style>
     /* The switch - the box around the slider */
 .switch {
@@ -193,6 +197,8 @@ input:checked + .slider:before {
 
 @section('javascript')
 
+<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
+
 <script type="text/javascript">
     $(document).ready(function (ev) {
 
@@ -216,7 +222,9 @@ input:checked + .slider:before {
         // tf.init();
 
         var table = $('#table-logs').DataTable({
-            "order": [[ 11, "desc" ]]
+            "order": [[ 11, "desc" ]],
+            scrollY: "500px",
+            scrollX: true,
         });
 
         var column = table.column( 11 );

@@ -40,5 +40,6 @@ Route::get('/get_techs', 'ExpertController@techs');
 // LOGS
 Route::get('/logs', 'LogController@index')->name('logs.index');
 Route::post('/logs/store', 'LogController@store')->name('logs.store');
+Route::get('/logs/position/{positionId}', 'LogController@position')->name('logs.position');
 
 Auth::routes(['register' => false]);

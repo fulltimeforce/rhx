@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Log;
 use App\Position;
+use App\Requirement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
@@ -112,6 +113,20 @@ class LogController extends Controller
         //
     }
 
+    public function position($positionId){
+        
+        $position = Position::where('id' , $positionId)->first();
+
+        $requirements = Requirement::where('position_id' , $positionId)->get();
+
+        $logs = Log::where('positions' , $positionId)->get();
+
+        return response()->json( (object) array(
+            "requirements" => $requirements,
+            "logs" => $logs ,
+            "position" => $position
+        ));
+    }
 
     private function platforms(){
         return array(

@@ -1,5 +1,11 @@
 @extends('layouts.app' , ['controller' => 'position'])
- 
+
+@section('styles')
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/dataTables.min.css') }}"/>
+
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col">
@@ -8,6 +14,152 @@
             <a class="btn btn-secondary float-right" href="{{ route('positions.create') }}">New Position</a>
             @endauth
         </div>
+    </div>
+
+    <!-- MODAL FILTER -->
+    <div class="modal fade" id="filterPosition" tabindex="-1" role="dialog" aria-labelledby="filterPositionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="filterPositionLabel">FILTER CVs - <span id="position-name"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-5 col-12">
+                    <p>REQUIREMENTS</p>
+                    <ul class="list-group" id="requirements-list">
+                        <li class="list-group-item">Cras justo odio</li>
+                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                        <li class="list-group-item">Morbi leo risus</li>
+                        <li class="list-group-item">Porta ac consectetur ac</li>
+                        <li class="list-group-item">Vestibulum at eros</li>
+                    </ul>
+                </div>
+                <div class="col-sm-7 col-12">
+                    <p>APPLICANTS</p>
+                    <table class="table" id="table-applicants">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>PHONE</th>
+                                <th>APPROVED</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- MODAL CALL FILTER -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">CALL FILTERED</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col col-sm">
+                    <p>REQUIREMENTS</p>
+                    <table>
+                        <tr><td>WORKING STATUS</td></tr>
+                        <tr><td>AVAILABILITY</td></tr>
+                        <tr><td>ENGLISH LEVEL</td></tr>
+
+                        <tr><td>SALARY EXPERCTATION</td></tr>
+                        <tr><td>NOTES</td></tr>
+                        <tr><td>INTERVIEW</td></tr>
+                    </table>
+
+                    <table>
+                        <thead>
+                            <tr><td></td> <td></td> <td>POSTULANTS</td></tr>
+                            <tr><td>REQUIREMENTS</td> <td></td> <td><p>{phone}</p><p>{name}</p></td> <td><p>{phone}</p><p>{name}</p</td> <td><p>{phone}</p><p>{name}</p</td></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>WORKING STATUS</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>AVAILABILITY</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>ENGLISH LEVEL</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+
+                            <tr>
+                                <td>SALARY EXPERCTATION</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>NOTES</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>INTERVIEW</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>   
+                    </table>
+                    <ul class="list-group">
+                        <li class="list-group-item">WORKING STATUS</li>
+                        <li class="list-group-item">AVAILABILITY</li>
+                        <li class="list-group-item">ENGLISH LEVEL</li>
+
+                        <li class="list-group-item">SALARY EXPERCTATION</li>
+                        <li class="list-group-item">NOTES</li>
+                        <li class="list-group-item">INTERVIEW</li>
+                    </ul>
+                </div>
+                <div class="col-8 col-sm-8">
+                    <p>APPLICANTS</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
+    </div>
     </div>
    
     @if ($message = Session::get('success'))
@@ -42,8 +194,8 @@
                 @else
                 <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
                 <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
-                <a href="#" class="btn btn-warning card-link">Filter</a>
-                <a href="#" class="btn btn-dark card-link">Call</a>
+                <a href="#" data-position="{{ $position->id }}" class="btn btn-warning card-link btn-position-filter">Filter</a>
+                <a href="#" data-position="{{ $position->id }}" class="btn btn-dark card-link btn-call-filter">Call</a>
                 @endguest
             </div>
         </div>
@@ -54,6 +206,8 @@
 @endsection
 
 @section('javascript')
+
+<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
@@ -84,8 +238,6 @@
                     }
                 });
             }
-            
-
         })
 
         function isEmail(email) {
@@ -93,6 +245,57 @@
             return regex.test(email);
         }
         
+        $(".btn-position-filter").on('click',function(ev){
+            ev.preventDefault();
+            var position = $(this).data('position');
+            var url = '{{ route("logs.position", ":id") }}';
+            url = url.replace(':id', position);
+            $.ajax({
+                type:'GET',
+                url:  url,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+
+                    $('#position-name').html(data.position.name);
+                    var list_req_html = '';
+                    $("#requirements-list").html('');
+                    for (let index = 0; index < data.requirements.length; index++) {
+                        var reqs_html = '<li class="list-group-item">:name</li>';
+                        reqs_html = reqs_html.replace(':name' , data.requirements[index].name );
+                        list_req_html += reqs_html;
+                    }
+                    $("#requirements-list").html(list_req_html);
+
+                    $("#table-applicants tbody").html('');
+                    var table_applicants_html = '';
+                    for (let index = 0; index < data.logs.length; index++) {
+                        var applicants_html = '<tr><td>:name</td><td>:phone</td><td> <input type="checkbox" name="filter[]" value="1"> </td></tr>';
+                        applicants_html = applicants_html.replace( ':name' , data.logs[index].name );    
+                        table_applicants_html += applicants_html
+                    }
+                    $("#table-applicants tbody").html(table_applicants_html);
+                    $("#table-applicants").DataTable({
+                        
+                        searching : false,
+                        lengthChange : false,
+                        paging : false,
+                        pageLength : 50,
+                        info : false
+                    });
+
+                    $("#filterPosition").modal()
+                    console.log(data,"eeee");
+
+                }
+            });
+        });
+
+        $(".btn-call-filter").on('click' , function(){
+            
+        });
 
     });
 </script>

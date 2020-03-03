@@ -18,6 +18,6 @@ class Requirement extends Model
     ];
 
     public function position(){
-        return $this->hasOne('App\Position', 'id', 'positions');
+        return $this->belongsTo('App\Position', 'position_id');
     }
 }
