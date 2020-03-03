@@ -161,7 +161,7 @@ class ExpertController extends Controller
             }
     
             if(Auth::check()){
-                return redirect()->route('experts.index')
+                return redirect()->route('experts.home')
                             ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
             }else{
                 return redirect()->route('positions.index')
@@ -253,7 +253,7 @@ class ExpertController extends Controller
                 $file->move( $destinationPath, $newNameFile );
             }
       
-            return redirect()->route('experts.index')
+            return redirect()->route('experts.home')
                             ->with('success','Expert updated successfully');
 
         } catch (Exception $exception) {
@@ -274,16 +274,19 @@ class ExpertController extends Controller
         $expert->positions()->detach();
         $expert->delete();
   
-        return redirect()->route('experts.index')
+        return redirect()->route('experts.home')
                         ->with('success','Expert deleted successfully');
     }
 
     public function filter(Request $request)
     {
         if(!Auth::check()) return redirect('login');
+
         $basic = $request->input('basic_level',array());
         $intermediate = $request->input('intermediate_level',array());
         $advanced = $request->input('advanced_level',array());
+
+        // return array($basic,$intermediate,$advanced);
 
         $basic_array = array();
         $intermediate_array = array();
@@ -328,8 +331,8 @@ class ExpertController extends Controller
             $advanced_array[$techid] = self::getTechLabel($techid);
         }
 
-        $experts = array();
-        if(!empty($thewholequery)) $experts = $thewholequery->paginate(10);
+        $experts = Expert::latest()->get();
+        if(!empty($thewholequery)) $experts = $thewholequery->get();
 
         return view('experts.index')->with('experts',$experts)
             ->with('i', (request()->input('page', 1) - 1) * 10)
@@ -349,6 +352,21 @@ class ExpertController extends Controller
                 if(preg_match('/' . ($start ? '^' : '') . $search . '/i', $techlabel) || preg_match('/' . ($start ? '^' : '') . $search . '/i', $techid)){
                     $techs[] = array ('value'=>$techid,'text'=>$techlabel);
                 }                
+            }
+        }
+
+        return response()->json($techs);
+    }
+
+    public function technologies(Request $request){
+        $search = $request->query('search','');
+        $start = $request->query('start','0');
+        $techs = array();
+        foreach(Expert::getTechnologies() as $catid => $cat){
+            foreach($cat[1] as $techid => $techlabel){
+                if(preg_match('/' . ($start ? '^' : '') . $search . '/i', $techlabel) || preg_match('/' . ($start ? '^' : '') . $search . '/i', $techid)){
+                    $techs[] = array ('id'=>$techid,'text'=>$techlabel);
+                }                  
             }
         }
 

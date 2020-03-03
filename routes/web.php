@@ -17,7 +17,11 @@
 
 Route::resource('experts','ExpertController');
 Route::get('/apply/{positionId}','ExpertController@apply')->name('experts.apply');
-Route::post('/experts', 'ExpertController@filter')->name('experts.filter');
+
+Route::get('/experts', 'ExpertController@index')->name('experts.home');
+
+Route::post('/experts/filter', 'ExpertController@filter')->name('experts.filter');
+
 Route::post('/experts/store', 'ExpertController@store')->name('experts.store');
 Route::get('/developer/edit/{expertId}','ExpertController@developerEdit')->name('developer.edit')->middleware('signed');
 Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSigned')->name('developer.edit.signed');
@@ -32,8 +36,9 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
-Route::get('position/enabled/{expertId}','PositionController@enabled')->name('position.enabled');
+Route::post('positions/enabled','PositionController@enabled')->name('positions.enabled');
 
+Route::get('expert/technologies','ExpertController@technologies')->name('expert.technologies');
 
 Route::get('/','PositionController@index')->name('home');
 
