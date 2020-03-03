@@ -398,6 +398,7 @@ class ExpertController extends Controller
     }
 
     public function isSlug($slug){
+
         $positions = Position::all();
         $is = false;
         $p = array();
