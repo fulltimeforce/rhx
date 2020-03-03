@@ -37,7 +37,9 @@ Route::get('position/enabled/{expertId}','PositionController@enabled')->name('po
 
 Route::get('/','PositionController@index')->name('home');
 
-Route::get('/{slug}','ExpertController@isSlug')->name('position.slug');
+Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
+
+Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
 
 Route::get('/get_techs', 'ExpertController@techs');
 

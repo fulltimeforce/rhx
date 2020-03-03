@@ -99,7 +99,7 @@
         $(".btn-copy-slug").on('click',function(ev){
             ev.preventDefault();
             var el = document.createElement("textarea");
-            el.value = "{{ route('home') }}" + '/'+$(this).data("url");
+            el.value = "{{ route('home') }}" + '/position/'+$(this).data("url");
             
             el.style.position = 'absolute';                 
             el.style.left = '-9999px';
