@@ -44,6 +44,7 @@
                 <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
                 <a href="#" class="btn btn-warning card-link">Filter</a>
                 <a href="#" class="btn btn-dark card-link">Call</a>
+                <a href="#" class="btn btn-primary card-link btn-copy-slug" title="Copied" data-toggle="tooltip" data-placement="top"  data-url="{{ $position->slug }}">Copy URL</a>
                 @endguest
             </div>
         </div>
@@ -57,7 +58,15 @@
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
+        $('[data-toggle="tooltip"]').tooltip({
+            trigger : 'click'
+        })
 
+        $('[data-toggle="tooltip"]').on('shown.bs.tooltip', function () {
+            setTimeout(() => {
+                $('[data-toggle="tooltip"]').tooltip('hide')
+            }, 2000);
+        })
         $(".btn-apply-expert").on('click',function(ev){
             ev.preventDefault();
             var position = $(this).data("position");
@@ -85,8 +94,27 @@
                 });
             }
             
-
         })
+
+        $(".btn-copy-slug").on('click',function(ev){
+            ev.preventDefault();
+            var el = document.createElement("textarea");
+            el.value = "{{ route('home') }}" + '/'+$(this).data("url");
+            
+            el.style.position = 'absolute';                 
+            el.style.left = '-9999px';
+            el.style.top = '0';
+            el.setSelectionRange(0, 99999);
+            el.setAttribute('readonly', ''); 
+            document.body.appendChild(el);
+            
+            el.focus();
+            el.select();
+
+            var success = document.execCommand('copy')
+            document.body.removeChild(el);
+
+        });
 
         function isEmail(email) {
             var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

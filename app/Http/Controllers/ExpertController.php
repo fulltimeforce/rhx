@@ -393,4 +393,28 @@ class ExpertController extends Controller
         return view('experts.create')->with('positionId', '' )->with('expert', $expert)->with('technologies',Expert::getTechnologies());
     }
 
+    public function positions($expertId){
+        return response()->json($expert);
+    }
+
+    public function isSlug($slug){
+        $positions = Position::all();
+        $is = false;
+        $p = array();
+        foreach ($positions as $key => $p) {
+            if($slug === $p->slug){
+                $position = $p;$is = true;break;
+            }
+        }
+
+        if($is){
+
+            $expert = $this->getModelFormat();
+        
+            return view('experts.create' )->with('positionId', $position->id )->with('positionName' , $position->name )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+        }else{
+            abort(404);
+        }
+    }
+
 }

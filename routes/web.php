@@ -32,8 +32,13 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
+Route::get('position/enabled/{expertId}','PositionController@enabled')->name('position.enabled');
+
 
 Route::get('/','PositionController@index')->name('home');
 
+Route::get('/{slug}','ExpertController@isSlug')->name('position.slug');
+
 Route::get('/get_techs', 'ExpertController@techs');
+
 Auth::routes(['register' => false]);
