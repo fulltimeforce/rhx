@@ -6,7 +6,7 @@
                 <h2> Show Expert</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('experts.index') }}"> Back</a>
+                <a class="btn btn-primary" href="{{ route('experts.home') }}"> Back</a>
             </div>
         </div>
     </div>

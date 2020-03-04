@@ -334,12 +334,14 @@ class ExpertController extends Controller
         $experts = Expert::latest()->get();
         if(!empty($thewholequery)) $experts = $thewholequery->get();
 
-        return view('experts.index')->with('experts',$experts)
-            ->with('i', (request()->input('page', 1) - 1) * 10)
-            ->with('technologies',Expert::getTechnologies())
-            ->with('basic',$basic_array)
-            ->with('intermediate',$intermediate_array)
-            ->with('advanced',$advanced_array);
+        // return view('experts.index')->with('experts',$experts)
+        //     ->with('i', (request()->input('page', 1) - 1) * 10)
+        //     ->with('technologies',Expert::getTechnologies())
+        //     ->with('basic',$basic_array)
+        //     ->with('intermediate',$intermediate_array)
+        //     ->with('advanced',$advanced_array);
+
+        return response()->json($experts);
     }
 
     public function techs(Request $request){
