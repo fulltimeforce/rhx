@@ -83,7 +83,7 @@
         </div>
         <div class="form-group col">
             <label for="phone">Teléfono/Celular</label>
-            <input type="text" name="phone" class="form-control" id="phone" value="{{ $expert->phone }}">
+            <input type="text" name="phone" class="form-control" id="phone" value="{{ $expert->phone }}" required>
         </div>
         <div class="form-group col">
             <label for="last_info_update">Última actualización</label>
