@@ -150,25 +150,14 @@ class PositionController extends Controller
         
     }
 
-    public function enabled($expertId){
-        $new_a_positions = array();
-        $expert_enableds = DB::table('expert_position')
-            ->leftJoin('experts', 'expert_position.expert_id', '=', 'experts.id')
-            ->select('expert_position.position_id')
+    public function enabled(Request $request){
+
+        $expertId = $request->input('expertId');
+        $positions = DB::table('positions')
+            ->leftJoin('expert_position' , 'positions.id', '=', 'expert_position.position_id' )
+            ->select('positions.*' , DB::raw('(CASE WHEN expert_position.expert_id = "'.$expertId.'" THEN 1 ELSE 0 END) AS active') )
             ->get();
-
-        $positions = Position::where('status' , 'enabled')->get();
-
-
-        // $positions = DB::table('positions')
-        //     ->leftJoin('expert_position' , )
-        //     ->select('positions.*' , DB::table('') )
-
-
-        foreach ($positions as $key => $position) {
-            
-        }
         
-        return response()->json( [] );
+        return response()->json( $positions );
     }
 }

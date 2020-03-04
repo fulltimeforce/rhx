@@ -1,7 +1,7 @@
 @extends('layouts.app' , ['controller' => 'experts'])
 
 @section('styles')
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
 
@@ -98,18 +98,18 @@ caption{
         </div>-->
         <div class="form-group">
             <label for="basic_level">Basic</label>
-            <select type="text" id="basic_level" name="basic_level[]" class="form-control search-level basic"></select>
+            <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic"></select>
         </div>
         <div class="form-group">
             <label for="intermediate_level">Intermediate</label>
-            <select type="text" id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate"></select>
+            <select multiple id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate"></select>
         </div>
         <div class="form-group">
             <label for="advanced_level">Advanced</label>
-            <select type="text" id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
+            <select multiple id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
         </div>
         <div class="form-group text-right">
-            <button type="submit" class="btn btn-success">Search</button>
+            <button type="button" class="btn btn-success" id="search">Search</button>
         </div>
     
     </form>
@@ -177,6 +177,8 @@ caption{
 @section('javascript')
 <script type="text/javascript" src="{{ asset('/tokenize2/tokenize2.min.js') }}"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
 <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
 
@@ -185,22 +187,66 @@ caption{
         
         $(document).ready(function () {
 
-            jQuery(".search-level").tokenize2({
-                dataSource: "{{ action('ExpertController@techs') }}",
+            // jQuery(".search-level").tokenize2({
+            //     dataSource: "{{ action('ExpertController@techs') }}",
+            // });
+            
+            var options = {
+            
+                lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
+                
+                scrollY: "500px",
+                scrollX: true,
+                scrollCollapse: true,
+                fixedColumns: {
+                    leftColumns: 2
+                },
+                searching: false
+                // dom: "Bfrtip",
+            }
+
+            var table = $("#allexperts").DataTable( options );
+
+
+            $(".search-level").select2({
+                ajax: {
+                    url: "{{ route('expert.technologies') }}",
+                    dataType: 'json',
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                        }
+                        // Query parameters will be ?search=[term]&type=public
+                        return query;
+                    },
+                    processResults: function (data) {
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        return {
+                            results: data
+                        };
+                    }
+
+                }
             });
+
             @if(isset($basic))
+                console.log("ddddddddddddd")
+                var basic = [];
                 @foreach ($basic as $techid => $techlabel)
-                    $(".search-level.basic").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+                    // $(".search-level.basic").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+                    console.log('{{$techid}}');
+                    basic.push('{{$techid}}');
                 @endforeach
+                $(".search-level.basic").val( basic).trigger('change');
             @endif
             @if(isset($intermediate))
                 @foreach ($intermediate as $techid => $techlabel)
-                    $(".search-level.intermediate").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+                    // $(".search-level.intermediate").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
                 @endforeach
             @endif
             @if(isset($advanced))
                 @foreach ($advanced as $techid => $techlabel)
-                    $(".search-level.advanced").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
+                    // $(".search-level.advanced").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
                 @endforeach
             @endif
 
@@ -245,47 +291,106 @@ caption{
                 });
             });
 
-            $(".btn-position").on('click' , function(){
+            $("#allexperts").on('click',".btn-position" , function(){
                 var id = $(this).data("id");
                 $.ajax({
-                    type:'GET',
-                    url:'/rhx/public/position/enabled/',
+                    type:'POST',
+                    url: '{{ route("positions.enabled") }}',
+                    data: {expertId : id},
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
                         console.log(data);
+                        for (let index = 0; index < array.length; index++) {
+                            var html = '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox"></div></li>';
+                            const element = array[index];
+                            
+                        }
                         $("#positionsExpert").modal();
                     }
                 });
                 
             });
 
+            $('#search').on('click' , function(){
+
+                var a_basic_level = $(".search-level.basic").val();
+                var a_intermediate_level = $(".search-level.intermediate").val();
+                var a_advanced_level = $(".search-level.advanced").val(); 
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("experts.filter") }}',
+                    data: {basic_level : a_basic_level , intermediate_level : a_intermediate_level , advanced_level : a_advanced_level },
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        table.destroy();
+                        var html = '';
+                        for (let index = 0; index < data.length; index++) {
+
+                            html += html_table_row(data[index]);
+                        }
+                        
+                        $("#allexperts tbody").html('');
+                        $("#allexperts tbody:first").html(html);
+
+
+                        table = $("#allexperts").DataTable( options );
+                        // 
+                    }
+                });
+            });
+
+            function html_table_row(data){
+                var html = '';
+                html += '<tr>';
+                html += '<td>';
+                html += '<form action="'+ "{{ route('experts.destroy', ':id' ) }}"+ '" method="POST">';
+        
+                // html += '        <a class="badge badge-info" href=" '+ "{{ route('experts.show', ':id') }}" + '">Show</a>';
+        
+                html += '        <a class="badge badge-primary" href="'+ "{{ route('experts.edit', ':id') }}" + '">Edit</a>';
+
+                if( data.file_path != '' ){
+                    html += '   <a href="'+data.file_path+'" download class="badge badge-dark text-light">DOWNLOAD</a>';
+                }
+                
+                html += '        <button type="button" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</button>';
+
+                html = html.replace(/:id/gi , data.id);
+
+                html += '<input type="hidden" name="_token" value="{{csrf_token()}}" /> ';
+                html += '<input type="hidden" name="_method" value="DELETE" /> ';
+                
+                // ('delete')
+                html += '        <button type="submit" class="badge badge-danger">Delete</button>';
+                html += '    </form>';
+                html += '</td>';
+                html += '<td>'+data.fullname+'</td>';
+                html += '<td>'+data.email_address+'</td>';
+                html += '<td>'+data.birthday+'</td>';
+                html += '<td>'+data.phone+'</td>';
+                html += '<td>'+data.availability+'</td>';
+                html += '<td>'+data.salary+'</td>';
+                @foreach($technologies as $categoryid => $category)
+                    @foreach($category[1] as $techid => $techlabel)
+                    // console.log( '{{$techid}}' ,'{{$techlabel}}' )
+                    html += '<td>'+data['{{$techid}}']+'</td>';
+                    @endforeach
+                @endforeach
+                html += '</tr>';
+                return html;
+            }
+
+
         });
 
-        var options = {
-            
-            lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
-            
-            scrollY: "500px",
-            scrollX: true,
-            scrollCollapse: true,
-            fixedColumns: {
-                leftColumns: 2
-            },
-            searching: false
-            // dom: "Bfrtip",
-        }
-
-        var table = $("#allexperts").DataTable( options );
-
-        $( table.table().container() ).on( 'click', 'tbody td:not(:first-child)', function (e) {
-            console.log("ddddddddddd");
-            // editor.inline( this );
-            
-            
-        } );
+        
         
     </script>   
 @endsection
