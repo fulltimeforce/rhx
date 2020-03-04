@@ -46,6 +46,8 @@ Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
 
 Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
 
-Route::get('/get_techs', 'ExpertController@techs');
+Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
+
+Route::post('positions/experts', 'PositionController@experts')->name('positions.experts.attach');
 
 Auth::routes(['register' => false]);
