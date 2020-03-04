@@ -153,11 +153,46 @@ class PositionController extends Controller
     public function enabled(Request $request){
 
         $expertId = $request->input('expertId');
-        $positions = DB::table('positions')
-            ->leftJoin('expert_position' , 'positions.id', '=', 'expert_position.position_id' )
-            ->select('positions.*' , DB::raw('(CASE WHEN expert_position.expert_id = "'.$expertId.'" THEN 1 ELSE 0 END) AS active') )
-            ->get();
+
+        $positions = Position::where('status' , 'enabled')->get();
+        $a_positions = array();
+        foreach ($positions as $key => $position) {
+            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id])->count();
+            $a_positions[] = (object) array(
+                "id" => $position->id,
+                "name" => $position->name,
+                "active" => $em > 0? 1 : 0 
+            );
+        }
         
-        return response()->json( $positions );
+        return response()->json( $a_positions );
     }
+
+    public function experts(Request $request){
+
+        $expertId = $request->input('expertId');
+
+        $positions = $request->input('positions');
+
+        $expert = Expert::where('id',$expertId)->first();
+
+        DB::table('expert_position')->where('expert_id' , $expertId)->delete();
+
+        foreach ($positions as $key => $position) {
+            DB::table('expert_position')->insert(
+                array(
+                    "expert_id" => $expertId,
+                    "position_id" => $position,
+                    "created_at" => date('Y-m-d H:i:s'),
+                    "updated_at" => date('Y-m-d H:i:s')
+                )
+            );
+        }
+
+        // $expert->positions()->attach( Position::whereIn('id' , $positions ) );
+
+        return 'dddd';
+
+    }
+
 }

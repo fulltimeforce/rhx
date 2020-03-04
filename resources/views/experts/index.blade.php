@@ -61,14 +61,16 @@ caption{
             </div>
             
             <div class="modal-body">
-                <ul class="list-group">
+                <form action="" id="form-positions">
+                <input type="hidden" name="expertId-p" id="expertId-p" value="">
+                <ul class="list-group" id="list-positions">
                     <li class="list-group-item d-flex justify-content-between align-items-center">Cras justo odio <div ><input type="checkbox"></div></li>
-                    
                 </ul>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" id="save-positions" class="btn btn-primary">Save</button>
             </div>
             
         </div>
@@ -83,19 +85,6 @@ caption{
     <br>
     <form action="{{ route('experts.filter') }}" method="POST">
         @csrf
-        <!--<div class="form-row">
-        @foreach($technologies as $categoryid => $category)
-                <div class="form-group col-3">
-                <h4>{{$category[0]}}</h4>
-                @foreach($category[1] as $techid => $techlabel)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="{{$techid}}" name="{{$categoryid}}" id="{{$techid}}">
-                        <label class="form-check-label" for="{{$techid}}">{{$techlabel}}</label>
-                    </div>
-                @endforeach
-                </div>
-        @endforeach
-        </div>-->
         <div class="form-group">
             <label for="basic_level">Basic</label>
             <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic"></select>
@@ -147,7 +136,7 @@ caption{
                                 <a href="{{ $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
                             @endif
 
-                            <button type="button" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</button>
+                            <a href="#" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</a>
 
                             @csrf
                             @method('DELETE')
@@ -187,10 +176,6 @@ caption{
         
         $(document).ready(function () {
 
-            // jQuery(".search-level").tokenize2({
-            //     dataSource: "{{ action('ExpertController@techs') }}",
-            // });
-            
             var options = {
             
                 lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
@@ -229,26 +214,6 @@ caption{
                 }
             });
 
-            @if(isset($basic))
-                console.log("ddddddddddddd")
-                var basic = [];
-                @foreach ($basic as $techid => $techlabel)
-                    // $(".search-level.basic").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
-                    console.log('{{$techid}}');
-                    basic.push('{{$techid}}');
-                @endforeach
-                $(".search-level.basic").val( basic).trigger('change');
-            @endif
-            @if(isset($intermediate))
-                @foreach ($intermediate as $techid => $techlabel)
-                    // $(".search-level.intermediate").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
-                @endforeach
-            @endif
-            @if(isset($advanced))
-                @foreach ($advanced as $techid => $techlabel)
-                    // $(".search-level.advanced").trigger('tokenize:tokens:add', ['{{$techid}}', '{{$techlabel}}', true]);
-                @endforeach
-            @endif
 
             $('#url-generate').on('click', function (ev) {
 
@@ -291,28 +256,7 @@ caption{
                 });
             });
 
-            $("#allexperts").on('click',".btn-position" , function(){
-                var id = $(this).data("id");
-                $.ajax({
-                    type:'POST',
-                    url: '{{ route("positions.enabled") }}',
-                    data: {expertId : id},
-                    headers: {
-                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success:function(data){
-                        console.log(data);
-                        for (let index = 0; index < array.length; index++) {
-                            var html = '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox"></div></li>';
-                            const element = array[index];
-                            
-                        }
-                        $("#positionsExpert").modal();
-                    }
-                });
-                
-            });
+            
 
             $('#search').on('click' , function(){
 
@@ -386,6 +330,61 @@ caption{
                 html += '</tr>';
                 return html;
             }
+
+            // ===================== SHOW POSITIONS =====================
+            $("table tbody").on('click', 'a.btn-position' , function(ev){
+                ev.preventDefault();
+                var id = $(this).data("id");
+                $('#expertId-p').val('');
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("positions.enabled") }}',
+                    data: {expertId : id},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        console.log(data);
+                        $('#expertId-p').val(id);
+                        $("#list-positions").html('');
+                        var html = '';
+                        for (let index = 0; index < data.length; index++) {
+                            html += '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox" name="positions[]" value="'+data[index].id+'" '+ (data[index].active == 1? 'checked' : '') +' ></div></li>';
+                            html = html.replace(':name' , data[index].name);
+                        }
+                        $("#list-positions").html(html);
+                        $("#positionsExpert").modal();
+                    }
+                });
+                
+            });
+
+            $("#save-positions").on('click' , function(ev){
+               
+                var positionsIDs = [];
+                $('#form-positions input[type="checkbox"]:checked').each( function(){
+                    positionsIDs.push($(this).val());
+                } );
+                var id = $('#expertId-p').val();
+                console.log( positionsIDs );
+
+                // return;
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("positions.experts.attach") }}',
+                    data: {expertId : id, positions : positionsIDs},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        console.log(data, "****************");
+                    }
+                });
+
+            });
+            
 
 
         });
