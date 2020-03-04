@@ -63,6 +63,8 @@ class PositionController extends Controller
             }
         }
         
+        $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
+
         $position = Position::create($input);
    
         return redirect()->route('positions.index')
@@ -153,6 +155,9 @@ class PositionController extends Controller
         }
         unset($input['req']);
         $position->update( $input );
+
+        $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
+        $position->update($input);
   
         return redirect()->route('positions.index')
                         ->with('success','Position updated successfully');
@@ -170,4 +175,48 @@ class PositionController extends Controller
         $position->experts()->detach();
         
     }
+
+    public function enabled(Request $request){
+
+        $expertId = $request->input('expertId');
+
+        $positions = Position::where('status' , 'enabled')->get();
+        $a_positions = array();
+        foreach ($positions as $key => $position) {
+            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id])->count();
+            $a_positions[] = (object) array(
+                "id" => $position->id,
+                "name" => $position->name,
+                "active" => $em > 0? 1 : 0 
+            );
+        }
+        
+        return response()->json( $a_positions );
+    }
+
+    public function experts(Request $request){
+
+        $expertId = $request->input('expertId');
+
+        $positions = $request->input('positions');
+
+        $expert = Expert::where('id',$expertId)->first();
+
+        DB::table('expert_position')->where('expert_id' , $expertId)->delete();
+
+        foreach ($positions as $key => $position) {
+            DB::table('expert_position')->insert(
+                array(
+                    "expert_id" => $expertId,
+                    "position_id" => $position,
+                    "created_at" => date('Y-m-d H:i:s'),
+                    "updated_at" => date('Y-m-d H:i:s')
+                )
+            );
+        }
+
+        return 'success';
+
+    }
+
 }

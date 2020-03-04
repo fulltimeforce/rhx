@@ -4,9 +4,14 @@
 <div class="row">
     <div class="col-lg-12 mt-5 mb-5">
         <div class="float-left">
+            @isset($positionName)
+            <h2>Apply to {{ $positionName }}</h2>
+            @endisset
+            @empty($positionName)
             @auth
             <h2>New Expert</h2>
             @endauth
+            @endempty
             
         </div>
         <div class="float-right">

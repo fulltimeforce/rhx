@@ -52,7 +52,7 @@
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.index') }}">{{ __('Experts') }}</a>
+                                <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
                             </li>
                         @endauth
                         <!-- Authentication Links -->

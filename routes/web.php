@@ -17,7 +17,11 @@
 
 Route::resource('experts','ExpertController');
 Route::get('/apply/{positionId}','ExpertController@apply')->name('experts.apply');
-Route::post('/experts', 'ExpertController@filter')->name('experts.filter');
+
+Route::get('/experts', 'ExpertController@index')->name('experts.home');
+
+Route::post('/experts/filter', 'ExpertController@filter')->name('experts.filter');
+
 Route::post('/experts/store', 'ExpertController@store')->name('experts.store');
 Route::get('/developer/edit/{expertId}','ExpertController@developerEdit')->name('developer.edit')->middleware('signed');
 Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSigned')->name('developer.edit.signed');
@@ -32,6 +36,9 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
+Route::post('positions/enabled','PositionController@enabled')->name('positions.enabled');
+
+Route::get('expert/technologies','ExpertController@technologies')->name('expert.technologies');
 
 Route::get('/','PositionController@index')->name('home');
 
@@ -41,5 +48,10 @@ Route::get('/get_techs', 'ExpertController@techs');
 Route::get('/logs', 'LogController@index')->name('logs.index');
 Route::post('/logs/store', 'LogController@store')->name('logs.store');
 Route::get('/logs/position/{positionId}', 'LogController@position')->name('logs.position');
+Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
+
+Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
+
+Route::post('positions/experts', 'PositionController@experts')->name('positions.experts.attach');
 
 Auth::routes(['register' => false]);
