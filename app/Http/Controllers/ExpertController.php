@@ -98,6 +98,7 @@ class ExpertController extends Controller
 
             $request->validate( [
                 'file_cv' => 'mimes:pdf,doc,docx|max:2048',
+                'phone' => 'required|numeric'
                 // 'email_address' => 'required|email:rfc,dns'
             ]);
 
@@ -215,6 +216,7 @@ class ExpertController extends Controller
         try {
             $request->validate([
                 'file_cv' => 'mimes:pdf,doc,docx|max:2048',
+                'phone' => 'required|numeric'
                 // 'email_address' => 'required|email:rfc,dns'
             ]);
 
