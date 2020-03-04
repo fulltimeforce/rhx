@@ -189,9 +189,7 @@ class PositionController extends Controller
             );
         }
 
-        // $expert->positions()->attach( Position::whereIn('id' , $positions ) );
-
-        return 'dddd';
+        return 'success';
 
     }
 

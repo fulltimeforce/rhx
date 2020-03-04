@@ -380,6 +380,7 @@ caption{
                     },
                     success:function(data){
                         console.log(data, "****************");
+                        $("#positionsExpert").modal('hide');
                     }
                 });
 
