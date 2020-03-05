@@ -128,6 +128,31 @@ class LogController extends Controller
         ));
     }
 
+    public function updateForm(Request $request){
+        $input = $request->all();
+        
+        $logId = $input['id'];
+        unset($input['id']);
+        $input['user_id'] = Auth::id();
+        // return $logId;
+        if( empty($logId) ){
+            $input['id'] = Hashids::encode(time());
+            return array(
+                'type' => 'create',
+                'data' => Log::create($input)
+            );
+
+        }else{
+            Log::where('id', $logId)->update($input);
+            $input["id"] = $logId;
+            return array(
+                'type' => 'update',
+                'data' => (object) $input
+            );
+        }
+
+    }
+
     private function platforms(){
         return array(
             (object) array(

@@ -28,6 +28,7 @@
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s;
+  border-radius: 20px;
 }
 
 .slider:before {
@@ -40,6 +41,7 @@
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
+  border-radius: 20px;
 }
 
 input.default:checked + .slider {
@@ -107,6 +109,7 @@ input:checked + .slider:before {
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" name="name" id="name" class="form-control">
+                            <input type="hidden" name="id" id="log-id">
                         </div>
                     </td>
                     <td>
@@ -148,8 +151,8 @@ input:checked + .slider:before {
             </form>
         </div>
         <div class="col-12">
-            <table class="table" id="table-logs">
-                <thead>
+            <table class="table row-border order-column" id="table-logs">
+                <thead class="thead-dark">
                     <tr>
                     <th>Actions</th>
                     <th>Name</th>
@@ -167,15 +170,17 @@ input:checked + .slider:before {
                 </thead>
                 <tbody>
                 @foreach($logs as $pid => $log)
-                    <tr>
-                        <td></td>
+                    <tr id="{{ $log->id }}" >
+                        <td>
+                            <a href="#" data-id="{{ $log->id }}" class="badge badge-primary btn-edit">Edit</a>
+                        </td>
                         <td>{{ $log->name }}</td>
                         <td>{{ $log->position->name }}</td>
                         <td>{{ collect($platforms)->firstWhere('value' , $log->platform)->label   }}  </td>
                         <td>{{ $log->link }}</td>
                         <td>
-                            <label class="switch ">
-                                <input type="checkbox" name="form" id="form" class="primary">
+                            <label class="switch">
+                                <input type="checkbox" name="form[]" data-id="{{ $log->id }}" id="form" class="primary change-form" {{ $log->form == 1 ? 'checked' : '' }} >
                                 <span class="slider"></span>
                             </label>
                         </td>
@@ -201,30 +206,14 @@ input:checked + .slider:before {
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
-
+        var $_logs = {!! $logs !!};
         var url_ajax = '{!! env("APP_URL_AJAX") !!}';
-
-        // var tfConfig = {
-        //     alternate_rows: true,
-        //     highlight_keywords: true,
-        //     responsive: true,
-        //     rows_counter: true,
-        //     popup_filters: true,
-        //     base_path: url_ajax + 'tablefilter/',
-        //     paging: {
-        //         results_per_page: ['Records: ', [10, 25, 50, 100]]
-        //     },
-        //     themes: [{
-        //         name: 'transparent'
-        //     }]
-        // };
-        // var tf = new TableFilter('table-logs',tfConfig);
-        // tf.init();
 
         var table = $('#table-logs').DataTable({
             "order": [[ 11, "desc" ]],
             scrollY: "500px",
             scrollX: true,
+            searching: false
         });
 
         var column = table.column( 11 );
@@ -235,7 +224,7 @@ input:checked + .slider:before {
             
             $.ajax({
                 type:'POST',
-                url: url_ajax + 'logs/store',
+                url: "{{ route('logs.updateForm') }}",
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -243,22 +232,93 @@ input:checked + .slider:before {
                 data:  $("#new-log input , #new-log select").serialize() ,
                 success:function(data){
                     console.log(data);
-                    table.row.add([
-                        '',
-                        data.name,
-                        {!! $positions !!}.filter(f => f.id == data.positions)[0].name,
-                        data.platform,
-                        data.link,
-                        0,
-                        '-',
-                        '-',
-                        '-',
-                        '-',
-                        '-',
-                        data.created_at
-                    ]).draw(true);
+                    // return;
+                    if(data.type == 'create'){
+                        table.row.add([
+                            '<a href="#" class="badge badge-primary btn-edit">Edit</a>',
+                            data.data.name,
+                            {!! $positions !!}.filter(f => f.id == data.data.positions)[0].name,
+                            {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
+                            data.data.link,
+                            '<label class="switch"><input type="checkbox" name="form[]" id="form" class="primary change-form"><span class="slider"></span></label>',
+                            '-',
+                            '-',
+                            '-',
+                            '-',
+                            '-',
+                            data.data.created_at
+                        ]).node().id = data.data.id;
+                        table.draw(false);  
+                        
+                    }else{
+                        var index = $_logs.findIndex( f => f.id == data.data.id);
+                        console.log(index, "dddddd");
+                        $_logs[index].name = data.data.name;
+                        $_logs[index].positions = data.data.positions;
+                        $_logs[index].platforms = data.data.platforms;
+                        $_logs[index].link = data.data.link;
+
+                        $('#'+ data.data.id + ' td:nth-child(2)').html(data.data.name);
+                        $('#'+ data.data.id + ' td:nth-child(3)').html({!! $positions !!}.filter(f => f.id == data.data.positions)[0].name);
+                        $('#'+ data.data.id + ' td:nth-child(4)').html({!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label);
+                        $('#'+ data.data.id + ' td:nth-child(5)').html(data.data.link);
+                        
+                    }
+                    $("#name").val('').focus();
+                    $("#link").val('');
+                    $("#log-id").val('');
+                    
                 }
             });
+        });
+
+        $('table').on('change', '.change-form',function(){
+            console.log( $(this).is(':checked') ? 1 : 0 );
+            var id = $(this).data("id");
+            $.ajax({
+                type:'POST',
+                url: "{{ route('logs.updateForm') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:  { logId: id, form: $(this).is(':checked') ? 1 : 0 } ,
+                success:function(data){
+                    console.log(data, "---------------------");
+                }
+
+            });
+        })
+
+        $('table').on('click', '.btn-edit', function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var log = $_logs.filter( f => f.id == id);
+
+            if(log.length > 0){
+                $("#log-id").val(log[0].id);
+                $("#name").val(log[0].name);
+                $("#positions").val(log[0].positions);
+                $("#platform").val(log[0].platform);
+                $("#link").val(log[0].link);
+
+            }
+            
+            console.log(log);
+
+            // $.ajax({
+            //     type:'POST',
+            //     url: "{{ route('logs.updateForm') }}",
+            //     headers: {
+            //         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     },
+            //     data:  { logId: id, form: $(this).is(':checked') ? 1 : 0 } ,
+            //     success:function(data){
+            //         console.log(data, "---------------------");
+            //     }
+
+            // });
         });
 
     });

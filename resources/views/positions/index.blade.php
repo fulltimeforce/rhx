@@ -302,8 +302,9 @@
                     $("#table-applicants tbody").html('');
                     var table_applicants_html = '';
                     for (let index = 0; index < data.logs.length; index++) {
-                        var applicants_html = '<tr><td>:name</td><td>:phone</td><td> <input type="checkbox" name="filter[]" value="1"> </td></tr>';
-                        applicants_html = applicants_html.replace( ':name' , data.logs[index].name );    
+                        var applicants_html = '<tr><td>:name</td><td>:phone</td><td> <input type="checkbox" data-id=":id" name="filter[]" class="ck-approve"> </td></tr>';
+                        applicants_html = applicants_html.replace( ':name' , data.logs[index].name );  
+                        applicants_html = applicants_html.replace( ':id' , data.logs[index].id );  
                         table_applicants_html += applicants_html
                     }
                     $("#table-applicants tbody").html(table_applicants_html);
@@ -326,6 +327,24 @@
         $(".btn-call-filter").on('click' , function(){
             
         });
+
+        $("table").on('change','.ck-approve' , function(){
+            var ck = $(this).is(':checked') ? 'yes' : 'no';
+            var id = $(this).data("id");
+            $.ajax({
+                type:'POST',
+                url: "{{ route('logs.updateForm') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:  { id: id, filter: ck } ,
+                success:function(data){
+                    console.log(data, "---------------------");
+                }
+
+            });
+        })
 
     });
 </script>

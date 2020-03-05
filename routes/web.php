@@ -48,6 +48,8 @@ Route::get('/get_techs', 'ExpertController@techs');
 Route::get('/logs', 'LogController@index')->name('logs.index');
 Route::post('/logs/store', 'LogController@store')->name('logs.store');
 Route::get('/logs/position/{positionId}', 'LogController@position')->name('logs.position');
+Route::post('/logs/updateform', 'LogController@updateForm')->name('logs.updateForm');
+
 Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
 
 Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
