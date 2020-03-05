@@ -114,30 +114,7 @@
             <input type="text" name="availability" class="form-control date" id="availability" value="{{ $expert->availability }}">
         </div>
     </div>
-    @auth
-    <div class="form-row">
-        <div class="form-group col">
-            <label for="linkedin">Linkedin</label>
-            <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{ $expert->linkedin }}">
-        </div>
-        <div class="form-group col">
-            <label for="github">Github</label>
-            <input type="text" name="github" class="form-control" id="github" value="{{ $expert->github }}">
-        </div>
-        <div class="form-group col">
-            <label for="instagram">Instagram</label>
-            <input type="text" name="instagram" class="form-control" id="instagram" value="{{ $expert->instagram }}">
-        </div>
-        <div class="form-group col">
-            <label for="facebook">Facebook</label>
-            <input type="text" name="facebook" class="form-control" id="facebook" value="{{ $expert->facebook }}">
-        </div>
-        <div class="form-group col">
-            <label for="twitter">Twitter</label>
-            <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $expert->twitter }}">
-        </div>
-    </div>
-    @endauth
+    
     <div class="form-row">
         <div class="form-group col">
             <label for="other_knowledge">¿Qué otros conocimientos tienes?</label>
