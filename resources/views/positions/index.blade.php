@@ -2,7 +2,9 @@
 
 @section('styles')
 
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/dataTables.min.css') }}"/>
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
 
 @endsection
 
@@ -64,11 +66,11 @@
     </div>
 
     <!-- MODAL CALL FILTER -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal fade" id="callFilter" tabindex="-1" role="dialog" aria-labelledby="callFilterLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">CALL FILTERED</h5>
+        <div class="modal-header text-center">
+            <h5 class="modal-title" id="callFilterLabel">CALL FILTERED - <span id="position-name-call">{positionName}</span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -76,82 +78,53 @@
         <div class="modal-body">
             <div class="row">
                 <div class="col col-sm">
-                    <p>REQUIREMENTS</p>
-                    <table>
-                        <tr><td>WORKING STATUS</td></tr>
-                        <tr><td>AVAILABILITY</td></tr>
-                        <tr><td>ENGLISH LEVEL</td></tr>
-
-                        <tr><td>SALARY EXPERCTATION</td></tr>
-                        <tr><td>NOTES</td></tr>
-                        <tr><td>INTERVIEW</td></tr>
-                    </table>
-
-                    <table>
+                    <table class="table" id="table-call-filter">
                         <thead>
-                            <tr><td></td> <td></td> <td>POSTULANTS</td></tr>
-                            <tr><td>REQUIREMENTS</td> <td></td> <td><p>{phone}</p><p>{name}</p></td> <td><p>{phone}</p><p>{name}</p</td> <td><p>{phone}</p><p>{name}</p</td></tr>
+                            <tr>
+                                <th>REQUIREMENTS</th> 
+                                <th></th> 
+                                <th><p>{phone}</p><p>{name}</p></th> 
+   
+                            </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>WORKING STATUS</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+
                             </tr>
                             <tr>
                                 <td>AVAILABILITY</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+ 
                             </tr>
                             <tr>
                                 <td>ENGLISH LEVEL</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+
                             </tr>
 
 
                             <tr>
                                 <td>SALARY EXPERCTATION</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+
                             </tr>
                             <tr>
                                 <td>NOTES</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+
                             </tr>
                             <tr>
                                 <td>INTERVIEW</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+
                             </tr>
                         </tbody>   
                     </table>
-                    <ul class="list-group">
-                        <li class="list-group-item">WORKING STATUS</li>
-                        <li class="list-group-item">AVAILABILITY</li>
-                        <li class="list-group-item">ENGLISH LEVEL</li>
 
-                        <li class="list-group-item">SALARY EXPERCTATION</li>
-                        <li class="list-group-item">NOTES</li>
-                        <li class="list-group-item">INTERVIEW</li>
-                    </ul>
                 </div>
-                <div class="col-8 col-sm-8">
-                    <p>APPLICANTS</p>
-                </div>
+
             </div>
         </div>
         <div class="modal-footer">
@@ -209,6 +182,7 @@
 @section('javascript')
 
 <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
@@ -323,10 +297,10 @@
                 }
             });
         });
+        
+        //
 
-        $(".btn-call-filter").on('click' , function(){
-            
-        });
+        
 
         $("table").on('change','.ck-approve' , function(){
             var ck = $(this).is(':checked') ? 'yes' : 'no';
@@ -341,10 +315,55 @@
                 data:  { id: id, filter: ck } ,
                 success:function(data){
                     console.log(data, "---------------------");
+                    
+                    <td><input type="text" class="form-control"></td>
                 }
 
             });
-        })
+        });
+
+
+        //
+
+        var table_call = $('#table-call-filter').DataTable({
+            scrollY: "700px",           
+            
+            lengthMenu: [[150 -1], [150 ,"All"]],
+            lengthChange : false,
+            paging : false,
+            pageLength : 150,
+            info : false,
+            scrollX: true,
+            scrollCollapse: true,
+            // fixedColumns: {
+            //     leftColumns: 2
+            // },
+            // "order": [[ 0, "desc" ]],
+            dom: "Bfrtip",
+            searching : false,
+        });
+
+        $("table .sorting_desc").trigger('click')
+            
+        $(".btn-call-filter").on('click' , function(ev){
+            ev.preventDefault();
+            $("#callFilter").modal();
+
+            var position = $(this).data('position');
+            var url = '{{ route("logs.position", ":id") }}';
+            url = url.replace(':id', position);
+            $.ajax({
+                type:'GET',
+                url:  url,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    $("#position-name-call").html(data.position.name);
+                }
+            })
+        });
 
     });
 </script>
