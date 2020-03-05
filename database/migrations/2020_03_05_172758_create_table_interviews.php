@@ -24,7 +24,7 @@ class CreateTableInterviews extends Migration
             $table->char('expert_id' , 16);
             $table->foreign('expert_id')->references('id')->on('experts');
             $table->integer('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            // $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
         
