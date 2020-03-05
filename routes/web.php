@@ -51,3 +51,7 @@ Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
 Route::post('positions/experts', 'PositionController@experts')->name('positions.experts.attach');
 
 Auth::routes(['register' => false]);
+
+
+Route::post('interviews/experts', 'InterviewController@expert')->name('interviews.expert');
+Route::post('interviews/save', 'InterviewController@save')->name('interviews.save');

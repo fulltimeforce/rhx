@@ -31,6 +31,90 @@ caption{
     border: 1px solid #dee2e6;
     color: #0056b3;
 }
+
+.slider {
+  border: none;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 125px;
+}
+
+.slider-checkbox {
+  display: none;
+}
+
+.slider-label {
+  border: 0;
+  border-radius: 20px;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+}
+
+.slider-inner {
+  display: block;
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s;
+  width: 200%;
+}
+
+.slider-inner:before,
+.slider-inner:after {
+  box-sizing: border-box;
+  display: block;
+  float: left;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  height: 30px;
+  line-height: 30px;
+  padding: 0;
+  width: 50%;
+}
+
+.slider-inner:before {
+  background-color: #007bff;
+  color: #fff;
+  content: "APPROVED";
+  padding-left: .75em;
+}
+
+.slider-inner:after {
+  background-color: #dc3545;
+  color: #FFF;
+  content: "FAILED";
+  padding-right: .75em;
+  text-align: right;
+}
+
+.slider-circle {
+  background-color: #FFF;
+  border: 0;
+  border-radius: 20px;
+  bottom: 0;
+  display: block;
+  margin: 5px;
+  position: absolute;
+  right: 91px;
+  top: 0;
+  transition: all 0.3s ease-in 0s; 
+  width: 20px;
+}
+
+.slider-checkbox:checked + .slider-label .slider-inner {
+  margin-left: 0;
+}
+
+.slider-checkbox:checked + .slider-label .slider-circle {
+  background-color: #FFFFFF;
+  right: 0; 
+}
+td.stickout{
+    background-color: yellow;
+}
 </style>
 @endsection
 
@@ -49,7 +133,12 @@ caption{
         <p id="showURL"></p>
     </div>
 
-    <!-- Modal -->
+    <!--  
+        /*========================================== MODALS ==========================================*/
+    -->
+    <!--  
+        /*========================================== POSITONS BY EXPERT ==========================================*/
+    -->
     <div class="modal fade" id="positionsExpert" tabindex="-1" role="dialog" aria-labelledby="positionsExpertLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -73,6 +162,81 @@ caption{
                 <button type="button" id="save-positions" class="btn btn-primary">Save</button>
             </div>
             
+        </div>
+    </div>
+    </div>
+    <!--  
+        /*========================================== INTERVIEWS BY EXPERT ==========================================*/
+    -->
+    <div class="modal" id="interviews-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="interviews-expertLabel">INTERVIEWS - <span id="interview_expert_name">{expert Name}</span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div >
+            <form action="" id="interviews-form" class="row">
+                <div class="col-5">
+                    <div class="form-group">
+                        <label for="">Type</label>
+                        <select class="form-control" name="type" id="interview_type">
+                            <option value="technical">Technical</option>
+                            <option value="psychological">Psychological</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="client">Client</option>
+                        </select>
+                        <input type="hidden" name="expert_id" id="interview_expert_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Result</label>
+                        <div class="slider">
+                            <input type="checkbox" name="result" class="slider-checkbox" id="interview_result" >
+                            <label class="slider-label" for="interview_result">
+                            <span class="slider-inner"></span>
+                            <span class="slider-circle"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date</label>
+                        <input type="text" class="form-control" name="date" id="interview_date">
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="form-group">
+                        <label for="">Description</label>
+                        <textarea name="description" id="interview_description" class="form-control" rows="10"></textarea>
+                    </div>
+                </div>
+            </form>
+            </div>
+            <div class="row mb-4">
+                <div class="col">
+                    <button class="btn btn-success" id="save-interview">SAVE</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" id="list-interviews">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="text-uppercase">:name-type</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">:description</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <span>:result</span>
+                            <span class="float-right">:date</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         </div>
     </div>
     </div>
@@ -105,7 +269,10 @@ caption{
 
     <div class="row">
         <div class="col">
-            <table class="table table-bordered row-border order-column" id="allexperts">
+            @component('layouts.components.spiner')
+            @endcomponent
+            <section id="section-allexperts" class="pb-5" style="display: none;">
+            <table class="table table-bordered row-border order-column" id="allexperts" >
             <thead class="thead-dark">
                 <tr>
                     <th data-col="action" >Acción</th>
@@ -129,7 +296,7 @@ caption{
                         <form action="{{ route('experts.destroy',$expert->id) }}" method="POST">
         
                             <!-- <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a> -->
-            
+
                             <a class="badge badge-primary" href="{{ route('experts.edit',$expert->id) }}">Edit</a>
 
                             @if($expert->file_path != '')
@@ -137,6 +304,8 @@ caption{
                             @endif
 
                             <a href="#" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</a>
+
+                            <a class="badge badge-secondary btn-interviews" data-id="{{ $expert->id }}" href="#">Interviews</a>
 
                             @csrf
                             @method('DELETE')
@@ -159,6 +328,7 @@ caption{
                 @endforeach
             <tbody>
             </table>
+            </section>
         </div>
     </div>
 @endsection
@@ -177,9 +347,7 @@ caption{
         $(document).ready(function () {
 
             var options = {
-            
                 lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
-                
                 scrollY: "500px",
                 scrollX: true,
                 scrollCollapse: true,
@@ -189,10 +357,13 @@ caption{
                 searching: false
                 // dom: "Bfrtip",
             }
-
+            
+            $("#loader-spinner").hide();
+            $("#section-allexperts").show();
             var table = $("#allexperts").DataTable( options );
 
-
+            
+            
             $(".search-level").select2({
                 ajax: {
                     url: "{{ route('expert.technologies') }}",
@@ -263,7 +434,9 @@ caption{
                 var a_basic_level = $(".search-level.basic").val();
                 var a_intermediate_level = $(".search-level.intermediate").val();
                 var a_advanced_level = $(".search-level.advanced").val(); 
-                
+                $("#loader-spinner").show();
+                $("#section-allexperts").hide();
+                table.destroy();
                 $.ajax({
                     type: 'POST',
                     url: '{{ route("experts.filter") }}',
@@ -273,24 +446,26 @@ caption{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
-                        table.destroy();
+                        
                         var html = '';
                         for (let index = 0; index < data.length; index++) {
 
-                            html += html_table_row(data[index]);
+                            html += html_table_row(data[index] , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
                         }
                         
                         $("#allexperts tbody").html('');
                         $("#allexperts tbody:first").html(html);
 
-
+                        $("#loader-spinner").hide();
+                        $("#section-allexperts").show();
                         table = $("#allexperts").DataTable( options );
+                        
                         // 
                     }
                 });
             });
 
-            function html_table_row(data){
+            function html_table_row(data , a_keys){
                 var html = '';
                 html += '<tr>';
                 html += '<td>';
@@ -304,7 +479,9 @@ caption{
                     html += '   <a href="'+data.file_path+'" download class="badge badge-dark text-light">DOWNLOAD</a>';
                 }
                 
-                html += '        <button type="button" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</button>';
+                html += '        <a href="#" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</a>';
+
+                html += '       <a class="badge badge-secondary btn-interviews" data-id="'+data.id+'" href="#">Interviews</a>';
 
                 html = html.replace(/:id/gi , data.id);
 
@@ -324,7 +501,8 @@ caption{
                 @foreach($technologies as $categoryid => $category)
                     @foreach($category[1] as $techid => $techlabel)
                     // console.log( '{{$techid}}' ,'{{$techlabel}}' )
-                    html += '<td>'+data['{{$techid}}']+'</td>';
+                    var _class = a_keys.filter(f => f=='{{$techid}}').length > 0 ? 'stickout' : ''; 
+                    html += '<td class="'+_class+'">'+data['{{$techid}}']+'</td>';
                     @endforeach
                 @endforeach
                 html += '</tr>';
@@ -332,6 +510,7 @@ caption{
             }
 
             // ===================== SHOW POSITIONS =====================
+
             $("table tbody").on('click', 'a.btn-position' , function(ev){
                 ev.preventDefault();
                 var id = $(this).data("id");
@@ -367,9 +546,7 @@ caption{
                     positionsIDs.push($(this).val());
                 } );
                 var id = $('#expertId-p').val();
-                console.log( positionsIDs );
 
-                // return;
                 $.ajax({
                     type:'POST',
                     url: '{{ route("positions.experts.attach") }}',
@@ -385,8 +562,83 @@ caption{
                 });
 
             });
-            
 
+            var template_card_interview = $('#list-interviews').html();
+            $('#list-interviews').html('');
+            
+            $("table tbody").on("click" , "a.btn-interviews" , function(ev){
+                ev.preventDefault();
+                var expertId = $(this).data("id");
+                var expert = {!! json_encode($experts) !!}.filter(f => f.id == expertId);
+                console.log(expert);
+                $("#interview_expert_name").html( expert[0].fullname );
+                $("#interview_expert_id").val(expertId);
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("interviews.expert") }}',
+                    data: {expertId : expertId },
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(interviews){
+                        console.log(interviews, "INTERVIEWS============");
+                        var html = '';
+                        
+                        for (let index = 0; index < interviews.length; index++) {
+                            var html_card_interview = template_card_interview;
+                            html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
+                            html_card_interview = html_card_interview.replace(':description' , interviews[index].description);
+                            var result = interviews[index].result ? 'APPROVE' : 'FAILED';
+                            html_card_interview = html_card_interview.replace(':result' , result);
+                            var _date = new Date(interviews[index].date);
+                            console.log(_date);
+                            html_card_interview = html_card_interview.replace(':date' , ((_date.getDate() > 9) ? _date.getDate() : ('0' + _date.getDate())) + '/' + ((_date.getMonth() > 8) ? (_date.getMonth() + 1) : ('0' + (_date.getMonth() + 1))) + '/' +  _date.getFullYear() );
+
+                            html += html_card_interview
+                        }
+
+                        $('#list-interviews').html(html);
+                        $("#interviews-expert").modal();
+                    }
+                });
+                
+            });
+
+            $('#interview_date').datetimepicker({
+                format: "{{ config('app.date_format_javascript') }}",
+                locale: "en",
+                defaultDate : new Date()
+            });
+
+            
+            $("#save-interview").on("click"  , function(ev){
+                ev.preventDefault();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("interviews.save") }}',
+                    data: $("form#interviews-form").serialize(),
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        console.log(data, "INTERVIEWS============");
+                        // 
+                        var html_card_interview = template_card_interview;
+
+                        html_card_interview = html_card_interview.replace(':name-type' , data.type);
+                        html_card_interview = html_card_interview.replace(':description' , data.description);
+                        var result = data.result ? 'APPROVE' : 'FAILED';
+                        html_card_interview = html_card_interview.replace(':result' , result);
+                        var _date = new Date(data.date);
+                        html_card_interview = html_card_interview.replace(':date' , ((_date.getDate() > 9) ? _date.getDate() : ('0' + _date.getDate())) + '/' + ((_date.getMonth() > 8) ? (_date.getMonth() + 1) : ('0' + (_date.getMonth() + 1))) + '/' +  _date.getFullYear() );
+                        $('#list-interviews').append(html_card_interview);
+                    }
+                });
+                
+            })
 
         });
 
