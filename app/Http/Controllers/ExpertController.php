@@ -388,11 +388,11 @@ class ExpertController extends Controller
 
     public function developerEditSigned($expertId) {
         return URL::temporarySignedRoute(
-            'developer.edit', now()->addMinutes(1), ['expertId' => $expertId]
+            'developer.edit', now()->addDays(7), ['expertId' => $expertId]
         );
     }
 
-    public function developerEdit($expertId){
+    public function developerEdit(Request $request ,$expertId){
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
         $expert = Expert::find($expertId);
 
