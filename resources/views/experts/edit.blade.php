@@ -160,37 +160,7 @@
                 </select>
             </div>
         </div>
-        <h3>Evaluaciones</h3>
-        <div class="form-row">
-            <div class="form-group col-4 col-sm-3">
-                <label for="assessment1">Evaluado en</label>
-                <input type="text" name="assessment1" class="form-control" id="assessment1" value="{{$expert->assessment1}}">
-            </div>
-            <div class="form-group col-8 col-sm">
-                <label for="result1">Resultado</label>
-                <input type="text" name="result1" class="form-control" id="result1" value="{{$expert->result1}}">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-4 col-sm-3">
-                <label for="assessment2">Evaluado en</label>
-                <input type="text" name="assessment2" class="form-control" id="assessment2" value="{{$expert->assessment2}}">
-            </div>
-            <div class="form-group col-8 col-sm">
-                <label for="result2">Resultado</label>
-                <input type="text" name="result2" class="form-control" id="result2" value="{{$expert->result2}}">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-4 col-sm-3">
-                <label for="assessment3">Evaluado en</label>
-                <input type="text" name="assessment3" class="form-control" id="assessment3" value="{{$expert->assessment3}}">
-            </div>
-            <div class="form-group col-8 col-sm">
-                <label for="result3">Resultado</label>
-                <input type="text" name="result3" class="form-control" id="result3" value="{{$expert->result3}}">
-            </div>
-        </div>
+        
     @foreach($technologies as $categoryid => $category)
         <h3>{{$category[0]}}</h3>
         <br>
