@@ -43,4 +43,9 @@ class InterviewController extends Controller
         return $c;
     }
 
+    public function delete(Request $request){
+        $input = $request->all();
+        return Interview::where('id', $input['id'])->delete();
+    }
+
 }

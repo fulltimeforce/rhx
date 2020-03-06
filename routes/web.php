@@ -55,3 +55,4 @@ Auth::routes(['register' => false]);
 
 Route::post('interviews/experts', 'InterviewController@expert')->name('interviews.expert');
 Route::post('interviews/save', 'InterviewController@save')->name('interviews.save');
+Route::post('interviews/delete', 'InterviewController@delete')->name('interviews.delete');
