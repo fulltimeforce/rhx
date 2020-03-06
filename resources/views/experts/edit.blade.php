@@ -32,7 +32,7 @@
     @endif
   
     <form action="{{ route('experts.update',$expert->id) }}" method="POST" enctype="multipart/form-data">
-        <button type="submit" class="btn btn-success">Editar</button>
+        <button type="submit" class="btn btn-success">Save</button>
         <a href="#" data-expert="{{ $expert->id }}" id="url-generate"  class="btn btn-info ">Link</a>
         <div class="alert alert-warning alert-dismissible mt-3" role="alert" style="display: none;">
             <b>Copy successful!!!!</b>
