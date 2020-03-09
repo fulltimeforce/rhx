@@ -273,7 +273,7 @@ td.stickout{
     </form>
     <div class="row">
         <div class="col">
-            <h5>Experts: {{ $experts }}</h5>
+            <h5>Experts: {{ $experts }} <span id="filter-count-expert" style="display: none;">- Filter : <span class="count-expert"></span></span></h5>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-4">
             <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
@@ -407,7 +407,7 @@ td.stickout{
         
 
         $('#search').on('click' , function(){
-
+            $("#filter-count-expert").hide();
             $('#search-column-name').val('');
             var a_basic_level = $(".search-level.basic").val();
             var a_intermediate_level = $(".search-level.intermediate").val();
@@ -426,7 +426,8 @@ td.stickout{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                    
+                    $("#filter-count-expert").show();
+                    $("#filter-count-expert .count-expert").html( data.length ) ;
                     var html = '';
                     $("#allexperts thead").html('');
                     $("#allexperts thead").html( html_table_head( a_basic_level.concat(a_intermediate_level , a_advanced_level) ) );
