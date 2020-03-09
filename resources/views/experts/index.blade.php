@@ -445,13 +445,20 @@ td.stickout{
         $('#search-column-name').on( 'keyup', function () {
             
             var text = $(this).val();
-            console.log(text);
-            if(table){
-                table.columns( 1 ).search(
-                    this.value
-                ).draw();
+            if( text .length >= 3){
+                if(table){
+                    table.columns( 1 ).search(
+                        this.value
+                    ).draw();
+                }
+            }else{
+                if(table){
+                    table.columns( 1 ).search(
+                        ''
+                    ).draw();
+                }
             }
-            
+
         } );
 
         function html_table_row(data , a_keys){
