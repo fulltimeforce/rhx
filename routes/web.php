@@ -54,6 +54,10 @@ Auth::routes(['register' => false]);
 Route::post('/requirement/position', 'RequirementController@positionById')->name('requirement.position');
 
 
+Route::post('interviews/experts', 'InterviewController@expert')->name('interviews.expert');
+Route::post('interviews/save', 'InterviewController@save')->name('interviews.save');
+Route::post('interviews/delete', 'InterviewController@delete')->name('interviews.delete');
+
 
 /*
 ============================== ROUTE SIGNED ===========================================
@@ -65,6 +69,10 @@ Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSi
 Route::get('/applicant/register/signed' , 'ExpertController@applicantRegisterSigned')->name('applicant.register.signed');
 Route::get('/applicant/register' , 'ExpertController@applicantRegister')->name('applicant.register')->middleware('signed');
 
+
+
+
+Auth::routes(['register' => false]);
 
 
 

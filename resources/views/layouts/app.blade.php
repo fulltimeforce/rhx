@@ -101,8 +101,10 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
         <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-        
-
+        <script type="text/javascript" src="{{ asset('/tablefilter/tablefilter.js') }}"></script>
+        <script>
+            var $_url_ajax = '{!! env("APP_URL_AJAX") !!}';
+        </script>
         @yield('javascript')
     </div>
 </body>

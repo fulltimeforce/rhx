@@ -73,14 +73,14 @@ caption{
 @section('javascript')
 <script type="text/javascript" src="{{ asset('/tokenize2/tokenize2.min.js') }}"></script>
 <script type="text/javascript">
-        
+       
     var tfConfig = {
         alternate_rows: true,
         highlight_keywords: true,
         responsive: true,
         rows_counter: true,
         popup_filters: true,
-        base_path: '/tablefilter/',
+        base_path: $_url_ajax + 'tablefilter/',
         paging: {
             results_per_page: ['Records: ', [10, 25, 50, 100]]
         },

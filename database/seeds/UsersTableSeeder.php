@@ -38,12 +38,19 @@ class UsersTableSeeder extends Seeder
             //     'email' => 'edwin.soria@fulltimeforce.com',
             //     'password' => bcrypt('me$sySnail21'),
             //     // 'created_at' => date(),
-            // ]
+            // ],
+
+            // [
+            //     'name' => "Jairo",
+            //     'email' => 'jairo.martinez@fulltimeforce.com',
+            //     'password' => bcrypt('w!ndySneeze31'),
+            //     // 'created_at' => date(),
+            // ],
 
             [
-                'name' => "Jairo",
-                'email' => 'jairo.martinez@fulltimeforce.com',
-                'password' => bcrypt('w!ndySneeze31'),
+                'name' => "Andrea",
+                'email' => 'andrea.flores@fulltimeforce.com',
+                'password' => bcrypt('tinySmok323'),
                 // 'created_at' => date(),
             ]
         ]);
