@@ -115,6 +115,9 @@ caption{
 td.stickout{
     background-color: yellow;
 }
+.dataTables_filter{
+    display: none;
+}
 </style>
 @endsection
 
@@ -251,22 +254,29 @@ td.stickout{
         @csrf
         <div class="form-group">
             <label for="basic_level">Basic</label>
-            <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic"></select>
+            <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic" size="1"></select>
         </div>
         <div class="form-group">
             <label for="intermediate_level">Intermediate</label>
-            <select multiple id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate"></select>
+            <select multiple id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate" size="1"></select>
         </div>
         <div class="form-group">
             <label for="advanced_level">Advanced</label>
-            <select multiple id="advanced_level" name="advanced_level[]" class="form-control search-level advanced"></select>
+            <select multiple id="advanced_level" name="advanced_level[]" class="form-control search-level advanced" size="1"></select>
         </div>
         <div class="form-group text-right">
             <button type="button" class="btn btn-success" id="search">Search</button>
         </div>
     
     </form>
-
+    <div class="row">
+        <div class="col">
+            <h5>Experts: {{ $experts }}</h5>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4">
+            <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             @component('layouts.components.spiner')
@@ -275,13 +285,13 @@ td.stickout{
             <table class="table table-bordered row-border order-column" id="allexperts" >
             <thead class="thead-dark">
                 <tr>
-                    <th data-col="action" >Acción</th>
-                    <th data-col="name" style="width: 200px;">Nombre</th>
+                    <th data-col="action" >Action</th>
+                    <th data-col="name" style="width: 200px;">Name</th>
                     <th data-col="email">Email</th>
-                    <th data-col="age">Edad</th>
-                    <th data-col="phone">Teléfono</th>
-                    <th data-col="availability">Disponibilidad</th>
-                    <th data-col="salary">Salario</th>
+                    <th data-col="age">Age</th>
+                    <th data-col="phone">Phone</th>
+                    <th data-col="availability">Availability</th>
+                    <th data-col="salary">Salary</th>
                     @foreach($technologies as $categoryid => $category)
                         @foreach($category[1] as $techid => $techlabel)
                             <th data-col="{{ $techid }}">{{$techlabel}}</th>
@@ -290,42 +300,7 @@ td.stickout{
                 </tr>
             </thead>
             <tbody>
-                @foreach ($experts as $expert)
-                <tr>
-                    <td>
-                        <form action="{{ route('experts.destroy',$expert->id) }}" method="POST">
-        
-                            <!-- <a class="badge badge-info" href="{{ route('experts.show',$expert->id) }}">Show</a> -->
-
-                            <a class="badge badge-primary" href="{{ route('experts.edit',$expert->id) }}">Edit</a>
-
-                            @if($expert->file_path != '')
-                                <a href="{{ $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
-                            @endif
-
-                            <a href="#" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</a>
-
-                            <a class="badge badge-secondary btn-interviews" data-id="{{ $expert->id }}" href="#">Interviews</a>
-
-                            @csrf
-                            @method('DELETE')
-            
-                            <button type="submit" class="badge badge-danger">Delete</button>
-                        </form>
-                    </td>
-                    <td style="background-color: #fafafa;">{{ $expert->fullname }}</td>
-                    <td>{{ $expert->email_address }}</td>
-                    <td>{{ $expert->birthday }}</td>
-                    <td>{{ $expert->phone }}</td>
-                    <td>{{ $expert->availability }}</td>
-                    <td>{{ $expert->salary }}</td>
-                    @foreach($technologies as $categoryid => $category)
-                        @foreach($category[1] as $techid => $techlabel)
-                        <td>{{ $expert->$techid }}</td>
-                        @endforeach
-                    @endforeach
-                </tr>
-                @endforeach
+                
             <tbody>
             </table>
             </section>
@@ -354,13 +329,15 @@ td.stickout{
             fixedColumns: {
                 leftColumns: 2
             },
-            searching: false
+            // searching: false
             // dom: "Bfrtip",
         }
         
         $("#loader-spinner").hide();
-        $("#section-allexperts").show();
-        var table = $("#allexperts").DataTable( options );
+        // $("#section-allexperts").show();
+        // var table = $("#allexperts").DataTable( options );
+
+        var table;
 
         $(".search-level").select2({
             ajax: {
@@ -382,8 +359,8 @@ td.stickout{
 
             }
         });
-
-
+        
+        
         $('#url-generate').on('click', function (ev) {
 
             ev.preventDefault();
@@ -429,12 +406,15 @@ td.stickout{
 
         $('#search').on('click' , function(){
 
+            $('#search-column-name').val('');
             var a_basic_level = $(".search-level.basic").val();
             var a_intermediate_level = $(".search-level.intermediate").val();
             var a_advanced_level = $(".search-level.advanced").val(); 
             $("#loader-spinner").show();
             $("#section-allexperts").hide();
-            table.destroy();
+            if(table){
+                table.destroy();
+            }
             $.ajax({
                 type: 'POST',
                 url: '{{ route("experts.filter") }}',
@@ -462,13 +442,23 @@ td.stickout{
             });
         });
 
+        $('#search-column-name').on( 'keyup', function () {
+            
+            var text = $(this).val();
+            console.log(text);
+            if(table){
+                table.columns( 1 ).search(
+                    this.value
+                ).draw();
+            }
+            
+        } );
+
         function html_table_row(data , a_keys){
             var html = '';
             html += '<tr>';
             html += '<td>';
             html += '<form action="'+ "{{ route('experts.destroy', ':id' ) }}"+ '" method="POST">';
-    
-            // html += '        <a class="badge badge-info" href=" '+ "{{ route('experts.show', ':id') }}" + '">Show</a>';
     
             html += '        <a class="badge badge-primary" href="'+ "{{ route('experts.edit', ':id') }}" + '">Edit</a>';
 
@@ -489,15 +479,21 @@ td.stickout{
             html += '        <button type="submit" class="badge badge-danger">Delete</button>';
             html += '    </form>';
             html += '</td>';
-            html += '<td style="background-color: #fafafa;">'+data.fullname+'</td>';
+            html += '<td style="background-color: #fafafa;width: 200px;">'+data.fullname+'</td>';
             html += '<td>'+data.email_address+'</td>';
             html += '<td>'+((data.birthday==null)? "": data.birthday)+'</td>';
             html += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
             html += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
             html += '<td>'+((data.salary==null)?"":data.salary)+'</td>';
+            var temp = '';
             @foreach($technologies as $categoryid => $category)
                 @foreach($category[1] as $techid => $techlabel)
                 // console.log( '{{$techid}}' ,'{{$techlabel}}' )
+                if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
+
+                }else{
+                    temp += '';
+                }
                 var _class = a_keys.filter(f => f=='{{$techid}}').length > 0 ? 'stickout' : ''; 
                 var _text =  (data['{{$techid}}'] == null)? '' : data['{{$techid}}'] ;
                 html += '<td class="'+_class+'">'+ _text +'</td>';
@@ -567,7 +563,7 @@ td.stickout{
         $("table tbody").on("click" , "a.btn-interviews" , function(ev){
             ev.preventDefault();
             var expertId = $(this).data("id");
-            var expert = {!! json_encode($experts) !!}.filter(f => f.id == expertId);
+            // var expert = {!! json_encode($experts) !!}.filter(f => f.id == expertId);
             console.log(expert);
             $("#interview_expert_name").html( expert[0].fullname );
             $("#interview_expert_id").val(expertId);

@@ -21,10 +21,10 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
-        $experts = Expert::latest()->get();
+        $experts = Expert::latest()->count();
   
         return view('experts.index',compact('experts'))
-            ->with('i', (request()->input('page', 1) - 1) * 5)->with('technologies',Expert::getTechnologies());
+            ->with('technologies',Expert::getTechnologies());
     }
 
     /**
