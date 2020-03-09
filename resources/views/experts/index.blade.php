@@ -479,6 +479,9 @@ td.stickout{
             html += '<th>Phone</th>';
             html += '<th>Availability</th>';
             html += '<th>Salary</th>';
+            html += '<th>Linkedin</th>';
+            html += '<th>Github</th>';
+            html += '<th>Experience</th>';
             var temp = '';
             var rows = '';
             @foreach($technologies as $categoryid => $category)
@@ -510,7 +513,7 @@ td.stickout{
             
             html += '        <a href="#" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</a>';
 
-            html += '       <a class="badge badge-secondary btn-interviews" data-id="'+data.id+'" href="#">Interviews</a>';
+            html += '       <a class="badge badge-secondary btn-interviews" data-id="'+data.id+'" data-name="'+data.fullname+'" href="#">Interviews</a>';
 
             html = html.replace(/:id/gi , data.id);
 
@@ -527,6 +530,9 @@ td.stickout{
             html += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
             html += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
             html += '<td>'+((data.salary==null)?"":data.salary)+'</td>';
+            html += '<td>'+((data.linkedin==null)?"":"<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.linkedin+"'>Link</a>")+'</td>';
+            html += '<td>'+((data.github==null)?"": "<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.github+"'>Link</a>" )+'</td>';
+            html += '<td class="text-capitalize">'+((data.focus==null)?"":data.focus)+'</td>';
             var temp = '';
             var rows = '';
             @foreach($technologies as $categoryid => $category)
@@ -607,9 +613,9 @@ td.stickout{
         $("table tbody").on("click" , "a.btn-interviews" , function(ev){
             ev.preventDefault();
             var expertId = $(this).data("id");
-            // var expert = {!! json_encode($experts) !!}.filter(f => f.id == expertId);
-            console.log(expert);
-            $("#interview_expert_name").html( expert[0].fullname );
+            var expertName = $(this).data("name");
+            
+            $("#interview_expert_name").html( expertName );
             $("#interview_expert_id").val(expertId);
             $.ajax({
                 type: 'POST',
@@ -642,6 +648,22 @@ td.stickout{
             });
             
         });
+
+        $('table').on('click' , '.copy-link' , function(ev){
+            var data = $(this).data("info");
+            ev.preventDefault();
+            var el = document.createElement("textarea");
+            el.value = data;
+            el.style.top = '0';
+            el.setSelectionRange(0, 99999);
+            el.setAttribute('readonly', ''); 
+            this.appendChild(el);
+            el.focus();
+            el.select();
+            var success = document.execCommand('copy')
+            this.removeChild(el);
+
+        })
 
         $('#interview_date').datetimepicker({
             format: "{{ config('app.date_format_javascript') }}",
