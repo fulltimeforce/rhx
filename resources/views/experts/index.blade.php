@@ -243,7 +243,9 @@ td.stickout{
         </div>
     </div>
     </div>
-   
+    <!--  
+        /*========================================== FORM ==========================================*/
+    -->
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
@@ -284,7 +286,7 @@ td.stickout{
             <section id="section-allexperts" class="pb-5" style="display: none;">
             <table class="table table-bordered row-border order-column" id="allexperts" >
             <thead class="thead-dark">
-                <tr>
+                <!-- <tr>
                     <th data-col="action" >Action</th>
                     <th data-col="name" style="width: 200px;">Name</th>
                     <th data-col="email">Email</th>
@@ -297,7 +299,7 @@ td.stickout{
                             <th data-col="{{ $techid }}">{{$techlabel}}</th>
                         @endforeach
                     @endforeach
-                </tr>
+                </tr> -->
             </thead>
             <tbody>
                 
@@ -426,6 +428,9 @@ td.stickout{
                 success:function(data){
                     
                     var html = '';
+                    $("#allexperts thead").html('');
+                    $("#allexperts thead").html( html_table_head( a_basic_level.concat(a_intermediate_level , a_advanced_level) ) );
+                    
                     for (let index = 0; index < data.length; index++) {
 
                         html += html_table_row(data[index] , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
@@ -461,6 +466,35 @@ td.stickout{
 
         } );
 
+        function html_table_head(a_keys){
+
+            var html = '';
+            html += '<tr>';
+            var columns = [];
+            html += '<th>Action</th>';
+            html += '<th style="width: 200px;">Name</th>';
+            html += '<th>Email</th>';
+            html += '<th>Age</th>';
+            html += '<th>Phone</th>';
+            html += '<th>Availability</th>';
+            html += '<th>Salary</th>';
+            var temp = '';
+            var rows = '';
+            @foreach($technologies as $categoryid => $category)
+                @foreach($category[1] as $techid => $techlabel)
+                    columns.push({title: "{{$techlabel}}" });
+                    if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
+                        rows += '<th>'+"{{$techlabel}}"+'</th>';
+                    }else{
+                        temp += '<th>'+"{{$techlabel}}"+'</th>';
+                    }
+                @endforeach
+            @endforeach
+            html += rows + temp;
+            html += '</tr>';
+            return html;
+        }
+
         function html_table_row(data , a_keys){
             var html = '';
             html += '<tr>';
@@ -493,19 +527,21 @@ td.stickout{
             html += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
             html += '<td>'+((data.salary==null)?"":data.salary)+'</td>';
             var temp = '';
+            var rows = '';
             @foreach($technologies as $categoryid => $category)
                 @foreach($category[1] as $techid => $techlabel)
                 // console.log( '{{$techid}}' ,'{{$techlabel}}' )
-                if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
-
-                }else{
-                    temp += '';
-                }
-                var _class = a_keys.filter(f => f=='{{$techid}}').length > 0 ? 'stickout' : ''; 
                 var _text =  (data['{{$techid}}'] == null)? '' : data['{{$techid}}'] ;
-                html += '<td class="'+_class+'">'+ _text +'</td>';
+                if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
+                    rows += '<td class="stickout">'+_text+'</td>';
+                }else{
+
+                    temp += '<td>'+_text+'</td>';
+                }
+                
                 @endforeach
             @endforeach
+            html += rows + temp;
             html += '</tr>';
             return html;
         }
