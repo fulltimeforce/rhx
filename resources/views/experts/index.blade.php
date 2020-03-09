@@ -537,7 +537,7 @@ td.stickout{
             var rows = '';
             @foreach($technologies as $categoryid => $category)
                 @foreach($category[1] as $techid => $techlabel)
-                // console.log( '{{$techid}}' ,'{{$techlabel}}' )
+                
                 var _text =  (data['{{$techid}}'] == null)? '' : data['{{$techid}}'] ;
                 if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
                     rows += '<td class="stickout">'+_text+'</td>';
@@ -568,7 +568,7 @@ td.stickout{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                    console.log(data);
+
                     $('#expertId-p').val(id);
                     $("#list-positions").html('');
                     var html = '';
@@ -600,7 +600,7 @@ td.stickout{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                    console.log(data, "****************");
+
                     $("#positionsExpert").modal('hide');
                 }
             });
@@ -626,9 +626,8 @@ td.stickout{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(interviews){
-                    console.log(interviews, "INTERVIEWS============");
+
                     var html = '';
-                    
                     for (let index = 0; index < interviews.length; index++) {
                         var html_card_interview = template_card_interview;
                         html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
@@ -636,9 +635,7 @@ td.stickout{
                         var result = interviews[index].result ? 'APPROVE' : 'FAILED';
                         html_card_interview = html_card_interview.replace(':result' , result);
                         var _date = new Date(interviews[index].date);
-                        console.log(_date);
                         html_card_interview = html_card_interview.replace(':date' , ((_date.getDate() > 9) ? _date.getDate() : ('0' + _date.getDate())) + '/' + ((_date.getMonth() > 8) ? (_date.getMonth() + 1) : ('0' + (_date.getMonth() + 1))) + '/' +  _date.getFullYear() );
-
                         html += html_card_interview
                     }
 
@@ -684,7 +681,7 @@ td.stickout{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                    console.log(data, "INTERVIEWS============");
+
                     // 
                     var html_card_interview = template_card_interview;
 
