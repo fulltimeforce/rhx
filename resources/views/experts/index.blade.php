@@ -472,16 +472,17 @@ td.stickout{
             var html = '';
             html += '<tr>';
             var columns = [];
+            var info = '';
             html += '<th>Action</th>';
             html += '<th style="width: 200px;">Name</th>';
-            html += '<th>Email</th>';
-            html += '<th>Age</th>';
-            html += '<th>Phone</th>';
-            html += '<th>Availability</th>';
-            html += '<th>Salary</th>';
-            html += '<th>Linkedin</th>';
-            html += '<th>Github</th>';
-            html += '<th>Experience</th>';
+            info += '<th>Email</th>';
+            info += '<th>Age</th>';
+            info += '<th>Phone</th>';
+            info += '<th>Availability</th>';
+            info += '<th>Salary</th>';
+            info += '<th>Linkedin</th>';
+            info += '<th>Github</th>';
+            info += '<th>Experience</th>';
             var temp = '';
             var rows = '';
             @foreach($technologies as $categoryid => $category)
@@ -494,7 +495,7 @@ td.stickout{
                     }
                 @endforeach
             @endforeach
-            html += rows + temp;
+            html += rows + info + temp;
             html += '</tr>';
             return html;
         }
@@ -525,14 +526,7 @@ td.stickout{
             html += '    </form>';
             html += '</td>';
             html += '<td style="background-color: #fafafa;width: 200px;">'+data.fullname+'</td>';
-            html += '<td>'+data.email_address+'</td>';
-            html += '<td>'+((data.birthday==null)? "": data.birthday)+'</td>';
-            html += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
-            html += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
-            html += '<td>'+((data.salary==null)?"":data.salary)+'</td>';
-            html += '<td>'+((data.linkedin==null)?"":"<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.linkedin+"'>Link</a>")+'</td>';
-            html += '<td>'+((data.github==null)?"": "<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.github+"'>Link</a>" )+'</td>';
-            html += '<td class="text-capitalize">'+((data.focus==null)?"":data.focus)+'</td>';
+            var info = '';
             var temp = '';
             var rows = '';
             @foreach($technologies as $categoryid => $category)
@@ -548,7 +542,19 @@ td.stickout{
                 
                 @endforeach
             @endforeach
-            html += rows + temp;
+
+            info += '<td>'+data.email_address+'</td>';
+            info += '<td>'+((data.birthday==null)? "": data.birthday)+'</td>';
+            info += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
+            info += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
+            info += '<td>'+((data.salary==null)?"":data.salary)+'</td>';
+            info += '<td>'+((data.linkedin==null)?"":"<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.linkedin+"'>Link</a>")+'</td>';
+            info += '<td>'+((data.github==null)?"": "<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.github+"'>Link</a>" )+'</td>';
+            info += '<td class="text-capitalize">'+((data.focus==null)?"":data.focus)+'</td>';
+
+            
+            
+            html += rows + info + temp;
             html += '</tr>';
             return html;
         }

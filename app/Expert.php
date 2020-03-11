@@ -25,7 +25,7 @@ class Expert extends Model
         //frameworks/libraries
         'dotnet','dotnetcore','entityframework','linq','unity','springframework','springboot','hibernate',
         'jsf','struts','gwt','blade','django','flask','ror','laravel','codeigniter','cakephp','symfony',
-        'yii','yii2','kohana','nodejs','expressjs','mongoose','nextjs','nestjs',
+        'yii','yii2','kohana','nodejs','expressjs','mongoose','nextjs','nestjs','fabricjs' , 'd3js',
         //frontend
         'ajax','angularjs','css3','html5','jquery','less','reactjs','sass','scss','stylus','vuejs',
         'javascript','angular345','angular678','typescript',
@@ -114,6 +114,8 @@ class Expert extends Model
                 'mongoose'=>'Mongoose',
                 'nextjs'=>'Next.js',
                 'nestjs'=>'NestJS',
+                'fabricjs' => 'Fabric.js',
+                'd3js' => 'D3.js'
             ),
         ),
         'frontend' => array(
