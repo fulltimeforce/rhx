@@ -45,6 +45,9 @@ Route::post('/logs/store', 'LogController@store')->name('logs.store');
 Route::get('/logs/position/{positionId}', 'LogController@position')->name('logs.position');
 Route::post('/logs/updateform', 'LogController@updateForm')->name('logs.updateForm');
 
+Route::post('/logs/requirementbylog', 'LogController@requirementByLog')->name('logs.requirementByLog');
+Route::post('/logs/savereqapplic', 'LogController@saveReqApplic')->name('logs.saveReqApplic');
+
 Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
 
 Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');

@@ -3,6 +3,9 @@
 use Illuminate\Database\Seeder;
 use Vinkla\Hashids\Facades\Hashids;
 
+use App\Log;
+use App\Position;
+
 class LogsTableSeeder extends Seeder
 {
     /**
@@ -12,24 +15,22 @@ class LogsTableSeeder extends Seeder
      */
     public function run()
     {
-        $platform = array('linkedin', 
-        'computrabajo',
-        'indeed', 
-        'getonboard' , 
-        'bumeran' ,
-        'catolica' , 
-        'upc' , 
-        'ulima' , 
-        'ricardopalma', 
-        'utp' , 
-        'fb');
+        $platform = Log::getPlataforms();
+        $positions = Position::get();
+
+        $a_ids = array();
+        foreach ($positions as $key => $position) {
+            $a_ids[] = $position->id;
+        }
+
         for ($i=0; $i < 50 ; $i++) { 
             DB::table('logs')->insert([
                 array(
                     'id' => Hashids::encode(time() + $i*123),
                     'name' => $this->randomName(),
-                    'positions' => 'qEj0wVkJYR4LylxV',
-                    'platform' => $platform[ rand( 0 , 10) ],
+                    'phone' => '985555622214',
+                    'positions' => $a_ids[ rand( 0 , 4) ],
+                    'platform' => $platform[ rand( 0 , 10) ]["id"],
                     'link' => 'URLRLRRLRLRLRLLRRLRLLRLRLRLRLR',
                     'form' => 0,
                     'filter' => '-',

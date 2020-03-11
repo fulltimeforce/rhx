@@ -59,7 +59,7 @@ class PositionController extends Controller
                         'name' => $req,
                         'position_id' => $input['id']
                     )
-                    );
+                );
             }
         }
         
@@ -141,16 +141,26 @@ class PositionController extends Controller
         if(!Auth::check()) return redirect('login');
         $request->validate([]);
         $input = $request->all();
-        Requirement::where('position_id' , $position->id)->delete();
+        $input["status"] = isset( $input["status"] ) ? 'enabled' : 'disabled';
+
+        $requirements = Requirement::where('position_id' , $position->id)->get();
+        $a_requirements = array();
+        foreach ($requirements as $key => $requirement) {
+            $a_requirements[] = strtolower($requirement->name);
+        }
         if(isset( $input['req'] )){
             
             foreach ($input['req'] as $key => $req) {
-                Requirement::create(
-                    array(
-                        'name' => $req,
-                        'position_id' => $position->id
-                    )
-                );
+                if( count( array_filter($a_requirements, function($val) use($req){ return (strtolower($val) == strtolower($req)); }  ) ) == 0  ){
+                    Requirement::create(
+                        array(
+                            'name' => $req,
+                            'position_id' => $position->id,
+                            'user_id' => Auth::id()
+                        )
+                    );
+                }
+                
             }
         }
         unset($input['req']);

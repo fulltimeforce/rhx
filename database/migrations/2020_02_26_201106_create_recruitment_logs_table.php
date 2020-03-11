@@ -17,6 +17,7 @@ class CreateRecruitmentLogsTable extends Migration
             $table->char('id' , 16);
             $table->primary('id');
             $table->string('name')->nullable();
+            $table->string('phone')->nullable();
             $table->string('positions')->nullable();
             $table->enum('platform', 
                 ['linkedin', 

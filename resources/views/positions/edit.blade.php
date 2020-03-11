@@ -40,7 +40,7 @@
         </div>
         <div class="form-row">
             <div class="form-check form-group">
-                <input type="checkbox" name="status" id="status" class="form-check-input" value="enabled" {{!! ($position->status=='enabled')?'checked':'' !!}}>
+                <input type="checkbox" name="status" id="status" class="form-check-input" value="enabled" {{ ($position->status=='enabled')?'checked':'' }} >
                 <label for="status" class="form-check-label">Enabled</label>
             </div>
         </div>

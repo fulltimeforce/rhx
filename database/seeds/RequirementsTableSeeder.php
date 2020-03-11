@@ -3,6 +3,9 @@
 use Illuminate\Database\Seeder;
 use Vinkla\Hashids\Facades\Hashids;
 
+use App\Position;
+use App\Requirement;
+
 class RequirementsTableSeeder extends Seeder
 {
     /**
@@ -13,15 +16,45 @@ class RequirementsTableSeeder extends Seeder
     public function run()
     {
         //
-        for ($i=0; $i < 10 ; $i++) { 
+        $positions = Position::get();
+
+        $a_ids = array();
+        foreach ($positions as $key => $position) {
+            $a_ids[] = $position->id;
+        }
+
+        foreach ( Requirement::getDefault() as $key => $requirement) {
+            DB::table('requirements')->insert(
+                array(
+                    'name' => $requirement,
+                    'position_id' => null,
+                    'user_id' => 5,
+                    'created_at' => date("Y-m-d H:i:s")
+                )
+            );
+        }  
+
+        for ($i=0; $i < 25 ; $i++) { 
             DB::table('requirements')->insert([
                 array(
-                    'name' => $this->randomName(),
-                    'position_id' => 'qEj0wVkJYR4LylxV'
+                    'name' => $this->generateRandomString(),
+                    'position_id' => $a_ids[ rand( 0 , 4) ],
+                    'user_id' => 5,
+                    'created_at' => date("Y-m-d H:i:s")
                 ),
 
             ]);
         }
+    }
+
+    private function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 
     private function randomName() {

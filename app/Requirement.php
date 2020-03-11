@@ -14,10 +14,25 @@ class Requirement extends Model
         'id',
         'name',
         'position_id',
-
+        'user_id'
     ];
+
+    protected $hidden = ['user_id'];
+
+    protected static $defaults = array(
+        'WORKING STATUS',
+        'AVAILABILITY',
+        'ENGLISH LEVEL',
+        'SALARY EXPERCTATION',
+        'NOTES',
+        'INTERVIEW'
+    );
 
     public function position(){
         return $this->belongsTo('App\Position', 'position_id');
+    }
+
+    public static function getDefault(){
+        return self::$defaults;
     }
 }
