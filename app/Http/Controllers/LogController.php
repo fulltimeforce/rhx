@@ -301,7 +301,6 @@ class LogController extends Controller
                 );
             }
             $response[] = $a_requirement;
-
         }
 
         return array(
@@ -311,11 +310,62 @@ class LogController extends Controller
 
     }
 
-    public function saveReqApplic( Request $request ){
+    public function saveReqApplict( Request $request ){
         $input = $request->all();
-        $data = $input["data"];
+        try {
+            $data = $input["data"];
+            $a_req_applict = array();
+            $a_logs_id = array();
+            $_data = json_decode($data);
+            // print_r($_data);
+            foreach ($_data as $req_k => $d) {
+                foreach ($d as $log_k => $_d) {
+                    $a_logs_id[] = $log_k;
+                    $a_req_applict[] = array(
+                        'log_id' => $log_k,
+                        'requirement_id' => intval(substr($req_k , 4)),
+                        'description' => $_d->description,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s"),
+                    );
+                }
+            }
+            $a_logs_id = array_unique($a_logs_id );
 
-        return $data;
+            $req_logs = DB::table('requirement_applicants')->whereIn('log_id' , $a_logs_id)->get();
+            $a_req_logs = array();
+            foreach ($req_logs as $key => $req_log) {
+                $a_req_logs[] = $req_log;
+            }
+
+            foreach ($a_req_applict as $key => $_r) {
+                $a_result = array_filter($a_req_logs , function($v) use($_r){
+                    if( $v->log_id == $_r["log_id"] && $v->requirement_id == $_r["requirement_id"] ) return true;
+                });
+                $a_result = array_values($a_result);
+                if( count($a_result) > 0){
+                    unset($_r['created_at']);
+                    DB::table('requirement_applicants')->where( function($query) use($_r){
+                        $query
+                            ->where('log_id', $_r["log_id"])
+                            ->where('requirement_id' , $_r["requirement_id"]);
+                    } )->update( $_r );
+                    if( $_r["requirement_id"] == 6 && $_r["description"] != '' ){
+                        
+                        Log::where('id' , $_r["log_id"])->update( array("called" => "yes") );
+                    }else if( $_r["requirement_id"] == 6 && $_r["description"] == '' ){
+                        
+                        Log::where('id' , $_r["log_id"])->update( array("called" => "no") );
+                    }
+                }else{
+                    DB::table('requirement_applicants')->insert( $_r );
+                }
+            }
+            return 'true';
+        } catch ( Exception $e) {
+            return $e->getMessage();
+        }
+        
     }
 
     private function platforms(){

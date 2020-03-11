@@ -82,6 +82,10 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.dataTables_scrollHeadInner, .dataTables_scrollHeadInner table {
+    width: 100% !important;
+}
 </style>
 
 @endsection
@@ -153,9 +157,9 @@ input:checked + .slider:before {
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col col-sm">
-                    <table class="table" id="table-call-filter" style="height: 800px">
-                        <thead>
+                <div class="col col-sm" style="height: 800px;">
+                    <table class="table row-border order-column" id="table-call-filter" style="height: 800px;width: 100%;">
+                        <thead class="table-dark">
                             
                         </thead>
                         <tbody>
@@ -367,18 +371,18 @@ input:checked + .slider:before {
 
         //
         var table_call_options = {
-            // scrollY: "700px",           
+            scrollY: "700px",           
             lengthMenu: [[150 -1], [150 ,"All"]],
             lengthChange : false,
             paging : false,
             pageLength : 150,
             info : false,
-            // scrollX: true,
-            // scrollCollapse: true,
+            scrollX: true,
+            scrollCollapse: true,
             ordering: false,
-            // fixedColumns: {
-            //     leftColumns: 2
-            // },
+            fixedColumns: {
+                leftColumns: 2
+            },
             // "order": [[ 0, "desc" ]],
             // dom: "Bfrtip",
             searching : false,
@@ -388,22 +392,22 @@ input:checked + .slider:before {
             
         $(".btn-call-filter").on('click' , function(ev){
             ev.preventDefault();
-            
-            var position = $(this).data('position');
+            var positionId = $(this).data('position');
+            var position = {!! json_encode($positions) !!}.filter(f => f.id == positionId);
             var url = '{{ route("logs.position", ":id") }}';
-            url = url.replace(':id', position);
+            url = url.replace(':id', positionId);
             $.ajax({
                 type:'post',
                 url:  '{{ route("logs.requirementByLog") }}',
-                data: {positionId : position},
+                data: {positionId : positionId},
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                    console.log(data, "****************");
+                    
                     if(table_call) table_call.destroy();
-                    // $("#position-name-call").html(data.position.name);
+                    $("#position-name-call").html( position[0].name );
 
                     $("#table-call-filter thead").html('');
                     $("#table-call-filter thead").html( html_table_head_call(data.logs) );
@@ -425,12 +429,14 @@ input:checked + .slider:before {
             })
         });
         
-        var content_req = [];
+        var content_req = {};
         $("#save-req-applicants").on('click' , function(ev){
+            console.log(content_req);
             $.ajax({
-                type:'post',
-                url:  '{{ route("logs.requirementByLog") }}',
-                data: {data : content_req},
+                type:'POST',
+                url:  '{{ route("logs.saveReqApplict") }}',
+                data: {data : JSON.stringify(content_req)},
+                dataType: "json",
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -438,7 +444,7 @@ input:checked + .slider:before {
                 success:function(data){
                     console.log(data, "****************");
 
-                    $("#callFilter").modal();
+                    // $("#callFilter").modal('hide');
                 }
             })
         });
@@ -448,8 +454,8 @@ input:checked + .slider:before {
             var log = $(this).data("log");
             var value = $(this).val();
 
-            if( !Array.isArray(content_req["req-"+req]) ){
-                content_req["req-"+req] = [];
+            if( !(("req-"+req) in content_req) ){
+                content_req["req-"+req] = {};
             }
             content_req["req-"+req][log] = {
                 description : value
@@ -461,8 +467,8 @@ input:checked + .slider:before {
         function html_table_head_call(logs){
             var html = '';
             html += '<tr>';
-            html += '<th>REQUIREMENTS</th>';
-            html += '<th></th>';
+            html += '<th class="align-middle">REQUIREMENTS</th>';
+            html += '<th class="align-middle"></th>';
             for (let index = 0; index < logs.length; index++) {
                 html += '<th><p>'+logs[index].name+'</p><p>'+logs[index].phone+'</p></th>';
             }
@@ -484,7 +490,7 @@ input:checked + .slider:before {
 
             for (let i = 0; i < requirements.length; i++) {
                 html += '<tr>';
-                html += '<td>'+requirements[i].name+'</td>';
+                html += '<td style="background-color: #fafafa;">'+requirements[i].name+'</td>';
                 html += '<td></td>';
                 for (let j = 0; j < requirements[i].logs.length; j++) {
                     var _class = (requirements[i].id === 6)? 'time-picker-input' : '';
@@ -495,8 +501,6 @@ input:checked + .slider:before {
             
             return html;
         }
-
-        
 
     });
 </script>

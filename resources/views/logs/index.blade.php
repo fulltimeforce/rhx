@@ -3,6 +3,7 @@
 @section('styles')
 
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/dataTables.bootstrap4.min.css') }}"/>
 
 <style>
@@ -113,8 +114,8 @@
                         <td>{{ $log->position->name }}</td>
                         <td>{{ collect($platforms)->firstWhere('value' , $log->platform)->label   }}  </td>
                         <td>{{ $log->link }}</td>
-                        <td>
-                            {{ $log->form == 1 ? 'checked' : '' }}
+                        <td class="text-center">
+                            <i class="fas {{ $log->form == 1 ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i>
                         </td>
                         <td>{{ $log->filter }}</td>
                         <td>{{ $log->called }}</td>
@@ -145,10 +146,11 @@
             "order": [[ 11, "desc" ]],
             scrollY: "500px",
             scrollX: true,
-            searching: false
+            searching: false,
+            ordering: false,
         });
 
-        var column = table.column( 11 );
+        var column = table.column( 12 );
 
         column.visible(false);
 
@@ -172,7 +174,7 @@
                             {!! $positions !!}.filter(f => f.id == data.data.positions)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
                             data.data.link,
-                            '<label class="switch"><input type="checkbox" name="form[]" id="form" class="primary change-form"><span class="slider"></span></label>',
+                            '<i class="fas fa-times-circle text-danger fa-2x"></i>',
                             '-',
                             '-',
                             '-',
@@ -236,22 +238,7 @@
                 $("#link").val(log[0].link);
 
             }
-            
-            console.log(log);
 
-            // $.ajax({
-            //     type:'POST',
-            //     url: "{{ route('logs.updateForm') }}",
-            //     headers: {
-            //         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     data:  { logId: id, form: $(this).is(':checked') ? 1 : 0 } ,
-            //     success:function(data){
-            //         console.log(data, "---------------------");
-            //     }
-
-            // });
         });
 
     });
