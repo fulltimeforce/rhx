@@ -47,7 +47,14 @@
             </div>
         </div>
     </div>
-    
+    @isset($signed )
+    <div class="row">
+        <div class="col">
+            <input type="hidden" name="signed" value="{{ $signed }}">
+            <input type="hidden" name="logid" value="{{ $log }}">
+        </div>
+    </div>
+    @endisset
     <div class="form-row">
         <div class="form-group col-12 col-sm-4">
             <label for="fullname">Nombre completo</label>

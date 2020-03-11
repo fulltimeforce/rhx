@@ -108,6 +108,7 @@
                     <tr id="{{ $log->id }}" >
                         <td>
                             <a href="#" data-id="{{ $log->id }}" class="badge badge-primary btn-edit">Edit</a>
+                            <a href="#" data-id="{{ $log->id }}" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-position="{{ $log->position->id }}" class="badge badge-info btn-link">Link</a>
                         </td>
                         <td>{{ $log->name }}</td>
                         <td>{{ $log->phone }}</td>
@@ -140,19 +141,22 @@
 <script type="text/javascript">
     $(document).ready(function (ev) {
         var $_logs = {!! $logs !!};
+        console.log($_logs);
         var url_ajax = '{!! env("APP_URL_AJAX") !!}';
 
         var table = $('#table-logs').DataTable({
-            "order": [[ 11, "desc" ]],
+            "order": [[ 12, "desc" ]],
             scrollY: "500px",
             scrollX: true,
             searching: false,
-            ordering: false,
+            // ordering: false,
         });
 
         var column = table.column( 12 );
 
         column.visible(false);
+
+        $('[data-toggle="tooltip"]').tooltip({trigger: 'click'});
 
         $("#save").on('click', function(ev){
             
@@ -168,9 +172,12 @@
                     console.log(data);
                     // return;
                     if(data.type == 'create'){
+                        var edit = '<a href="#" data-id="'+data.data.id+'" class="badge badge-primary btn-edit">Edit</a>';
+                        var link = '<a href="#" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-id="'+data.data.id+'" data-position="'+data.data.positions+'" class="badge badge-info btn-link">Link</a>';
                         table.row.add([
-                            '<a href="#" class="badge badge-primary btn-edit">Edit</a>',
+                            edit + link,
                             data.data.name,
+                            data.data.phone,
                             {!! $positions !!}.filter(f => f.id == data.data.positions)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
                             data.data.link,
@@ -183,7 +190,21 @@
                             data.data.created_at
                         ]).node().id = data.data.id;
                         table.draw(false);  
-                        
+                        $_logs.push({
+                            id      : data.data.id,
+                            name    : data.data.name,
+                            phone   : data.data.phone,
+                            positions : data.data.positions,
+                            platform : data.data.platform,
+                            link : data.data.link,
+                            filter: "-",
+                            called: "-",
+                            scheduled: "-",
+                            attended: "-",
+                            approve: "-",
+                            expert_id: null,
+                            created_at : data.data.created_at
+                        });
                     }else{
                         var index = $_logs.findIndex( f => f.id == data.data.id);
                         console.log(index, "dddddd");
@@ -199,6 +220,7 @@
                         
                     }
                     $("#name").val('').focus();
+                    $("#phone").val('');
                     $("#link").val('');
                     $("#log-id").val('');
                     
@@ -206,23 +228,7 @@
             });
         });
 
-        $('table').on('change', '.change-form',function(){
-            console.log( $(this).is(':checked') ? 1 : 0 );
-            var id = $(this).data("id");
-            $.ajax({
-                type:'POST',
-                url: "{{ route('logs.updateForm') }}",
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data:  { logId: id, form: $(this).is(':checked') ? 1 : 0 } ,
-                success:function(data){
-                    console.log(data, "---------------------");
-                }
-
-            });
-        })
+        
 
         $('table').on('click', '.btn-edit', function(ev){
             ev.preventDefault();
@@ -238,6 +244,40 @@
                 $("#link").val(log[0].link);
 
             }
+
+        });
+
+        $('table').on('click', '.btn-link', function(ev){
+            ev.preventDefault();
+            var position = $(this).data("position");
+            var log = $(this).data("id");
+            var url = '{{ route("log.synchronization.signed" , ["position" => ":position" , "applicant" => ":log" ]) }}';
+            url = url.replace("%3Aposition" , position);
+            url = url.replace("%3Alog" , log);
+            $.ajax({
+                type:'GET',
+                url: url,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+               
+                success:function(data){
+
+                    var el = document.createElement("textarea");
+                    el.value = data;
+                    el.style.top = '0';
+                    el.setSelectionRange(0, 99999);
+                    el.setAttribute('readonly', ''); 
+                    this.appendChild(el);
+                    el.focus();
+                    el.select();
+                    var success = document.execCommand('copy')
+                    this.removeChild(el);
+
+                }
+
+            });
 
         });
 

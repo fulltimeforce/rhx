@@ -72,7 +72,9 @@ Route::get('/developer/edit/signed/{expertId}','ExpertController@developerEditSi
 Route::get('/applicant/register/signed' , 'ExpertController@applicantRegisterSigned')->name('applicant.register.signed');
 Route::get('/applicant/register' , 'ExpertController@applicantRegister')->name('applicant.register')->middleware('signed');
 
-
+// log
+Route::get('/expert/register/signed' , 'LogController@synchronizationSigned')->name('log.synchronization.signed');
+Route::get('/expert/register' , 'LogController@synchronization')->name('log.synchronization')->middleware('signed');
 
 
 Auth::routes(['register' => false]);

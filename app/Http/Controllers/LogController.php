@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Log;
 use App\Position;
 use App\Requirement;
+use App\Expert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\DB;
 
@@ -144,94 +146,7 @@ class LogController extends Controller
             );
 
         }else{
-            // if( isset($input["filter"]) ){
-
-            //     if( $input["filter"] == 'yes' ){
-                    
-            //         $log = Log::where('id' , $logId)->first();
-            //         $requirements_defaults = Requirement::whereNull('position_id')->orderBy('id', 'asc')->get();
-            //         $requirements = Requirement::where('position_id' , $log->positions)->orderBy('id', 'asc')->get();
-            //         $req_applicants = DB::table('requirement_applicants')->where('log_id', $logId)->orderBy('order', 'asc')->get();
-            //         $a_req_applicants_ids = array();
-            //         $a_req_applicants_ids_req = array();
-            //         foreach ($req_applicants as $key => $req_applicant) {
-            //             $a_req_applicants_ids[] = $req_applicant->id;
-            //         }
-            //         foreach ($req_applicants as $key => $req_applicant) {
-            //             $a_req_applicants_ids_req[] = $req_applicant->requirement_id;
-            //         }
-            //         $a_requirements = array();
-            //         $a_requirements_start = array();
-            //         $a_requirements_end = array();
-
-            //         foreach ($requirements_defaults as $key => $req_default) {
-            //             if( in_array( $req_default->id , array(1,2,3) ) ){
-            //                 if( count( array_filter( $a_req_applicants_ids_req , function($_id) use($req_default){  return ($_id == $req_default->id); } ) ) == 0 ){
-            //                     $a_requirements_start[] = array(
-            //                         'log_id' => $logId,
-            //                         'requirement_id' => $req_default->id,
-            //                         'order' => 0, //$order,
-            //                         'description' => '',
-            //                         'created_at' => date("Y-m-d H:i:s"),
-            //                         'updated_at' => date("Y-m-d H:i:s")
-            //                     );
-            //                 }
-                            
-            //                 // $order++;
-            //             }else{
-            //                 if( count( array_filter( $a_req_applicants_ids_req , function($_id) use ($req_default){ return ($_id == $req_default->id); } ) ) == 0 ){
-            //                     $a_requirements_end[] = array(
-            //                         'log_id' => $logId,
-            //                         'requirement_id' => $req_default->id,
-            //                         'order' => 0, // count($requirements) + $order_end + 3,
-            //                         'description' => '',
-            //                         'created_at' => date("Y-m-d H:i:s"),
-            //                         'updated_at' => date("Y-m-d H:i:s")
-            //                     );
-            //                 }
-                            
-            //                 // $order_end++;
-            //             }
-            //         }
-            //         foreach ($requirements as $key => $requirement) {
-            //             if( count( array_filter( $a_req_applicants_ids_req , function($_id) use ($requirement){  return ($_id == $requirement->id); } ) ) == 0 ){
-            //                 $a_requirements[] = array(
-            //                     'log_id' => $logId,
-            //                     'requirement_id' => $requirement->id,
-            //                     'order' => 0 , //$order,
-            //                     'description' => '',
-            //                     'created_at' => date("Y-m-d H:i:s"),
-            //                     'updated_at' => date("Y-m-d H:i:s")
-            //                 );
-            //             }
-            //             // $order++;
-
-            //         }
-                    
-            //         $insert_req_apli = array_merge( $a_requirements_start,  $a_requirements );
-
-            //         $insert_req_apli = array_merge( $insert_req_apli,  $a_requirements_end );
-            //         // print_r( $insert_req_apli );
-            //         $a_ids = array();
-            //         foreach ($insert_req_apli as $key => $r) {
-            //             # code...
-            //             $a_ids[] = DB::table('requirement_applicants')->insertGetId($r);
-            //         }
-
-            //         if( count($a_req_applicants_ids) > 5) {
-            //             array_splice( $a_req_applicants_ids , (count($a_req_applicants_ids) - 3) , 0 , $a_ids);
-            //         }else{
-            //             $a_req_applicants_ids = $a_ids;
-            //         }
-            //         $order = 1;
-                    
-            //         foreach ($a_req_applicants_ids as $key => $id) {
-                        
-            //             DB::table('requirement_applicants')->where('id' , $id)->update(array('order' => $order)); $order++;
-            //         }
-                    
-            //     }
-            // }
+            
             Log::where('id', $logId)->update($input);
             $input["id"] = $logId;
             
@@ -415,5 +330,46 @@ class LogController extends Controller
                 "label" => "Facebook"
             ),
         );
+    }
+
+    public function synchronizationSigned( Request $request ) {
+        
+        $position = $request->query('position');
+        $applicant = $request->query('applicant');
+        
+        return URL::temporarySignedRoute(
+            'log.synchronization', now()->addDays(7) , ['position' => $position , 'applicant' => $applicant]
+        );
+        
+    }
+
+    public function synchronization( Request $request ){
+
+        $q_position = $request->query('position');
+        $q_applicant = $request->query('applicant');
+        $position = Position::where('id' , $q_position )->first();
+        if( empty($position) ) abort(404); 
+        $log = Log::where('id' , $q_applicant )->first();
+        if( empty($log) ) abort(404); 
+
+        $expert = $this->getModelFormat();
+        return view('experts.create' , array(
+            'positionId'    => $position->id,
+            'expert'        => $expert,
+            'technologies'  => Expert::getTechnologies(),
+            'positionName'    => $position->name,
+            'signed' => true,
+            'log' => $log->id
+        ));
+        // return view('experts.create')->with('positionId', '' )->with('expert', $expert)->with('technologies',Expert::getTechnologies());
+    }
+
+    private function getModelFormat(){
+        $expert = new Expert();
+        $a = [];
+        foreach ($expert->getFillable() as $k => $f) {
+            $a[$f] = "";
+        }
+        return (object) $a;
     }
 }

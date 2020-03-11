@@ -122,6 +122,17 @@ class ExpertController extends Controller
                 $input["user_id"] = Auth::id();
                 $input["user_name"] = Auth::user()->name;
             }
+            $signed = null;
+            $logId = null;
+            if( isset( $input["signed"] ) && isset( $input["log"] ) ){
+                
+                $signed = $input["signed"];
+                $logId = $input["log"];
+
+                unset( $input["signed"] );
+                unset( $input["log"] );
+            }
+            
 
             $input['fullname'] = ucwords(substr( $input['fullname'] , 0 , 244));
             $input['email_address'] = substr( $input['email_address'] , 0 , 244);
@@ -153,6 +164,10 @@ class ExpertController extends Controller
 
             if( $file ){
                 $file->move( $destinationPath, $newNameFile );
+            }
+
+            if( !is_null($signed) && !is_null($logId) ){
+                Log::where('id' , $logId)->update( array('expert_id' => $input['id'] ) );
             }
             
             $positionId = $request->input('position','');
