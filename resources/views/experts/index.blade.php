@@ -5,7 +5,7 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
 
-
+ 
 <style>
 caption{
     /* caption-side: top !important; */
