@@ -118,6 +118,10 @@ td.stickout{
 .dataTables_filter{
     display: none;
 }
+
+a.btn-delete-interview{
+    margin: -2.2rem -.5rem -1rem auto;
+}
 </style>
 @endsection
 
@@ -182,6 +186,24 @@ td.stickout{
         </div>
         <div class="modal-body">
             <div >
+            <div class="row mb-4">
+                <div class="col" id="list-interviews">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="text-uppercase">:name-type</h5>
+                            <a href="#" class="btn btn-danger float-right btn-delete-interview" data-id=":id">Delete</a>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">:description</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <span>:result</span>
+                            <span class="float-right">:date</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <form action="" id="interviews-form" class="row">
                 <div class="col-5">
                     <div class="form-group">
@@ -222,22 +244,7 @@ td.stickout{
                     <button class="btn btn-success" id="save-interview">SAVE</button>
                 </div>
             </div>
-            <div class="row">
-                <div class="col" id="list-interviews">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="text-uppercase">:name-type</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">:description</p>
-                        </div>
-                        <div class="card-footer text-muted">
-                            <span>:result</span>
-                            <span class="float-right">:date</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
         
         </div>
@@ -636,6 +643,7 @@ td.stickout{
                     var html = '';
                     for (let index = 0; index < interviews.length; index++) {
                         var html_card_interview = template_card_interview;
+                        html_card_interview = html_card_interview.replace(':id' , interviews[index].id);
                         html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
                         html_card_interview = html_card_interview.replace(':description' , interviews[index].description);
                         var result = interviews[index].result ? 'APPROVE' : 'FAILED';
@@ -690,7 +698,7 @@ td.stickout{
 
                     // 
                     var html_card_interview = template_card_interview;
-
+                    html_card_interview = html_card_interview.replace(':id' , data.id);
                     html_card_interview = html_card_interview.replace(':name-type' , data.type);
                     html_card_interview = html_card_interview.replace(':description' , data.description);
                     var result = data.result ? 'APPROVE' : 'FAILED';
@@ -698,10 +706,33 @@ td.stickout{
                     var _date = new Date(data.date);
                     html_card_interview = html_card_interview.replace(':date' , ((_date.getDate() > 9) ? _date.getDate() : ('0' + _date.getDate())) + '/' + ((_date.getMonth() > 8) ? (_date.getMonth() + 1) : ('0' + (_date.getMonth() + 1))) + '/' +  _date.getFullYear() );
                     $('#list-interviews').append(html_card_interview);
+                    $("#interview_description").val('');
                 }
             });
             
-        })
+        });
+
+        $('#list-interviews').on('click' , '.btn-delete-interview' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var _this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("interviews.delete") }}',
+                data: {id : id},
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    
+                    _this.parent().parent().slideUp('slow' , function(){
+                        $(this).remove();
+                    })
+                    
+                }
+            });
+        });
 
     });
  
