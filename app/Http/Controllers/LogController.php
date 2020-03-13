@@ -27,6 +27,7 @@ class LogController extends Controller
         $positions = Position::latest()->get();
         $logs = Log::all();
         $platforms = $this->platforms();
+        // return $logs;
         return view('logs.index' , compact('logs'))->with(['positions' => $positions, 'platforms' => $platforms]);
     }
 

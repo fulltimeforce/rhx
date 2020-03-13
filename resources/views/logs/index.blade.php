@@ -108,12 +108,14 @@
                     <tr id="{{ $log->id }}" >
                         <td>
                             <a href="#" data-id="{{ $log->id }}" class="badge badge-primary btn-edit">Edit</a>
+                            @if( !is_null($log->positions) )
                             <a href="#" data-id="{{ $log->id }}" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-position="{{ $log->position->id }}" class="badge badge-info btn-link">Link</a>
+                            @endif
                         </td>
                         <td>{{ $log->name }}</td>
                         <td>{{ $log->phone }}</td>
-                        <td>{{ $log->position->name }}</td>
-                        <td>{{ collect($platforms)->firstWhere('value' , $log->platform)->label   }}  </td>
+                        <td>{{ is_null($log->positions)? '' :  $log->position->name }}</td>
+                        <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : ''  }}  </td>
                         <td>{{ $log->link }}</td>
                         <td class="text-center">
                             <i class="fas {{ $log->form == 1 ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i>
@@ -213,11 +215,11 @@
                         $_logs[index].platforms = data.data.platforms;
                         $_logs[index].link = data.data.link;
 
-                        $('#'+ data.data.id + ' td:nth-child(2)').html(data.data.name);
-                        $('#'+ data.data.id + ' td:nth-child(3)').html(data.data.phone);
-                        $('#'+ data.data.id + ' td:nth-child(4)').html({!! $positions !!}.filter(f => f.id == data.data.positions)[0].name);
-                        $('#'+ data.data.id + ' td:nth-child(5)').html({!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label);
-                        $('#'+ data.data.id + ' td:nth-child(6)').html(data.data.link);
+                        $('#'+ data.data.id + ' td:nth-child(2)').html( data.data.name );
+                        $('#'+ data.data.id + ' td:nth-child(3)').html( data.data.phone ? data.data.phone : '' );
+                        $('#'+ data.data.id + ' td:nth-child(4)').html( data.data.positions ? {!! $positions !!}.filter(f => f.id == data.data.positions)[0].name : '' );
+                        $('#'+ data.data.id + ' td:nth-child(5)').html( data.data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label : '' );
+                        $('#'+ data.data.id + ' td:nth-child(6)').html( data.data.link? data.data.link : '' );
                         
                     }
                     $("#name").val('').focus();

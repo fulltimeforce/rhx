@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Expert;
 use App\Position;
+use App\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
@@ -164,10 +165,6 @@ class ExpertController extends Controller
 
             if( $file ){
                 $file->move( $destinationPath, $newNameFile );
-            }
-
-            if( !is_null($signed) && !is_null($logId) ){
-                Log::where('id' , $logId)->update( array('expert_id' => $input['id'] ) );
             }
             
             $positionId = $request->input('position','');
@@ -453,6 +450,34 @@ class ExpertController extends Controller
         }else{
             abort(404);
         }
+    }
+
+    public function log( Request $request ){
+
+        $input = $request->all();
+
+        $expertId = $input['id'];
+        $expert = Expert::where('id' , $expertId)->first();
+        $logId = Hashids::encode(time());
+
+        if( !empty( $expert ) ){
+            $log = array(
+                'id'        => $logId,
+                'name'      => $expert->fullname,
+                'phone'     => $expert->phone,
+                // 'positions' => '',
+                'form'      => 1,
+                'user_id'   => Auth::id(),
+            );
+    
+            $created = Log::create( $log );
+    
+            Expert::where('id' , $expertId)->update( array('log_id' => $logId) );
+
+            return $created;
+        }
+
+        return 0;
     }
 
 }

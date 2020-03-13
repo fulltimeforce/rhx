@@ -521,6 +521,10 @@ a.btn-delete-interview{
             
             html += '        <a href="#" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</a>';
 
+            if( data.log_id == '' || data.log_id == null ){
+                html += '        <a href="#" data-id="'+data.id+'" class="badge badge-dark btn-log">Log</a>';
+            }
+
             html += '       <a class="badge badge-secondary btn-interviews" data-id="'+data.id+'" data-name="'+data.fullname+'" href="#">Interviews</a>';
 
             html = html.replace(/:id/gi , data.id);
@@ -733,6 +737,28 @@ a.btn-delete-interview{
                     
                 }
             });
+        });
+
+        $('table').on('click' , '.btn-log' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var $_this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("experts.log") }}',
+                data: {id : id},
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    
+                    console.log(data , "______________data");
+                    if(data) $_this.remove();
+                    
+                }
+            });
+
         });
 
     });
