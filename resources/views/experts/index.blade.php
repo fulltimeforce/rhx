@@ -671,7 +671,8 @@ a.btn-delete-interview{
             this.appendChild(el);
             el.focus();
             el.select();
-            var success = document.execCommand('copy')
+            var success = document.execCommand('copy');
+            console.log(success, "dsdsdsdsdsdsdsdsdsds");
             this.removeChild(el);
 
         })

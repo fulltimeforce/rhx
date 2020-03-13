@@ -252,6 +252,7 @@
             ev.preventDefault();
             var position = $(this).data("position");
             var log = $(this).data("id");
+            var _this = this;
             var url = '{{ route("log.synchronization.signed" , ["position" => ":position" , "applicant" => ":log" ]) }}';
             url = url.replace("%3Aposition" , position);
             url = url.replace("%3Alog" , log);
@@ -270,11 +271,11 @@
                     el.style.top = '0';
                     el.setSelectionRange(0, 99999);
                     el.setAttribute('readonly', ''); 
-                    this.appendChild(el);
+                    _this.appendChild(el);
                     el.focus();
                     el.select();
                     var success = document.execCommand('copy')
-                    this.removeChild(el);
+                    _this.removeChild(el);
 
                 }
 

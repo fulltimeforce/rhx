@@ -45,6 +45,8 @@ class Expert extends Model
         'macros','tablasdinamicas','vba',
         //ci/cd
         'docker','kubernetes','jenkins','gitlab','travis','spinnaker','screwdriver',
+        //
+        '3dmodeling','csharpu','animation','physics','networking','vr','graphics','ui',
         //Others
         'git','svn', 'file_path'
     ];
@@ -223,6 +225,19 @@ class Expert extends Model
                 'spinnaker'=>'Spinnaker',
                 'screwdriver'=>'Screwdriver',
             ),
+        ),
+        'unity' => array(
+            'Unity',
+            array(
+                '3dmodeling' => '3D Modeling',
+                'csharpu' => 'C#',
+                'animation' => 'Animation',
+                'physics' => 'Physics',
+                'networking' => 'Networking',
+                'vr' => 'Virtual Reality',
+                'graphics' => 'Graphics',
+                'ui' => 'UI',
+            )
         ),
         'others' => array(
             'Others',
