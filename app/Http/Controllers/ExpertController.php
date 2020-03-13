@@ -480,4 +480,14 @@ class ExpertController extends Controller
         return 0;
     }
 
+    public function searchbyname( Request $request ){
+
+        $input = $request->all();
+        $fullname = $input['name'];
+        $experts = Expert::where('fullname' , 'like' , '%'.$fullname.'%')->orderBy('created_at')->get();
+
+        return response()->json($experts);
+
+    }
+
 }
