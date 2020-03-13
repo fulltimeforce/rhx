@@ -214,9 +214,10 @@
                         $_logs[index].link = data.data.link;
 
                         $('#'+ data.data.id + ' td:nth-child(2)').html(data.data.name);
-                        $('#'+ data.data.id + ' td:nth-child(3)').html({!! $positions !!}.filter(f => f.id == data.data.positions)[0].name);
-                        $('#'+ data.data.id + ' td:nth-child(4)').html({!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label);
-                        $('#'+ data.data.id + ' td:nth-child(5)').html(data.data.link);
+                        $('#'+ data.data.id + ' td:nth-child(3)').html(data.data.phone);
+                        $('#'+ data.data.id + ' td:nth-child(4)').html({!! $positions !!}.filter(f => f.id == data.data.positions)[0].name);
+                        $('#'+ data.data.id + ' td:nth-child(5)').html({!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label);
+                        $('#'+ data.data.id + ' td:nth-child(6)').html(data.data.link);
                         
                     }
                     $("#name").val('').focus();
