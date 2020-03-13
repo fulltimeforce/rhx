@@ -251,7 +251,7 @@ input:checked + .slider:before {
                 $("input[name='email_"+position+"']").removeClass('is-invalid');
                 $.ajax({
                     type:'POST',
-                    url:'/expert/validate',
+                    url: "{{ route('experts.validate') }}",
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

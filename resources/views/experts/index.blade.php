@@ -293,20 +293,7 @@ a.btn-delete-interview{
             <section id="section-allexperts" class="pb-5" style="display: none;">
             <table class="table table-bordered row-border order-column" id="allexperts" >
             <thead class="thead-dark">
-                <!-- <tr>
-                    <th data-col="action" >Action</th>
-                    <th data-col="name" style="width: 200px;">Name</th>
-                    <th data-col="email">Email</th>
-                    <th data-col="age">Age</th>
-                    <th data-col="phone">Phone</th>
-                    <th data-col="availability">Availability</th>
-                    <th data-col="salary">Salary</th>
-                    @foreach($technologies as $categoryid => $category)
-                        @foreach($category[1] as $techid => $techlabel)
-                            <th data-col="{{ $techid }}">{{$techlabel}}</th>
-                        @endforeach
-                    @endforeach
-                </tr> -->
+
             </thead>
             <tbody>
                 
@@ -401,7 +388,6 @@ a.btn-delete-interview{
                             
                         });
                     }
-                    
                     setTimeout(() => {
                         $(".alert").slideUp(500, function() {
                             document.body.removeChild(el);
@@ -411,19 +397,22 @@ a.btn-delete-interview{
             });
         });
 
-        
+        var a_basic_level = [];
+        var a_intermediate_level = [];
+        var a_advanced_level = [];
 
         $('#search').on('click' , function(){
             $("#filter-count-expert").hide();
             $('#search-column-name').val('');
-            var a_basic_level = $(".search-level.basic").val();
-            var a_intermediate_level = $(".search-level.intermediate").val();
-            var a_advanced_level = $(".search-level.advanced").val(); 
+            a_basic_level = $(".search-level.basic").val();
+            a_intermediate_level = $(".search-level.intermediate").val();
+            a_advanced_level = $(".search-level.advanced").val(); 
+            
             $("#loader-spinner").show();
             $("#section-allexperts").hide();
-            if(table){
-                table.destroy();
-            }
+
+            if(table) table.destroy();
+            
             $.ajax({
                 type: 'POST',
                 url: '{{ route("experts.filter") }}',
@@ -433,46 +422,81 @@ a.btn-delete-interview{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                    $("#filter-count-expert").show();
-                    $("#filter-count-expert .count-expert").html( data.length ) ;
-                    var html = '';
-                    $("#allexperts thead").html('');
-                    $("#allexperts thead").html( html_table_head( a_basic_level.concat(a_intermediate_level , a_advanced_level) ) );
-                    
-                    for (let index = 0; index < data.length; index++) {
 
-                        html += html_table_row(data[index] , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
-                    }
-                    
-                    $("#allexperts tbody").html('');
-                    $("#allexperts tbody:first").html(html);
-
-                    $("#loader-spinner").hide();
-                    $("#section-allexperts").show();
-                    table = $("#allexperts").DataTable( options );
+                    print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
 
                 }
             });
         });
-
-        $('#search-column-name').on( 'keyup', function () {
+        function delay(callback, ms) {
+            var timer = 0;
+            return function() {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                callback.apply(context, args);
+                }, ms || 0);
+            };
+        }
+        $('#search-column-name').on( 'keyup', delay(function (ev) {
             
             var text = $(this).val();
-            if( text .length >= 3){
-                if(table){
-                    table.columns( 1 ).search(
-                        this.value
-                    ).draw();
-                }
-            }else{
-                if(table){
-                    table.columns( 1 ).search(
-                        ''
-                    ).draw();
-                }
-            }
+            // if( text .length >= 3){
+            //     if(table){
+            //         table.columns( 1 ).search(
+            //             this.value
+            //         ).draw();
+            //     }
+            // }else{
+            //     if(table){
+            //         table.columns( 1 ).search(
+            //             ''
+            //         ).draw();
+            //     }
+            // }
 
-        } );
+            $("#loader-spinner").show();
+            $("#section-allexperts").hide();
+
+            if(table) table.destroy();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("experts.search") }}',
+                data: { name : text },
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+
+                    print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
+
+                }
+            });
+
+        } , 500 ));
+
+        function print_table_experts( data , techonologies_level ){
+
+            $("#filter-count-expert").show();
+            $("#filter-count-expert .count-expert").html( data.length ) ;
+            var html = '';
+            $("#allexperts thead").html('');
+            $("#allexperts thead").html( html_table_head( techonologies_level ) );
+            
+            for (let index = 0; index < data.length; index++) {
+
+                html += html_table_row(data[index] , techonologies_level );
+            }
+            
+            $("#allexperts tbody").html('');
+            $("#allexperts tbody:first").html(html);
+
+            $("#loader-spinner").hide();
+            $("#section-allexperts").show();
+            table = $("#allexperts").DataTable( options );
+        }
 
         function html_table_head(a_keys){
 
