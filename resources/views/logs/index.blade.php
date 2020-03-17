@@ -38,6 +38,7 @@
                             <label for="name">Name</label>
                             <input type="text" name="name" id="name" class="form-control">
                             <input type="hidden" name="id" id="log-id">
+                            <input type="hidden" name="expert_id" id="expert_id">
                         </div>
                     </td>
                     <td>
@@ -48,8 +49,8 @@
                     </td>
                     <td>
                         <div class="form-group">
-                            <label for="positions">Positions</label>
-                            <select id="positions" class="form-control" name="positions" >
+                            <label for="position">Positions</label>
+                            <select id="position" class="form-control" name="position" >
                                 @foreach($positions as $pid => $position)
                                     <option value="{{ $position->id }}">{{ $position->name }}</option>
                                 @endforeach
@@ -107,15 +108,18 @@
                 @foreach($logs as $pid => $log)
                     <tr id="{{ $log->id }}" >
                         <td>
-                            <a href="#" data-id="{{ $log->id }}" class="badge badge-primary btn-edit">Edit</a>
-                            @if( !is_null($log->positions) )
-                            <a href="#" data-id="{{ $log->id }}" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-position="{{ $log->position->id }}" class="badge badge-info btn-link">Link</a>
+                            <a href="#" data-id="{{ $log->id }}" class="badge badge-success btn-edit">Edit</a>
+                            @if( $log->form == 0 )
+                            <a href="#" data-id="{{ $log->id }}" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-expert="{{ $log->expert_id }}" class="badge badge-info btn-link">Link</a>
+                            @endif
+                            @if( $log->user_id == 0 )
+                            <a href="#" data-id="{{ $log->id }}" class="badge badge-primary btn-take">Take</a>
                             @endif
                         </td>
-                        <td>{{ $log->name }}</td>
-                        <td>{{ $log->phone }}</td>
-                        <td>{{ is_null($log->positions)? '' :  $log->position->name }}</td>
-                        <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : ''  }}  </td>
+                        <td>{{ $log->expert->fullname }}</td>
+                        <td>{{ $log->expert->phone }}</td>
+                        <td>{{ $log->position->name }}</td>
+                        <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : '' }}  </td>
                         <td>{{ $log->link }}</td>
                         <td class="text-center">
                             <i class="fas {{ $log->form == 1 ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i>
@@ -158,8 +162,6 @@
 
         column.visible(false);
 
-        $('[data-toggle="tooltip"]').tooltip({trigger: 'click'});
-
         $("#save").on('click', function(ev){
             
             $.ajax({
@@ -175,12 +177,12 @@
                     // return;
                     if(data.type == 'create'){
                         var edit = '<a href="#" data-id="'+data.data.id+'" class="badge badge-primary btn-edit">Edit</a>';
-                        var link = '<a href="#" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-id="'+data.data.id+'" data-position="'+data.data.positions+'" class="badge badge-info btn-link">Link</a>';
+                        var link = '    <a href="#" data-toggle="tooltip" data-placement="top" title="Copied..!!" data-id="'+data.data.id+'" data-expert="'+data.data.expert_id+'" class="badge badge-info btn-link">Link</a>';
                         table.row.add([
                             edit + link,
                             data.data.name,
                             data.data.phone,
-                            {!! $positions !!}.filter(f => f.id == data.data.positions)[0].name,
+                            {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
                             data.data.link,
                             '<i class="fas fa-times-circle text-danger fa-2x"></i>',
@@ -194,9 +196,16 @@
                         table.draw(false);  
                         $_logs.push({
                             id      : data.data.id,
-                            name    : data.data.name,
-                            phone   : data.data.phone,
-                            positions : data.data.positions,
+                            expert: {
+                                fullname : data.data.name,
+                                phone: data.data.phone,
+                            },
+                            position:{
+                                id: data.data.position_id,
+                                name: {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name
+                            },
+                            // phone   : data.data.phone,
+                            position_id : data.data.position_id,
                             platform : data.data.platform,
                             link : data.data.link,
                             filter: "-",
@@ -204,34 +213,42 @@
                             scheduled: "-",
                             attended: "-",
                             approve: "-",
-                            expert_id: null,
+                            expert_id: data.data.expert_id,
                             created_at : data.data.created_at
                         });
                     }else{
                         var index = $_logs.findIndex( f => f.id == data.data.id);
                         console.log(index, "dddddd");
-                        $_logs[index].name = data.data.name;
-                        $_logs[index].positions = data.data.positions;
-                        $_logs[index].platforms = data.data.platforms;
+                        $_logs[index].expert = {
+                            fullname : data.data.name,
+                            phone: data.data.phone,
+                        };
+                        $_logs[index].expert_id = data.data.expert_id;
+                        $_logs[index].position_id = data.data.position_id;
+                        $_logs[index].position = {
+                            name : {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
+                            id: data.data.position_id
+                        };
+                        $_logs[index].platform = data.data.platform;
                         $_logs[index].link = data.data.link;
 
                         $('#'+ data.data.id + ' td:nth-child(2)').html( data.data.name );
                         $('#'+ data.data.id + ' td:nth-child(3)').html( data.data.phone ? data.data.phone : '' );
-                        $('#'+ data.data.id + ' td:nth-child(4)').html( data.data.positions ? {!! $positions !!}.filter(f => f.id == data.data.positions)[0].name : '' );
+                        $('#'+ data.data.id + ' td:nth-child(4)').html( data.data.position_id ? {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name : '' );
                         $('#'+ data.data.id + ' td:nth-child(5)').html( data.data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label : '' );
                         $('#'+ data.data.id + ' td:nth-child(6)').html( data.data.link? data.data.link : '' );
                         
                     }
+                    // clean
                     $("#name").val('').focus();
                     $("#phone").val('');
                     $("#link").val('');
                     $("#log-id").val('');
-                    
+                    $("#expert_id").val('');
+                    $("#log-id").val('');
                 }
             });
         });
-
-        
 
         $('table').on('click', '.btn-edit', function(ev){
             ev.preventDefault();
@@ -240,11 +257,12 @@
 
             if(log.length > 0){
                 $("#log-id").val(log[0].id);
-                $("#name").val(log[0].name);
-                $("#phone").val(log[0].phone);
-                $("#positions").val(log[0].positions);
+                $("#name").val(log[0].expert.fullname);
+                $("#phone").val(log[0].expert.phone);
+                $("#position").val(log[0].position_id);
                 $("#platform").val(log[0].platform);
                 $("#link").val(log[0].link);
+                $("#expert_id").val(log[0].expert_id);
 
             }
 
@@ -252,14 +270,15 @@
 
         $('table').on('click', '.btn-link', function(ev){
             ev.preventDefault();
-            var position = $(this).data("position");
-            var log = $(this).data("id");
+            var expert = $(this).data("expert");
+            var logId = $(this).data("id");
+
             var _this = this;
-            var url = '{{ route("log.synchronization.signed" , ["position" => ":position" , "applicant" => ":log" ]) }}';
-            url = url.replace("%3Aposition" , position);
-            url = url.replace("%3Alog" , log);
+            var url = '{{ route("developer.edit.signed" , ["expertId" => ":expertId" ]) }}';
+            url = url.replace(":expertId" , expert);
+            
             $.ajax({
-                type:'GET',
+                type: 'GET',
                 url: url,
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
@@ -283,6 +302,25 @@
 
             });
 
+        });
+
+        $('table').on('click', '.btn-take', function(ev){
+            ev.preventDefault();
+            var _id = $(this).data("id");
+            var _this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('logs.takeUser') }}",
+                data: { id: _id },
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    _this.remove();
+                }
+
+            });
         });
 
     });

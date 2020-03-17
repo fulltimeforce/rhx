@@ -52,6 +52,7 @@ Route::post('/logs/updateform', 'LogController@updateForm')->name('logs.updateFo
 
 Route::post('/logs/requirementbylog', 'LogController@requirementByLog')->name('logs.requirementByLog');
 Route::post('/logs/savereqapplict', 'LogController@saveReqApplict')->name('logs.saveReqApplict');
+Route::post('/logs/take', 'LogController@takeUser')->name('logs.takeUser');
 
 Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
 

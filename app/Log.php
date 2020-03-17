@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
 {
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing = true;
+
+    protected $table = 'expert_position';
     //
     protected $fillable = [
-        'id',
-        'name',
-        'phone',
-        'positions',
+        'expert_id',
+        'position_id',
         'platform',
         'link',
         'form',
@@ -26,15 +25,19 @@ class Log extends Model
     ];
 
     protected $hidden = [
-        'updated_at' , 'user_id'
+        'created_at' , 'updated_at'
     ];
 
     public function position(){
-        return $this->hasOne('App\Position', 'id', 'positions');
+        return $this->hasOne('App\Position', 'id', 'position_id');
+    }
+
+    public function expert(){
+        return $this->hasOne('App\Expert', 'id', 'expert_id');
     }
 
     public function user(){
-        return $this->hasOne('App\User', 'id', 'user');
+        return $this->hasOne('App\User', 'id', 'user_id');
     }
 
     protected static $platforms = array(

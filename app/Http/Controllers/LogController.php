@@ -133,27 +133,75 @@ class LogController extends Controller
     }
 
     public function updateForm(Request $request){
+
         $input = $request->all();
         
-        $logId = $input['id'];
-        unset($input['id']);
-        $input['user_id'] = Auth::id();
-        // return $logId;
-        if( empty($logId) ){
-            $input['id'] = Hashids::encode(time());
+        if( !isset( $input['id'] ) ){
+            $expert_id = Hashids::encode( time() );
+            $expert = array(
+                "id"        => $expert_id,
+                "fullname"  => $input['name'],
+                "phone"     => $input['phone'],
+                "user_id"   => Auth::id(),
+                "user_name" => Auth::user()->name,
+            );
+
+            $create = Expert::create( $expert );
+            $log = Log::create(
+                array(
+                    "expert_id"     => $expert_id,
+                    "position_id"   => $input['position'],
+                    "platform"      => $input['platform'],
+                    "link"          => $input['link'],
+                    "user_id"       => Auth::id()
+                )
+            )->id;
             return array(
                 'type' => 'create',
-                'data' => Log::create($input)
+                'data' => array(
+                    "id"            => $log,
+                    "name"          => $input['name'],
+                    "phone"         => $input['phone'],
+                    "platform"      => $input['platform'],
+                    "position_id"   => $input['position'],
+                    "link"          => $input['link'],
+                    "expert_id"     => $expert_id,
+                    "created_at"    => date("Y-m-d H:i:s")
+                )
             );
 
         }else{
-            
-            Log::where('id', $logId)->update($input);
-            $input["id"] = $logId;
-            
+            Expert::where('id' , $input['expert_id'])->update(
+                array(
+                    "fullname"  => $input['name'],
+                    "phone"     => $input['phone']
+                )
+            );
+
+            $update = Log::where('id' , $input['id'])
+                ->where('expert_id' , $input['expert_id'])
+                ->update(
+                array(
+                    
+                    "position_id"   => $input['position'],
+                    "platform"      => $input['platform'],
+                    "link"          => $input['link'],
+                    "user_id"       => Auth::id(),
+                    "updated_at"    => date("Y-m-d H:i:s")
+                )
+            );
+
             return array(
                 'type' => 'update',
-                'data' => (object) $input
+                'data' => (object) array(
+                    "id" => $input['id'],
+                    "name" => $input['name'],
+                    "phone" => $input['phone'],
+                    "expert_id" => $input['expert_id'],
+                    "position_id"   => $input['position'],
+                    "platform" => $input['platform'],
+                    "link" => $input['link'],
+                )
             );
         }
 
@@ -363,6 +411,15 @@ class LogController extends Controller
             'log' => $log->id
         ));
         // return view('experts.create')->with('positionId', '' )->with('expert', $expert)->with('technologies',Expert::getTechnologies());
+    }
+
+    public function takeUser( Request $request ){
+        $input = $request->all();
+        Log::where( 'id' , $input['id'] )->update(
+            array(
+                'user_id' => Auth::id()
+            )
+        );
     }
 
     private function getModelFormat(){

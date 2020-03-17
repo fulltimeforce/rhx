@@ -6,6 +6,7 @@ use App\Position;
 use Illuminate\Http\Request;
 use App\Expert;
 use App\Requirement;
+use App\Log;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\DB;
@@ -212,15 +213,15 @@ class PositionController extends Controller
 
         $expert = Expert::where('id',$expertId)->first();
 
-        DB::table('expert_position')->where('expert_id' , $expertId)->delete();
+        Log::where('expert_id' , $expertId)->delete();
 
         foreach ($positions as $key => $position) {
-            DB::table('expert_position')->insert(
+            Log::create(
                 array(
                     "expert_id" => $expertId,
                     "position_id" => $position,
-                    "created_at" => date('Y-m-d H:i:s'),
-                    "updated_at" => date('Y-m-d H:i:s')
+                    "user_id"   => Auth::id(),
+                    
                 )
             );
         }

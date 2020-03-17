@@ -224,7 +224,7 @@ class ExpertController extends Controller
     public function update(Request $request, Expert $expert)
     {
         //
-        if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
+        // if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
         try {
             $request->validate([
                 'file_cv' => 'mimes:pdf,doc,docx|max:2048',
@@ -265,6 +265,14 @@ class ExpertController extends Controller
 
             if( $file ){
                 $file->move( $destinationPath, $newNameFile );
+            }
+
+            if( $input['position'] ){
+                Log::where('expert_id' , $expert->id)->update(
+                    array(
+                        'form' => 1
+                    )
+                );
             }
       
             return redirect()->route('experts.home')
@@ -399,20 +407,33 @@ class ExpertController extends Controller
     }
 
     public function developerEditSigned($expertId) {
+        $query = array(
+            'expertId' => $expertId 
+        );
+        if( Log::where('expert_id' , $expertId)->count() > 0 ){
+            $query['position'] = time();
+        }
+
         return URL::temporarySignedRoute(
-            'developer.edit', now()->addDays(7), ['expertId' => $expertId]
+            'developer.edit', now()->addDays(7), $query
         );
     }
 
-    public function developerEdit(Request $request ,$expertId){
+    public function developerEdit(Request $request , $expertId){
+
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
+
         $expert = Expert::find($expertId);
+        $position = 0;
+        if( !is_null( $request->query('position') ) ){
+            $position = 1;
+        } 
 
         $disabledInputs = array(
             ''
         );
 
-        return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
+        return view('experts.edit')->with('expert', $expert)->with('position', $position)->with('technologies',Expert::getTechnologies());
     }
 
     public function applicantRegisterSigned() {

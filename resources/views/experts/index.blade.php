@@ -131,7 +131,7 @@ a.btn-delete-interview{
             <h1>Experts</h1>
         </div>
         <div class="col text-right">
-            <a class="btn btn-primary" href="{{ route('experts.create') }}">New Expert</a>
+            <!-- <a class="btn btn-primary" href="{{ route('experts.create') }}">New Expert</a> -->
             <a class="btn btn-info" id="url-generate" href="#">Generate URL</a>
         </div>
     </div>
@@ -362,7 +362,7 @@ a.btn-delete-interview{
             ev.preventDefault();
             $.ajax({
                 type:'GET',
-                url:'/applicant/register/signed',
+                url: "{{ route('applicant.register.signed') }}" ,
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -428,6 +428,7 @@ a.btn-delete-interview{
                 }
             });
         });
+
         function delay(callback, ms) {
             var timer = 0;
             return function() {
@@ -438,6 +439,7 @@ a.btn-delete-interview{
                 }, ms || 0);
             };
         }
+
         $('#search-column-name').on( 'keyup', delay(function (ev) {
             
             var text = $(this).val();
@@ -545,9 +547,9 @@ a.btn-delete-interview{
             
             html += '        <a href="#" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</a>';
 
-            if( data.log_id == '' || data.log_id == null ){
-                html += '        <a href="#" data-id="'+data.id+'" class="badge badge-dark btn-log">Log</a>';
-            }
+            // if( data.log_id == '' || data.log_id == null ){
+            //     html += '        <a href="#" data-id="'+data.id+'" class="badge badge-dark btn-log">Log</a>';
+            // }
 
             html += '       <a class="badge badge-secondary btn-interviews" data-id="'+data.id+'" data-name="'+data.fullname+'" href="#">Interviews</a>';
 
@@ -578,7 +580,7 @@ a.btn-delete-interview{
                 @endforeach
             @endforeach
 
-            info += '<td>'+data.email_address+'</td>';
+            info += '<td>'+((data.email_address==null)? "" : data.email_address)+'</td>';
             info += '<td>'+((data.birthday==null)? "": data.birthday)+'</td>';
             info += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
             info += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
@@ -763,27 +765,27 @@ a.btn-delete-interview{
             });
         });
 
-        $('table').on('click' , '.btn-log' , function(ev){
-            ev.preventDefault();
-            var id = $(this).data("id");
-            var $_this = $(this);
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("experts.log") }}',
-                data: {id : id},
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
+        // $('table').on('click' , '.btn-log' , function(ev){
+        //     ev.preventDefault();
+        //     var id = $(this).data("id");
+        //     var $_this = $(this);
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: '{{ route("experts.log") }}',
+        //         data: {id : id},
+        //         headers: {
+        //             'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         success:function(data){
                     
-                    console.log(data , "______________data");
-                    if(data) $_this.remove();
+        //             console.log(data , "______________data");
+        //             if(data) $_this.remove();
                     
-                }
-            });
+        //         }
+        //     });
 
-        });
+        // });
 
     });
  
