@@ -38,7 +38,7 @@ class RequirementsTableSeeder extends Seeder
             DB::table('requirements')->insert([
                 array(
                     'name' => $this->generateRandomString(),
-                    'position_id' => $a_ids[ rand( 0 , 4) ],
+                    'position_id' => $a_ids[ rand( 0 , 1) ],
                     'user_id' => 5,
                     'created_at' => date("Y-m-d H:i:s")
                 ),

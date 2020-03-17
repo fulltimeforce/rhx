@@ -324,7 +324,7 @@ input:checked + .slider:before {
                     
                     for (let index = 0; index < data.logs.length; index++) {
                         var applicants_html = '<tr><td>:name</td><td> <label class="switch"> <input type="checkbox" data-id=":id" name="filter[]" class="primary ck-approve" :checked> <span class="slider"></span> </label> </td></tr>';
-                        applicants_html = applicants_html.replace( ':name' , data.logs[index].name );  
+                        applicants_html = applicants_html.replace( ':name' , data.logs[index].expert.fullname );  
                         applicants_html = applicants_html.replace( ':id' , data.logs[index].id );
                         if( data.logs[index].filter == 'yes' ){
                             applicants_html = applicants_html.replace( ':checked' , 'checked' );
@@ -356,14 +356,14 @@ input:checked + .slider:before {
             var id = $(this).data("id");
             $.ajax({
                 type:'POST',
-                url: "{{ route('logs.updateForm') }}",
+                url: "{{ route('logs.approveFilter') }}",
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data:  { id: id, filter: ck } ,
                 success:function(data){
-                    console.log(data, "---------------------");
+                    // console.log(data, "---------------------");
                 }
 
             });
@@ -470,7 +470,7 @@ input:checked + .slider:before {
             html += '<th class="align-middle">REQUIREMENTS</th>';
             html += '<th class="align-middle"></th>';
             for (let index = 0; index < logs.length; index++) {
-                html += '<th><p>'+logs[index].name+'</p><p>'+logs[index].phone+'</p></th>';
+                html += '<th><p>'+logs[index].expert.fullname+'</p><p>'+logs[index].expert.phone+'</p></th>';
             }
             html += '</tr>';
             return html;

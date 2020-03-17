@@ -123,7 +123,7 @@ class LogController extends Controller
 
         $requirements = Requirement::where('position_id' , $positionId)->get();
 
-        $logs = Log::where('positions' , $positionId)->get();
+        $logs = Log::with(['expert' , 'position' ])->where('position_id' , $positionId)->get();
 
         return response()->json( (object) array(
             "requirements" => $requirements,
@@ -207,6 +207,11 @@ class LogController extends Controller
 
     }
 
+    public function approveFilter( Request $request ){
+        $input = $request->all();
+        Log::where('id' , $input['id'])->update( array('filter' => $input['filter']) );
+    }
+
     public function requirementByLog(Request $request){
 
         $input = $request->all();
@@ -233,7 +238,7 @@ class LogController extends Controller
         $_a_requirements = array_merge($a_requirements_start , $a_requirements);
         $_a_requirements = array_merge($_a_requirements , $a_requirements_end);
 
-        $logs = Log::where([['positions','=', $positionId] , ['filter' , '=' , 'yes']])->get();
+        $logs = Log::with(['expert' , 'position' ])->where([['position_id','=', $positionId] , ['filter' , '=' , 'yes']])->get();
         $a_log_id = array();
         foreach ($logs as $key => $log) {
             $a_log_id[] = $log->id;
