@@ -87,7 +87,7 @@ input:checked + .slider:before {
     width: 100% !important;
 }
 #callFilter.modal.show .modal-dialog{
-    max-width: 98%;
+    /* max-width: 98%; */
 }
 .bootstrap-datetimepicker-widget.dropdown-menu{
     min-width: 292px;
@@ -377,15 +377,15 @@ input:checked + .slider:before {
 
         //
         var table_call_options = {
-            scrollY: "700px",           
+            scrollY: "500px",           
             lengthMenu: [[150 -1], [150 ,"All"]],
-            lengthChange : false,
+            
             paging : false,
             pageLength : 150,
             info : false,
             scrollX: true,
             scrollCollapse: true,
-            ordering: false,
+            // ordering: false,
             fixedColumns: {
                 leftColumns: 2
             },
@@ -395,7 +395,7 @@ input:checked + .slider:before {
         };
 
         var table_call;
-            
+
         $(".btn-call-filter").on('click' , function(ev){
             ev.preventDefault();
             var positionId = $(this).data('position');
@@ -420,7 +420,7 @@ input:checked + .slider:before {
 
                     
                     $("#table-call-filter tbody").html('');
-                    $("#table-call-filter tbody").html(html_table_body_call(data.data));
+                    $("#table-call-filter tbody").html( html_table_body_call(data.data) );
 
                     table_call = $('#table-call-filter').DataTable(table_call_options);
 
@@ -479,7 +479,7 @@ input:checked + .slider:before {
             var html = '';
             html += '<tr>';
             html += '<th class="align-middle">REQUIREMENTS</th>';
-            html += '<th class="align-middle"></th>';
+            html += '<th class="align-middle">POSITION</th>';
             for (let index = 0; index < logs.length; index++) {
                 html += '<th><p>'+logs[index].expert.fullname+'</p><p>'+logs[index].expert.phone+'</p></th>';
             }
@@ -493,16 +493,15 @@ input:checked + .slider:before {
                 'WORKING STATUS','AVAILABILITY','ENGLISH LEVEL'
             ];
             var fixed_requirement_end = [
-                'SALARY EXPERCTATION','NOTES','INTERVIEW'
+                'SALARY EXPECTATION','NOTES','INTERVIEW'
             ];
             // var all_requirements = requirements.map(m => {return {}})
             // fixed_requirement_start.map( (m,i) => { requirements.splice( i ,0 , {name: m , log}) });
-            console.log(requirements);
-
+            var count = 1;
             for (let i = 0; i < requirements.length; i++) {
                 html += '<tr>';
                 html += '<td style="background-color: #fafafa;">'+requirements[i].name+'</td>';
-                html += '<td></td>';
+                html += '<td>'+count+'</td>';
                 for (let j = 0; j < requirements[i].logs.length; j++) {
                     var _class = (requirements[i].id === 6)? 'time-picker-input' : '';
                     html += '<td><div class="form-group" style="position: relative;">';
@@ -514,6 +513,7 @@ input:checked + .slider:before {
                     
                     html += '</div></td>';
                 }
+                count++;
                 html += '</tr>';
             }
             

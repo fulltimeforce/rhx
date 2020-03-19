@@ -81,7 +81,7 @@
             </div>
             <div class="form-group col-6 col-sm-2">
                 <label for="birthday">Fecha de nacimiento</label>
-                <input type="text" name="birthday" class="form-control date" id="birthday" value="{{$expert->birthday}}">
+                <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{$expert->birthday}}">
             </div>
         </div>
         <div class="form-row">
@@ -104,7 +104,7 @@
             </div>
             <div class="form-group col-2">
                 <label for="last_info_update">Última actualización</label>
-                <input type="text" name="last_info_update" class="form-control date" id="last_info_update" value="{{$expert->last_info_update}}">
+                <input type="text" name="last_info_update" class="form-control date" id="last_info_update" data-toggle="datetimepicker" data-target="#last_info_update" value="{{$expert->last_info_update}}">
             </div>
         </div>
         <div class="form-row"> 
@@ -118,7 +118,7 @@
             </div>
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="availability">Disponibilidad</label>
-                <input type="text" name="availability" class="form-control date" id="availability" value="{{$expert->availability}}">
+                <input type="text" name="availability" class="form-control date" id="availability" data-toggle="datetimepicker" data-target="#availability" value="{{$expert->availability}}">
             </div>
         </div>
         <div class="form-row">

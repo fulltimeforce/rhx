@@ -70,7 +70,7 @@
         </div>
         <div class="form-group col-6 col-sm-2">
             <label for="birthday">Fecha de nacimiento</label>
-            <input type="text" name="birthday" class="form-control date" id="birthday" value="{{ $expert->birthday }}">
+            <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{ $expert->birthday }}">
         </div>
         
     </div>
@@ -118,7 +118,7 @@
         </div>
         <div class="form-group col-6 col-sm-4 col-lg-3">
             <label for="availability">Disponibilidad</label>
-            <input type="text" name="availability" class="form-control date" id="availability" value="{{ $expert->availability }}">
+            <input type="text" name="availability" class="form-control date" id="availability" data-toggle="datetimepicker" data-target="#availability" value="{{ $expert->availability }}">
         </div>
     </div>
     @auth
