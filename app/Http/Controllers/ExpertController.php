@@ -170,7 +170,15 @@ class ExpertController extends Controller
             $positionId = $request->input('position','');
             if(!empty($positionId) && $isCreated){
                 $position = Position::find($positionId);
-                $expert->positions()->attach($position);
+                // $expert->positions()->attach($position);
+
+                Log::create(
+                    array(
+                        "expert_id"     =>  $input["id"],
+                        "position_id"   =>  $positionId,
+                        "form"          =>  1
+                    )
+                );
             }
     
             if(Auth::check()){
@@ -267,7 +275,7 @@ class ExpertController extends Controller
                 $file->move( $destinationPath, $newNameFile );
             }
 
-            if( $input['position'] ){
+            if( isset($input['position']) ){
                 Log::where('expert_id' , $expert->id)->update(
                     array(
                         'form' => 1

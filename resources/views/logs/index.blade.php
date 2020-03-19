@@ -124,9 +124,13 @@
                         <td class="text-center">
                             <i class="fas {{ $log->form == 1 ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i>
                         </td>
-                        <td>{{ $log->filter }}</td>
-                        <td>{{ $log->called }}</td>
-                        <td>{{ $log->scheduled }}</td>
+                        <td>
+                            <i class="fas {{ $log->filter == 'yes' ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i>
+                        </td>
+                        <td>
+                            <i class="fas {{ $log->called == 'yes' ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i></td>
+                        <td>
+                            <i class="fas {{ $log->scheduled == 'yes' ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }} fa-2x"></i></td>
                         <td>{{ $log->attended }}</td>
                         <td>{{ $log->approve }}</td>
                         <td>{{ $log->created_at }}</td>

@@ -306,11 +306,16 @@ class LogController extends Controller
             foreach ($req_logs as $key => $req_log) {
                 $a_req_logs[] = $req_log;
             }
-
+            $a_isCalled = array();
             foreach ($a_req_applict as $key => $_r) {
                 $a_result = array_filter($a_req_logs , function($v) use($_r){
                     if( $v->log_id == $_r["log_id"] && $v->requirement_id == $_r["requirement_id"] ) return true;
                 });
+                if( $_r["requirement_id"] != 6 ){
+                    $a_isCalled["log-".$_r["log_id"]] = isset( $a_isCalled["log-".$_r["log_id"]]  )? $a_isCalled["log-".$_r["log_id"]] : '';
+                    $a_isCalled["log-".$_r["log_id"]] = $_r["description"] . $a_isCalled["log-".$_r["log_id"]] ;
+                }
+                
                 $a_result = array_values($a_result);
                 if( count($a_result) > 0){
                     unset($_r['created_at']);
@@ -319,18 +324,32 @@ class LogController extends Controller
                             ->where('log_id', $_r["log_id"])
                             ->where('requirement_id' , $_r["requirement_id"]);
                     } )->update( $_r );
+
+                    $update_log = array(
+                        // "called"    => "yes",
+                        "scheduled" => "yes" 
+                    );
                     if( $_r["requirement_id"] == 6 && $_r["description"] != '' ){
                         
-                        Log::where('id' , $_r["log_id"])->update( array("called" => "yes") );
+                        Log::where('id' , $_r["log_id"])->update( $update_log );
                     }else if( $_r["requirement_id"] == 6 && $_r["description"] == '' ){
-                        
-                        Log::where('id' , $_r["log_id"])->update( array("called" => "no") );
+                        // $update_log["called"] = "no";
+                        $update_log["scheduled"] = "no";
+
+                        Log::where('id' , $_r["log_id"])->update( $update_log );
                     }
                 }else{
                     DB::table('requirement_applicants')->insert( $_r );
                 }
             }
-            return 'true';
+            foreach ($a_isCalled as $key => $value) {
+                if( empty( $value ) ){
+                    Log::where('id' , intval( substr($key , 4) ) )->update( array("called" => "no") );
+                }else{
+                    Log::where('id' , intval( substr($key , 4) ) )->update( array("called" => "yes") );
+                }
+            }
+            return $a_isCalled;
         } catch ( Exception $e) {
             return $e->getMessage();
         }

@@ -86,6 +86,12 @@ input:checked + .slider:before {
 .dataTables_scrollHeadInner, .dataTables_scrollHeadInner table {
     width: 100% !important;
 }
+#callFilter.modal.show .modal-dialog{
+    max-width: 98%;
+}
+.bootstrap-datetimepicker-widget.dropdown-menu{
+    min-width: 292px;
+}
 </style>
 
 @endsection
@@ -421,9 +427,13 @@ input:checked + .slider:before {
                     $("#callFilter").modal();
 
                     $('.time-picker-input').datetimepicker({
-                        format: "{{ config('app.date_format_javascript') }}",
+                        format: "{{ config('app.date_format_js_datetime') }}",
                         locale: "en",
-                        showClose : true
+                        showClose : true,
+                        toolbarplacement: 'top',
+                        icons:{
+                            time: "far fa-clock",
+                        }
                     });
                 }
             })
@@ -449,7 +459,8 @@ input:checked + .slider:before {
             })
         });
         
-        $('table').on( 'keyup , dp.change', '.input-req-log' , function (ev) {
+        $('table').on( 'keyup , change.datetimepicker', '.input-req-log' , function (ev) {
+            console.log("dddddd");
             var req = $(this).data("req");
             var log = $(this).data("log");
             var value = $(this).val();
@@ -494,7 +505,14 @@ input:checked + .slider:before {
                 html += '<td></td>';
                 for (let j = 0; j < requirements[i].logs.length; j++) {
                     var _class = (requirements[i].id === 6)? 'time-picker-input' : '';
-                    html += '<td><div class="form-group" style="position: relative;"><input type="text" class="form-control input-req-log '+_class+'" data-req="'+requirements[i].id+'" data-log="'+requirements[i].logs[j].applicant_id+'" value="'+requirements[i].logs[j].description+'" /></div></td>';
+                    html += '<td><div class="form-group" style="position: relative;">';
+                    if( _class != ''){
+                        html += '<input type="text" class="form-control input-req-log '+_class+'" data-toggle="datetimepicker" id="time-'+requirements[i].id+'-'+j+'" data-target="#time-'+requirements[i].id+'-'+j+'" data-req="'+requirements[i].id+'" data-log="'+requirements[i].logs[j].applicant_id+'" value="'+requirements[i].logs[j].description+'" />';
+                    }else{
+                        html += '<textarea class="form-control input-req-log " data-req="'+requirements[i].id+'" data-log="'+requirements[i].logs[j].applicant_id+'" >'+requirements[i].logs[j].description+'</textarea>';
+                    }
+                    
+                    html += '</div></td>';
                 }
                 html += '</tr>';
             }
