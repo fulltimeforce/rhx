@@ -305,7 +305,6 @@ a.btn-delete-interview{
 @endsection
 
 @section('javascript')
-<script type="text/javascript" src="{{ asset('/tokenize2/tokenize2.min.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
@@ -589,8 +588,6 @@ a.btn-delete-interview{
             info += '<td>'+((data.github==null)?"": "<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.github+"'>Link</a>" )+'</td>';
             info += '<td class="text-capitalize">'+((data.focus==null)?"":data.focus)+'</td>';
 
-            
-            
             html += rows + info + temp;
             html += '</tr>';
             return html;

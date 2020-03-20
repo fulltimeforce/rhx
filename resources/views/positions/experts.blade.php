@@ -267,13 +267,18 @@ a.btn-delete-interview{
                 <tr>
                     <th>Action</th>
                     <th style="width: 200px;">Name</th>
+                    @foreach($current_tech as $categoryid => $category)
+                        @foreach($category as $techid => $techlabel)
+                            <th>{{$techlabel}}</th>
+                        @endforeach
+                    @endforeach
                     <th>Email</th>
                     <th>Age</th>
                     <th>Phone</th>
                     <th>Availability</th>
                     <th>Salary</th>
-                    @foreach($technologies as $categoryid => $category)
-                        @foreach($category[1] as $techid => $techlabel)
+                    @foreach($after_tech as $categoryid => $category)
+                        @foreach($category as $techid => $techlabel)
                             <th>{{$techlabel}}</th>
                         @endforeach
                     @endforeach
@@ -296,14 +301,19 @@ a.btn-delete-interview{
                         </form>
                     </td>
                     <td>{{ $expert->fullname }}</td>
+                    @foreach($current_tech as $categoryid => $category)
+                        @foreach($category as $techid => $techlabel)
+                        <td style="background-color: yellow;">{{ $expert->$techid }}</td>
+                        @endforeach
+                    @endforeach
                     <td>{{ $expert->email_address }}</td>
                     <td>{{ $expert->birthday }}</td>
                     <td>{{ $expert->phone }}</td>
                     <td>{{ $expert->availability }}</td>
                     <td>{{ $expert->salary }}</td>
-                    @foreach($technologies as $categoryid => $category)
-                        @foreach($category[1] as $techid => $techlabel)
-                        <td>{{ $expert->$techid }}</td>
+                    @foreach($after_tech as $categoryid => $category)
+                        @foreach($category as $techid => $techlabel)
+                        <td >{{ $expert->$techid }}</td>
                         @endforeach
                     @endforeach
                 </tr>

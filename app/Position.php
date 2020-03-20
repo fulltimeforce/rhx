@@ -15,6 +15,9 @@ class Position extends Model
         'description',
         'slug',
         'status',
+        'technology_basic',
+        'technology_inter',
+        'technology_advan'
     ];  
 
     protected $hidden = [
