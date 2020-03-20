@@ -194,7 +194,7 @@ class PositionController extends Controller
         $positions = Position::where('status' , 'enabled')->get();
         $a_positions = array();
         foreach ($positions as $key => $position) {
-            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id])->count();
+            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id ])->count();
             $a_positions[] = (object) array(
                 "id" => $position->id,
                 "name" => $position->name,
@@ -221,7 +221,7 @@ class PositionController extends Controller
                     "expert_id" => $expertId,
                     "position_id" => $position,
                     "user_id"   => Auth::id(),
-                    
+                    "form" => 1
                 )
             );
         }

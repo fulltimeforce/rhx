@@ -294,4 +294,8 @@ class Expert extends Model
         $diff = date_diff(date_create($dateOfBirth), date_create($today));
         return $diff->format('%y');
     }
+
+    public function log(){
+        return $this->belongsTo('App\Log' , 'id','expert_id');
+    }
 }
