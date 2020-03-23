@@ -234,6 +234,8 @@ return [
 
     'date_format_js_datetime' => 'MM/DD/YYYY hh:mm a',
 
+    'date_format_php' => 'm/d/Y',
+
     'date_format_mysql' => "Y-m-d H:i:s"
     
 ];

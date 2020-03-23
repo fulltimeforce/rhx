@@ -467,6 +467,28 @@ class LogController extends Controller
         );
     }
 
+    public function schedules(){
+        if(!Auth::check()) return redirect('login');
+
+        $logs = Log::with(['user' , 'expert' , 'position'])
+            ->where( 'scheduled' , 'yes')
+            ->addSelect(['datetime' => DB::table('requirement_applicants')
+                ->select('description')
+                ->whereColumn('log_id' , 'expert_position.id')
+                ->where('requirement_id' , '=' , 6)
+                ->limit(1)
+            ])->get();
+
+        return view('schedule.index' , compact('logs'));
+    }
+
+    public function scheduleSave( Request $request ){
+        if(!Auth::check()) return redirect('login');
+        $input = $request->all();
+
+        Log::where('id' , $input['id'])->update( array('notes' => $input['note']) );
+    }
+
     private function getModelFormat(){
         $expert = new Expert();
         $a = [];
@@ -475,4 +497,6 @@ class LogController extends Controller
         }
         return (object) $a;
     }
+
+
 }

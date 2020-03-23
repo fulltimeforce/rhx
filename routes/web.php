@@ -68,7 +68,8 @@ Route::post('interviews/experts', 'InterviewController@expert')->name('interview
 Route::post('interviews/save', 'InterviewController@save')->name('interviews.save');
 Route::post('interviews/delete', 'InterviewController@delete')->name('interviews.delete');
 
-
+Route::get('/schedules','LogController@schedules')->name('log.schedules');
+Route::post('/schedules/save','LogController@scheduleSave')->name('log.schedule.save');
 /*
 ============================== ROUTE SIGNED ===========================================
 */

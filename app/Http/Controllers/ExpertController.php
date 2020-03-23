@@ -98,8 +98,11 @@ class ExpertController extends Controller
             //code...
 
             $request->validate( [
-                'file_cv' => 'mimes:pdf,doc,docx|max:2048',
-                'phone' => 'required|numeric'
+                'file_cv'           => 'mimes:pdf,doc,docx|max:2048',
+                'phone'             => 'required|numeric',
+                'birthday'          => 'date_format:'.config('app.date_format_php'),
+                'last_info_update'  => 'date_format:'.config('app.date_format_php'),
+                'availability'      => 'date_format:'.config('app.date_format_php'),
                 // 'email_address' => 'required|email:rfc,dns'
             ]);
 
@@ -236,7 +239,10 @@ class ExpertController extends Controller
         try {
             $request->validate([
                 'file_cv' => 'mimes:pdf,doc,docx|max:2048',
-                'phone' => 'required|numeric'
+                'phone' => 'required|numeric',
+                'birthday'          => 'date_format:'.config('app.date_format_php'),
+                'last_info_update'  => 'date_format:'.config('app.date_format_php'),
+                'availability'      => 'date_format:'.config('app.date_format_php'),
                 // 'email_address' => 'required|email:rfc,dns'
             ]);
 

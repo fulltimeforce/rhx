@@ -61,6 +61,9 @@
                     <ul class="navbar-nav ml-auto">
                         @auth
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('log.schedules') }}">{{ __('Schedule') }}</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs') }}</a>
                             </li>
                             <li class="nav-item">
