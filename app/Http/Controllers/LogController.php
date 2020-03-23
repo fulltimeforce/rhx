@@ -25,20 +25,26 @@ class LogController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
-        $positions = Position::latest()->get();
+        $positions = Position::where('status' , 'enabled')->latest()->get();
         $logs = null;
         $user = User::find(Auth::id());
         if( $user->role_id == 2 ){
-            $logs = Log::with(['expert' , 'position' ])->where( function($query){
+            $logs = Log::with(['expert' , 'position' => function($q){
+                $q->where('positions.status' , 'enabled');
+            }])->where( function($query){
                 $query
+                    // 
+                    
                     ->whereIn('user_id' , [ Auth::id() , 0 ]);
             } )->get();
         }else{
             $logs = Log::all();
         }
         $platforms = $this->platforms();
+        
+
         // return $logs;
-        return view('logs.index' , compact('logs'))->with(['positions' => $positions, 'platforms' => $platforms]);
+        return view('logs.index' , compact('logs') )->with(['positions' => $positions, 'platforms' => $platforms]);
     }
 
     /**

@@ -193,6 +193,7 @@ input:checked + .slider:before {
     <div class="row row-cols-1 ">
     
     @foreach($positions as $pid => $position)
+    
     <div class="col mb-4">
         <div class="card">
             <div class="card-header" data-toggle="collapse" href="#position-{{$position->id}}" role="button" aria-expanded="true" aria-controls="position-{{$position->id}}">
@@ -223,6 +224,7 @@ input:checked + .slider:before {
             </div>
         </div>
     </div>
+    
     @endforeach
     
     </div>

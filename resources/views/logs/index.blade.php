@@ -106,6 +106,7 @@
                 </thead>
                 <tbody>
                 @foreach($logs as $pid => $log)
+                    @if( !is_null($log->position) )
                     <tr id="{{ $log->id }}" >
                         <td>
                             <a href="#" data-id="{{ $log->id }}" class="badge badge-success btn-edit">Edit</a>
@@ -135,6 +136,7 @@
                         <td>{{ $log->approve }}</td>
                         <td>{{ $log->created_at }}</td>
                     </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

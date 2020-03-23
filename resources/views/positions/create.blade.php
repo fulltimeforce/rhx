@@ -48,6 +48,12 @@
             <label for="status" class="form-check-label">Enabled</label>
         </div>
     </div>
+    <div class="form-row">
+        <div class="form-check form-group">
+            <input type="checkbox" name="private" id="private" class="form-check-input" value="1" checked>
+            <label for="private" class="form-check-label">Private</label>
+        </div>
+    </div>
 
     <div class="row mb-3">
         <div class="col-12">

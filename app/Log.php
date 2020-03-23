@@ -8,6 +8,8 @@ class Log extends Model
 {
     public $incrementing = true;
 
+    public $primaryKey = 'id';
+
     protected $table = 'expert_position';
     //
     protected $fillable = [
@@ -29,7 +31,7 @@ class Log extends Model
     ];
 
     public function position(){
-        return $this->hasOne('App\Position', 'id', 'position_id');
+        return $this->hasOne('App\Position', 'id', 'position_id')->where('status', '=', 'enabled');
     }
 
     public function expert(){

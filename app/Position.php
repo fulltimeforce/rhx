@@ -17,7 +17,8 @@ class Position extends Model
         'status',
         'technology_basic',
         'technology_inter',
-        'technology_advan'
+        'technology_advan',
+        'private'
     ];  
 
     protected $hidden = [

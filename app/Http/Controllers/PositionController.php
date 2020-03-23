@@ -22,7 +22,15 @@ class PositionController extends Controller
     public function index()
     {
         //
-        $positions = Position::latest()->get();
+        $positions = Position::where( function($q){
+            if( !Auth::check() ){
+                $q->where('status' , 'enabled');
+            }
+        } );
+
+        if(!Auth::check()) $positions = $positions->where('private' , 1);
+
+        $positions = $positions->latest()->get();
         return view('positions.index',compact('positions'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
@@ -71,7 +79,7 @@ class PositionController extends Controller
         
         $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
 
-        
+        $input['private'] = isset($input['private'])? 1 : 0;
 
         $position = Position::create($input);
    
@@ -222,7 +230,9 @@ class PositionController extends Controller
         unset($input['req']);
 
         $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
-        
+
+        $input['private'] = isset($input['private'])? 1 : 0;
+
         $position->update($input);
   
         return redirect()->route('positions.index')
