@@ -385,7 +385,7 @@ input:checked + .slider:before {
             info : false,
             scrollX: true,
             scrollCollapse: true,
-            // ordering: false,
+            ordering: false,
             fixedColumns: {
                 leftColumns: 2
             },
@@ -479,7 +479,6 @@ input:checked + .slider:before {
             var html = '';
             html += '<tr>';
             html += '<th class="align-middle">REQUIREMENTS</th>';
-            html += '<th class="align-middle">POSITION</th>';
             for (let index = 0; index < logs.length; index++) {
                 html += '<th><p>'+logs[index].expert.fullname+'</p><p>'+logs[index].expert.phone+'</p></th>';
             }
@@ -501,7 +500,6 @@ input:checked + .slider:before {
             for (let i = 0; i < requirements.length; i++) {
                 html += '<tr>';
                 html += '<td style="background-color: #fafafa;">'+requirements[i].name+'</td>';
-                html += '<td>'+count+'</td>';
                 for (let j = 0; j < requirements[i].logs.length; j++) {
                     var _class = (requirements[i].id === 6)? 'time-picker-input' : '';
                     html += '<td><div class="form-group" style="position: relative;">';

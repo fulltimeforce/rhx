@@ -1,5 +1,10 @@
 @extends('layouts.app' , ['controller' => 'positions-edit'])
-   
+
+@section('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col-lg-12 margin-tb">
@@ -68,7 +73,37 @@
                 </ul>
             </div>
         </div>
-
+        <div class="row mb-3">
+            <div class="col-12">
+                <h4>Technologies</h4>
+            </div>
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="technology_basic">Basic</label>
+                    <select multiple id="technology_basic" name="technology_basic[]" class="form-control search-level basic" size="1">
+                        @foreach( $a_tech_basic as $tid => $tlabel)
+                            <option value="{{ $tid }}" selected > {{ $tlabel }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="technology_inter">Intermediate</label>
+                    <select multiple id="technology_inter" name="technology_inter[]" class="form-control search-level intermediate" size="1">
+                        @foreach( $a_tech_inter as $tid => $tlabel)
+                            <option value="{{ $tid }}" selected > {{ $tlabel }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="technology_advan">Advanced</label>
+                    <select multiple id="technology_advan" name="technology_advan[]" class="form-control search-level advanced" size="1">
+                        @foreach( $a_tech_advan as $tid => $tlabel)
+                            <option value="{{ $tid }}" selected > {{ $tlabel }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
         
     </div>
@@ -77,9 +112,37 @@
 @endsection
 
 @section('javascript')
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
+
+        $(".search-level").select2({
+            tags: true,
+            tokenSeparators: [','],
+            ajax: {
+                url: "{{ route('expert.technologies') }}",
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                    }
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                },
+                processResults: function (data) {
+
+                    
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    return {
+                        results: data
+                    };
+                }
+
+            }
+        });
+
+        // $('#technology_basic').select2('val', ['english_reading','mariadb']);
+
         $("#add-requirement").on('click' , function(ev){
             ev.preventDefault();
             $("#list-requirements").append( " <li class='list-group-item d-flex justify-content-between align-items-center'>"+ $("#requirement").val() +"<input type='hidden' name='req[]' value='"+$("#requirement").val()+"' /> <span class='badge badge-primary badge-pill'>R</span></li>" )

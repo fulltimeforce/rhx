@@ -6,6 +6,7 @@ use App\Log;
 use App\Position;
 use App\Requirement;
 use App\Expert;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -25,7 +26,16 @@ class LogController extends Controller
         //
         if(!Auth::check()) return redirect('login');
         $positions = Position::latest()->get();
-        $logs = Log::all();
+        $logs = null;
+        $user = User::find(Auth::id());
+        if( $user->role_id == 2 ){
+            $logs = Log::with(['expert' , 'position' ])->where( function($query){
+                $query
+                    ->whereIn('user_id' , [ Auth::id() , 0 ]);
+            } )->get();
+        }else{
+            $logs = Log::all();
+        }
         $platforms = $this->platforms();
         // return $logs;
         return view('logs.index' , compact('logs'))->with(['positions' => $positions, 'platforms' => $platforms]);
@@ -123,8 +133,19 @@ class LogController extends Controller
 
         $requirements = Requirement::where('position_id' , $positionId)->get();
 
-        $logs = Log::with(['expert' , 'position' ])->where('position_id' , $positionId)->get();
+        $user = User::find(Auth::id());
 
+        $logs = null;
+        if( $user->role_id == 2 ){
+            $logs = Log::with(['expert' , 'position' ])->where( function($query) use ($positionId){
+                $query
+                    ->where('position_id' , $positionId)
+                    ->whereIn('user_id' , [ Auth::id() , 0 ]);
+            } )->get();
+        }else{
+            $logs = Log::with(['expert' , 'position' ])->where('position_id' , $positionId)->get();
+        }
+        
         return response()->json( (object) array(
             "requirements" => $requirements,
             "logs" => $logs ,

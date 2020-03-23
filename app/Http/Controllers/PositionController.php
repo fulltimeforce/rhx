@@ -53,18 +53,25 @@ class PositionController extends Controller
         
         $input['id'] = Hashids::encode( time() );
 
+        $input['technology_basic'] = isset( $input['technology_basic'] )? implode("," , $input['technology_basic'] ) : '' ;
+        $input['technology_inter'] = isset( $input['technology_inter'] )? implode("," , $input['technology_inter'] ) : '' ;
+        $input['technology_advan'] = isset( $input['technology_advan'] )? implode("," , $input['technology_advan'] ) : '' ;
+
         if(isset( $input['req'] )){
             foreach ($input['req'] as $key => $req) {
                 Requirement::create(
                     array(
                         'name' => $req,
                         'position_id' => $input['id']
+
                     )
                 );
             }
         }
         
         $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
+
+        
 
         $position = Position::create($input);
    
@@ -95,7 +102,30 @@ class PositionController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
-        return view('positions.edit')->with('position',$position);
+        
+        $a_basic = !is_null($position->technology_basic)? explode("," , $position->technology_basic) : array();
+        $a_inter = !is_null($position->technology_inter)? explode("," , $position->technology_inter) : array();
+        $a_advan = !is_null($position->technology_advan)? explode("," , $position->technology_advan) : array();
+        
+        $a_tech_basic = array();
+        $a_tech_inter = array();
+        $a_tech_advan = array();
+
+        foreach(Expert::getTechnologies() as $catid => $cat){
+            foreach($cat[1] as $techid => $techlabel){
+                if( in_array( $techid , $a_basic ) ) $a_tech_basic = array_merge( $a_tech_basic, array( $techid => $techlabel ));
+                if( in_array( $techid , $a_inter ) ) $a_tech_inter = array_merge( $a_tech_inter, array( $techid => $techlabel ));
+                if( in_array( $techid , $a_advan ) ) $a_tech_advan = array_merge( $a_tech_advan ,array( $techid => $techlabel ));
+            }
+        }
+
+        // return $a_tech_advan;
+
+        return view('positions.edit')
+            ->with('a_tech_basic', $a_tech_basic)
+            ->with('a_tech_inter', $a_tech_inter)
+            ->with('a_tech_advan', $a_tech_advan)
+            ->with('position',$position);
     }
     
 
@@ -115,7 +145,11 @@ class PositionController extends Controller
             ->from('expert_position')
             ->where('position_id' , $positionId);
         })->get();
-
+        $position = Position::find($positionId);
+        $a_basic = !is_null( $position->technology_basic )? explode(",", $position->technology_basic) : array();
+        $a_inter = !is_null( $position->technology_inter )? explode(",", $position->technology_inter) : array();
+        $a_advan = !is_null( $position->technology_advan )? explode(",", $position->technology_advan) : array();
+        $a_technologies = array_merge($a_basic,$a_inter,$a_advan);
         $n_experts = array();
         foreach ($experts as $k => $expert) {
             
@@ -125,7 +159,23 @@ class PositionController extends Controller
             $expert->birthday = $interval->y;
             $n_experts[] = $expert;
         }
-        return view('positions.experts')->with('experts' , $n_experts)->with('technologies',Expert::getTechnologies());
+
+        $current_tech = array();
+        $after_tech = array();
+        foreach(Expert::getTechnologies() as $catid => $cat){
+            foreach($cat[1] as $techid => $techlabel){
+                if( in_array( $techid , $a_technologies) ){
+                    $current_tech[] = array($techid => $techlabel ); 
+                }else{
+                    $after_tech[] = array($techid => $techlabel ); 
+                }                
+            }
+        }
+        return view('positions.experts')
+            ->with('experts' , $n_experts)
+            ->with('current_tech' , $current_tech)
+            ->with('after_tech' , $after_tech)
+            ->with('technologies',Expert::getTechnologies());
     }
 
 
@@ -149,6 +199,11 @@ class PositionController extends Controller
         foreach ($requirements as $key => $requirement) {
             $a_requirements[] = strtolower($requirement->name);
         }
+
+        $input['technology_basic'] = isset( $input['technology_basic'] )? implode("," , $input['technology_basic'] ) : '' ;
+        $input['technology_inter'] = isset( $input['technology_inter'] )? implode("," , $input['technology_inter'] ) : '' ;
+        $input['technology_advan'] = isset( $input['technology_advan'] )? implode("," , $input['technology_advan'] ) : '' ;
+        
         if(isset( $input['req'] )){
             
             foreach ($input['req'] as $key => $req) {
@@ -165,9 +220,9 @@ class PositionController extends Controller
             }
         }
         unset($input['req']);
-        $position->update( $input );
 
         $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
+        
         $position->update($input);
   
         return redirect()->route('positions.index')
@@ -194,7 +249,7 @@ class PositionController extends Controller
         $positions = Position::where('status' , 'enabled')->get();
         $a_positions = array();
         foreach ($positions as $key => $position) {
-            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id])->count();
+            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id ])->count();
             $a_positions[] = (object) array(
                 "id" => $position->id,
                 "name" => $position->name,
@@ -221,7 +276,7 @@ class PositionController extends Controller
                     "expert_id" => $expertId,
                     "position_id" => $position,
                     "user_id"   => Auth::id(),
-                    
+                    "form" => 1
                 )
             );
         }
