@@ -194,6 +194,7 @@ a.btn-delete-interview{
                             <a href="#" class="btn btn-danger float-right btn-delete-interview" data-id=":id">Delete</a>
                         </div>
                         <div class="card-body">
+                            <b class="mb-2">:about</b>
                             <p class="card-text">:description</p>
                         </div>
                         <div class="card-footer text-muted">
@@ -228,10 +229,14 @@ a.btn-delete-interview{
                     </div>
                     <div class="form-group">
                         <label for="">Date</label>
-                        <input type="text" class="form-control" name="date" id="interview_date">
+                        <input type="text" class="form-control" name="date" id="interview_date" data-toggle="datetimepicker" data-target="#interview_date">
                     </div>
                 </div>
                 <div class="col-7">
+                    <div class="form-group">
+                        <label for="">About</label>
+                        <input type="text" class="form-control" name="about" id="about">
+                    </div>
                     <div class="form-group">
                         <label for="">Description</label>
                         <textarea name="description" id="interview_description" class="form-control" rows="10"></textarea>
@@ -672,6 +677,7 @@ a.btn-delete-interview{
                         var html_card_interview = template_card_interview;
                         html_card_interview = html_card_interview.replace(':id' , interviews[index].id);
                         html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
+                        html_card_interview = html_card_interview.replace(':about' , interviews[index].about);
                         html_card_interview = html_card_interview.replace(':description' , interviews[index].description);
                         var result = interviews[index].result ? 'APPROVE' : 'FAILED';
                         html_card_interview = html_card_interview.replace(':result' , result);
@@ -728,6 +734,7 @@ a.btn-delete-interview{
                     var html_card_interview = template_card_interview;
                     html_card_interview = html_card_interview.replace(':id' , data.id);
                     html_card_interview = html_card_interview.replace(':name-type' , data.type);
+                    html_card_interview = html_card_interview.replace(':about' , data.about);
                     html_card_interview = html_card_interview.replace(':description' , data.description);
                     var result = data.result ? 'APPROVE' : 'FAILED';
                     html_card_interview = html_card_interview.replace(':result' , result);

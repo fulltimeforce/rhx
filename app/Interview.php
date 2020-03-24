@@ -13,7 +13,7 @@ class Interview extends Model
     protected $keyType = 'integer';
 
     protected $fillable = [
-        'type', 'description', 'result', 'date' , 'expert_id' , 'user_id'
+        'type', 'description', 'about', 'result', 'date' , 'expert_id' , 'user_id'
     ];
 
     protected $hidden = [
