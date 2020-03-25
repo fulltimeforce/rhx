@@ -60,12 +60,15 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         @auth
+                        
+                            @if( Auth::user()->role->id == 1 )
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('log.schedules') }}">{{ __('Schedule') }}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs') }}</a>
                             </li>
+                            @endif
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
