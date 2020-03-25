@@ -283,16 +283,17 @@ class Expert extends Model
     public function setBirthdayAttribute($value)
     {
         if(!empty($value))
-        $this->attributes['birthday'] = Carbon::createFromFormat(config('app.date_format'), $value)->format('Y-m-d');
+            $this->attributes['birthday'] = Carbon::createFromFormat(config('app.date_format'), $value)->format('Y-m-d');
     }
 
     public function getBirthdayAttribute($value)
     {
         //$date = Carbon::parse($value)->format(config('app.date_format'));
-        $dateOfBirth = $value;
-        $today = date("Y-m-d");
-        $diff = date_diff(date_create($dateOfBirth), date_create($today));
-        return $diff->format('%y');
+        // $dateOfBirth = $value;
+        // $today = date("Y-m-d");
+        // $diff = date_diff(date_create($dateOfBirth), date_create($today));
+        // return $diff->format('%y');
+        return Carbon::parse($value)->format(config('app.date_format'));
     }
 
     public function log(){

@@ -222,6 +222,7 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
+        // return $expert;
         return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
     }
 
