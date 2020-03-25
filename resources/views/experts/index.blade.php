@@ -585,7 +585,7 @@ a.btn-delete-interview{
             @endforeach
 
             info += '<td>'+((data.email_address==null)? "" : data.email_address)+'</td>';
-            info += '<td>'+((data.birthday==null)? "": data.birthday)+'</td>';
+            info += '<td>'+((data.age==null)? "": data.age)+'</td>';
             info += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
             info += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
             info += '<td>'+((data.salary==null)?"":data.salary)+'</td>';

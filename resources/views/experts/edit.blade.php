@@ -81,6 +81,7 @@
             </div>
             <div class="form-group col-6 col-sm-2">
                 <label for="birthday">Fecha de nacimiento</label>
+                
                 <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{$expert->birthday}}">
             </div>
         </div>
