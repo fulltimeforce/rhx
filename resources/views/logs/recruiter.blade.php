@@ -264,11 +264,11 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                             {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
                             data.data.link,
-                            '-',
-                            '-',
-                            '-',
-                            '-',
-                            '-',
+                            '<div class="SliderSwitch"><label for="filter-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="filter-'+data.data.id+'" name="filter" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
+                            '<div class="SliderSwitch"><label for="called-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="called-'+data.data.id+'" name="called" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
+                            '<div class="SliderSwitch"><label for="scheduled-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="scheduled-'+data.data.id+'" name="scheduled" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
+                            '<div class="SliderSwitch"><label for="attended-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="attended-'+data.data.id+'" name="attended" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
+                            '<div class="SliderSwitch"><label for="approve-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="approve-'+data.data.id+'" name="approve" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
                             data.data.created_at
                         ]).node().id = data.data.id;
                         table.draw(false);  

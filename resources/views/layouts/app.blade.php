@@ -66,11 +66,11 @@
                                 <a class="nav-link" href="{{ route('log.schedules') }}">{{ __('Schedule') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs') }}</a>
+                                <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs2') }}</a>
                             </li>
                             @endif
                             </li><li class="nav-item">
-                                <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('logs') }}</a>
+                                <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
