@@ -855,6 +855,9 @@ td.stickout{
                     $("#interview_result").prop('checked', data.result == 1? true : false);  // Checks the box
                     $("#interview_expert_id").val( data.expert_id );
                     $("#interview_id").val( data.id );
+
+                    $('#form-btn-edit').show();
+                    $('#form-btn-save').hide();
                 }
             });
         });
@@ -872,8 +875,8 @@ td.stickout{
                     
                     console.log(data)
 
-                    $('#form-btn-edit').show();
-                    $('#form-btn-save').hide();
+                    $('#form-btn-edit').hide();
+                    $('#form-btn-save').show();
 
                     $("#interview-"+data.id).find(".txt-type").html(data.type);
                     $("#interview-"+data.id).find(".txt-about").html(data.about);
