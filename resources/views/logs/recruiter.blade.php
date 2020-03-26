@@ -271,7 +271,7 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                         @endif
                         table.row.add([
                             _buttons,
-                            data.data.name,
+                            data.data.expert,
                             data.data.date,
                             {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
@@ -342,7 +342,7 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
             ev.preventDefault();
             var id = $(this).data("id");
             var log = $_logs.filter( f => f.id == id);
-
+            console.log( log );
             if(log.length > 0){
                 $("#log-id").val(log[0].id);
                 $("#name").val(log[0].expert);

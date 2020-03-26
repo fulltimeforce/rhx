@@ -39,7 +39,7 @@ class RecruiterlogController extends Controller
             'type' => 'create',
             'data' => array(
                 "id"            => $log->id,
-                "name"          => $input['expert'],
+                "expert"          => $input['expert'],
                 "date"         => $input['date'],
                 "platform"      => $input['platform'],
                 "position_id"   => $input['position_id'],
