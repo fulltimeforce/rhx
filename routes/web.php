@@ -67,6 +67,8 @@ Route::post('/requirement/position', 'RequirementController@positionById')->name
 Route::post('interviews/experts', 'InterviewController@expert')->name('interviews.expert');
 Route::post('interviews/save', 'InterviewController@save')->name('interviews.save');
 Route::post('interviews/delete', 'InterviewController@delete')->name('interviews.delete');
+Route::post('interviews/edit', 'InterviewController@edit')->name('interviews.edit');
+Route::post('interviews/update', 'InterviewController@update')->name('interviews.update');
 
 Route::get('/schedules','LogController@schedules')->name('log.schedules');
 Route::post('/schedules/save','LogController@scheduleSave')->name('log.schedule.save');
