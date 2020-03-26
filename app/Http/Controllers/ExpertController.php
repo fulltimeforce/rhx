@@ -28,6 +28,24 @@ class ExpertController extends Controller
             ->with('technologies',Expert::getTechnologies());
     }
 
+    public function listjqgrid(Request $request){
+
+        $query = $request->query();
+
+        $expert = Expert::offset( $query['page'] )
+        ->limit( $query['rows'] )
+        ->get();
+
+        $records = Expert::count();
+
+        return json_encode(array(
+            "page"      => $query['page'],
+            "total"     => intval($records/$query['rows']),
+            "records"   => $records,
+            "rows"      => $expert
+        ));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

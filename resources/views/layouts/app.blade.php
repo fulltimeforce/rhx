@@ -69,6 +69,9 @@
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs') }}</a>
                             </li>
                             @endif
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('logs') }}</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
@@ -77,6 +80,8 @@
                             </li>
                         @endauth
                         <!-- Authentication Links -->
+                            
+
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>

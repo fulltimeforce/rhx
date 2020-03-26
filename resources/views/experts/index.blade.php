@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
 
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/> -->
  
 <style>
 caption{
@@ -307,6 +309,13 @@ a.btn-delete-interview{
             </section>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+            <table id="list2"></table>
+            <div id="pager2"></div>
+        </div>
+    </div>
 @endsection
 
 @section('javascript')
@@ -315,11 +324,44 @@ a.btn-delete-interview{
 
 <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/jqGrid/js/jquery.jqGrid.min.js') }}"></script> -->
 
 
 <script type="text/javascript">
-        
+    // $.jgrid.defaults.styleUI = 'Bootstrap';
     $(document).ready(function () {
+
+        // var url = "{{ route('expert.list') }}";
+
+        // var a_colNames = [];
+        // var a_colModels = [];
+        // @foreach($technologies as $categoryid => $category)
+        //     @foreach($category[1] as $techid => $techlabel)
+                
+        //     @endforeach
+        // @endforeach
+        // console.log(url);
+        // jQuery("#list2").jqGrid({
+        //     url: url,
+        //     datatype: "json",
+        //     colNames:['Id','Name'],
+        //     colModel:[
+        //         {name:'id', index:'id'},
+        //         {name:'fullname', index:'fullname'},	
+        //     ],
+        //     rowNum:20,
+        //     rowList:[20,25,30],
+        //     pager: '#pager2',
+        //     sortname: 'id',
+        //     regional: 'es',
+        //     viewrecords: true,
+        //     sortorder: "desc",
+
+        // });
+        // jQuery("#list2").jqGrid('navGrid','#pager2',{edit:false,add:false,del:false});
+
+        // return;
 
         var options = {
             lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],

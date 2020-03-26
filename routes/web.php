@@ -70,6 +70,16 @@ Route::post('interviews/delete', 'InterviewController@delete')->name('interviews
 
 Route::get('/schedules','LogController@schedules')->name('log.schedules');
 Route::post('/schedules/save','LogController@scheduleSave')->name('log.schedule.save');
+
+//jqgrid
+Route::get('/expert/list','ExpertController@listjqgrid')->name('expert.list');
+
+//recruiter log
+
+Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
+Route::post('/recruiter/save','RecruiterlogController@saveForm')->name('recruiter.save');
+Route::post('/recruiter/update','RecruiterlogController@updateForm')->name('recruiter.update');
+
 /*
 ============================== ROUTE SIGNED ===========================================
 */
