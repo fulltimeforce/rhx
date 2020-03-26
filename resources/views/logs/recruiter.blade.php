@@ -325,7 +325,7 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
         $('table').on('change' , '.ck-form' , function(ev){
             var id = $(this).data("id");
             var attr = $(this).attr("name");
-            var val = $(this).is(':checkbox') ? 1 : 0;
+            var val = $(this).is(':checked') ? 1 : 0;
             var data_post = {};
             data_post["id"] = id;
             data_post[attr] = val;
