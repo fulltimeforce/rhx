@@ -79,6 +79,7 @@ Route::get('/expert/list','ExpertController@listjqgrid')->name('expert.list');
 Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
 Route::post('/recruiter/save','RecruiterlogController@saveForm')->name('recruiter.save');
 Route::post('/recruiter/update','RecruiterlogController@updateForm')->name('recruiter.update');
+Route::post('/recruiter/delete','RecruiterlogController@deleteForm')->name('recruiter.delete');
 
 /*
 ============================== ROUTE SIGNED ===========================================

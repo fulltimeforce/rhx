@@ -153,8 +153,12 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                         </div>
                     </td>
                     <td>
-                        <div class="form-group">
+                        <div class="form-group" id="btn-form-save">
                             <button type="button" id="save" class="btn btn-success">SAVE</button>
+                        </div>
+                        <div class="form-group" id="btn-form-edit" style="display:none;">
+                            <button type="button" id="edit" class="btn btn-success">Edit</button>
+                            <button type="button" id="clear" class="btn btn-info">Clear</button>
                         </div>
                     </td>
                 </tr>
@@ -182,9 +186,12 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                 <tbody>
                 @foreach($logs as $pid => $log)
                     
-                    <tr id="{{ $log->id }}" >
+                    <tr id="row-{{ $log->id }}" >
                         <td>
-                            
+                            <a class="badge badge-primary log-edit" data-id="{{ $log->id }}" href="#">Edit</a>
+                            @if( Auth::user()->role->id == 1 )
+                            <a class="badge badge-danger log-delete" data-id="{{ $log->id }}" href="#">Delete</a>
+                            @endif
                         </td>
                         <td>{{ $log->expert }}</td>
                         <td>{{ $log->date }}</td>
@@ -227,6 +234,8 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
             format: "{{ config('app.date_format_javascript') }}",
             locale: "en"
         });
+        $('#date').val( moment().format("{{ config('app.date_format_javascript') }}") )
+
 
         var $_logs = {!! $logs !!};
 
@@ -256,9 +265,12 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                     console.log(data);
                     // return;
                     if(data.type == 'create'){
-                        
+                        var _buttons = '<a class="badge badge-primary log-edit" data-id="'+data.data.id+'" href="#">Edit</a>';
+                        @if( Auth::user()->role->id == 1 )
+                        _buttons += '  <a class="badge badge-danger log-delete" data-id="'+data.data.id+'" href="#">Delete</a>';
+                        @endif
                         table.row.add([
-                            '',
+                            _buttons,
                             data.data.name,
                             data.data.date,
                             {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
@@ -270,7 +282,7 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                             '<div class="SliderSwitch"><label for="attended-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="attended-'+data.data.id+'" name="attended" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
                             '<div class="SliderSwitch"><label for="approve-'+data.data.id+'"><input class="ck-form" value="1" data-id="'+data.data.id+'" id="approve-'+data.data.id+'" name="approve" type="checkbox" /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div>',
                             data.data.created_at
-                        ]).node().id = data.data.id;
+                        ]).node().id = "row-"+data.data.id;
                         table.draw(false);  
                         $_logs.push({
                             id      : data.data.id,
@@ -290,29 +302,11 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                             approve: "-",
                             created_at : data.data.created_at
                         });
-                    }else{
-                        var index = $_logs.findIndex( f => f.id == data.data.id);
-                        console.log(index, "dddddd");
-                        $_logs[index].expert = data.data.expert;
-                        $_logs[index].date = data.data.date;
-                        $_logs[index].position_id = data.data.position_id;
-                        $_logs[index].position = {
-                            name : {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
-                            id: data.data.position_id
-                        };
-                        $_logs[index].platform = data.data.platform;
-                        $_logs[index].link = data.data.link;
-
-                        $('#'+ data.data.id + ' td:nth-child(2)').html( data.data.name );
-                        $('#'+ data.data.id + ' td:nth-child(3)').html( data.data.date ? data.data.date : '' );
-                        $('#'+ data.data.id + ' td:nth-child(4)').html( data.data.position_id ? {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name : '' );
-                        $('#'+ data.data.id + ' td:nth-child(5)').html( data.data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label : '' );
-                        $('#'+ data.data.id + ' td:nth-child(6)').html( data.data.link? data.data.link : '' );
-                        
                     }
+
                     // clean
                     $("#name").val('').focus();
-                    $("#date").val('');
+                    $("#date").val( moment().format("{{ config('app.date_format_javascript') }}") );
                     $("#link").val('');
                     $("#log-id").val('');
                     $("#expert_id").val('');
@@ -342,7 +336,101 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
 
                 }
             });
-        })
+        });
+
+        $('table').on('click' , '.log-edit' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var log = $_logs.filter( f => f.id == id);
+
+            if(log.length > 0){
+                $("#log-id").val(log[0].id);
+                $("#name").val(log[0].expert);
+                $("#date").val(log[0].date);
+                $("#position").val(log[0].position_id);
+                $("#platform").val(log[0].platform);
+                $("#link").val(log[0].link);
+
+                $("#btn-form-save").hide();
+                $("#btn-form-edit").show();
+            }
+        });
+
+        $("#clear").on('click' , function(ev){
+            $("#log-id").val('');
+            $("#name").val('');
+            $("#date").val(moment().format("{{ config('app.date_format_javascript') }}"));
+            
+            $("#link").val('');
+
+            $("#btn-form-save").show();
+            $("#btn-form-edit").hide();
+        });
+
+        $("#edit").on('click' , function(ev){
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruiter.update') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:  $("#new-log input , #new-log select").serialize() ,
+                success:function(data){
+                    console.log(data);
+                    // return;
+                    
+                    var index = $_logs.findIndex( f => f.id == data.id);
+                    console.log(index, "dddddd");
+                    $_logs[index].expert = data.expert;
+                    $_logs[index].date = data.date;
+                    $_logs[index].position_id = data.position_id;
+                    $_logs[index].position = {
+                        name : {!! $positions !!}.filter(f => f.id == data.position_id)[0].name,
+                        id: data.position_id
+                    };
+                    $_logs[index].platform = data.platform;
+                    $_logs[index].link = data.link;
+
+                    $('#'+ data.id + ' td:nth-child(2)').html( data.expert );
+                    $('#'+ data.id + ' td:nth-child(3)').html( data.date ? data.date : '' );
+                    $('#'+ data.id + ' td:nth-child(4)').html( data.position_id ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : '' );
+                    $('#'+ data.id + ' td:nth-child(5)').html( data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.platform)[0].label : '' );
+                    $('#'+ data.id + ' td:nth-child(6)').html( data.link? data.link : '' );
+                        
+                    
+                    // clean
+                    $("#name").val('').focus();
+                    $("#date").val(moment().format("{{ config('app.date_format_javascript') }}"));
+                    $("#link").val('');
+                    $("#log-id").val('');
+                    $("#expert_id").val('');
+                    $("#log-id").val('');
+                }
+            });
+        });
+
+
+        $("table").on('click' , '.log-delete' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruiter.delete') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:  { id: id} ,
+                success:function(data){
+                    console.log(data);
+                    // return;
+                    $("#row-"+id).addClass("remove-row");
+                    table.rows( '.remove-row' ).remove().draw();
+                    
+                }
+            });
+        });
 
 
     });

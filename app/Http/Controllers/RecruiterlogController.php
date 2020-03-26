@@ -57,6 +57,21 @@ class RecruiterlogController extends Controller
 
         $log = Recruiterlog::where('id' , $id)->update($input);
 
+        return array(
+            "id" => $id,
+            "expert" => isset( $input['expert'] )? $input['expert'] : '' ,
+            "date" => isset( $input['date'] )? $input['date'] : '',
+            "position_id"   => isset( $input['position_id'] )? $input['position_id'] : '',
+            "platform" => isset( $input['platform'] )? $input['platform'] : '',
+            "link" => isset( $input['link'] )? $input['link'] : '',
+        );
+    }
+
+    public function deleteForm( Request $request ){
+        $input = $request->all();
+        $id = $input["id"];
+
+        Recruiterlog::where('id' , $id)->delete();
     }
 
     private function platforms(){
