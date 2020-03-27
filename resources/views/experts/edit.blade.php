@@ -162,7 +162,7 @@
                     <option value="frontend" {{ ($expert->focus=="frontend")? "selected" : "" }}>Frontend</option>
                     <option value="mobile" {{ ($expert->focus=="mobile")? "selected" : "" }}>Mobile</option>
                     <option value="devops" {{ ($expert->focus=="devops")? "selected" : "" }}>DevOps</option>
-                    <option value="devops" {{ ($expert->focus=="game")? "selected" : "" }}>Games</option>
+                    <option value="game" {{ ($expert->focus=="game")? "selected" : "" }}>Games</option>
                 </select>
             </div>
         </div>
