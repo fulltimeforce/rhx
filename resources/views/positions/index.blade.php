@@ -217,10 +217,10 @@ input:checked + .slider:before {
                 @else
                 <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
                 <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
-                <a href="#" data-position="{{ $position->id }}" class="btn btn-warning card-link btn-position-filter">Filter</a>
-                <a href="#" data-position="{{ $position->id }}" class="btn btn-dark card-link btn-call-filter">Call</a>
+                
                 <a href="#" class="btn btn-primary card-link btn-copy-slug" title="Copied" data-toggle="tooltip" data-placement="top"  data-url="{{ $position->slug }}">Copy URL</a>
                 @endguest
+                <!-- btn-position-filter ,  btn-call-filter -->
             </div>
         </div>
     </div>

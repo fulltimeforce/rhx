@@ -70,8 +70,8 @@ class PositionController extends Controller
                 Requirement::create(
                     array(
                         'name' => $req,
-                        'position_id' => $input['id']
-
+                        'position_id' => $input['id'],
+                        'user_id' => Auth::id()
                     )
                 );
             }

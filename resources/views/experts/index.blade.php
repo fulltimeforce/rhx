@@ -747,6 +747,18 @@ td.stickout{
                     }
 
                     $('#list-interviews').html(html);
+
+                    $("#interview_type").val('');
+                    $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+                    $("#about").val('');
+                    $("#interview_description").val('');
+                    $("#interview_result").prop('checked', false);
+                    
+                    $("#interview_id").val( '' );
+
+                    $('#form-btn-edit').hide();
+                    $('#form-btn-save').show();
+                    
                     $("#interviews-expert").modal();
                 }
             });
