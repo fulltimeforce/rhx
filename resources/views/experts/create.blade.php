@@ -163,6 +163,7 @@
                 <option value="frontend">Frontend</option>
                 <option value="mobile">Mobile</option>
                 <option value="devops">DevOps</option>
+                <option value="game">Games</option>
             </select>
         </div>
     </div>

@@ -23,7 +23,8 @@ class Log extends Model
         'scheduled',
         'attended',
         'approve',
-        'user_id'
+        'user_id',
+        'status'
     ];
 
     protected $hidden = [

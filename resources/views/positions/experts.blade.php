@@ -266,6 +266,7 @@ a.btn-delete-interview{
                 <thead class="thead-dark">
                 <tr>
                     <th>Action</th>
+                    <th style="width: 150px;">Status</th>
                     <th style="width: 200px;">Name</th>
                     @foreach($current_tech as $categoryid => $category)
                         @foreach($category as $techid => $techlabel)
@@ -299,6 +300,19 @@ a.btn-delete-interview{
                             @method('DELETE')
                             <!-- <button type="submit" class="badge badge-danger">Delete</button> -->
                         </form>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <select name="expert_status" class="form-control expert_status" data-expert="{{ $expert->id }}" data-position="{{ $positionId }}">
+                                <option value=""></option>
+                                <option value="filter" {{ $expert->status == 'filter' ? 'selected' : '' }}>Filter</option>
+                                <option value="called" {{ $expert->status == 'called' ? 'selected' : '' }}>Called</option>
+                                <option value="scheduled" {{ $expert->status == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
+                                <option value="attended" {{ $expert->status == 'attended' ? 'selected' : '' }}>Attended</option>
+                                <option value="approved" {{ $expert->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="failed" {{ $expert->status == 'failed' ? 'selected' : '' }}>Failed</option>
+                            </select>
+                        </div>
                     </td>
                     <td>{{ $expert->fullname }}</td>
                     @foreach($current_tech as $categoryid => $category)
@@ -336,7 +350,7 @@ a.btn-delete-interview{
             scrollX: true,
             scrollCollapse: true,
             fixedColumns: {
-                leftColumns: 2
+                leftColumns: 3
             },
             // searching: false
             // dom: "Bfrtip",
@@ -463,6 +477,24 @@ a.btn-delete-interview{
                 }
             }
         } , 500 ));
+
+        $('table').on('change' , '.expert_status' , function(){
+            var expertId = $(this).data('expert');
+            var positionId = $(this).data('position');
+            var status = $(this).val();
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("positions.expert.status") }}',
+                data: {expertId : expertId , positionId : positionId ,status : status},
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(interviews){
+
+                }
+            });
+        })
 
     });
 </script>   

@@ -152,7 +152,14 @@ class PositionController extends Controller
             $query->select('expert_id')
             ->from('expert_position')
             ->where('position_id' , $positionId);
-        })->get();
+        })
+        ->addSelect(['status' => Log::select('status')->where( function($q) use($positionId) {
+            $q
+                ->whereColumn('expert_position.expert_id' , '=', 'experts.id')
+                ->where('expert_position.position_id' , $positionId);
+        })->limit(1) ])
+        
+        ->get();
         $position = Position::find($positionId);
         $a_basic = !is_null( $position->technology_basic )? explode(",", $position->technology_basic) : array();
         $a_inter = !is_null( $position->technology_inter )? explode(",", $position->technology_inter) : array();
@@ -183,6 +190,7 @@ class PositionController extends Controller
             ->with('experts' , $n_experts)
             ->with('current_tech' , $current_tech)
             ->with('after_tech' , $after_tech)
+            ->with('positionId' , $positionId)
             ->with('technologies',Expert::getTechnologies());
     }
 
@@ -293,6 +301,21 @@ class PositionController extends Controller
 
         return 'success';
 
+    }
+
+
+    public function changeStatus(Request $request){
+        $expertId = $request->input('expertId');
+
+        $positionId = $request->input('positionId');
+
+        $status = $request->input('status');
+
+        Log::where(function($q)use($expertId,$positionId){
+            $q
+                ->where('expert_id' , $expertId)
+                ->where('position_id' , $positionId);
+        })->update(array('status' => $status));
     }
 
 }

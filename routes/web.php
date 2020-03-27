@@ -41,6 +41,7 @@ Route::post('expert/search','ExpertController@searchbyname')->name('experts.sear
 Route::post('expert/log','ExpertController@log')->name('experts.log');
 
 Route::post('positions/enabled','PositionController@enabled')->name('positions.enabled');
+Route::post('positions/expert/status','PositionController@changeStatus')->name('positions.expert.status');
 
 Route::get('/get_techs', 'ExpertController@techs');
 

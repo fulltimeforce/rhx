@@ -41,7 +41,7 @@ class CreateExpertsTable extends Migration
             $table->string('result2')->nullable();
             $table->string('assessment3')->nullable();
             $table->string('result3')->nullable();
-            $table->enum('focus',['backend','frontend','mobile','devops','fullstack'])->nullable();
+            $table->enum('focus',['backend','frontend','mobile','devops','fullstack','game'])->nullable();
 
             $techs = array(
                 // english
