@@ -121,7 +121,7 @@ td.stickout{
     display: none;
 }
 .txt-description{
-    white-space: pre;
+    white-space: pre-line;
 }
 </style>
 @endsection
