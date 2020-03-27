@@ -32,17 +32,14 @@ class ExpertController extends Controller
 
         $query = $request->query();
 
-        $expert = Expert::offset( $query['page'] )
-        ->limit( $query['rows'] )
-        ->get();
+        $expert = Expert::paginate($query['rows']);
 
-        $records = Expert::count();
-
+        // return $expert;
         return json_encode(array(
-            "page"      => $query['page'],
-            "total"     => intval($records/$query['rows']),
-            "records"   => $records,
-            "rows"      => $expert
+            "page"      => $expert->currentPage(),
+            "total"     => $expert->lastPage(),
+            "records"   => $expert->total(),
+            "rows"      => $expert->items()
         ));
     }
 

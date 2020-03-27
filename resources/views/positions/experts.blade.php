@@ -291,7 +291,7 @@ a.btn-delete-interview{
                         <form action="{{ route('experts.destroy', $expert->id ) }}" method="POST">
                             <a class="badge badge-primary" href="{{ route( 'experts.edit', $expert->id ) }}">Edit</a>
                             @if($expert->file_path != '' )
-                            <a href="{{ $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
+                            <a href="{{ route('home' ) .'/'. $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
                             @endif
                             <a href="#" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</a>
                             <a class="badge badge-secondary btn-interviews" data-id="{{ $expert->id }}" data-name="{{ $expert->fullname }}" href="#">Interviews</a>

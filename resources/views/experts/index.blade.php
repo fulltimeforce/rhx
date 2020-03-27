@@ -5,8 +5,9 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
 
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/> -->
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid.css') }}"/> -->
+
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/> -->
  
 <style>
 caption{
@@ -339,39 +340,71 @@ td.stickout{
 
 <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
+
 <!-- <script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/jqGrid/js/jquery.jqGrid.min.js') }}"></script> -->
 
 
 <script type="text/javascript">
-    // $.jgrid.defaults.styleUI = 'Bootstrap';
+    // $.jgrid.defaults.styleUI = 'Bootstrap4';
     $(document).ready(function () {
+
+        $("#loader-spinner").hide();
 
         // var url = "{{ route('expert.list') }}";
 
-        // var a_colNames = [];
-        // var a_colModels = [];
+        
+        // var a_colModels = [
+        //     {name:'id', index:'id'},
+        //     {name:'fullname', index:'fullname'}
+        // ];
+        // var a_colModels_temp = [];
+        // var a_colModels_info = [
+        //     {name:'email_address', index:'email_address'},
+        //     {name:'age', index:'age'},
+        //     {name:'phone', index:'phone'},
+        //     {name:'availability', index:'availability'},
+        //     {name:'salary', index:'salary'},
+        //     {name:'linkedin', index:'linkedin'},
+        //     {name:'github', index:'github'},
+        //     {name:'focus', index:'focus'},
+        // ];
+
+        // //titles
+        // var a_colNames = ['Action' , 'Name'];
+        // var a_colNames_temp = [];
+        // var a_colNames_info = ['Email','Age','Phone','Availability','Salary','Linkedin','Github','Experience'];
+
+
         // @foreach($technologies as $categoryid => $category)
         //     @foreach($category[1] as $techid => $techlabel)
-                
+        //         // a_keys.filter(f => f=='{{$techid}}').length > 
+        //         if ( false ){
+        //             a_colNames.push( "{{$techlabel}}");
+        //             a_colModels.push( {name:'{{$techid}}', index:'{{$techid}}'});
+        //         }else{
+        //             a_colNames_temp.push( "{{$techlabel}}");
+        //             a_colModels_temp.push( {name:'{{$techid}}', index:'{{$techid}}'});
+        //         }
         //     @endforeach
         // @endforeach
-        // console.log(url);
+
         // jQuery("#list2").jqGrid({
         //     url: url,
         //     datatype: "json",
-        //     colNames:['Id','Name'],
-        //     colModel:[
-        //         {name:'id', index:'id'},
-        //         {name:'fullname', index:'fullname'},	
-        //     ],
-        //     rowNum:20,
-        //     rowList:[20,25,30],
+        //     colNames: a_colNames.concat(a_colNames_info, a_colNames_temp),
+        //     colModel: a_colModels.concat(a_colModels_info, a_colModels_temp),
+        //     rowNum: 50,
+        //     rowList: [50,100,150],
         //     pager: '#pager2',
         //     sortname: 'id',
         //     regional: 'es',
         //     viewrecords: true,
         //     sortorder: "desc",
+        //     height: '500',
+        //     autowidth:true,
+        //     shrinkToFit:false,
+        //     forceFit:true,
 
         // });
         // jQuery("#list2").jqGrid('navGrid','#pager2',{edit:false,add:false,del:false});
@@ -390,7 +423,7 @@ td.stickout{
             // dom: "Bfrtip",
         }
         
-        $("#loader-spinner").hide();
+        
         // $("#section-allexperts").show();
         // var table = $("#allexperts").DataTable( options );
 
@@ -758,7 +791,7 @@ td.stickout{
 
                     $('#form-btn-edit').hide();
                     $('#form-btn-save').show();
-                    
+
                     $("#interviews-expert").modal();
                 }
             });

@@ -230,7 +230,7 @@ class Expert extends Model
             'Unity',
             array(
                 '3dmodeling' => '3D Modeling',
-                'csharpu' => 'C#',
+                'csharpu' => 'Unity C#',
                 'animation' => 'Animation',
                 'physics' => 'Physics',
                 'networking' => 'Networking',
