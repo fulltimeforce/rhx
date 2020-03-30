@@ -44,6 +44,7 @@ class RecruiterlogController extends Controller
                 "platform"      => $input['platform'],
                 "position_id"   => $input['position_id'],
                 "link"          => $input['link'],
+                "user_name"          => Auth::user()->name,
                 "created_at"    => date("Y-m-d H:i:s")
             )
         );

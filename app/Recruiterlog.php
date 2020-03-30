@@ -45,4 +45,8 @@ class Recruiterlog extends Model
         return $this->hasOne('App\Position', 'id', 'position_id')->where('status', '=', 'enabled');
     }
 
+    public function user(){
+        return $this->hasOne('App\User', 'id', 'user_id');
+    }
+
 }

@@ -171,6 +171,7 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                     <tr>
                     <th>Actions</th>
                     <th>Name</th>
+                    <th>Recruiter</th>
                     <th>Date</th>
                     <th>Position</th>
                     <th>Plataform</th>
@@ -188,12 +189,16 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                     
                     <tr id="row-{{ $log->id }}" >
                         <td>
-                            <a class="badge badge-primary log-edit" data-id="{{ $log->id }}" href="#">Edit</a>
-                            @if( Auth::user()->role->id == 1 )
-                            <a class="badge badge-danger log-delete" data-id="{{ $log->id }}" href="#">Delete</a>
+                            @if( Auth::id() == $log->user_id || Auth::user()->role->id == 1  )
+                                <a class="badge badge-primary log-edit" data-id="{{ $log->id }}" href="#">Edit</a>
+                            @endif
+                            
+                            @if( Auth::id() == $log->user_id || Auth::user()->role->id == 1 )
+                                <a class="badge badge-danger log-delete" data-id="{{ $log->id }}" href="#">Delete</a>
                             @endif
                         </td>
                         <td>{{ $log->expert }}</td>
+                        <td>{{ $log->user->name }}</td>
                         <td>{{ $log->date }}</td>
                         <td>{{ $log->position->name }}</td>
                         <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : '' }}  </td>
@@ -266,13 +271,14 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                     // return;
                     if(data.type == 'create'){
                         var _buttons = '<a class="badge badge-primary log-edit" data-id="'+data.data.id+'" href="#">Edit</a>';
-                        @if( Auth::user()->role->id == 1 )
+                        
                         _buttons += '  <a class="badge badge-danger log-delete" data-id="'+data.data.id+'" href="#">Delete</a>';
-                        @endif
+                        
                         table.row.add([
                             _buttons,
                             data.data.expert,
                             data.data.date,
+                            data.data.user_name,
                             {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
                             data.data.link,
