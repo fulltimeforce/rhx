@@ -2,12 +2,13 @@
 
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/> -->
 
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid.css') }}"/> -->
 
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/> -->
+<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.css') }}"/>
  
 <style>
 caption{
@@ -118,12 +119,24 @@ caption{
 td.stickout{
     background-color: yellow;
 }
+td.frozencell{
+    background-color : #fafafa;
+}
 .dataTables_filter{
     display: none;
 }
 .txt-description{
     white-space: pre-line;
 }
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td,
+.ui-jqgrid .ui-jqgrid-htable thead th div{
+    white-space: normal;
+}
+.ui-jqgrid .table-bordered th.ui-th-ltr{
+    color: #fff;
+    background-color: #343a40;
+}
+
 </style>
 @endsection
 
@@ -301,7 +314,7 @@ td.stickout{
         </div>
     
     </form>
-    <div class="row">
+    <div class="row mb-4">
         <div class="col">
             <h5>Experts: {{ $experts }} <span id="filter-count-expert" style="display: none;">- Filter : <span class="count-expert"></span></span></h5>
         </div>
@@ -313,23 +326,16 @@ td.stickout{
         <div class="col">
             @component('layouts.components.spiner')
             @endcomponent
-            <section id="section-allexperts" class="pb-5" style="display: none;">
-            <table class="table table-bordered row-border order-column" id="allexperts" >
-            <thead class="thead-dark">
-
-            </thead>
-            <tbody>
-                
-            <tbody>
-            </table>
-            </section>
+            
+            <table id="list2"></table>
+            <div id="pager2"></div>
+            
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <table id="list2"></table>
-            <div id="pager2"></div>
+            
         </div>
     </div>
 @endsection
@@ -338,78 +344,248 @@ td.stickout{
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
-<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script> -->
 
-<!-- <script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/jqGrid/js/jquery.jqGrid.min.js') }}"></script> -->
-
+<script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/jqGrid/js/jquery.jqGrid.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.js') }}"></script>
 
 <script type="text/javascript">
-    // $.jgrid.defaults.styleUI = 'Bootstrap4';
+    $.jgrid.defaults.styleUI = 'Bootstrap4';
     $(document).ready(function () {
 
         $("#loader-spinner").hide();
 
-        // var url = "{{ route('expert.list') }}";
+        function jqGridExperts_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
 
-        
-        // var a_colModels = [
-        //     {name:'id', index:'id'},
-        //     {name:'fullname', index:'fullname'}
-        // ];
-        // var a_colModels_temp = [];
-        // var a_colModels_info = [
-        //     {name:'email_address', index:'email_address'},
-        //     {name:'age', index:'age'},
-        //     {name:'phone', index:'phone'},
-        //     {name:'availability', index:'availability'},
-        //     {name:'salary', index:'salary'},
-        //     {name:'linkedin', index:'linkedin'},
-        //     {name:'github', index:'github'},
-        //     {name:'focus', index:'focus'},
-        // ];
+            var url = '{{ route("expert.list" , array( "basic" => ":basic", "intermediate" => ":inter", "advanced" => ":advan" , "name" => ":search_name" ) ) }}';
+            
+            $("#loader-spinner").show();
+            
+            var q_basic = a_keys_basic? a_keys_basic.join(',') : '';
+            var q_inter = a_keys_inter? a_keys_inter.join(',') : '';
+            var q_advan = a_keys_advan? a_keys_advan.join(',') : '';
 
-        // //titles
-        // var a_colNames = ['Action' , 'Name'];
-        // var a_colNames_temp = [];
-        // var a_colNames_info = ['Email','Age','Phone','Availability','Salary','Linkedin','Github','Experience'];
+            url = url.replace("%3Abasic" , q_basic);
+            url = url.replace("%3Ainter" , q_inter);
+            url = url.replace("%3Aadvan" , q_advan);
+
+            url = url.replace("%3Asearch_name" , search_name);
 
 
-        // @foreach($technologies as $categoryid => $category)
-        //     @foreach($category[1] as $techid => $techlabel)
-        //         // a_keys.filter(f => f=='{{$techid}}').length > 
-        //         if ( false ){
-        //             a_colNames.push( "{{$techlabel}}");
-        //             a_colModels.push( {name:'{{$techid}}', index:'{{$techid}}'});
-        //         }else{
-        //             a_colNames_temp.push( "{{$techlabel}}");
-        //             a_colModels_temp.push( {name:'{{$techid}}', index:'{{$techid}}'});
-        //         }
-        //     @endforeach
-        // @endforeach
+            url = url.replace(/amp;/gi , "");
 
-        // jQuery("#list2").jqGrid({
-        //     url: url,
-        //     datatype: "json",
-        //     colNames: a_colNames.concat(a_colNames_info, a_colNames_temp),
-        //     colModel: a_colModels.concat(a_colModels_info, a_colModels_temp),
-        //     rowNum: 50,
-        //     rowList: [50,100,150],
-        //     pager: '#pager2',
-        //     sortname: 'id',
-        //     regional: 'es',
-        //     viewrecords: true,
-        //     sortorder: "desc",
-        //     height: '500',
-        //     autowidth:true,
-        //     shrinkToFit:false,
-        //     forceFit:true,
+            var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
 
-        // });
-        // jQuery("#list2").jqGrid('navGrid','#pager2',{edit:false,add:false,del:false});
+            var a_colModels = [
+                {name:'action', index:'action' , width: 100 ,frozen : true , classes : 'frozencell'},
+                {name:'fullname', index:'fullname' , frozen : true , classes : 'frozencell'},
+                {name:'id', index:'id' , hidden: true },
+                {name:'file_path', index:'file_path' , hidden: true}
+            ];
+            var a_colModels_temp = [];
+            var a_colModels_info = [
+                {name:'email_address', index:'email_address'},
+                {name:'age', index:'age' , width: 60},
+                {name:'phone', index:'phone' , width: 110},
+                {name:'availability', index:'availability'},
+                {name:'salary', index:'salary' , width: 110},
+                {name:'linkedin', index:'linkedin'},
+                {name:'github', index:'github'},
+                {name:'focus', index:'focus'},
+            ];
 
-        // return;
+            //titles
+            var a_colNames = ['Action' , 'Name' , 'ID' , 'File'];
+            var a_colNames_temp = [];
+            var a_colNames_info = ['Email','Age','Phone','Availability','Salary','Linkedin','Github','Experience'];
+
+
+            @foreach($technologies as $categoryid => $category)
+                @foreach($category[1] as $techid => $techlabel)
+                    // a_keys_filter.filter(f => f=='{{$techid}}').length > 
+                    if ( a_keys_filter.filter(f => f=='{{$techid}}').length > 0 ){
+                        a_colNames.push( "{{$techlabel}}");
+                        a_colModels.push( {name:'{{$techid}}', index:'{{$techid}}' , classes : 'stickout' , width: 110 , align : 'center'} );
+                    }else{
+                        a_colNames_temp.push( "{{$techlabel}}");
+                        a_colModels_temp.push( {name:'{{$techid}}', index:'{{$techid}}' , width: 110 ,align : 'center'});
+                    }
+                @endforeach
+            @endforeach
+
+            console.log( url , "URL------");
+            console.log( a_colNames.concat(a_colNames_info, a_colNames_temp) , "names------");
+            console.log( a_colModels.concat(a_colModels_info, a_colModels_temp) , "models------");
+
+            // return;
+            
+            
+            if(_is_jqgrid) $.jgrid.gridUnload("#list2"); // jQuery("#list2").jqGrid('GridDestroy');
+            
+            jQuery("#list2").jqGrid("initFontAwesome").jqGrid({
+                url: url,
+                datatype: "json",
+                colNames: a_colNames.concat(a_colNames_info, a_colNames_temp),
+                colModel: a_colModels.concat(a_colModels_info, a_colModels_temp),
+                rowNum: 25,
+                rowList: [25,50,100],
+                pager: '#pager2',
+                sortname: 'id',
+                regional: 'es',
+                viewrecords: true,
+                sortorder: "desc",
+                height: '500',
+                autowidth:true,
+                shrinkToFit:false,
+                forceFit:true,
+                gridComplete: function(){
+                    var grid = jQuery("#list2");
+                    var ids = grid.jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+
+                        var rowId = ids[i];
+                        var rowData = jQuery('#list2').jqGrid ('getRowData', rowId);
+                        console.log(rowData, "rowData")
+                        var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
+                        actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
+                        actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
+                        actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
+                        actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
+                        
+                        actions = actions.replace(/:id/gi , rowData.id);
+                        grid.jqGrid('setRowData', rowId, { action: actions });
+                    }
+
+                    $("#loader-spinner").hide();
+
+                    // =================== DELETE
+
+                    $("table tbody").on('click', 'a.btn-delete-expert' , function(ev){
+                        ev.preventDefault();
+                        var id = $(this).data("id");
+                        $.ajax({
+                            type:'POST',
+                            url: '{{ route("experts.deleteExpert") }}',
+                            data: {expertId : id},
+                            headers: {
+                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success:function(data){
+
+                                $('#list2').jqGrid('delRowData',id);
+                            }
+                        });
+
+                    });
+                    // =============== POSITIONS
+
+                    $("table tbody").on('click', 'a.btn-position' , function(ev){
+                        ev.preventDefault();
+                        var id = $(this).data("id");
+                        $('#expertId-p').val('');
+                        $.ajax({
+                            type:'POST',
+                            url: '{{ route("positions.enabled") }}',
+                            data: {expertId : id},
+                            headers: {
+                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success:function(data){
+
+                                $('#expertId-p').val(id);
+                                $("#list-positions").html('');
+                                var html = '';
+                                for (let index = 0; index < data.length; index++) {
+                                    html += '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox" name="positions[]" value="'+data[index].id+'" '+ (data[index].active == 1? 'checked' : '') +' ></div></li>';
+                                    html = html.replace(':name' , data[index].name);
+                                }
+                                $("#list-positions").html(html);
+                                $("#positionsExpert").modal();
+                            }
+                        });
+                        
+                    });
+
+                    // =============== LIST INTERVIEWS
+
+                    $("table tbody").on("click" , "a.btn-interviews" , function(ev){
+                        ev.preventDefault();
+                        var expertId = $(this).data("id");
+                        var expertName = $(this).data("name");
+                        
+                        $("#interview_expert_name").html( expertName );
+                        $("#interview_expert_id").val(expertId);
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("interviews.expert") }}',
+                            data: {expertId : expertId },
+                            headers: {
+                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success:function(interviews){
+                                console.log(interviews);
+                                var html = '';
+                                for (let index = 0; index < interviews.length; index++) {
+                                    var html_card_interview = template_card_interview;
+                                    html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                                    html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                                    html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                                    html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
+                                    html_card_interview = html_card_interview.replace(':about' , interviews[index].about);
+                                    html_card_interview = html_card_interview.replace(':description' , interviews[index].description.replace(/↵/g, '<br>'));
+                                    var result = interviews[index].result ? 'APPROVED' : 'FAILED';
+                                    html_card_interview = html_card_interview.replace(':result' , result);
+                                    var _date = new Date(interviews[index].date);
+                                    html_card_interview = html_card_interview.replace(':date' , moment( interviews[index].date ).format("{{ config('app.date_format_javascript') }}") );
+                                    html += html_card_interview
+                                }
+
+                                $('#list-interviews').html(html);
+
+                                $("#interview_type").val('');
+                                $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+                                $("#about").val('');
+                                $("#interview_description").val('');
+                                $("#interview_result").prop('checked', false);
+                                
+                                $("#interview_id").val( '' );
+
+                                $('#form-btn-edit').hide();
+                                $('#form-btn-save').show();
+
+                                $("#interviews-expert").modal();
+                            }
+                        });
+                        
+                    });
+
+
+
+                    $('.oi-caret-right').addClass('fas').addClass('fa-angle-right')
+                        .removeClass('oi').removeClass('oi-caret-right');
+                    
+                    $('.oi-media-step-forward').addClass('fas').addClass('fa-angle-double-right')
+                        .removeClass('oi').removeClass('oi-media-step-forward');
+
+                    $('.oi-caret-left').addClass('fas').addClass('fa-angle-left')
+                        .removeClass('oi').removeClass('oi-caret-left');
+
+                    $('.oi-media-step-backward').addClass('fas').addClass('fa-angle-double-left')
+                        .removeClass('oi').removeClass('oi-media-step-backward');
+                }
+
+            });
+            jQuery("#list2").jqGrid('navGrid','#pager2',{edit:false,add:false,del:false});
+            jQuery("#list2").jqGrid('setFrozenColumns');
+
+            $("#loader-spinner").hide();
+            
+        }
 
         var options = {
             lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
@@ -422,10 +598,6 @@ td.stickout{
             // searching: false
             // dom: "Bfrtip",
         }
-        
-        
-        // $("#section-allexperts").show();
-        // var table = $("#allexperts").DataTable( options );
 
         var table;
 
@@ -495,6 +667,8 @@ td.stickout{
         var a_intermediate_level = [];
         var a_advanced_level = [];
 
+        var is_jqgrid = false;
+
         $('#search').on('click' , function(){
             $("#filter-count-expert").hide();
             $('#search-column-name').val('');
@@ -503,24 +677,27 @@ td.stickout{
             a_advanced_level = $(".search-level.advanced").val(); 
             
             $("#loader-spinner").show();
-            $("#section-allexperts").hide();
-
-            if(table) table.destroy();
             
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("experts.filter") }}',
-                data: {basic_level : a_basic_level , intermediate_level : a_intermediate_level , advanced_level : a_advanced_level },
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
 
-                    print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
 
-                }
-            });
+            jqGridExperts_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '' );
+            is_jqgrid = true;
+            // if(table) table.destroy();
+            
+            // $.ajax({
+            //     type: 'POST',
+            //     url: '{{ route("experts.filter") }}',
+            //     data: {basic_level : a_basic_level , intermediate_level : a_intermediate_level , advanced_level : a_advanced_level },
+            //     headers: {
+            //         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     },
+            //     success:function(data){
+
+            //         print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
+
+            //     }
+            // });
         });
 
         function delay(callback, ms) {
@@ -552,24 +729,26 @@ td.stickout{
             // }
 
             $("#loader-spinner").show();
-            $("#section-allexperts").hide();
 
-            if(table) table.destroy();
+            jqGridExperts_filter( [], [] , [] , is_jqgrid , text );
+            is_jqgrid = true;
 
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("experts.search") }}',
-                data: { name : text },
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
+            // if(table) table.destroy();
 
-                    print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
+            // $.ajax({
+            //     type: 'POST',
+            //     url: '{{ route("experts.search") }}',
+            //     data: { name : text },
+            //     headers: {
+            //         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     },
+            //     success:function(data){
 
-                }
-            });
+            //         print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
+
+            //     }
+            // });
 
         } , 500 ));
 
@@ -590,7 +769,7 @@ td.stickout{
             $("#allexperts tbody:first").html(html);
 
             $("#loader-spinner").hide();
-            $("#section-allexperts").show();
+            
             table = $("#allexperts").DataTable( options );
         }
 
@@ -690,33 +869,7 @@ td.stickout{
 
         // ===================== SHOW POSITIONS =====================
 
-        $("table tbody").on('click', 'a.btn-position' , function(ev){
-            ev.preventDefault();
-            var id = $(this).data("id");
-            $('#expertId-p').val('');
-            $.ajax({
-                type:'POST',
-                url: '{{ route("positions.enabled") }}',
-                data: {expertId : id},
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-
-                    $('#expertId-p').val(id);
-                    $("#list-positions").html('');
-                    var html = '';
-                    for (let index = 0; index < data.length; index++) {
-                        html += '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox" name="positions[]" value="'+data[index].id+'" '+ (data[index].active == 1? 'checked' : '') +' ></div></li>';
-                        html = html.replace(':name' , data[index].name);
-                    }
-                    $("#list-positions").html(html);
-                    $("#positionsExpert").modal();
-                }
-            });
-            
-        });
+        
 
         $("#save-positions").on('click' , function(ev){
             
@@ -745,58 +898,6 @@ td.stickout{
 
         var template_card_interview = $('#list-interviews').html();
         $('#list-interviews').html('');
-        
-        $("table tbody").on("click" , "a.btn-interviews" , function(ev){
-            ev.preventDefault();
-            var expertId = $(this).data("id");
-            var expertName = $(this).data("name");
-            
-            $("#interview_expert_name").html( expertName );
-            $("#interview_expert_id").val(expertId);
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("interviews.expert") }}',
-                data: {expertId : expertId },
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(interviews){
-                    console.log(interviews);
-                    var html = '';
-                    for (let index = 0; index < interviews.length; index++) {
-                        var html_card_interview = template_card_interview;
-                        html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
-                        html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
-                        html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
-                        html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
-                        html_card_interview = html_card_interview.replace(':about' , interviews[index].about);
-                        html_card_interview = html_card_interview.replace(':description' , interviews[index].description.replace(/↵/g, '<br>'));
-                        var result = interviews[index].result ? 'APPROVED' : 'FAILED';
-                        html_card_interview = html_card_interview.replace(':result' , result);
-                        var _date = new Date(interviews[index].date);
-                        html_card_interview = html_card_interview.replace(':date' , moment( interviews[index].date ).format("{{ config('app.date_format_javascript') }}") );
-                        html += html_card_interview
-                    }
-
-                    $('#list-interviews').html(html);
-
-                    $("#interview_type").val('');
-                    $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
-                    $("#about").val('');
-                    $("#interview_description").val('');
-                    $("#interview_result").prop('checked', false);
-                    
-                    $("#interview_id").val( '' );
-
-                    $('#form-btn-edit').hide();
-                    $('#form-btn-save').show();
-
-                    $("#interviews-expert").modal();
-                }
-            });
-            
-        });
 
         $('table').on('click' , '.copy-link' , function(ev){
             var data = $(this).data("info");

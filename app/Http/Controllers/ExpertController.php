@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Expert;
 use App\Position;
 use App\Log;
+use App\Interview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,17 @@ class ExpertController extends Controller
 
         $query = $request->query();
 
-        $expert = Expert::paginate($query['rows']);
+        $basic = array();
+        $intermediate = array();
+        $advanced = array();
+
+        if( isset( $query['basic'] ) ) $basic = $query['basic'] != ''? explode("," , $query['basic']) : array()  ;
+        if( isset( $query['intermediate'] ) ) $intermediate = $query['intermediate'] != ''? explode("," , $query['intermediate']) : array()  ;
+        if( isset( $query['advanced'] ) ) $advanced = $query['advanced'] != ''? explode("," , $query['advanced']) : array()  ;
+
+        $experts = $this->filter($basic , $intermediate, $advanced);
+        $experts->where('fullname' , 'like' , '%'.$query['name'].'%');
+        $expert =  $experts->paginate( $query['rows'] );
 
         // return $expert;
         return json_encode(array(
@@ -330,19 +341,21 @@ class ExpertController extends Controller
                         ->with('success','Expert deleted successfully');
     }
 
-    public function filter(Request $request)
+    public function deleteExpert(Request $request){
+
+        $id = $request->input('expertId');
+
+        Interview::where('expert_id' , $id)->delete();
+
+        Expert::where('id' , $id)->delete();
+
+    }
+
+    private function filter($basic = array() , $intermediate = array() , $advanced = array() )
     {
         if(!Auth::check()) return redirect('login');
 
-        $basic = $request->input('basic_level',array());
-        $intermediate = $request->input('intermediate_level',array());
-        $advanced = $request->input('advanced_level',array());
-
         // return array($basic,$intermediate,$advanced);
-
-        $basic_array = array();
-        $intermediate_array = array();
-        $advanced_array = array();
 
         //BASIC
         $thewholequery = null; 
@@ -356,7 +369,7 @@ class ExpertController extends Controller
                     $query->where($techid,'basic')->orWhere($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }
-            $basic_array[$techid] = self::getTechLabel($techid);
+
         }   
         foreach($intermediate as $techid){
             if(empty($thewholequery)) {
@@ -368,7 +381,7 @@ class ExpertController extends Controller
                     $query->where($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }
-            $intermediate_array[$techid] = self::getTechLabel($techid);
+
         }
         foreach($advanced as $techid){
             if(empty($thewholequery)) {
@@ -380,11 +393,11 @@ class ExpertController extends Controller
                     $query->where($techid,'advanced');  
                 });
             }
-            $advanced_array[$techid] = self::getTechLabel($techid);
+
         }
 
-        $experts = Expert::with(['log'])->latest()->get();
-        if(!empty($thewholequery)) $experts = $thewholequery->get();
+        $experts = Expert::with(['log'])->latest();
+        if(!empty($thewholequery)) $experts = $thewholequery;
 
         // return view('experts.index')->with('experts',$experts)
         //     ->with('i', (request()->input('page', 1) - 1) * 10)
@@ -393,7 +406,7 @@ class ExpertController extends Controller
         //     ->with('intermediate',$intermediate_array)
         //     ->with('advanced',$advanced_array);
 
-        return response()->json($this->visibleExpert($experts));
+        return $experts;
     }
 
     private function visibleExpert($_experts){

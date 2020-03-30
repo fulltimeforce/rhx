@@ -31,6 +31,7 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 Route::get('/apply/{positionId}','ExpertController@apply')->name('experts.apply');
 Route::post('/experts/filter', 'ExpertController@filter')->name('experts.filter');
 Route::post('/experts/store', 'ExpertController@store')->name('experts.store');
+Route::post('/experts/deleteExpert', 'ExpertController@deleteExpert')->name('experts.deleteExpert');
 Route::get('expert/technologies','ExpertController@technologies')->name('expert.technologies');
 
 Route::post('positions/experts', 'PositionController@experts')->name('positions.experts.attach');
