@@ -186,10 +186,14 @@ class PositionController extends Controller
                 }                
             }
         }
+        
+        $requirements = Requirement::where('position_id' , $positionId)->get();
+
         return view('positions.experts')
             ->with('experts' , $n_experts)
             ->with('current_tech' , $current_tech)
             ->with('after_tech' , $after_tech)
+            ->with('requirements' , $requirements)
             ->with('positionId' , $positionId)
             ->with('technologies',Expert::getTechnologies());
     }

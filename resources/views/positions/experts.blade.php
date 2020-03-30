@@ -262,6 +262,16 @@ a.btn-delete-interview{
     </div>
     <div class="row">
         <div class="col">
+            <h6>Requirements:</h6>
+            <ul class="row">
+                @foreach( $requirements as $rid => $requirement )
+                    <li class="col-3">{{ $requirement->name }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
             <table class="table table-bordered row-border order-column" id="allexperts">
                 <thead class="thead-dark">
                 <tr>
