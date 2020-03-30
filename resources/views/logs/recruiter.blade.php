@@ -245,14 +245,14 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
         var $_logs = {!! $logs !!};
 
         var table = $('#table-logs').DataTable({
-            "order": [[ 11, "desc" ]],
+            "order": [[ 12, "desc" ]],
             scrollY: "500px",
             scrollX: true,
             searching: false,
             // ordering: false,
         });
 
-        var column = table.column( 11 );
+        var column = table.column( 12 );
 
         column.visible(false);
 
