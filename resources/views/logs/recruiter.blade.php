@@ -277,8 +277,8 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                         table.row.add([
                             _buttons,
                             data.data.expert,
-                            data.data.date,
                             data.data.user_name,
+                            data.data.date,
                             {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
                             {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
                             data.data.link,
