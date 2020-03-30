@@ -388,9 +388,9 @@ td.frozencell{
             var a_colModels_info = [
                 {name:'email_address', index:'email_address'},
                 {name:'age', index:'age' , width: 60},
-                {name:'phone', index:'phone' , width: 110},
+                {name:'phone', index:'phone' , width: 120},
                 {name:'availability', index:'availability'},
-                {name:'salary', index:'salary' , width: 110},
+                {name:'salary', index:'salary' , width: 110 ,formatter: function(cellvalue,options, rowObject) { return "S/. "+ (cellvalue == null? '' : cellvalue ) ;}},
                 {name:'linkedin', index:'linkedin'},
                 {name:'github', index:'github'},
                 {name:'focus', index:'focus'},
