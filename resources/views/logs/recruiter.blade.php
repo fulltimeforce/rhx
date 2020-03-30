@@ -398,11 +398,11 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                     $_logs[index].platform = data.platform;
                     $_logs[index].link = data.link;
 
-                    $('#'+ data.id + ' td:nth-child(2)').html( data.expert );
-                    $('#'+ data.id + ' td:nth-child(3)').html( data.date ? data.date : '' );
-                    $('#'+ data.id + ' td:nth-child(4)').html( data.position_id ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : '' );
-                    $('#'+ data.id + ' td:nth-child(5)').html( data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.platform)[0].label : '' );
-                    $('#'+ data.id + ' td:nth-child(6)').html( data.link? data.link : '' );
+                    $('#row-'+ data.id + ' td:nth-child(2)').html( data.expert );
+                    $('#row-'+ data.id + ' td:nth-child(4)').html( data.date ? data.date : '' );
+                    $('#row-'+ data.id + ' td:nth-child(5)').html( data.position_id ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : '' );
+                    $('#row-'+ data.id + ' td:nth-child(6)').html( data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.platform)[0].label : '' );
+                    $('#row-'+ data.id + ' td:nth-child(7)').html( data.link? data.link : '' );
                         
                     
                     // clean
