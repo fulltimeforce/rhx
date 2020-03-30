@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Recruiterlog;
 use App\Position;
+use Carbon\Carbon;
 
 class RecruiterlogController extends Controller
 {
@@ -55,16 +56,21 @@ class RecruiterlogController extends Controller
         $id = $input["id"];
 
         unset( $input["id"] );
-
+        $date = '';
+        if( isset( $input["date"] ) ){
+            $date = $input["date"];
+            $input["date"] = Carbon::createFromFormat(config('app.date_format'), $input["date"])->format('Y-m-d');
+        }
+        
         $log = Recruiterlog::where('id' , $id)->update($input);
 
         return array(
             "id" => $id,
             "expert" => isset( $input['expert'] )? $input['expert'] : '' ,
-            "date" => isset( $input['date'] )? $input['date'] : '',
+            "date" => $date != '' ? $date : '',
             "position_id"   => isset( $input['position_id'] )? $input['position_id'] : '',
             "platform" => isset( $input['platform'] )? $input['platform'] : '',
-            "link" => isset( $input['link'] )? $input['link'] : '',
+            "link" => isset( $input['link'] )? $input['link'] : '', 
         );
     }
 
