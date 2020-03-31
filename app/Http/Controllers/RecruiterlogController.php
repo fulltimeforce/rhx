@@ -34,6 +34,17 @@ class RecruiterlogController extends Controller
 
     }
 
+    public function listlogs( Request $request ){
+
+        $logs = Recruiterlog::with(['user'])->paginate( $request->query('limit') );
+
+        return array(
+            "total" => $logs->total(),
+            "totalNotFiltered" => $logs->total(),
+            "rows" => $logs->items()
+        );
+    }
+
     public function saveForm( Request $request ){
         $input = $request->all();
         unset($input['id']);
@@ -45,8 +56,7 @@ class RecruiterlogController extends Controller
             'data' => array(
                 "id"            => $log->id,
                 "expert"          => $input['expert'],
-                "phone"          => $input['phone'],
-                "email"          => $input['email'],
+                "info"          => $input['info'],
                 "date"         => $input['date'],
                 "platform"      => $input['platform'],
                 "position_id"   => $input['position_id'],
@@ -73,8 +83,7 @@ class RecruiterlogController extends Controller
         return array(
             "id" => $id,
             "expert" => isset( $input['expert'] )? $input['expert'] : '' ,
-            "phone" => isset( $input['phone'] )? $input['phone'] : '' ,
-            "email" => isset( $input['email'] )? $input['email'] : '' ,
+            "info" => isset( $input['info'] )? $input['info'] : '' ,
             "date" => $date != '' ? $date : '',
             "position_id"   => isset( $input['position_id'] )? $input['position_id'] : '',
             "platform" => isset( $input['platform'] )? $input['platform'] : '',

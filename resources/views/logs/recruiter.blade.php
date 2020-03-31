@@ -7,6 +7,9 @@
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/dataTables.bootstrap4.min.css') }}"/> -->
 <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
 
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/> -->
+
 <style>
     /* The switch - the box around the slider */
 .SliderSwitch {
@@ -135,9 +138,10 @@ a.badge-warning:focus{
                     </td>
                     <td >
                         <div class="form-group" style="position: relative;">
-                            <label for="phone">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control">
+                            <label for="date">Date</label>
+                            <input type="text" name="date" id="date" class="form-control" data-toggle="datetimepicker" data-target="#date">
                         </div>
+                        
                     </td>
                     <td>
                         <div class="form-group">
@@ -147,6 +151,30 @@ a.badge-warning:focus{
                                     <option value="{{ $position->id }}">{{ $position->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="form-group" id="btn-form-save">
+                            <button type="button" id="save" class="btn btn-success">SAVE</button>
+                        </div>
+                        <div class="form-group" id="btn-form-edit" style="display:none;">
+                            <button type="button" id="edit" class="btn btn-success">Edit</button>
+                            <button type="button" id="clear" class="btn btn-info">Clear</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group" style="position: relative;">
+                            <label for="info">Phone/Email</label>
+                            <input type="text" name="info" id="info" class="form-control">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="link">Link</label>
+                            <input type="text" name="link" id="link" class="form-control">
                         </div>
                     </td>
                     <td>
@@ -162,57 +190,33 @@ a.badge-warning:focus{
                             </select>
                         </div>
                     </td>
-                    <td>
-                        <div class="form-group" id="btn-form-save">
-                            <button type="button" id="save" class="btn btn-success">SAVE</button>
-                        </div>
-                        <div class="form-group" id="btn-form-edit" style="display:none;">
-                            <button type="button" id="edit" class="btn btn-success">Edit</button>
-                            <button type="button" id="clear" class="btn btn-info">Clear</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-group" style="position: relative;">
-                            <label for="date">Date</label>
-                            <input type="text" name="date" id="date" class="form-control" data-toggle="datetimepicker" data-target="#date">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group" style="position: relative;">
-                            <label for="email">Email</label>
-                            <input type="text" name="email" id="email" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="link">Link</label>
-                            <input type="text" name="link" id="link" class="form-control">
-                        </div>
-                    </td>
                     <td></td>
                 </tr>
             </table>
             </form>
         </div>
+        <!-- <div class="col-12">
+
+            <table class="table row-border order-column" id="table-logs-fill">
+                    
+            </table>
+        </div> -->
         <div class="col-12">
             <table class="table row-border order-column" id="table-logs">
                 <thead class="thead-dark">
                     <tr>
                     <th>Actions</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Recruiter</th>
                     <th>Date</th>
+                    <th>Recruiter</th>
+                    <th>Name</th>
                     <th>Position</th>
-                    <th>Platform</th>
-                    <th>Link</th>
+                    <th>Info</th>
                     <th style="width: 150px;">Contact</th>
                     <th>Filter</th>
                     <th style="width: 150px;">Schedule</th>
                     <th>Evaluate</th>
+                    <th>Platform</th>
+                    <th>Link</th>
                     <th>Created at</th>
                     </tr>
                 </thead>
@@ -229,14 +233,12 @@ a.badge-warning:focus{
                                 <a class="badge badge-danger log-delete" data-id="{{ $log->id }}" href="#">Delete</a>
                             @endif
                         </td>
+                        <td style="background-color: #fafafa;">{{ $log->date }}</td>
+                        <td style="background-color: #fafafa;">{{ $log->user->name }}</td>
                         <td style="background-color: #fafafa;">{{ $log->expert }}</td>
-                        <td>{{ $log->phone }}</td>
-                        <td>{{ $log->email }}</td>
-                        <td>{{ $log->user->name }}</td>
-                        <td>{{ $log->date }}</td>
+
                         <td>{{ $log->position->name }}</td>
-                        <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : '' }}  </td>
-                        <td>{{ $log->link }}</td>
+                        <td>{{ $log->info }}</td>
                         <td>
                             <div class="form-group">
                                 <select class="form-control form-dropdown" data-name="contact" data-id="{{ $log->id }}">
@@ -271,6 +273,8 @@ a.badge-warning:focus{
                             <a href="#" class="badge chk-evaluate badge-{{ $log->technique == '' ? 'secondary' : ($log->technique == 'approved' ? 'success' : ( $log->commercial == 'not approved' ? 'danger' : 'warning' )) }}" data-value="{{ $log->technique }}" data-name="technique" data-id="{{ $log->id }}">Technique</a>
                             <a href="#" class="badge chk-evaluate badge-{{ $log->psychology == '' ? 'secondary' : ($log->psychology == 'approved' ? 'success' : ( $log->commercial == 'not approved' ? 'danger' : 'warning' )) }}" data-value="{{ $log->psychology }}" data-name="psychology" data-id="{{ $log->id }}">Psychology</a>
                         </td>
+                        <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : '' }}  </td>
+                        <td>{{ $log->link }}</td>
                         <td>{{ $log->created_at }}</td>
                     </tr>
                     
@@ -289,6 +293,9 @@ a.badge-warning:focus{
 <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
 
+<!-- <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script> -->
+
 <script type="text/javascript">
     $(document).ready(function (ev) {
 
@@ -301,18 +308,52 @@ a.badge-warning:focus{
 
         var $_logs = {!! $logs !!};
 
+        // $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
+        //     height: 500,
+        //     pagination: true,
+        //     sidePagination: "server",
+        //     columns: [
+        //         {
+        //             field: 'id',
+        //             title: "Actions",
+        //             valign: 'middle',
+        //             clickToSelect: false,
+        //             formatter : function(value,row,index) {
+        //                 return '<button class=\'btn btn-primary \' pageName="'+row.expert+'" pageDetails="'+row.id+'"  >Edit</button> ';
+        //             }
+        //         },
+        //         {
+        //             field: 'expert', title: 'Name'
+        //         },
+        //         {
+        //             field: 'date', title: 'Date'
+        //         },
+        //     ],
+        //     pageNumber: 2,
+        //     showExtendedPagination: true,
+        //     totalNotFilteredField: 'totalNotFiltered',
+        //     url : "{{ route('recruiter.listlogs') }}",
+        //     queryParams : function(params){
+        //         var offset = params.offset;
+        //         var limit = params.limit;
+        //         var page = (offset / limit) + 1;
+        //         return {'offset': offset,'limit':params.limit,'page' : page};
+        //     }
+
+        // });
+
         var table = $('#table-logs').DataTable({
-            "order": [[ 13, "desc" ]],
+            "order": [[ 12, "desc" ]],
             scrollY: "500px",
             scrollX: true,
             searching: false,
             fixedColumns: {
-                leftColumns: 2
+                leftColumns: 4
             },
             // ordering: false,
         });
 
-        var column = table.column( 13 );
+        var column = table.column( 12 );
 
         column.visible(false);
 
@@ -336,26 +377,24 @@ a.badge-warning:focus{
                         
                         table.row.add([
                             _buttons,
-                            data.data.expert,
-                            data.data.phone,
-                            data.data.email,
-                            data.data.user_name,
                             data.data.date,
+                            data.data.user_name,
+                            data.data.expert,
                             {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
-                            {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
-                            data.data.link,
+                            data.data.info,
                             html_select_contact( data.data.id ),
                             html_check_filter( data.data.id ),
                             html_select_schedule( data.data.id ),
                             html_check_evaluate( data.data.id ),
+                            {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
+                            data.data.link,
                             data.data.created_at
                         ]).node().id = "row-"+data.data.id;
                         table.draw(false);  
                         $_logs.push({
                             id      : data.data.id,
                             expert: data.data.expert,
-                            phone: data.data.phone,
-                            email: data.data.email,
+                            info: data.data.info,
                             position:{
                                 id: data.data.position_id,
                                 name: {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name
@@ -375,8 +414,7 @@ a.badge-warning:focus{
 
                     // clean
                     $("#name").val('').focus();
-                    $("#email").val('');
-                    $("#phone").val('');
+                    $("#info").val('');
                     $("#date").val( moment().format("{{ config('app.date_format_javascript') }}") );
                     $("#link").val('');
                     $("#log-id").val('');
@@ -417,8 +455,7 @@ a.badge-warning:focus{
             if(log.length > 0){
                 $("#log-id").val(log[0].id);
                 $("#name").val(log[0].expert);
-                $("#phone").val(log[0].phone);
-                $("#email").val(log[0].email);
+                $("#info").val(log[0].info);
                 $("#date").val(log[0].date);
                 $("#position").val(log[0].position_id);
                 $("#platform").val(log[0].platform);
@@ -432,8 +469,7 @@ a.badge-warning:focus{
         $("#clear").on('click' , function(ev){
             $("#log-id").val('');
             $("#name").val('');
-            $("#email").val('');
-            $("#phone").val('');
+            $("#info").val('');
             $("#date").val(moment().format("{{ config('app.date_format_javascript') }}"));
             
             $("#link").val('');
@@ -458,8 +494,7 @@ a.badge-warning:focus{
                     var index = $_logs.findIndex( f => f.id == data.id);
                     console.log(index, "dddddd");
                     $_logs[index].expert = data.expert;
-                    $_logs[index].phone = data.phone;
-                    $_logs[index].email = data.email;
+                    $_logs[index].info = data.info;
                     $_logs[index].date = data.date;
                     $_logs[index].position_id = data.position_id;
                     $_logs[index].position = {
@@ -469,19 +504,18 @@ a.badge-warning:focus{
                     $_logs[index].platform = data.platform;
                     $_logs[index].link = data.link;
 
-                    $('#row-'+ data.id + ' td:nth-child(2)').html( data.expert );
-                    $('#row-'+ data.id + ' td:nth-child(3)').html( data.phone );
-                    $('#row-'+ data.id + ' td:nth-child(4)').html( data.email );
-                    $('#row-'+ data.id + ' td:nth-child(6)').html( data.date ? data.date : '' );
-                    $('#row-'+ data.id + ' td:nth-child(7)').html( data.position_id ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : '' );
-                    $('#row-'+ data.id + ' td:nth-child(8)').html( data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.platform)[0].label : '' );
-                    $('#row-'+ data.id + ' td:nth-child(9)').html( data.link? data.link : '' );
+                    $('#row-'+ data.id + ' td:nth-child(2)').html( data.date ? data.date : '' );
+                    $('#row-'+ data.id + ' td:nth-child(4)').html( data.expert );
+                    $('#row-'+ data.id + ' td:nth-child(5)').html( data.position_id ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : '' );
+                    $('#row-'+ data.id + ' td:nth-child(6)').html( data.info );
+
+                    $('#row-'+ data.id + ' td:nth-child(11)').html( data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.platform)[0].label : '' );
+                    $('#row-'+ data.id + ' td:nth-child(12)').html( data.link? data.link : '' );
                         
                     
                     // clean
                     $("#name").val('').focus();
-                    $("#email").val('');
-                    $("#phone").val('');
+                    $("#info").val('');
                     $("#date").val(moment().format("{{ config('app.date_format_javascript') }}"));
                     $("#link").val('');
                     $("#log-id").val('');
