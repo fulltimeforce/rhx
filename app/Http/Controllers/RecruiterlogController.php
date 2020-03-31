@@ -26,7 +26,11 @@ class RecruiterlogController extends Controller
         $positions = Position::where('status' , 'enabled')->latest()->get();
         $logs = Recruiterlog::all();
         $platforms = $this->platforms();
-        return view('logs.recruiter' , compact('logs') )->with(['positions' => $positions, 'platforms' => $platforms]);
+        return view('logs.recruiter' , compact('logs') )
+            ->with([
+                'positions' => $positions, 
+                'platforms' => $platforms
+            ]);
 
     }
 
@@ -41,6 +45,8 @@ class RecruiterlogController extends Controller
             'data' => array(
                 "id"            => $log->id,
                 "expert"          => $input['expert'],
+                "phone"          => $input['phone'],
+                "email"          => $input['email'],
                 "date"         => $input['date'],
                 "platform"      => $input['platform'],
                 "position_id"   => $input['position_id'],
@@ -67,6 +73,8 @@ class RecruiterlogController extends Controller
         return array(
             "id" => $id,
             "expert" => isset( $input['expert'] )? $input['expert'] : '' ,
+            "phone" => isset( $input['phone'] )? $input['phone'] : '' ,
+            "email" => isset( $input['email'] )? $input['email'] : '' ,
             "date" => $date != '' ? $date : '',
             "position_id"   => isset( $input['position_id'] )? $input['position_id'] : '',
             "platform" => isset( $input['platform'] )? $input['platform'] : '',

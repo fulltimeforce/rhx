@@ -21,11 +21,17 @@ class Recruiterlog extends Model
         'user_id',
         'platform',
         'link',
-        'filter',
-        'called',
-        'scheduled',
-        'attended',
-        'approve',
+        'phone',
+        'email',
+        'contact',
+        'cv',
+        'experience',
+        'communication',
+        'english',
+        'schedule',
+        'commercial',
+        'technique',
+        'psychology'
         
     ];
 
@@ -49,4 +55,5 @@ class Recruiterlog extends Model
         return $this->hasOne('App\User', 'id', 'user_id');
     }
 
+    
 }
