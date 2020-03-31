@@ -174,7 +174,7 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
                     <th>Recruiter</th>
                     <th>Date</th>
                     <th>Position</th>
-                    <th>Plataform</th>
+                    <th>Platform</th>
                     <th>Link</th>
                     <th>Filter</th>
                     <th>Called</th>

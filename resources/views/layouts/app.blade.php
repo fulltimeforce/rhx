@@ -62,12 +62,12 @@
                         @auth
                         
                             @if( Auth::user()->role->id == 1 )
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link" href="{{ route('log.schedules') }}">{{ __('Schedule') }}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs2') }}</a>
-                            </li>
+                            </li> -->
                             @endif
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
