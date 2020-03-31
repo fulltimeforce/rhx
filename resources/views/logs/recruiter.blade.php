@@ -90,6 +90,17 @@ table.dataTable thead .sorting:before,
 table.dataTable thead .sorting:after{
     content: '';
 }
+
+a.badge-success.focus, 
+a.badge-success:focus,
+a.badge-secondary.focus, 
+a.badge-secondary:focus,
+a.badge-danger.focus, 
+a.badge-danger:focus,
+a.badge-warning.focus, 
+a.badge-warning:focus{
+    box-shadow: none;
+}
 </style>
 @endsection
  
