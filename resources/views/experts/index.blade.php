@@ -7,8 +7,11 @@
 
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid.css') }}"/> -->
 
-<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.css') }}"/>
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.css') }}"/> -->
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
  
 <style>
 caption{
@@ -324,6 +327,11 @@ td.frozencell{
     </div>
     <div class="row">
         <div class="col">
+            <table id="list-experts"></table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
             @component('layouts.components.spiner')
             @endcomponent
             
@@ -347,15 +355,209 @@ td.frozencell{
 <!-- <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script> -->
 
-<script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/jqGrid/js/jquery.jqGrid.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.js') }}"></script> -->
+
+<script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
 
 <script type="text/javascript">
-    $.jgrid.defaults.styleUI = 'Bootstrap4';
+    // $.jgrid.defaults.styleUI = 'Bootstrap4';
     $(document).ready(function () {
 
         $("#loader-spinner").hide();
+
+        function tablebootstrap_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
+            
+            var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
+
+            var columns = [
+                {
+                    field: 'id',
+                    title: "Actions",
+                    valign: 'middle',
+                    clickToSelect: false,
+                    formatter : function(value,rowData,index) {
+                        var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
+                        actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
+                        actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
+                        actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
+                        actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
+                        
+                        actions = actions.replace(/:id/gi , rowData.id);
+
+                        return actions;
+                    },
+                    width: 100,
+                    class: 'frozencell'
+                },
+                { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'}
+            ];
+            var columns_temp = [];
+            var columns_info = [
+                { field: 'email', title: "Email" },
+                { field: 'age', title: "Age" },
+                { field: 'phone', title: "Phone" },
+                { field: 'availability', title: "Availability" },
+                { field: 'salary', title: "Salary" },
+                { field: 'linkedin', title: "Linkedin" },
+                { field: 'github', title: "Github" },
+                { field: 'experience', title: "Experience" },
+            ];
+
+            @foreach($technologies as $categoryid => $category)
+                @foreach($category[1] as $techid => $techlabel)
+                    // a_keys_filter.filter(f => f=='{{$techid}}').length > 
+                    if ( a_keys_filter.filter(f => f=='{{$techid}}').length > 0 ){
+                        columns.push( { field: '{{$techid}}', title: "{{$techlabel}}", class: 'stickout' } );
+                    }else{
+                        columns_temp.push( { field: '{{$techid}}', title: "{{$techlabel}}" , width: 110, align: 'center' } );
+                    }
+                @endforeach
+            @endforeach
+
+            $("#list-experts").bootstrapTable('destroy').bootstrapTable({
+                height: 500,
+                pagination: true,
+                sidePagination: "server",
+                columns: columns.concat(columns_info, columns_temp),
+                showExtendedPagination: true,
+                totalNotFilteredField: 'totalNotFiltered',
+                url : "{{ route('expert.listtbootstrap') }}",
+                fixedColumns: true,
+                fixedNumber: 2,
+                theadClasses: 'table-dark',
+                uniqueId: 'id',
+                pageSize: 25,
+                queryParams : function(params){
+                    var offset = params.offset;
+                    var limit = params.limit;
+                    var page = (offset / limit) + 1;
+                    var q_basic = a_keys_basic? a_keys_basic.join(',') : '';
+                    var q_inter = a_keys_inter? a_keys_inter.join(',') : '';
+                    var q_advan = a_keys_advan? a_keys_advan.join(',') : '';
+                    return {
+                        'offset': offset,
+                        'rows':params.limit,
+                        'page' : page , 
+                        'basic': q_basic , 
+                        'intermediate': q_inter ,
+                        'advanced' : q_advan,
+                        'name' : search_name
+                    };
+                }
+
+            });
+
+
+            $("#loader-spinner").hide();
+
+            // =================== DELETE
+
+            $("table tbody").on('click', 'a.btn-delete-expert' , function(ev){
+                ev.preventDefault();
+                var id = $(this).data("id");
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("experts.deleteExpert") }}',
+                    data: {expertId : id},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+
+                        $("#list-experts").bootstrapTable('removeByUniqueId',id);
+                    }
+                });
+
+            });
+            // =============== POSITIONS
+
+            $("table tbody").on('click', 'a.btn-position' , function(ev){
+                ev.preventDefault();
+                var id = $(this).data("id");
+                $('#expertId-p').val('');
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("positions.enabled") }}',
+                    data: {expertId : id},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+
+                        $('#expertId-p').val(id);
+                        $("#list-positions").html('');
+                        var html = '';
+                        for (let index = 0; index < data.length; index++) {
+                            html += '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox" name="positions[]" value="'+data[index].id+'" '+ (data[index].active == 1? 'checked' : '') +' ></div></li>';
+                            html = html.replace(':name' , data[index].name);
+                        }
+                        $("#list-positions").html(html);
+                        $("#positionsExpert").modal();
+                    }
+                });
+                
+            });
+
+            // =============== LIST INTERVIEWS
+
+            $("table tbody").on("click" , "a.btn-interviews" , function(ev){
+                ev.preventDefault();
+                var expertId = $(this).data("id");
+                var expertName = $(this).data("name");
+                
+                $("#interview_expert_name").html( expertName );
+                $("#interview_expert_id").val(expertId);
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("interviews.expert") }}',
+                    data: {expertId : expertId },
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(interviews){
+                        console.log(interviews);
+                        var html = '';
+                        for (let index = 0; index < interviews.length; index++) {
+                            var html_card_interview = template_card_interview;
+                            html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                            html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                            html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                            html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
+                            html_card_interview = html_card_interview.replace(':about' , interviews[index].about);
+                            html_card_interview = html_card_interview.replace(':description' , interviews[index].description.replace(/↵/g, '<br>'));
+                            var result = interviews[index].result ? 'APPROVED' : 'FAILED';
+                            html_card_interview = html_card_interview.replace(':result' , result);
+                            var _date = new Date(interviews[index].date);
+                            html_card_interview = html_card_interview.replace(':date' , moment( interviews[index].date ).format("{{ config('app.date_format_javascript') }}") );
+                            html += html_card_interview
+                        }
+
+                        $('#list-interviews').html(html);
+
+                        $("#interview_type").val('');
+                        $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+                        $("#about").val('');
+                        $("#interview_description").val('');
+                        $("#interview_result").prop('checked', false);
+                        
+                        $("#interview_id").val( '' );
+
+                        $('#form-btn-edit').hide();
+                        $('#form-btn-save').show();
+
+                        $("#interviews-expert").modal();
+                    }
+                });
+                
+            });
+
+        }
 
         function jqGridExperts_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
 
@@ -457,113 +659,6 @@ td.frozencell{
                         actions = actions.replace(/:id/gi , rowData.id);
                         grid.jqGrid('setRowData', rowId, { action: actions });
                     }
-
-                    $("#loader-spinner").hide();
-
-                    // =================== DELETE
-
-                    $("table tbody").on('click', 'a.btn-delete-expert' , function(ev){
-                        ev.preventDefault();
-                        var id = $(this).data("id");
-                        $.ajax({
-                            type:'POST',
-                            url: '{{ route("experts.deleteExpert") }}',
-                            data: {expertId : id},
-                            headers: {
-                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success:function(data){
-
-                                $('#list2').jqGrid('delRowData',id);
-                            }
-                        });
-
-                    });
-                    // =============== POSITIONS
-
-                    $("table tbody").on('click', 'a.btn-position' , function(ev){
-                        ev.preventDefault();
-                        var id = $(this).data("id");
-                        $('#expertId-p').val('');
-                        $.ajax({
-                            type:'POST',
-                            url: '{{ route("positions.enabled") }}',
-                            data: {expertId : id},
-                            headers: {
-                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success:function(data){
-
-                                $('#expertId-p').val(id);
-                                $("#list-positions").html('');
-                                var html = '';
-                                for (let index = 0; index < data.length; index++) {
-                                    html += '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox" name="positions[]" value="'+data[index].id+'" '+ (data[index].active == 1? 'checked' : '') +' ></div></li>';
-                                    html = html.replace(':name' , data[index].name);
-                                }
-                                $("#list-positions").html(html);
-                                $("#positionsExpert").modal();
-                            }
-                        });
-                        
-                    });
-
-                    // =============== LIST INTERVIEWS
-
-                    $("table tbody").on("click" , "a.btn-interviews" , function(ev){
-                        ev.preventDefault();
-                        var expertId = $(this).data("id");
-                        var expertName = $(this).data("name");
-                        
-                        $("#interview_expert_name").html( expertName );
-                        $("#interview_expert_id").val(expertId);
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ route("interviews.expert") }}',
-                            data: {expertId : expertId },
-                            headers: {
-                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success:function(interviews){
-                                console.log(interviews);
-                                var html = '';
-                                for (let index = 0; index < interviews.length; index++) {
-                                    var html_card_interview = template_card_interview;
-                                    html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
-                                    html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
-                                    html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
-                                    html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
-                                    html_card_interview = html_card_interview.replace(':about' , interviews[index].about);
-                                    html_card_interview = html_card_interview.replace(':description' , interviews[index].description.replace(/↵/g, '<br>'));
-                                    var result = interviews[index].result ? 'APPROVED' : 'FAILED';
-                                    html_card_interview = html_card_interview.replace(':result' , result);
-                                    var _date = new Date(interviews[index].date);
-                                    html_card_interview = html_card_interview.replace(':date' , moment( interviews[index].date ).format("{{ config('app.date_format_javascript') }}") );
-                                    html += html_card_interview
-                                }
-
-                                $('#list-interviews').html(html);
-
-                                $("#interview_type").val('');
-                                $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
-                                $("#about").val('');
-                                $("#interview_description").val('');
-                                $("#interview_result").prop('checked', false);
-                                
-                                $("#interview_id").val( '' );
-
-                                $('#form-btn-edit').hide();
-                                $('#form-btn-save').show();
-
-                                $("#interviews-expert").modal();
-                            }
-                        });
-                        
-                    });
-
 
 
                     $('.oi-caret-right').addClass('fas').addClass('fa-angle-right')
@@ -669,6 +764,7 @@ td.frozencell{
 
         var is_jqgrid = false;
 
+
         $('#search').on('click' , function(){
             $("#filter-count-expert").hide();
             $('#search-column-name').val('');
@@ -678,26 +774,11 @@ td.frozencell{
             
             $("#loader-spinner").show();
             
+            // jqGridExperts_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '' );
 
-
-            jqGridExperts_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '' );
+            tablebootstrap_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '');
             is_jqgrid = true;
-            // if(table) table.destroy();
             
-            // $.ajax({
-            //     type: 'POST',
-            //     url: '{{ route("experts.filter") }}',
-            //     data: {basic_level : a_basic_level , intermediate_level : a_intermediate_level , advanced_level : a_advanced_level },
-            //     headers: {
-            //         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     success:function(data){
-
-            //         print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
-
-            //     }
-            // });
         });
 
         function delay(callback, ms) {
@@ -714,41 +795,11 @@ td.frozencell{
         $('#search-column-name').on( 'keyup', delay(function (ev) {
             
             var text = $(this).val();
-            // if( text .length >= 3){
-            //     if(table){
-            //         table.columns( 1 ).search(
-            //             this.value
-            //         ).draw();
-            //     }
-            // }else{
-            //     if(table){
-            //         table.columns( 1 ).search(
-            //             ''
-            //         ).draw();
-            //     }
-            // }
 
             $("#loader-spinner").show();
 
             jqGridExperts_filter( [], [] , [] , is_jqgrid , text );
             is_jqgrid = true;
-
-            // if(table) table.destroy();
-
-            // $.ajax({
-            //     type: 'POST',
-            //     url: '{{ route("experts.search") }}',
-            //     data: { name : text },
-            //     headers: {
-            //         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     success:function(data){
-
-            //         print_table_experts( data , a_basic_level.concat(a_intermediate_level , a_advanced_level) );
-
-            //     }
-            // });
 
         } , 500 ));
 

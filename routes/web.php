@@ -78,6 +78,9 @@ Route::post('/schedules/save','LogController@scheduleSave')->name('log.schedule.
 //jqgrid
 Route::get('/expert/list','ExpertController@listjqgrid')->name('expert.list');
 
+// table bootstrap
+Route::get('/expert/listtbootstrap','ExpertController@listtbootstrap')->name('expert.listtbootstrap');
+
 //recruiter log
 
 Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');

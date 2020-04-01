@@ -54,6 +54,28 @@ class ExpertController extends Controller
         ));
     }
 
+    public function listtbootstrap(Request $request){
+        $query = $request->query();
+
+        $basic = array();
+        $intermediate = array();
+        $advanced = array();
+
+        if( isset( $query['basic'] ) ) $basic = $query['basic'] != ''? explode("," , $query['basic']) : array()  ;
+        if( isset( $query['intermediate'] ) ) $intermediate = $query['intermediate'] != ''? explode("," , $query['intermediate']) : array()  ;
+        if( isset( $query['advanced'] ) ) $advanced = $query['advanced'] != ''? explode("," , $query['advanced']) : array()  ;
+
+        $experts = $this->filter($basic , $intermediate, $advanced);
+        $experts->where('fullname' , 'like' , '%'.$query['name'].'%');
+        $expert =  $experts->paginate( $query['rows'] );
+
+        return json_encode(array(
+            "total" => $expert->total(),
+            "totalNotFiltered" => $expert->total(),
+            "rows" => $expert->items()
+        ));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
