@@ -54,7 +54,7 @@
             <div class="col-12 col-sm-6 col-md-5">
                 <div class="input-group">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" name="file_cv" id="file_cv" accept="application/msword, application/pdf, .doc, .docx">
+                        <input type="file" class="custom-file-input" name="file_cv_update" id="file_cv" accept="application/msword, application/pdf, .doc, .docx">
                         <label class="custom-file-label" for="file_cv">UPLOAD CV (max 2M)</label>
                     </div>
                     @if( $expert->file_path != '' )

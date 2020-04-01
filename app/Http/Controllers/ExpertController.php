@@ -287,7 +287,7 @@ class ExpertController extends Controller
         // if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
         try {
             $request->validate([
-                'file_cv' => 'mimes:pdf,doc,docx|max:2048',
+                'file_cv_update' => 'mimes:pdf,doc,docx|max:2048',
                 'phone' => 'required|numeric',
                 'birthday'          => 'date_format:'.config('app.date_format_php'),
                 'last_info_update'  => 'date_format:'.config('app.date_format_php'),
@@ -295,7 +295,7 @@ class ExpertController extends Controller
                 // 'email_address' => 'required|email:rfc,dns'
             ]);
 
-            $file = $request->file("file_cv");
+            $file = $request->file("file_cv_update");
 
             $destinationPath = 'uploads/cv';
         
@@ -303,7 +303,6 @@ class ExpertController extends Controller
             
             $newNameFile = '';
 
-            $input["file_path"] = '';
             if( $file ){
 
                 $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
