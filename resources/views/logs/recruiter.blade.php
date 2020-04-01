@@ -2,13 +2,8 @@
 
 @section('styles')
 
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/dataTables.min.css') }}"/> -->
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/dataTables.bootstrap4.min.css') }}"/> -->
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
-
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/> -->
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
 
 <style>
     /* The switch - the box around the slider */
@@ -92,6 +87,13 @@ input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
 table.dataTable thead .sorting:before,
 table.dataTable thead .sorting:after{
     content: '';
+}
+
+td.stickout{
+    background-color: yellow;
+}
+td.frozencell{
+    background-color : #fafafa;
 }
 
 a.badge-success.focus, 
@@ -195,94 +197,11 @@ a.badge-warning:focus{
             </table>
             </form>
         </div>
-        <!-- <div class="col-12">
-
-            <table class="table row-border order-column" id="table-logs-fill">
-                    
-            </table>
-        </div> -->
         <div class="col-12">
-            <table class="table row-border order-column" id="table-logs">
-                <thead class="thead-dark">
-                    <tr>
-                    <th>Actions</th>
-                    <th>Date</th>
-                    <th>Recruiter</th>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Info</th>
-                    <th style="width: 150px;">Contact</th>
-                    <th>Filter</th>
-                    <th style="width: 150px;">Schedule</th>
-                    <th>Evaluate</th>
-                    <th>Platform</th>
-                    <th>Link</th>
-                    <th>Created at</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach($logs as $pid => $log)
-                    
-                    <tr id="row-{{ $log->id }}" >
-                        <td style="background-color: #fafafa;">
-                            @if( Auth::id() == $log->user_id || Auth::user()->role->id == 1  )
-                                <a class="badge badge-primary log-edit" data-id="{{ $log->id }}" href="#">Edit</a>
-                            @endif
-                            
-                            @if( Auth::id() == $log->user_id || Auth::user()->role->id == 1 )
-                                <a class="badge badge-danger log-delete" data-id="{{ $log->id }}" href="#">Delete</a>
-                            @endif
-                        </td>
-                        <td style="background-color: #fafafa;">{{ $log->date }}</td>
-                        <td style="background-color: #fafafa;">{{ $log->user->name }}</td>
-                        <td style="background-color: #fafafa;">{{ $log->expert }}</td>
-
-                        <td>{{ $log->position->name }}</td>
-                        <td>{{ $log->info }}</td>
-                        <td>
-                            <div class="form-group">
-                                <select class="form-control form-dropdown" data-name="contact" data-id="{{ $log->id }}">
-                                    <option value="">Select option</option>
-                                    <option value="contacted" {{ $log->contact == 'contacted' ? 'selected' : '' }} >Contactado</option>
-                                    <option value="not respond" {{ $log->contact == 'not respond' ? 'selected' : '' }} >No Responde</option>
-                                    <option value="dont want" {{ $log->contact == 'dont want' ? 'selected' : '' }} >No desea</option>
-                                    <option value="not available" {{ $log->contact == 'not available' ? 'selected' : '' }} >No disponible</option>
-                                    <option value="num email incorrect" {{ $log->contact == 'num email incorrect' ? 'selected' : '' }} >Num/Email incorrecto</option>
-                                    <option value="submitted form" {{ $log->contact == 'submitted form' ? 'selected' : '' }} >Form enviado</option>
-                                    <option value="filled form" {{ $log->contact == 'filled form' ? 'selected' : '' }} >Form llenado</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <a href="#" class="badge chk-filter badge-{{ $log->cv == '' ? 'secondary' : ($log->cv == 'approved' ? 'success' : 'danger') }}" data-value="{{ $log->cv }}" data-name="cv" data-id="{{ $log->id }}">CV</a>
-                            <a href="#" class="badge chk-filter badge-{{ $log->experience == '' ? 'secondary' : ($log->experience == 'approved' ? 'success' : 'danger') }}" data-value="{{ $log->experience }}" data-name="experience" data-id="{{ $log->id }}">Experience</a>
-                            <a href="#" class="badge chk-filter badge-{{ $log->communication == '' ? 'secondary' : ($log->communication == 'approved' ? 'success' : 'danger') }}" data-value="{{ $log->communication }}" data-name="communication" data-id="{{ $log->id }}">Communication</a>
-                            <a href="#" class="badge chk-filter badge-{{ $log->english == '' ? 'secondary' : ($log->english == 'approved' ? 'success' : 'danger') }}" data-value="{{ $log->english }}" data-name="english" data-id="{{ $log->id }}">English</a>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <select class="form-control form-dropdown" data-name="schedule" data-id="{{ $log->id }}">
-                                    <option value="">Select option</option>
-                                    <option value="scheduled" {{ $log->schedule == 'scheduled' ? 'selected' : '' }}>Agendado</option>
-                                    <option value="dont want" {{ $log->schedule == 'dont want' ? 'selected' : '' }}>No puede/desea</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <a href="#" class="badge chk-evaluate badge-{{ $log->commercial == '' ? 'secondary' : ($log->commercial == 'approved' ? 'success' : ( $log->commercial == 'not approved' ? 'danger' : 'warning' ) ) }}" data-value="{{ $log->commercial }}" data-name="commercial" data-id="{{ $log->id }}">Commercial</a>
-                            <a href="#" class="badge chk-evaluate badge-{{ $log->technique == '' ? 'secondary' : ($log->technique == 'approved' ? 'success' : ( $log->commercial == 'not approved' ? 'danger' : 'warning' )) }}" data-value="{{ $log->technique }}" data-name="technique" data-id="{{ $log->id }}">Technique</a>
-                            <a href="#" class="badge chk-evaluate badge-{{ $log->psychology == '' ? 'secondary' : ($log->psychology == 'approved' ? 'success' : ( $log->commercial == 'not approved' ? 'danger' : 'warning' )) }}" data-value="{{ $log->psychology }}" data-name="psychology" data-id="{{ $log->id }}">Psychology</a>
-                        </td>
-                        <td>{{ !is_null($log->platform)? collect($platforms)->firstWhere('value' , $log->platform)->label : '' }}  </td>
-                        <td>{{ $log->link }}</td>
-                        <td>{{ $log->created_at }}</td>
-                    </tr>
-                    
-                @endforeach
-                </tbody>
-                <!-- <div class="SliderSwitch"><label for="approve-"><input class="ck-form" value="1" data-id="" id="approve-" name="approve" type="checkbox"  /><div class="SliderSwitch__container"><div class="fas SliderSwitch__toggle"></div></div></label></div> -->
+            <table class="table row-border order-column" id="table-logs-fill"> 
             </table>
         </div>
+
     </div>
     
 
@@ -290,11 +209,8 @@ a.badge-warning:focus{
 
 @section('javascript')
 
-<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
-
-<!-- <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script> -->
+<script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
@@ -308,54 +224,59 @@ a.badge-warning:focus{
 
         var $_logs = {!! $logs !!};
 
-        // $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
-        //     height: 500,
-        //     pagination: true,
-        //     sidePagination: "server",
-        //     columns: [
-        //         {
-        //             field: 'id',
-        //             title: "Actions",
-        //             valign: 'middle',
-        //             clickToSelect: false,
-        //             formatter : function(value,row,index) {
-        //                 return '<button class=\'btn btn-primary \' pageName="'+row.expert+'" pageDetails="'+row.id+'"  >Edit</button> ';
-        //             }
-        //         },
-        //         {
-        //             field: 'expert', title: 'Name'
-        //         },
-        //         {
-        //             field: 'date', title: 'Date'
-        //         },
-        //     ],
-        //     pageNumber: 2,
-        //     showExtendedPagination: true,
-        //     totalNotFilteredField: 'totalNotFiltered',
-        //     url : "{{ route('recruiter.listlogs') }}",
-        //     queryParams : function(params){
-        //         var offset = params.offset;
-        //         var limit = params.limit;
-        //         var page = (offset / limit) + 1;
-        //         return {'offset': offset,'limit':params.limit,'page' : page};
-        //     }
-
-        // });
-
-        var table = $('#table-logs').DataTable({
-            "order": [[ 12, "desc" ]],
-            scrollY: "500px",
-            scrollX: true,
-            searching: false,
-            fixedColumns: {
-                leftColumns: 4
+        var a_columns = [
+            {
+                field: 'id',
+                title: "Actions",
+                valign: 'middle',
+                clickToSelect: false,
+                formatter : function(value,row,index) {
+                    var _buttons = '';
+                    
+                    if( "{{ Auth::id() }}" == row.user_id || "{{ Auth::user()->role->id }}" == 1){
+                        _buttons += '<a class="badge badge-primary log-edit" data-id="'+row.id+'" href="#">Edit</a>';
+                    
+                        _buttons += '  <a class="badge badge-danger log-delete" data-id="'+row.id+'" href="#">Delete</a>';
+                    }
+                    return _buttons;
+                },
+                class: 'frozencell'
             },
-            // ordering: false,
+            {   field: 'date', title: 'Date', class: 'frozencell'  },
+            {   field: 'user.name', title: 'Recruiter' , class: 'frozencell'   },
+            {   field: 'expert', title: 'Name' , class: 'frozencell'  },
+            {   field: 'position.name', title: 'Position'   },
+            {   field: 'info', title: 'Info'   },
+            {   field: 'contact', title: 'Contact', width: 150 , widthUnit: 'px' , formatter: function(value,row,index) { return html_select_contact( row.id , value ) }   },
+            {   field: 'filter', title: 'Filter' , formatter: function(value,row,index) { return html_check_filter( row.id , row ) }  },
+            {   field: 'schedule', title: 'Schedule' , formatter: function(value,row,index) { return html_select_schedule( row.id , value ) }  },
+            {   field: 'evaluate', title: 'Evaluate' , formatter: function(value,row,index) { return html_check_evaluate( row.id , row ) }  },
+            {   field: 'platform', title: 'Platform' , formatter: function(value,row,index){ return row.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == row.platform)[0].label : ''; }   },
+            {   field: 'link', title: 'Link'   },
+
+        ];
+
+        $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
+            height: 500,
+            pagination: true,
+            sidePagination: "server",
+            columns: a_columns,
+            fixedColumns: true,
+            fixedNumber: 4,
+            theadClasses: 'table-dark',
+            showExtendedPagination: true,
+            uniqueId: 'id',
+            pageSize: 25,
+            totalNotFilteredField: 'totalNotFiltered',
+            url : "{{ route('recruiter.listlogs') }}",
+            queryParams : function(params){
+                var offset = params.offset;
+                var limit = params.limit;
+                var page = (offset / limit) + 1;
+                return {'offset': offset,'limit':params.limit,'page' : page};
+            }
+
         });
-
-        var column = table.column( 12 );
-
-        column.visible(false);
 
         $("#save").on('click', function(ev){
             
@@ -370,47 +291,28 @@ a.badge-warning:focus{
                 success:function(data){
                     console.log(data);
                     // return;
-                    if(data.type == 'create'){
-                        var _buttons = '<a class="badge badge-primary log-edit" data-id="'+data.data.id+'" href="#">Edit</a>';
-                        
-                        _buttons += '  <a class="badge badge-danger log-delete" data-id="'+data.data.id+'" href="#">Delete</a>';
-                        
-                        table.row.add([
-                            _buttons,
-                            data.data.date,
-                            data.data.user_name,
-                            data.data.expert,
-                            {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name,
-                            data.data.info,
-                            html_select_contact( data.data.id ),
-                            html_check_filter( data.data.id ),
-                            html_select_schedule( data.data.id ),
-                            html_check_evaluate( data.data.id ),
-                            {!! json_encode($platforms) !!}.filter(f => f.value == data.data.platform)[0].label ,
-                            data.data.link,
-                            data.data.created_at
-                        ]).node().id = "row-"+data.data.id;
-                        table.draw(false);  
-                        $_logs.push({
-                            id      : data.data.id,
-                            expert: data.data.expert,
-                            info: data.data.info,
-                            position:{
-                                id: data.data.position_id,
-                                name: {!! $positions !!}.filter(f => f.id == data.data.position_id)[0].name
-                            },
-                            date   : data.data.date,
-                            position_id : data.data.position_id,
-                            platform : data.data.platform,
-                            link : data.data.link,
-                            filter: "-",
-                            called: "-",
-                            scheduled: "-",
-                            attended: "-",
-                            approve: "-",
-                            created_at : data.data.created_at
-                        });
-                    }
+
+                    $("#table-logs-fill").bootstrapTable('insertRow', {index: 0, row: data});
+
+                    $_logs.push({
+                        id      : data.id,
+                        expert: data.expert,
+                        info: data.info,
+                        position:{
+                            id: data.position_id,
+                            name: {!! $positions !!}.filter(f => f.id == data.position_id)[0].name
+                        },
+                        date   : data.date,
+                        position_id : data.position_id,
+                        platform : data.platform,
+                        link : data.link,
+                        filter: "-",
+                        called: "-",
+                        scheduled: "-",
+                        attended: "-",
+                        approve: "-",
+                        created_at : data.created_at
+                    });
 
                     // clean
                     $("#name").val('').focus();
@@ -488,9 +390,7 @@ a.badge-warning:focus{
                 },
                 data:  $("#new-log input , #new-log select").serialize() ,
                 success:function(data){
-                    console.log(data);
-                    // return;
-                    
+
                     var index = $_logs.findIndex( f => f.id == data.id);
                     console.log(index, "dddddd");
                     $_logs[index].expert = data.expert;
@@ -503,16 +403,8 @@ a.badge-warning:focus{
                     };
                     $_logs[index].platform = data.platform;
                     $_logs[index].link = data.link;
-
-                    $('#row-'+ data.id + ' td:nth-child(2)').html( data.date ? data.date : '' );
-                    $('#row-'+ data.id + ' td:nth-child(4)').html( data.expert );
-                    $('#row-'+ data.id + ' td:nth-child(5)').html( data.position_id ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : '' );
-                    $('#row-'+ data.id + ' td:nth-child(6)').html( data.info );
-
-                    $('#row-'+ data.id + ' td:nth-child(11)').html( data.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == data.platform)[0].label : '' );
-                    $('#row-'+ data.id + ' td:nth-child(12)').html( data.link? data.link : '' );
                         
-                    
+                    $("#table-logs-fill").bootstrapTable('updateByUniqueId', {id: data.id, row: data }).
                     // clean
                     $("#name").val('').focus();
                     $("#info").val('');
@@ -558,7 +450,7 @@ a.badge-warning:focus{
                 .removeClass('badge-secondary')
                 .removeClass('badge-danger');
 
-            if( val == '' ){
+            if( val == null ){
                 $(this).addClass('badge-danger');
                 $(this).data('value' , 'not approved')
                 val = 'not approved';
@@ -628,7 +520,7 @@ a.badge-warning:focus{
                 .removeClass('badge-danger')
                 .removeClass('badge-warning');
 
-            if( val == '' ){
+            if( val == null ){
                 $(this).addClass('badge-success');
                 $(this).data('value' , 'approved')
                 val = 'approved';
@@ -669,49 +561,49 @@ a.badge-warning:focus{
 
         });
 
-        function html_select_contact( _id ){
+        function html_select_contact( _id , _contact){
             var html = '';
             html += '<div class="form-group">';
-            html += '    <select class="form-control form-dropdown" data-name="contact" data-id="'+_id+'">';
-            html += '        <option value="">Select option</option>';
-            html += '        <option value="contacted" >Contactado</option>';
-            html += '        <option value="not respond" >No Responde</option>';
-            html += '        <option value="dont want" >No desea</option>';
-            html += '        <option value="not available" >No disponible</option>';
-            html += '        <option value="num email incorrect" >Num/Email incorrecto</option>';
-            html += '        <option value="submitted form" >Form enviado</option>';
-            html += '        <option value="filled form" >Form llenado</option>';
+            html += '    <select class="form-control form-dropdown" data-name="contact" data-id="'+_id+'" style="width: 200px;">';
+            html += '        <option value="" >Select option</option>';
+            html += '        <option value="contacted" '+(_contact=='contacted'? 'selected' : '' )+'>Contactado</option>';
+            html += '        <option value="not respond" '+(_contact=='not respond'? 'selected' : '' )+'>No Responde</option>';
+            html += '        <option value="dont want" '+(_contact=='dont want'? 'selected' : '' )+'>No desea</option>';
+            html += '        <option value="not available" '+(_contact=='not available'? 'selected' : '' )+'>No disponible</option>';
+            html += '        <option value="num email incorrect" '+(_contact=='num email incorrect'? 'selected' : '' )+'>Num/Email incorrecto</option>';
+            html += '        <option value="submitted form" '+(_contact=='submitted form'? 'selected' : '' )+'>Form enviado</option>';
+            html += '        <option value="filled form" '+(_contact=='filled form'? 'selected' : '' )+'>Form llenado</option>';
             html += '    </select>';
             html += '</div>';
             return html;
         }
 
-        function html_check_filter( _id ){
+        function html_check_filter( _id, _filter ){
             var html = '';
-            html += '<a href="#" class="badge chk-filter badge-secondary" data-value="" data-name="cv" data-id="'+_id+'">CV</a>';
-            html += '<a href="#" class="badge chk-filter badge-secondary" data-value="" data-name="experience" data-id="'+_id+'">Experience</a>';
-            html += '<a href="#" class="badge chk-filter badge-secondary" data-value="" data-name="communication" data-id="'+_id+'">Communication</a>';
-            html += '<a href="#" class="badge chk-filter badge-secondary" data-value="" data-name="english" data-id="'+_id+'">English</a>';
+            html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.cv == null ? 'secondary' : (_filter.cv == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.cv+'" data-name="cv" data-id="'+_id+'">CV</a>\n';
+            html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.experience == null ? 'secondary' : (_filter.experience == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.experience+'" data-name="experience" data-id="'+_id+'">Experience</a>\n';
+            html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.communication == null ? 'secondary' : (_filter.communication == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.communication+'" data-name="communication" data-id="'+_id+'">Communication</a>\n';
+            html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.english == null ? 'secondary' : (_filter.english == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.english+'" data-name="english" data-id="'+_id+'">English</a>';
             return html;
         }
 
-        function html_select_schedule( _id ){
+        function html_select_schedule( _id , _schedule){
             var html = '';
             html += '<div class="form-group">';
-            html += '    <select class="form-control form-dropdown" data-name="schedule" data-id="'+_id+'">';
+            html += '    <select class="form-control form-dropdown" data-name="schedule" data-id="'+_id+'" style="width: 150px;">';
             html += '        <option value="">Select option</option>';
-            html += '        <option value="scheduled" >Agendado</option>';
-            html += '        <option value="dont want">No puede/desea</option>';
+            html += '        <option value="scheduled" '+( _schedule=='scheduled'? 'selected' : '' )+'>Agendado</option>';
+            html += '        <option value="dont want" '+( _schedule=='dont want'? 'selected' : '' )+'>No puede/desea</option>';
             html += '    </select>';
             html += '</div>';
             return html;
         }
 
-        function html_check_evaluate( _id ){
+        function html_check_evaluate( _id , _evaluate){
             var html = '';
-            html += '<a href="#" class="badge chk-evaluate badge-secondary" data-value="" data-name="commercial" data-id="'+_id+'">Commercial</a>';
-            html += '<a href="#" class="badge chk-evaluate badge-secondary" data-value="" data-name="technique" data-id="'+_id+'">Technique</a>';
-            html += '<a href="#" class="badge chk-evaluate badge-secondary" data-value="" data-name="psychology" data-id="'+_id+'">Psychology</a>';
+            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.commercial == null ? 'secondary' : (_evaluate.commercial == 'approved' ? 'success' : ( _evaluate.commercial == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.commercial+'" data-name="commercial" data-id="'+_id+'">Commercial</a>\n';
+            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.technique == null ? 'secondary' : (_evaluate.technique == 'approved' ? 'success' : ( _evaluate.technique == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.technique+'" data-name="technique" data-id="'+_id+'">Technique</a>\n';
+            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.psychology == null ? 'secondary' : (_evaluate.psychology == 'approved' ? 'success' : ( _evaluate.psychology == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.psychology+'" data-name="psychology" data-id="'+_id+'">Psychology</a>\n';
             
             return html;
         }

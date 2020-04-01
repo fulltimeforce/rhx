@@ -2,13 +2,6 @@
 
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/> -->
-
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid.css') }}"/> -->
-
-<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/css/ui.jqgrid-bootstrap4.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.css') }}"/> -->
 
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
@@ -149,7 +142,7 @@ td.frozencell{
             <h1>Experts</h1>
         </div>
         <div class="col text-right">
-            <!-- <a class="btn btn-primary" href="{{ route('experts.create') }}">New Expert</a> -->
+            
             <a class="btn btn-info" id="url-generate" href="#">Generate URL</a>
         </div>
     </div>
@@ -330,43 +323,19 @@ td.frozencell{
             <table id="list-experts"></table>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            @component('layouts.components.spiner')
-            @endcomponent
-            
-            <table id="list2"></table>
-            <div id="pager2"></div>
-            
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            
-        </div>
-    </div>
+    
 @endsection
 
 @section('javascript')
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
-<!-- <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script> -->
-
-<!-- <script type="text/javascript" src="{{ asset('/jqGrid/js/i18n/grid.locale-en.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/jqGrid/js/jquery.jqGrid.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/jqGrid/plugins/jQuery.jqGrid.fontAwesome4.js') }}"></script> -->
-
 <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
 
 <script type="text/javascript">
-    // $.jgrid.defaults.styleUI = 'Bootstrap4';
+    
     $(document).ready(function () {
-
-        $("#loader-spinner").hide();
 
         function tablebootstrap_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
             
@@ -408,7 +377,7 @@ td.frozencell{
 
             @foreach($technologies as $categoryid => $category)
                 @foreach($category[1] as $techid => $techlabel)
-                    // a_keys_filter.filter(f => f=='{{$techid}}').length > 
+                    
                     if ( a_keys_filter.filter(f => f=='{{$techid}}').length > 0 ){
                         columns.push( { field: '{{$techid}}', title: "{{$techlabel}}", class: 'stickout' } );
                     }else{
@@ -451,7 +420,6 @@ td.frozencell{
             });
 
 
-            $("#loader-spinner").hide();
 
             // =================== DELETE
 
@@ -559,143 +527,6 @@ td.frozencell{
 
         }
 
-        function jqGridExperts_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
-
-            var url = '{{ route("expert.list" , array( "basic" => ":basic", "intermediate" => ":inter", "advanced" => ":advan" , "name" => ":search_name" ) ) }}';
-            
-            $("#loader-spinner").show();
-            
-            var q_basic = a_keys_basic? a_keys_basic.join(',') : '';
-            var q_inter = a_keys_inter? a_keys_inter.join(',') : '';
-            var q_advan = a_keys_advan? a_keys_advan.join(',') : '';
-
-            url = url.replace("%3Abasic" , q_basic);
-            url = url.replace("%3Ainter" , q_inter);
-            url = url.replace("%3Aadvan" , q_advan);
-
-            url = url.replace("%3Asearch_name" , search_name);
-
-
-            url = url.replace(/amp;/gi , "");
-
-            var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
-
-            var a_colModels = [
-                {name:'action', index:'action' , width: 100 ,frozen : true , classes : 'frozencell'},
-                {name:'fullname', index:'fullname' , frozen : true , classes : 'frozencell'},
-                {name:'id', index:'id' , hidden: true },
-                {name:'file_path', index:'file_path' , hidden: true}
-            ];
-            var a_colModels_temp = [];
-            var a_colModels_info = [
-                {name:'email_address', index:'email_address'},
-                {name:'age', index:'age' , width: 60},
-                {name:'phone', index:'phone' , width: 120},
-                {name:'availability', index:'availability'},
-                {name:'salary', index:'salary' , width: 110 ,formatter: function(cellvalue,options, rowObject) { return "S/. "+ (cellvalue == null? '' : cellvalue ) ;}},
-                {name:'linkedin', index:'linkedin'},
-                {name:'github', index:'github'},
-                {name:'focus', index:'focus'},
-            ];
-
-            //titles
-            var a_colNames = ['Action' , 'Name' , 'ID' , 'File'];
-            var a_colNames_temp = [];
-            var a_colNames_info = ['Email','Age','Phone','Availability','Salary','Linkedin','Github','Experience'];
-
-
-            @foreach($technologies as $categoryid => $category)
-                @foreach($category[1] as $techid => $techlabel)
-                    // a_keys_filter.filter(f => f=='{{$techid}}').length > 
-                    if ( a_keys_filter.filter(f => f=='{{$techid}}').length > 0 ){
-                        a_colNames.push( "{{$techlabel}}");
-                        a_colModels.push( {name:'{{$techid}}', index:'{{$techid}}' , classes : 'stickout' , width: 110 , align : 'center'} );
-                    }else{
-                        a_colNames_temp.push( "{{$techlabel}}");
-                        a_colModels_temp.push( {name:'{{$techid}}', index:'{{$techid}}' , width: 110 ,align : 'center'});
-                    }
-                @endforeach
-            @endforeach
-
-            console.log( url , "URL------");
-            console.log( a_colNames.concat(a_colNames_info, a_colNames_temp) , "names------");
-            console.log( a_colModels.concat(a_colModels_info, a_colModels_temp) , "models------");
-
-            // return;
-            
-            
-            if(_is_jqgrid) $.jgrid.gridUnload("#list2"); // jQuery("#list2").jqGrid('GridDestroy');
-            
-            jQuery("#list2").jqGrid("initFontAwesome").jqGrid({
-                url: url,
-                datatype: "json",
-                colNames: a_colNames.concat(a_colNames_info, a_colNames_temp),
-                colModel: a_colModels.concat(a_colModels_info, a_colModels_temp),
-                rowNum: 25,
-                rowList: [25,50,100],
-                pager: '#pager2',
-                sortname: 'id',
-                regional: 'es',
-                viewrecords: true,
-                sortorder: "desc",
-                height: '500',
-                autowidth:true,
-                shrinkToFit:false,
-                forceFit:true,
-                gridComplete: function(){
-                    var grid = jQuery("#list2");
-                    var ids = grid.jqGrid('getDataIDs');
-                    for (var i = 0; i < ids.length; i++) {
-
-                        var rowId = ids[i];
-                        var rowData = jQuery('#list2').jqGrid ('getRowData', rowId);
-                        console.log(rowData, "rowData")
-                        var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
-                        actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
-                        actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
-                        actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
-                        actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
-                        
-                        actions = actions.replace(/:id/gi , rowData.id);
-                        grid.jqGrid('setRowData', rowId, { action: actions });
-                    }
-
-
-                    $('.oi-caret-right').addClass('fas').addClass('fa-angle-right')
-                        .removeClass('oi').removeClass('oi-caret-right');
-                    
-                    $('.oi-media-step-forward').addClass('fas').addClass('fa-angle-double-right')
-                        .removeClass('oi').removeClass('oi-media-step-forward');
-
-                    $('.oi-caret-left').addClass('fas').addClass('fa-angle-left')
-                        .removeClass('oi').removeClass('oi-caret-left');
-
-                    $('.oi-media-step-backward').addClass('fas').addClass('fa-angle-double-left')
-                        .removeClass('oi').removeClass('oi-media-step-backward');
-                }
-
-            });
-            jQuery("#list2").jqGrid('navGrid','#pager2',{edit:false,add:false,del:false});
-            jQuery("#list2").jqGrid('setFrozenColumns');
-
-            $("#loader-spinner").hide();
-            
-        }
-
-        var options = {
-            lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
-            scrollY: "500px",
-            scrollX: true,
-            scrollCollapse: true,
-            fixedColumns: {
-                leftColumns: 2
-            },
-            // searching: false
-            // dom: "Bfrtip",
-        }
-
-        var table;
-
         $(".search-level").select2({
             ajax: {
                 url: "{{ route('expert.technologies') }}",
@@ -772,12 +603,7 @@ td.frozencell{
             a_intermediate_level = $(".search-level.intermediate").val();
             a_advanced_level = $(".search-level.advanced").val(); 
             
-            $("#loader-spinner").show();
-            
-            // jqGridExperts_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '' );
-
             tablebootstrap_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '');
-            is_jqgrid = true;
             
         });
 
@@ -796,133 +622,13 @@ td.frozencell{
             
             var text = $(this).val();
 
-            $("#loader-spinner").show();
-
-            // jqGridExperts_filter( [], [] , [] , is_jqgrid , text );
-
             tablebootstrap_filter( [], [] , [] , is_jqgrid , text );
             is_jqgrid = true;
 
         } , 500 ));
 
-        function print_table_experts( data , techonologies_level ){
-
-            $("#filter-count-expert").show();
-            $("#filter-count-expert .count-expert").html( data.length ) ;
-            var html = '';
-            $("#allexperts thead").html('');
-            $("#allexperts thead").html( html_table_head( techonologies_level ) );
-            
-            for (let index = 0; index < data.length; index++) {
-
-                html += html_table_row(data[index] , techonologies_level );
-            }
-            
-            $("#allexperts tbody").html('');
-            $("#allexperts tbody:first").html(html);
-
-            $("#loader-spinner").hide();
-            
-            table = $("#allexperts").DataTable( options );
-        }
-
-        function html_table_head(a_keys){
-
-            var html = '';
-            html += '<tr>';
-            var columns = [];
-            var info = '';
-            html += '<th>Action</th>';
-            html += '<th style="width: 200px;">Name</th>';
-            info += '<th>Email</th>';
-            info += '<th>Age</th>';
-            info += '<th>Phone</th>';
-            info += '<th>Availability</th>';
-            info += '<th>Salary</th>';
-            info += '<th>Linkedin</th>';
-            info += '<th>Github</th>';
-            info += '<th>Experience</th>';
-            var temp = '';
-            var rows = '';
-            @foreach($technologies as $categoryid => $category)
-                @foreach($category[1] as $techid => $techlabel)
-                    columns.push({title: "{{$techlabel}}" });
-                    if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
-                        rows += '<th>'+"{{$techlabel}}"+'</th>';
-                    }else{
-                        temp += '<th>'+"{{$techlabel}}"+'</th>';
-                    }
-                @endforeach
-            @endforeach
-            html += rows + info + temp;
-            html += '</tr>';
-            return html;
-        }
-
-        function html_table_row(data , a_keys){
-            var html = '';
-            html += '<tr>';
-            html += '<td>';
-            html += '<form action="'+ "{{ route('experts.destroy', ':id' ) }}"+ '" method="POST">';
-    
-            html += '        <a class="badge badge-primary" href="'+ "{{ route('experts.edit', ':id') }}" + '">Edit</a>';
-
-            if( data.file_path != '' ){
-                html += '   <a href="'+data.file_path+'" download class="badge badge-dark text-light">DOWNLOAD</a>';
-            }
-            
-            html += '        <a href="#" data-id="'+data.id+'" class="badge badge-info btn-position">Positions</a>';
-
-            // if( data.log_id == '' || data.log_id == null ){
-            //     html += '        <a href="#" data-id="'+data.id+'" class="badge badge-dark btn-log">Log</a>';
-            // }
-
-            html += '       <a class="badge badge-secondary btn-interviews" data-id="'+data.id+'" data-name="'+data.fullname+'" href="#">Interviews</a>';
-
-            html = html.replace(/:id/gi , data.id);
-
-            html += '<input type="hidden" name="_token" value="{{csrf_token()}}" /> ';
-            html += '<input type="hidden" name="_method" value="DELETE" /> ';
-            
-            // ('delete')
-            html += '        <button type="submit" class="badge badge-danger">Delete</button>';
-            html += '    </form>';
-            html += '</td>';
-            html += '<td style="background-color: #fafafa;width: 200px;">'+data.fullname+'</td>';
-            var info = '';
-            var temp = '';
-            var rows = '';
-            @foreach($technologies as $categoryid => $category)
-                @foreach($category[1] as $techid => $techlabel)
-                
-                var _text =  (data['{{$techid}}'] == null)? '' : data['{{$techid}}'] ;
-                if ( a_keys.filter(f => f=='{{$techid}}').length > 0 ){
-                    rows += '<td class="stickout">'+_text+'</td>';
-                }else{
-
-                    temp += '<td>'+_text+'</td>';
-                }
-                
-                @endforeach
-            @endforeach
-
-            info += '<td>'+((data.email_address==null)? "" : data.email_address)+'</td>';
-            info += '<td>'+((data.age==null)? "": data.age)+'</td>';
-            info += '<td>'+((data.phone==null)? "": data.phone)+'</td>';
-            info += '<td>'+((data.availability==null)?"":data.availability)+'</td>';
-            info += '<td>'+((data.salary==null)?"":data.salary)+'</td>';
-            info += '<td>'+((data.linkedin==null)?"":"<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.linkedin+"'>Link</a>")+'</td>';
-            info += '<td>'+((data.github==null)?"": "<a href='#' class='btn btn-sm btn-info copy-link' data-info='"+data.github+"'>Link</a>" )+'</td>';
-            info += '<td class="text-capitalize">'+((data.focus==null)?"":data.focus)+'</td>';
-
-            html += rows + info + temp;
-            html += '</tr>';
-            return html;
-        }
 
         // ===================== SHOW POSITIONS =====================
-
-        
 
         $("#save-positions").on('click' , function(ev){
             
@@ -1110,28 +816,6 @@ td.frozencell{
             $('#form-btn-save').show();
 
         });
-
-        // $('table').on('click' , '.btn-log' , function(ev){
-        //     ev.preventDefault();
-        //     var id = $(this).data("id");
-        //     var $_this = $(this);
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: '{{ route("experts.log") }}',
-        //         data: {id : id},
-        //         headers: {
-        //             'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //         },
-        //         success:function(data){
-                    
-        //             console.log(data , "______________data");
-        //             if(data) $_this.remove();
-                    
-        //         }
-        //     });
-
-        // });
 
     });
  

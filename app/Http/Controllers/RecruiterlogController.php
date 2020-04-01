@@ -36,7 +36,7 @@ class RecruiterlogController extends Controller
 
     public function listlogs( Request $request ){
 
-        $logs = Recruiterlog::with(['user'])->paginate( $request->query('limit') );
+        $logs = Recruiterlog::with(['user', 'position'])->orderBy('created_at' , 'desc')->paginate( $request->query('limit') );
 
         return array(
             "total" => $logs->total(),
@@ -51,20 +51,7 @@ class RecruiterlogController extends Controller
         $input['user_id'] = Auth::id();
         $log = Recruiterlog::create($input);
 
-        return array(
-            'type' => 'create',
-            'data' => array(
-                "id"            => $log->id,
-                "expert"          => $input['expert'],
-                "info"          => $input['info'],
-                "date"         => $input['date'],
-                "platform"      => $input['platform'],
-                "position_id"   => $input['position_id'],
-                "link"          => $input['link'],
-                "user_name"          => Auth::user()->name,
-                "created_at"    => date("Y-m-d H:i:s")
-            )
-        );
+        return Recruiterlog::with(['user', 'position'])->find($log->id);
     }
 
     public function updateForm( Request $request ){
@@ -80,15 +67,7 @@ class RecruiterlogController extends Controller
         
         $log = Recruiterlog::where('id' , $id)->update($input);
 
-        return array(
-            "id" => $id,
-            "expert" => isset( $input['expert'] )? $input['expert'] : '' ,
-            "info" => isset( $input['info'] )? $input['info'] : '' ,
-            "date" => $date != '' ? $date : '',
-            "position_id"   => isset( $input['position_id'] )? $input['position_id'] : '',
-            "platform" => isset( $input['platform'] )? $input['platform'] : '',
-            "link" => isset( $input['link'] )? $input['link'] : '', 
-        );
+        return Recruiterlog::with(['user', 'position'])->find( $id );
     }
 
     public function deleteForm( Request $request ){
