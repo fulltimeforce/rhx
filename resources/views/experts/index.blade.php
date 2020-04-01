@@ -398,7 +398,7 @@ td.frozencell{
                 fixedNumber: 2,
                 theadClasses: 'table-dark',
                 uniqueId: 'id',
-                pageSize: 25,
+                pageSize: 50,
                 queryParams : function(params){
                     var offset = params.offset;
                     var limit = params.limit;
