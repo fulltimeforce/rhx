@@ -35,6 +35,8 @@ Route::post('/experts/deleteExpert', 'ExpertController@deleteExpert')->name('exp
 Route::get('expert/technologies','ExpertController@technologies')->name('expert.technologies');
 
 Route::post('positions/experts', 'PositionController@experts')->name('positions.experts.attach');
+Route::get('positions/experts/list', 'PositionController@relationsExperts')->name('positions.experts.list');
+
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
 Route::post('expert/search','ExpertController@searchbyname')->name('experts.search');

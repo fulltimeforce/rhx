@@ -198,6 +198,33 @@ class PositionController extends Controller
             ->with('technologies',Expert::getTechnologies());
     }
 
+    public function relationsExperts( Request $request ){
+
+        $positionId = $request->query('positionId');
+
+        $experts =  DB::table('experts')->whereIn('id', function($query) use ($positionId){
+            $query->select('expert_id')
+            ->from('expert_position')
+            ->where('position_id' , $positionId);
+        });
+        if( !empty( $request->query('name') ) ){
+            $experts->where('fullname' , 'like' , '%'.$request->query('name').'%');
+        }
+        $experts = $experts->addSelect(['status' => Log::select('status')->where( function($q) use($positionId) {
+            $q
+                ->whereColumn('expert_position.expert_id' , '=', 'experts.id')
+                ->where('expert_position.position_id' , $positionId);
+        })->limit(1) ])
+        ->paginate( $request->query('rows') );
+
+        return array(
+            "total" => $experts->total(),
+            "totalNotFiltered" => $experts->total(),
+            "rows" => $experts->items()
+        );
+
+    }
+
 
     /**
      * Update the specified resource in storage.

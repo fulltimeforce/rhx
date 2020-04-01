@@ -43,7 +43,7 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <img src="https://fulltimeforce.com/wp-content/themes/ftf-2020/images/fulltimeforce-logo.svg" alt="Fulltimeforce Logo" id="logo">
                 </a>
@@ -116,7 +116,7 @@
         </nav>
 
         <main class="py-4">
-            <div class="container">
+            <div class="container-fluid">
                 @yield('content')
             </div>
             

@@ -2,8 +2,12 @@
 
 @section('styles')
 
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/> -->
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
+
 <style>
 #showURL{
     word-break: break-all;
@@ -114,6 +118,13 @@ td.stickout{
 
 a.btn-delete-interview{
     margin: -2.2rem -.5rem -1rem auto;
+}
+
+td.stickout{
+    background-color: yellow;
+}
+td.frozencell{
+    background-color : #fafafa;
 }
 
 </style>
@@ -272,101 +283,99 @@ a.btn-delete-interview{
     </div>
     <div class="row">
         <div class="col">
-            <table class="table table-bordered row-border order-column" id="allexperts">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Action</th>
-                    <th style="width: 150px;">Status</th>
-                    <th style="width: 200px;">Name</th>
-                    @foreach($current_tech as $categoryid => $category)
-                        @foreach($category as $techid => $techlabel)
-                            <th>{{$techlabel}}</th>
-                        @endforeach
-                    @endforeach
-                    <th>Email</th>
-                    <th>Age</th>
-                    <th>Phone</th>
-                    <th>Availability</th>
-                    <th>Salary</th>
-                    @foreach($after_tech as $categoryid => $category)
-                        @foreach($category as $techid => $techlabel)
-                            <th>{{$techlabel}}</th>
-                        @endforeach
-                    @endforeach
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($experts as $expert)
-                <tr>
-                    <td>
-                        <form action="{{ route('experts.destroy', $expert->id ) }}" method="POST">
-                            <a class="badge badge-primary" href="{{ route( 'experts.edit', $expert->id ) }}">Edit</a>
-                            @if($expert->file_path != '' )
-                            <a href="{{ route('home' ) .'/'. $expert->file_path }}" download class="badge badge-dark text-light">DOWNLOAD</a>
-                            @endif
-                            <a href="#" data-id="{{ $expert->id }}" class="badge badge-info btn-position">Positions</a>
-                            <a class="badge badge-secondary btn-interviews" data-id="{{ $expert->id }}" data-name="{{ $expert->fullname }}" href="#">Interviews</a>
-                            @csrf
-                            @method('DELETE')
-                            <!-- <button type="submit" class="badge badge-danger">Delete</button> -->
-                        </form>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <select name="expert_status" class="form-control expert_status" data-expert="{{ $expert->id }}" data-position="{{ $positionId }}">
-                                <option value=""></option>
-                                <option value="filter" {{ $expert->status == 'filter' ? 'selected' : '' }}>Filter</option>
-                                <option value="called" {{ $expert->status == 'called' ? 'selected' : '' }}>Called</option>
-                                <option value="scheduled" {{ $expert->status == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                                <option value="attended" {{ $expert->status == 'attended' ? 'selected' : '' }}>Attended</option>
-                                <option value="approved" {{ $expert->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="failed" {{ $expert->status == 'failed' ? 'selected' : '' }}>Failed</option>
-                            </select>
-                        </div>
-                    </td>
-                    <td>{{ $expert->fullname }}</td>
-                    @foreach($current_tech as $categoryid => $category)
-                        @foreach($category as $techid => $techlabel)
-                        <td style="background-color: yellow;">{{ $expert->$techid }}</td>
-                        @endforeach
-                    @endforeach
-                    <td>{{ $expert->email_address }}</td>
-                    <td>{{ $expert->birthday }}</td>
-                    <td>{{ $expert->phone }}</td>
-                    <td>{{ $expert->availability }}</td>
-                    <td>{{ $expert->salary }}</td>
-                    @foreach($after_tech as $categoryid => $category)
-                        @foreach($category as $techid => $techlabel)
-                        <td >{{ $expert->$techid }}</td>
-                        @endforeach
-                    @endforeach
-                </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <table id="list-experts"></table>
+
         </div>
     </div>
 @endsection
 
 @section('javascript')
-<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
+
+
+<script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
+
+
 <script type="text/javascript">
 
     $(document).ready(function (ev) {
-        var options = {
-            lengthMenu: [[50, 100, 150, -1], [50, 100, 150, "All"]],
-            scrollY: "500px",
-            scrollX: true,
-            scrollCollapse: true,
-            fixedColumns: {
-                leftColumns: 3
-            },
-            // searching: false
-            // dom: "Bfrtip",
-        }
 
-        var table = $("#allexperts").DataTable( options );
+        var a_columns = [
+            {
+                field: 'id',
+                title: "Actions",
+                valign: 'middle',
+                clickToSelect: false,
+                formatter : function(value,rowData,index) {
+                    var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
+                    actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
+                    actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
+                    actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
+                    
+                    actions = actions.replace(/:id/gi , rowData.id);
+
+                    return actions;
+                },
+                width: 100,
+                class: 'frozencell'
+            },
+            { field: 'status', title: "Status", formatter: function(value,rowData,index){ return html_status_expert(rowData.id, value); } , width: 150 , class: 'frozencell'},
+            { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'}
+        ];
+
+        @foreach($current_tech as $categoryid => $category)
+            @foreach($category as $techid => $techlabel)
+                a_columns.push( { field: '{{$techid}}', title: "{{$techlabel}}", class: 'stickout', align: 'center' } );
+            @endforeach
+        @endforeach
+
+        a_columns.push({ field: 'email_address', title: "Email" });
+        a_columns.push({ field: 'age', title: "Age" });
+        a_columns.push({ field: 'phone', title: "Phone" });
+        a_columns.push({ field: 'availability', title: "Availability" });
+        a_columns.push({ field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : "S/. "+value;} });
+        a_columns.push({ field: 'linkedin', title: "Linkedin" });
+        a_columns.push({ field: 'github', title: "Github" });
+        a_columns.push({ field: 'experience', title: "Experience" });
+
+        @foreach($after_tech as $categoryid => $category)
+            @foreach($category as $techid => $techlabel)
+                a_columns.push( { field: '{{$techid}}', title: "{{$techlabel}}" , width: 110, align: 'center' } );
+            @endforeach
+        @endforeach
+
+        function list_experts( search_name ){
+            $("#list-experts").bootstrapTable('destroy').bootstrapTable({
+                height: 500,
+                pagination: true,
+                sidePagination: "server",
+                columns: a_columns,
+                showExtendedPagination: true,
+                totalNotFilteredField: 'totalNotFiltered',
+                url : "{{ route('positions.experts.list') }}",
+                fixedColumns: true,
+                fixedNumber: 3,
+                theadClasses: 'table-dark',
+                uniqueId: 'id',
+                pageSize: 25,
+                queryParams : function(params){
+                    var offset = params.offset;
+                    var limit = params.limit;
+                    var page = (offset / limit) + 1;
+                    return {
+                        'offset': offset,
+                        'rows': params.limit,
+                        'page' : page , 
+                        'positionId' : "{{ $positionId }}",
+                        'name' : search_name
+                    };
+                }
+
+            });
+        }
+        
+        list_experts('');
+        // ================================== POSITIONS =====================
 
         $("table tbody").on('click', 'a.btn-position' , function(ev){
             ev.preventDefault();
@@ -396,6 +405,8 @@ a.btn-delete-interview{
             
         });
 
+        // ================================== SAVE POSITIONS =====================
+
         $("#save-positions").on('click' , function(ev){
             
             var positionsIDs = [];
@@ -419,6 +430,8 @@ a.btn-delete-interview{
             });
 
         });
+
+        // ================================== INTERVIEWS =====================
 
         var template_card_interview = $('#list-interviews').html();
         $('#list-interviews').html('');
@@ -472,20 +485,10 @@ a.btn-delete-interview{
         }
 
         $('#search-column-name').on( 'keyup', delay(function (ev) {
+
             var text = $(this).val();
-            if( text .length >= 3){
-                if(table){
-                    table.columns( 1 ).search(
-                        text
-                    ).draw();
-                }
-            }else{
-                if(table){
-                    table.columns( 1 ).search(
-                        ''
-                    ).draw();
-                }
-            }
+            list_experts(text);
+
         } , 500 ));
 
         $('table').on('change' , '.expert_status' , function(){
@@ -505,6 +508,24 @@ a.btn-delete-interview{
                 }
             });
         })
+
+
+        function html_status_expert( _id , _status ){
+            var html = '';
+            html += '<div class="form-group">';
+            html += '    <select name="expert_status" class="form-control expert_status" style="width: 150px;" data-expert="'+_id+'" data-position="{{ $positionId }}">';
+            html += '        <option value=""></option>';
+            html += '        <option value="filter" '+( _status == 'filter' ? 'selected' : '' ) + '>Filter</option>';
+            html += '        <option value="called" '+( _status == 'called' ? 'selected' : '' ) + '>Called</option>';
+            html += '        <option value="scheduled" '+( _status == 'scheduled' ? 'selected' : '' ) + '>Scheduled</option>';
+            html += '        <option value="attended" '+( _status == 'attended' ? 'selected' : '' ) + '>Attended</option>';
+            html += '        <option value="approved" '+( _status == 'approved' ? 'selected' : '' ) + '>Approved</option>';
+            html += '        <option value="failed" '+( _status == 'failed' ? 'selected' : '' ) + '>Failed</option>';
+            html += '    </select>';
+            html += '</div>';
+
+            return html;
+        }
 
     });
 </script>   

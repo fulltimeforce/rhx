@@ -36,7 +36,9 @@ class RecruiterlogController extends Controller
 
     public function listlogs( Request $request ){
 
-        $logs = Recruiterlog::with(['user', 'position'])->orderBy('created_at' , 'desc')->paginate( $request->query('limit') );
+        $logs = Recruiterlog::with(['user', 'position'])
+            ->orderBy('created_at' , 'desc')
+            ->paginate( $request->query('limit') );
 
         return array(
             "total" => $logs->total(),
