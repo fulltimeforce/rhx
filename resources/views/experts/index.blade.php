@@ -396,11 +396,11 @@ td.frozencell{
             ];
             var columns_temp = [];
             var columns_info = [
-                { field: 'email', title: "Email" },
+                { field: 'email_address', title: "Email" },
                 { field: 'age', title: "Age" },
                 { field: 'phone', title: "Phone" },
                 { field: 'availability', title: "Availability" },
-                { field: 'salary', title: "Salary" },
+                { field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : "S/. "+value;} },
                 { field: 'linkedin', title: "Linkedin" },
                 { field: 'github', title: "Github" },
                 { field: 'experience', title: "Experience" },
@@ -798,7 +798,9 @@ td.frozencell{
 
             $("#loader-spinner").show();
 
-            jqGridExperts_filter( [], [] , [] , is_jqgrid , text );
+            // jqGridExperts_filter( [], [] , [] , is_jqgrid , text );
+
+            tablebootstrap_filter( [], [] , [] , is_jqgrid , text );
             is_jqgrid = true;
 
         } , 500 ));
