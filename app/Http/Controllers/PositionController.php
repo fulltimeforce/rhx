@@ -148,32 +148,13 @@ class PositionController extends Controller
         //
         if(!Auth::check()) return redirect('login');
 
-        $experts = DB::table('experts')->whereIn('id', function($query) use ($positionId){
-            $query->select('expert_id')
-            ->from('expert_position')
-            ->where('position_id' , $positionId);
-        })
-        ->addSelect(['status' => Log::select('status')->where( function($q) use($positionId) {
-            $q
-                ->whereColumn('expert_position.expert_id' , '=', 'experts.id')
-                ->where('expert_position.position_id' , $positionId);
-        })->limit(1) ])
-        
-        ->get();
         $position = Position::find($positionId);
         $a_basic = !is_null( $position->technology_basic )? explode(",", $position->technology_basic) : array();
         $a_inter = !is_null( $position->technology_inter )? explode(",", $position->technology_inter) : array();
         $a_advan = !is_null( $position->technology_advan )? explode(",", $position->technology_advan) : array();
         $a_technologies = array_merge($a_basic,$a_inter,$a_advan);
         $n_experts = array();
-        foreach ($experts as $k => $expert) {
-            
-            $date = new DateTime($expert->birthday);
-            $now = new DateTime();
-            $interval = $now->diff($date);
-            $expert->birthday = $interval->y;
-            $n_experts[] = $expert;
-        }
+        
 
         $current_tech = array();
         $after_tech = array();
@@ -190,7 +171,6 @@ class PositionController extends Controller
         $requirements = Requirement::where('position_id' , $positionId)->get();
 
         return view('positions.experts')
-            ->with('experts' , $n_experts)
             ->with('current_tech' , $current_tech)
             ->with('after_tech' , $after_tech)
             ->with('requirements' , $requirements)
@@ -201,21 +181,27 @@ class PositionController extends Controller
     public function relationsExperts( Request $request ){
 
         $positionId = $request->query('positionId');
+        $filter = $request->query('filter');
 
         $experts =  DB::table('experts')->whereIn('id', function($query) use ($positionId){
             $query->select('expert_id')
             ->from('expert_position')
             ->where('position_id' , $positionId);
+            
         });
         if( !empty( $request->query('name') ) ){
             $experts->where('fullname' , 'like' , '%'.$request->query('name').'%');
         }
-        $experts = $experts->addSelect(['status' => Log::select('status')->where( function($q) use($positionId) {
+        $experts = $experts->addSelect(['status' => Log::select('status')->where( function($q) use($positionId, $filter) {
             $q
                 ->whereColumn('expert_position.expert_id' , '=', 'experts.id')
                 ->where('expert_position.position_id' , $positionId);
-        })->limit(1) ])
-        ->paginate( $request->query('rows') );
+            
+        })->limit(1) ]);
+
+        if( !empty($filter) ) $experts->where('status' , $filter);
+
+        $experts = $experts->paginate( $request->query('rows') );
 
         return array(
             "total" => $experts->total(),

@@ -149,6 +149,7 @@ a.badge-warning:focus{
                         <div class="form-group">
                             <label for="position">Positions</label>
                             <select id="position" class="form-control" name="position_id" >
+                                <option value="">Select option</option>
                                 @foreach($positions as $pid => $position)
                                     <option value="{{ $position->id }}">{{ $position->name }}</option>
                                 @endforeach
@@ -305,7 +306,7 @@ a.badge-warning:focus{
                         info: data.info,
                         position:{
                             id: data.position_id,
-                            name: {!! $positions !!}.filter(f => f.id == data.position_id)[0].name
+                            name: data.position_id != null ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : null
                         },
                         date   : data.date,
                         position_id : data.position_id,
@@ -403,7 +404,7 @@ a.badge-warning:focus{
                     $_logs[index].date = data.date;
                     $_logs[index].position_id = data.position_id;
                     $_logs[index].position = {
-                        name : {!! $positions !!}.filter(f => f.id == data.position_id)[0].name,
+                        name : data.position_id != null ? {!! $positions !!}.filter(f => f.id == data.position_id)[0].name : null ,
                         id: data.position_id
                     };
                     $_logs[index].platform = data.platform;

@@ -126,14 +126,25 @@ td.stickout{
 td.frozencell{
     background-color : #fafafa;
 }
-
+a.badge-success.focus, 
+a.badge-success:focus,
+a.badge-secondary.focus, 
+a.badge-secondary:focus,
+a.badge-danger.focus, 
+a.badge-danger:focus,
+a.badge-warning.focus, 
+a.badge-warning:focus,
+a.badge-light.focus, 
+a.badge-light:focus{
+    box-shadow: none;
+}
 </style>
 @endsection
  
 @section('content')
 
     <div class="row">
-        <div class="col-lg-12 mt-5 mb-5">
+        <div class="col-lg-12 mt-5">
             <div class="float-left">
                 <h2>Show applicants</h2>
             </div>
@@ -265,15 +276,15 @@ td.frozencell{
 
     <div class="row">
         <div class="col">
-            <h5>Experts: {{ count($experts) }} </h5>
+            
         </div>
         <div class="col-lg-3 col-md-3 col-sm-4">
             <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
         <div class="col">
-            <h6>Requirements:</h6>
+            <h5>Requirements:</h5>
             <ul class="row">
                 @foreach( $requirements as $rid => $requirement )
                     <li class="col-3">{{ $requirement->name }}</li>
@@ -281,7 +292,26 @@ td.frozencell{
             </ul>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
+        <div class="col">
+            <h5>Filter:</h5>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-primary" >
+                    <input type="radio" name="filter"  value="" class="rd-filter"> All
+                </label>
+                <label class="btn btn-primary" >
+                    <input type="radio" name="filter"  value="not interviewed" class="rd-filter"> Not Interviewed
+                </label>
+                <label class="btn btn-primary" >
+                    <input type="radio" name="filter"  value="disqualified" class="rd-filter"> Disqualified
+                </label>
+                <label class="btn btn-primary" >
+                    <input type="radio" name="filter"  value="qualified" class="rd-filter"> Qualified
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
         <div class="col">
             <table id="list-experts"></table>
 
@@ -345,7 +375,7 @@ td.frozencell{
             @endforeach
         @endforeach
 
-        function list_experts( search_name ){
+        function list_experts( search_name , _filter ){
             $("#list-experts").bootstrapTable('destroy').bootstrapTable({
                 height: 500,
                 pagination: true,
@@ -364,18 +394,19 @@ td.frozencell{
                     var limit = params.limit;
                     var page = (offset / limit) + 1;
                     return {
-                        'offset': offset,
-                        'rows': params.limit,
-                        'page' : page , 
-                        'positionId' : "{{ $positionId }}",
-                        'name' : search_name
+                        'offset'        : offset,
+                        'rows'          : params.limit,
+                        'page'          : page , 
+                        'positionId'    : "{{ $positionId }}",
+                        'filter'        : _filter,
+                        'name'          : search_name
                     };
                 }
 
             });
         }
         
-        list_experts('');
+        list_experts('' , '');
         // ================================== POSITIONS =====================
 
         $("table tbody").on('click', 'a.btn-position' , function(ev){
@@ -488,16 +519,16 @@ td.frozencell{
         $('#search-column-name').on( 'keyup', delay(function (ev) {
 
             var text = $(this).val();
-            list_experts(text);
+            list_experts(text , '');
 
         } , 500 ));
 
-        $('table').on('change' , '.expert_status' , function(ev){
+        $('table').on('click' , '.expert_status' , function(ev){
 
             ev.preventDefault();
             var expertId = $(this).data("id");
             var status = $(this).data('value');
-            var positionId = $(this).data('position');
+            var positionId = "{{ $positionId }}";
 
             $(this)
                 .removeClass('badge-light')
@@ -507,7 +538,7 @@ td.frozencell{
 
             if( status == null ){
                 $(this).addClass('badge-secondary');
-                $(this).data('value' , 'not approved')
+                $(this).data('value' , 'not interviewed')
                 status = 'not interviewed';
             }else if( status == 'not interviewed' ){
 
@@ -523,7 +554,7 @@ td.frozencell{
             }else if( status == 'qualified' ){
 
                 $(this).addClass('badge-light');
-                $(this).data('value' , '')
+                $(this).data('value' , null)
                 status = '';
             }
 
@@ -558,6 +589,12 @@ td.frozencell{
 
             return html;
         }
+
+        $('.rd-filter').on("change" , function(ev){
+            
+            list_experts('' ,  $(this).val() );
+            return;
+        });
 
     });
 </script>   
