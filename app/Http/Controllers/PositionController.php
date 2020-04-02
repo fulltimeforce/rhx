@@ -183,30 +183,30 @@ class PositionController extends Controller
         $positionId = $request->query('positionId');
         $filter = $request->query('filter');
 
-        $experts =  DB::table('experts')->whereIn('id', function($query) use ($positionId){
-            $query->select('expert_id')
-            ->from('expert_position')
-            ->where('position_id' , $positionId);
+        $experts =  DB::table('experts')->select('experts.*' , 'expert_position.status')
+            ->join('expert_position', 'expert_position.expert_id', '=', 'experts.id')
+            ->whereColumn('expert_position.expert_id', '=', 'experts.id' )
+            ->whereIn('experts.id', function($query) use ($positionId){
+                $query->select('ep.expert_id')
+                ->from('expert_position' , 'ep')
+                ->where('ep.position_id' , $positionId);
+            });
             
-        });
+        if( !empty($filter) ) $experts->where('expert_position.status' , $filter);
+
         if( !empty( $request->query('name') ) ){
-            $experts->where('fullname' , 'like' , '%'.$request->query('name').'%');
+            $experts->where('experts.fullname' , 'like' , '%'.$request->query('name').'%');
         }
-        $experts = $experts->addSelect(['status' => Log::select('status')->where( function($q) use($positionId, $filter) {
-            $q
-                ->whereColumn('expert_position.expert_id' , '=', 'experts.id')
-                ->where('expert_position.position_id' , $positionId);
-            
-        })->limit(1) ]);
+        
+        $experts->distinct();
+        
 
-        if( !empty($filter) ) $experts->where('status' , $filter);
-
-        $experts = $experts->paginate( $request->query('rows') );
+        $_experts = $experts->paginate( $request->query('rows') );
 
         return array(
-            "total" => $experts->total(),
-            "totalNotFiltered" => $experts->total(),
-            "rows" => $experts->items()
+            "total" => $_experts->total(),
+            "totalNotFiltered" => $_experts->total(),
+            "rows" => $experts->get()
         );
 
     }

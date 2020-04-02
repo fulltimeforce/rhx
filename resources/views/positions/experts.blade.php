@@ -296,8 +296,8 @@ a.badge-light:focus{
         <div class="col">
             <h5>Filter:</h5>
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-primary" >
-                    <input type="radio" name="filter"  value="" class="rd-filter"> All
+                <label class="btn btn-primary active" >
+                    <input type="radio" name="filter" checked value="" class="rd-filter"> All
                 </label>
                 <label class="btn btn-primary" >
                     <input type="radio" name="filter"  value="not interviewed" class="rd-filter"> Not Interviewed
