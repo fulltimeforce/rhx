@@ -307,10 +307,12 @@ td.frozencell{
                 valign: 'middle',
                 clickToSelect: false,
                 formatter : function(value,rowData,index) {
-                    var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
+                    var actions = '';
+                    actions += '<a class="badge expert_status badge-'+( rowData.status == null ? 'light' : ( rowData.status == 'not interviewed' ? 'secondary' : ( rowData.status == 'disqualified'? 'danger' : 'success' )  ) )+'  " data-id="'+rowData.id+'" data-value="'+rowData.status+'" href="#">Commercial</a>\n';
+                    actions += '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
                     actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
                     actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
-                    actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
+                    actions += '<a class="badge badge-warning btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                     
                     actions = actions.replace(/:id/gi , rowData.id);
 
@@ -319,7 +321,6 @@ td.frozencell{
                 width: 100,
                 class: 'frozencell'
             },
-            { field: 'status', title: "Status", formatter: function(value,rowData,index){ return html_status_expert(rowData.id, value); } , width: 150 , class: 'frozencell'},
             { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'}
         ];
 
@@ -354,7 +355,7 @@ td.frozencell{
                 totalNotFilteredField: 'totalNotFiltered',
                 url : "{{ route('positions.experts.list') }}",
                 fixedColumns: true,
-                fixedNumber: 3,
+                fixedNumber: 2,
                 theadClasses: 'table-dark',
                 uniqueId: 'id',
                 pageSize: 25,
@@ -491,10 +492,41 @@ td.frozencell{
 
         } , 500 ));
 
-        $('table').on('change' , '.expert_status' , function(){
-            var expertId = $(this).data('expert');
+        $('table').on('change' , '.expert_status' , function(ev){
+
+            ev.preventDefault();
+            var expertId = $(this).data("id");
+            var status = $(this).data('value');
             var positionId = $(this).data('position');
-            var status = $(this).val();
+
+            $(this)
+                .removeClass('badge-light')
+                .removeClass('badge-success')
+                .removeClass('badge-secondary')
+                .removeClass('badge-danger');
+
+            if( status == null ){
+                $(this).addClass('badge-secondary');
+                $(this).data('value' , 'not approved')
+                status = 'not interviewed';
+            }else if( status == 'not interviewed' ){
+
+                $(this).addClass('badge-danger');
+                $(this).data('value' , 'disqualified')
+                status = 'disqualified';
+
+            }else if( status == 'disqualified' ){
+
+                $(this).addClass('badge-success');
+                $(this).data('value' , 'qualified')
+                status = 'qualified';
+            }else if( status == 'qualified' ){
+
+                $(this).addClass('badge-light');
+                $(this).data('value' , '')
+                status = '';
+            }
+
             $.ajax({
                 type: 'POST',
                 url: '{{ route("positions.expert.status") }}',

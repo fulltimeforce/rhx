@@ -256,27 +256,31 @@ a.badge-warning:focus{
 
         ];
 
-        $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
-            height: 500,
-            pagination: true,
-            sidePagination: "server",
-            columns: a_columns,
-            fixedColumns: true,
-            fixedNumber: 4,
-            theadClasses: 'table-dark',
-            showExtendedPagination: true,
-            uniqueId: 'id',
-            pageSize: 25,
-            totalNotFilteredField: 'totalNotFiltered',
-            url : "{{ route('recruiter.listlogs') }}",
-            queryParams : function(params){
-                var offset = params.offset;
-                var limit = params.limit;
-                var page = (offset / limit) + 1;
-                return {'offset': offset,'limit':params.limit,'page' : page};
-            }
+        function update_table_logs(){
+            $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
+                height: 500,
+                pagination: true,
+                sidePagination: "server",
+                columns: a_columns,
+                fixedColumns: true,
+                fixedNumber: 4,
+                theadClasses: 'table-dark',
+                showExtendedPagination: true,
+                uniqueId: 'id',
+                pageSize: 25,
+                totalNotFilteredField: 'totalNotFiltered',
+                url : "{{ route('recruiter.listlogs') }}",
+                queryParams : function(params){
+                    var offset = params.offset;
+                    var limit = params.limit;
+                    var page = (offset / limit) + 1;
+                    return {'offset': offset,'limit':params.limit,'page' : page};
+                }
 
-        });
+            });
+        }
+        update_table_logs();
+        
 
         $("#save").on('click', function(ev){
             
@@ -292,7 +296,8 @@ a.badge-warning:focus{
                     console.log(data);
                     // return;
 
-                    $("#table-logs-fill").bootstrapTable('insertRow', {index: 0, row: data});
+                    update_table_logs();
+                    // $("#table-logs-fill").bootstrapTable('insertRow', {index: 0, row: data});
 
                     $_logs.push({
                         id      : data.id,
@@ -403,8 +408,8 @@ a.badge-warning:focus{
                     };
                     $_logs[index].platform = data.platform;
                     $_logs[index].link = data.link;
-                        
-                    $("#table-logs-fill").bootstrapTable('updateByUniqueId', {id: data.id, row: data }).
+                    update_table_logs();    
+                    // $("#table-logs-fill").bootstrapTable('updateByUniqueId', {id: data.id, row: data }).
                     // clean
                     $("#name").val('').focus();
                     $("#info").val('');
@@ -602,8 +607,8 @@ a.badge-warning:focus{
         function html_check_evaluate( _id , _evaluate){
             var html = '';
             html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.commercial == null ? 'secondary' : (_evaluate.commercial == 'approved' ? 'success' : ( _evaluate.commercial == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.commercial+'" data-name="commercial" data-id="'+_id+'">Commercial</a>\n';
-            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.technique == null ? 'secondary' : (_evaluate.technique == 'approved' ? 'success' : ( _evaluate.technique == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.technique+'" data-name="technique" data-id="'+_id+'">Technique</a>\n';
-            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.psychology == null ? 'secondary' : (_evaluate.psychology == 'approved' ? 'success' : ( _evaluate.psychology == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.psychology+'" data-name="psychology" data-id="'+_id+'">Psychology</a>\n';
+            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.technique == null ? 'secondary' : (_evaluate.technique == 'approved' ? 'success' : ( _evaluate.technique == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.technique+'" data-name="technique" data-id="'+_id+'">Technical</a>\n';
+            html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.psychology == null ? 'secondary' : (_evaluate.psychology == 'approved' ? 'success' : ( _evaluate.psychology == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.psychology+'" data-name="psychology" data-id="'+_id+'">Psychological</a>\n';
             
             return html;
         }
