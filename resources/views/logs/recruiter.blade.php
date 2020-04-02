@@ -437,8 +437,7 @@ a.badge-warning:focus{
                 success:function(data){
                     console.log(data);
                     // return;
-                    $("#row-"+id).addClass("remove-row");
-                    table.rows( '.remove-row' ).remove().draw();
+                    update_table_logs();
                     
                 }
             });
