@@ -259,7 +259,7 @@ class PositionController extends Controller
         $input['private'] = isset($input['private'])? 1 : 0;
 
         $position->update($input);
-  
+
         return redirect()->route('positions.index')
                         ->with('success','Position updated successfully');
     }

@@ -51,7 +51,7 @@
         </div>
         <div class="form-row">
             <div class="form-check form-group">
-                <input type="checkbox" name="status" id="status" class="form-check-input" value="enabled" {{ ($position->private==1)?'checked':'' }} >
+                <input type="checkbox" name="private" id="private" class="form-check-input" value="1" {{ ($position->private==1)?'checked':'' }} >
                 <label for="status" class="form-check-label">Private</label>
             </div>
         </div>
