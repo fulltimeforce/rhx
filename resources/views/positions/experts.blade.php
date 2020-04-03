@@ -145,7 +145,7 @@ a.badge-light:focus{
     <div class="row">
         <div class="col-lg-12 mt-5">
             <div class="float-left">
-                <h2>Show applicants</h2>
+                <h2>{{ $position->name }} Applicants</h2>
             </div>
             <div class="float-right">
                 <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
@@ -301,8 +301,10 @@ a.badge-light:focus{
             <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
         </div>
     </div>
+    @if( count($requirements) > 0 )
     <div class="row mt-3">
         <div class="col">
+            
             <h5>Requirements:</h5>
             <ul class="row">
                 @foreach( $requirements as $rid => $requirement )
@@ -311,9 +313,9 @@ a.badge-light:focus{
             </ul>
         </div>
     </div>
+    @endif
     <div class="row mt-3">
         <div class="col">
-            <h5>Filter:</h5>
             <div class="btn-group" >
 
                 <button class="btn btn-light rd-filter" data-value="null">Commercial</button>

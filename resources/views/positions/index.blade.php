@@ -195,6 +195,24 @@ input:checked + .slider:before {
     @foreach($positions as $pid => $position)
     
     <div class="col mb-4">
+        @auth
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <h6>{{$position->name}}</h6>
+                    </div>
+                    <div class="col-12 col-sm-6 text-right">
+                        <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
+                        <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
+                        
+                        <a href="#" class="btn btn-primary card-link btn-copy-slug" title="Copied" data-toggle="tooltip" data-placement="top"  data-url="{{ $position->slug }}">Copy URL</a>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        @endauth
+        @guest
         <div class="card">
             <div class="card-header" data-toggle="collapse" href="#position-{{$position->id}}" role="button" aria-expanded="true" aria-controls="position-{{$position->id}}">
                 <h4>{{$position->name}}</h4>
@@ -223,6 +241,7 @@ input:checked + .slider:before {
                 <!-- btn-position-filter ,  btn-call-filter -->
             </div>
         </div>
+        @endguest
     </div>
     
     @endforeach

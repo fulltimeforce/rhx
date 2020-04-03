@@ -19,12 +19,15 @@ class ExpertController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index()
+    public function index( Request $request )
     {
         //
         if(!Auth::check()) return redirect('login');
         $_experts = $this->visibleExpert( Expert::with(['log'])->latest()->get() );
         $experts = count($_experts);
+        $query = $request->query();
+        $search = isset( $query['search'] )? 2 : 3;
+
         return view('experts.index',compact('experts'))
             ->with('technologies',Expert::getTechnologies());
     }

@@ -174,6 +174,7 @@ class PositionController extends Controller
             ->with('current_tech' , $current_tech)
             ->with('after_tech' , $after_tech)
             ->with('requirements' , $requirements)
+            ->with('position', $position)
             ->with('positionId' , $positionId)
             ->with('technologies',Expert::getTechnologies());
     }

@@ -607,7 +607,17 @@ td.frozencell{
             a_basic_level = $(".search-level.basic").val();
             a_intermediate_level = $(".search-level.intermediate").val();
             a_advanced_level = $(".search-level.advanced").val(); 
-            
+            window.history.replaceState({
+                edwin: "fefsf"
+                }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
+                    {   search : true , 
+                        basic: a_basic_level.join(","),
+                        intermediate: a_intermediate_level.join(","),
+                        advanced: a_advanced_level.join(",")
+                    }
+                    )
+                );
+
             tablebootstrap_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '');
             
         });
