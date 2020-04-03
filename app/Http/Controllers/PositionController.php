@@ -183,7 +183,7 @@ class PositionController extends Controller
         $positionId = $request->query('positionId');
         $filter = $request->query('filter');
 
-        $experts =  DB::table('experts')->select('experts.*' , 'expert_position.status')
+        $experts =  Expert::select('experts.*' , 'expert_position.status')
             ->join('expert_position', 'expert_position.expert_id', '=', 'experts.id')
             ->whereColumn('expert_position.expert_id', '=', 'experts.id' )
             ->whereIn('experts.id', function($query) use ($positionId){
