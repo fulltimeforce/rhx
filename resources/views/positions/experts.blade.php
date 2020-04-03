@@ -295,19 +295,10 @@ a.badge-light:focus{
     <div class="row mt-3">
         <div class="col">
             <h5>Filter:</h5>
-            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-primary active" >
-                    <input type="radio" name="filter" checked value="" class="rd-filter"> All
-                </label>
-                <label class="btn btn-primary" >
-                    <input type="radio" name="filter"  value="not interviewed" class="rd-filter"> Not Interviewed
-                </label>
-                <label class="btn btn-primary" >
-                    <input type="radio" name="filter"  value="disqualified" class="rd-filter"> Disqualified
-                </label>
-                <label class="btn btn-primary" >
-                    <input type="radio" name="filter"  value="qualified" class="rd-filter"> Qualified
-                </label>
+            <div class="btn-group" >
+
+                <button class="btn btn-light rd-filter" data-value="null">Commercial</button>
+                
             </div>
         </div>
     </div>
@@ -338,7 +329,7 @@ a.badge-light:focus{
                 clickToSelect: false,
                 formatter : function(value,rowData,index) {
                     var actions = '';
-                    actions += '<a class="badge expert_status badge-'+( rowData.status == null ? 'light' : ( rowData.status == 'not interviewed' ? 'secondary' : ( rowData.status == 'disqualified'? 'danger' : 'success' )  ) )+'  " data-id="'+rowData.id+'" data-value="'+rowData.status+'" href="#">Commercial</a>\n';
+                    actions += '<a class="badge expert_status badge-'+( rowData.status == 'not interviewed' ? 'secondary' : ( rowData.status == 'disqualified'? 'danger' : 'success' ) )+'  " data-id="'+rowData.id+'" data-value="'+rowData.status+'" href="#">Commercial</a>\n';
                     actions += '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
                     actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
                     actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
@@ -536,11 +527,7 @@ a.badge-light:focus{
                 .removeClass('badge-secondary')
                 .removeClass('badge-danger');
 
-            if( status == null ){
-                $(this).addClass('badge-secondary');
-                $(this).data('value' , 'not interviewed')
-                status = 'not interviewed';
-            }else if( status == 'not interviewed' ){
+            if( status == 'not interviewed' ){
 
                 $(this).addClass('badge-danger');
                 $(this).data('value' , 'disqualified')
@@ -553,9 +540,9 @@ a.badge-light:focus{
                 status = 'qualified';
             }else if( status == 'qualified' ){
 
-                $(this).addClass('badge-light');
-                $(this).data('value' , null)
-                status = '';
+                $(this).addClass('badge-secondary');
+                $(this).data('value' , 'not interviewed')
+                status = 'not interviewed';
             }
 
             $.ajax({
@@ -590,9 +577,39 @@ a.badge-light:focus{
             return html;
         }
 
-        $('.rd-filter').on("change" , function(ev){
-            
-            list_experts('' ,  $(this).val() );
+        $('.rd-filter').on("click" , function(ev){
+
+            var status = $(this).data('value');
+
+            $(this)
+                .removeClass('btn-light')
+                .removeClass('btn-success')
+                .removeClass('btn-secondary')
+                .removeClass('btn-danger');
+
+            if( status == null ){
+                $(this).addClass('btn-secondary');
+                $(this).data('value' , 'not interviewed')
+                status = 'not interviewed';
+            }else if( status == 'not interviewed' ){
+
+                $(this).addClass('btn-danger');
+                $(this).data('value' , 'disqualified')
+                status = 'disqualified';
+
+            }else if( status == 'disqualified' ){
+
+                $(this).addClass('btn-success');
+                $(this).data('value' , 'qualified')
+                status = 'qualified';
+            }else if( status == 'qualified' ){
+
+                $(this).addClass('btn-light');
+                $(this).data('value' , null)
+                status = '';
+            }
+
+            list_experts('' ,  status );
             return;
         });
 

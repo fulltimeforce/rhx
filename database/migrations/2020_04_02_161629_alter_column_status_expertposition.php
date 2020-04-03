@@ -25,7 +25,7 @@ class AlterColumnStatusExpertposition extends Migration
             $table->enum('status' , 
                 ['not interviewed',
                 'disqualified',
-                'qualified'])->after('approve')->nullable();
+                'qualified'])->after('approve')->default('not interviewed');
             
         });
     }
