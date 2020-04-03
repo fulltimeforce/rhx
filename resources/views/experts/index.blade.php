@@ -337,6 +337,11 @@ td.frozencell{
     
     $(document).ready(function () {
 
+        $('#interview_date').datetimepicker({
+            format: "{{ config('app.date_format_javascript') }}",
+            locale: "en"
+        });
+
         function tablebootstrap_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );

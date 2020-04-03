@@ -116,10 +116,6 @@ td.stickout{
     display: none;
 }
 
-a.btn-delete-interview{
-    margin: -2.2rem -.5rem -1rem auto;
-}
-
 td.stickout{
     background-color: yellow;
 }
@@ -137,6 +133,9 @@ a.badge-warning:focus,
 a.badge-light.focus, 
 a.badge-light:focus{
     box-shadow: none;
+}
+.txt-description{
+    white-space: pre-line;
 }
 </style>
 @endsection
@@ -211,13 +210,21 @@ a.badge-light:focus{
             <div >
             <div class="row mb-4">
                 <div class="col" id="list-interviews">
-                    <div class="card mb-4">
+                    <div class="card mb-4" id="interview-:id">
                         <div class="card-header">
-                            <h5 class="text-uppercase">:name-type</h5>
-                            <a href="#" class="btn btn-danger float-right btn-delete-interview" data-id=":id">Delete</a>
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="text-uppercase txt-type">:name-type</h5>
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" class="btn btn-danger btn-delete-interview" data-id=":id">Delete</a>
+                                    <a href="#" class="btn btn-primary btn-edit-interview" data-id=":id">Edit</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <p class="card-text">:description</p>
+                            <b class="mb-2 txt-about">:about</b>
+                            <p class="card-text txt-description">:description</p>
                         </div>
                         <div class="card-footer text-muted">
                             <span>:result</span>
@@ -238,6 +245,7 @@ a.badge-light:focus{
                             <option value="client">Client</option>
                         </select>
                         <input type="hidden" name="expert_id" id="interview_expert_id">
+                        <input type="hidden" name="id" id="interview_id">
                     </div>
                     <div class="form-group">
                         <label for="">Result</label>
@@ -251,10 +259,14 @@ a.badge-light:focus{
                     </div>
                     <div class="form-group">
                         <label for="">Date</label>
-                        <input type="text" class="form-control" name="date" id="interview_date">
+                        <input type="text" class="form-control" name="date" id="interview_date" data-toggle="datetimepicker" data-target="#interview_date">
                     </div>
                 </div>
                 <div class="col-7">
+                    <div class="form-group">
+                        <label for="">About</label>
+                        <input type="text" class="form-control" name="about" id="about">
+                    </div>
                     <div class="form-group">
                         <label for="">Description</label>
                         <textarea name="description" id="interview_description" class="form-control" rows="10"></textarea>
@@ -264,7 +276,14 @@ a.badge-light:focus{
             </div>
             <div class="row mb-4">
                 <div class="col">
-                    <button class="btn btn-success" id="save-interview">SAVE</button>
+                    <div class="form-group" id="form-btn-save">
+                        <button class="btn btn-success" id="save-interview">SAVE</button>
+                    </div>
+                    <div class="form-group" id="form-btn-edit" style="display: none;">
+                        <button class="btn btn-success" id="edit-interview">EDIT</button>
+                        <button class="btn btn-info" id="clear-interview">CLEAR</button>
+                    </div>
+                    
                 </div>
             </div>
             
@@ -320,6 +339,11 @@ a.badge-light:focus{
 <script type="text/javascript">
 
     $(document).ready(function (ev) {
+
+        $('#interview_date').datetimepicker({
+            format: "{{ config('app.date_format_javascript') }}",
+            locale: "en"
+        });
 
         var a_columns = [
             {
@@ -479,17 +503,30 @@ a.badge-light:focus{
                     var html = '';
                     for (let index = 0; index < interviews.length; index++) {
                         var html_card_interview = template_card_interview;
-                        html_card_interview = html_card_interview.replace(':id' , interviews[index].id);
+                        html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                        html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
+                        html_card_interview = html_card_interview.replace(/:id/ , interviews[index].id);
                         html_card_interview = html_card_interview.replace(':name-type' , interviews[index].type);
+                        html_card_interview = html_card_interview.replace(':about' , interviews[index].about);
                         html_card_interview = html_card_interview.replace(':description' , interviews[index].description);
                         var result = interviews[index].result ? 'APPROVE' : 'FAILED';
                         html_card_interview = html_card_interview.replace(':result' , result);
                         var _date = new Date(interviews[index].date);
-                        html_card_interview = html_card_interview.replace(':date' , ((_date.getDate() > 9) ? _date.getDate() : ('0' + _date.getDate())) + '/' + ((_date.getMonth() > 8) ? (_date.getMonth() + 1) : ('0' + (_date.getMonth() + 1))) + '/' +  _date.getFullYear() );
+                        html_card_interview = html_card_interview.replace(':date' , moment( interviews[index].date ).format("{{ config('app.date_format_javascript') }}") );
                         html += html_card_interview
                     }
 
                     $('#list-interviews').html(html);
+                    $("#interview_type").val('');
+                    $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+                    $("#about").val('');
+                    $("#interview_description").val('');
+                    $("#interview_result").prop('checked', false);
+                    
+                    $("#interview_id").val( '' );
+
+                    $('#form-btn-edit').hide();
+                    $('#form-btn-save').show()
                     $("#interviews-expert").modal();
                 }
             });
@@ -611,6 +648,141 @@ a.badge-light:focus{
 
             list_experts('' ,  status );
             return;
+        });
+
+        $("#save-interview").on("click"  , function(ev){
+            ev.preventDefault();
+            
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("interviews.save") }}',
+                data: $("form#interviews-form").serialize(),
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+
+                    // 
+                    var html_card_interview = template_card_interview;
+                    html_card_interview = html_card_interview.replace(/:id/ , data.id);
+                    html_card_interview = html_card_interview.replace(/:id/ , data.id);
+                    html_card_interview = html_card_interview.replace(/:id/ , data.id);
+                    html_card_interview = html_card_interview.replace(':name-type' , data.type);
+                    html_card_interview = html_card_interview.replace(':about' , data.about);
+                    html_card_interview = html_card_interview.replace(':description' , data.description);
+                    var result = data.result ? 'APPROVED' : 'FAILED';
+                    html_card_interview = html_card_interview.replace(':result' , result);
+                    var _date = new Date(data.date);
+                    html_card_interview = html_card_interview.replace(':date' , moment(data.date).format("{{ config('app.date_format_javascript') }}") );
+                    $('#list-interviews').append(html_card_interview);
+                    $("#interview_description").val('');
+                    $("#about").val('');
+                    $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+                }
+            });
+            
+        });
+
+        $('#list-interviews').on('click' , '.btn-delete-interview' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var _this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("interviews.delete") }}',
+                data: {id : id},
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    
+                    _this.parent().parent().parent().parent().slideUp('slow' , function(){
+                        $(this).remove();
+                    })
+                    
+                }
+            });
+        });
+
+        $("#list-interviews").on('click' , '.btn-edit-interview' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var _this = $(this);
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("interviews.edit") }}',
+                data: {id : id},
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    
+                    $("#interview_type").val( data.type );
+                    $("#interview_date").val( moment(data.date).format("{{ config('app.date_format_javascript') }}") );
+                    $("#about").val( data.about );
+                    $("#interview_description").val(data.description);
+                    $("#interview_result").prop('checked', data.result == 1? true : false);  // Checks the box
+                    $("#interview_expert_id").val( data.expert_id );
+                    $("#interview_id").val( data.id );
+
+                    $('#form-btn-edit').show();
+                    $('#form-btn-save').hide();
+                }
+            });
+        });
+
+        $("#edit-interview").on('click' , function(){
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("interviews.update") }}',
+                data: $("form#interviews-form").serialize(),
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    
+                    console.log(data)
+
+                    $('#form-btn-edit').hide();
+                    $('#form-btn-save').show();
+
+                    $("#interview-"+data.id).find(".txt-type").html(data.type);
+                    $("#interview-"+data.id).find(".txt-about").html(data.about);
+                    $("#interview-"+data.id).find(".txt-description").html(data.description);
+                    $("#interview-"+data.id).find(".txt-date").html( moment(data.date).format("{{ config('app.date_format_javascript') }}") );
+                    $("#interview-"+data.id).find(".txt-result").html(data.result == 1 ? 'APPROVED' : 'FAILED' );
+
+
+                    $("#interview_type").val('');
+                    $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+                    $("#about").val('');
+                    $("#interview_description").val('');
+                    $("#interview_result").prop('checked', false);
+                    
+                    $("#interview_id").val( '' );
+                    
+                }
+            });
+        });
+
+        $("#clear-interview").on('click' , function(){
+
+            $("#interview_type").val('');
+            $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
+            $("#about").val('');
+            $("#interview_description").val('');
+            $("#interview_result").prop('checked', false);
+            
+            $("#interview_id").val( '' );
+
+            $('#form-btn-edit').hide();
+            $('#form-btn-save').show();
+
         });
 
     });
