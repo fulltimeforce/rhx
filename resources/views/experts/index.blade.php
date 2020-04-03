@@ -291,19 +291,32 @@ td.frozencell{
         </div>
     @endif
     <br>
+    
     <form action="{{ route('experts.filter') }}" method="POST">
         @csrf
         <div class="form-group">
             <label for="basic_level">Basic</label>
-            <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic" size="1"></select>
+            <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic" size="1">
+                @foreach( $basic as $tid => $tlabel)
+                    <option value="{{ $tid }}" selected > {{ $tlabel }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="form-group">
             <label for="intermediate_level">Intermediate</label>
-            <select multiple id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate" size="1"></select>
+            <select multiple id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate" size="1">
+                @foreach( $intermediate as $tid => $tlabel)
+                    <option value="{{ $tid }}" selected > {{ $tlabel }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="form-group">
             <label for="advanced_level">Advanced</label>
-            <select multiple id="advanced_level" name="advanced_level[]" class="form-control search-level advanced" size="1"></select>
+            <select multiple id="advanced_level" name="advanced_level[]" class="form-control search-level advanced" size="1">
+                @foreach( $advanced as $tid => $tlabel)
+                    <option value="{{ $tid }}" selected > {{ $tlabel }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="form-group text-right">
             <button type="button" class="btn btn-success" id="search">Search</button>
@@ -345,6 +358,8 @@ td.frozencell{
         function tablebootstrap_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
+
+            console.log(a_keys_filter);
 
             var columns = [
                 {
@@ -531,6 +546,22 @@ td.frozencell{
             });
 
         }
+
+        @if( $search )
+            var basic = [];
+            @foreach($basic as $tid => $tlabel)
+                basic.push( "{{$tid}}" );
+            @endforeach
+            var intermediate = [];
+            @foreach($intermediate as $tid => $tlabel)
+                intermediate.push( "{{$tid}}" );
+            @endforeach
+            var advanced = [];
+            @foreach($advanced as $tid => $tlabel)
+                advanced.push( "{{$tid}}" );
+            @endforeach
+            tablebootstrap_filter( basic, intermediate , advanced , false , '' );
+        @endif
 
         $(".search-level").select2({
             ajax: {

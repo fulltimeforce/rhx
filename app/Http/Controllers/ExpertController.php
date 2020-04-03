@@ -26,10 +26,30 @@ class ExpertController extends Controller
         $_experts = $this->visibleExpert( Expert::with(['log'])->latest()->get() );
         $experts = count($_experts);
         $query = $request->query();
-        $search = isset( $query['search'] )? 2 : 3;
+
+        $search = isset( $query['search'] )? true : false;
+        $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
+        $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
+        $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
+
+        $basic = array();
+        $intermediate = array();
+        $advanced = array();
+
+        foreach(Expert::getTechnologies() as $catid => $cat){
+            foreach($cat[1] as $techid => $techlabel){
+                if( in_array( $techid , $a_basic ) ) $basic = array_merge( $basic, array( $techid => $techlabel ));
+                if( in_array( $techid , $a_inter ) ) $intermediate = array_merge( $intermediate, array( $techid => $techlabel ));
+                if( in_array( $techid , $a_advan ) ) $advanced = array_merge( $advanced ,array( $techid => $techlabel ));
+            }
+        }
 
         return view('experts.index',compact('experts'))
-            ->with('technologies',Expert::getTechnologies());
+            ->with('search', $search )
+            ->with('basic', $basic )
+            ->with('intermediate', $intermediate )
+            ->with('advanced', $advanced )
+            ->with('technologies', Expert::getTechnologies() );
     }
 
     public function listjqgrid(Request $request){
