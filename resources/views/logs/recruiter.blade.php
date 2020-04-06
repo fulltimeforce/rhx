@@ -149,7 +149,7 @@ a.badge-warning:focus{
                         <div class="form-group">
                             <label for="position">Positions</label>
                             <select id="position" class="form-control" name="position_id" >
-                                <option value="">Select option</option>
+                                <option value="">None</option>
                                 @foreach($positions as $pid => $position)
                                     <option value="{{ $position->id }}">{{ $position->name }}</option>
                                 @endforeach
@@ -569,7 +569,7 @@ a.badge-warning:focus{
         function html_select_contact( _id , _contact){
             var html = '';
             html += '<div class="form-group">';
-            html += '    <select class="form-control form-dropdown" data-name="contact" data-id="'+_id+'" style="width: 200px;">';
+            html += '    <select class="form-control pdowform-dron" data-name="contact" data-id="'+_id+'" style="width: 200px;">';
             html += '        <option value="" >Select option</option>';
             html += '        <option value="contacted" '+(_contact=='contacted'? 'selected' : '' )+'>Contactado</option>';
             html += '        <option value="not respond" '+(_contact=='not respond'? 'selected' : '' )+'>No Responde</option>';
