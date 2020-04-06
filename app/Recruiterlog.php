@@ -34,12 +34,6 @@ class Recruiterlog extends Model
         
     ];
 
-    public function setDateAttribute($value)
-    {
-        // if(!empty($value))
-        // $this->attributes['date'] = Carbon::createFromFormat(config('app.date_format'), $value)->format('Y-m-d');
-        
-    }
 
     public function getDateAttribute($value)
     {

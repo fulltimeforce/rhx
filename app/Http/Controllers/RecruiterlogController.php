@@ -51,6 +51,7 @@ class RecruiterlogController extends Controller
         $input = $request->all();
         unset($input['id']);
         $input['user_id'] = Auth::id();
+        $input['date'] = Carbon::createFromFormat(config('app.date_format'), $input['date'])->format('Y-m-d');
         $log = Recruiterlog::create($input);
 
         return Recruiterlog::with(['user', 'position'])->find($log->id);
