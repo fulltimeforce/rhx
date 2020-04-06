@@ -253,7 +253,7 @@ input:checked + .slider:before {
             
         })
 
-        $(".btn-copy-slug").on('click',function(ev){
+        $("table").on('click' , '.btn-copy-slug',function(ev){
             ev.preventDefault();
             var el = document.createElement("textarea");
             el.value = "{{ route('home') }}" + '/position/'+$(this).data("url");
