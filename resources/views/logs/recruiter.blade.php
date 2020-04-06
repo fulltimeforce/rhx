@@ -467,8 +467,8 @@ a.badge-warning:focus{
             }else if( val == 'approved' ){
 
                 $(this).addClass('badge-secondary');
-                $(this).data('value' , '')
-                val = '';
+                $(this).data('value' , null)
+                val = null;
             }
 
             var data_post = {};
@@ -542,8 +542,8 @@ a.badge-warning:focus{
             }else if( val == 'not show up' ){
 
                 $(this).addClass('badge-secondary');
-                $(this).data('value' , '')
-                val = '';
+                $(this).data('value' , null)
+                val = null;
             }
 
 
