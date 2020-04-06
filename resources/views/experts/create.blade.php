@@ -118,7 +118,8 @@
         </div>
         <div class="form-group col-6 col-sm-4 col-lg-3">
             <label for="availability">Disponibilidad</label>
-            <input type="text" name="availability" class="form-control date" id="availability" data-toggle="datetimepicker" data-target="#availability" value="{{ $expert->availability }}">
+            {!! Form::text('availability', date('m/d/Y'), ['class'=>'form-control date','id'=>'availability', 'data-toggle'=> 'datetimepicker', 'data-target'=> '#availability']) !!}
+            
         </div>
     </div>
     @auth
