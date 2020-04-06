@@ -182,9 +182,8 @@ input:checked + .slider:before {
 
 
         $("#table-positions").bootstrapTable('destroy').bootstrapTable({
-            height: 500,
-            pagination: true,
-            sidePagination: "server",
+
+            
             columns: [
                 { field: 'name', title: "Position" },
                 { field: 'id', title: "Actions" , width: 400 , formatter: function(value,rowData,index){
@@ -198,23 +197,12 @@ input:checked + .slider:before {
                     } 
                 }
             ],
-            showExtendedPagination: true,
-            totalNotFilteredField: 'totalNotFiltered',
+            
             url : "{{ route('positions.listpositions') }}",
             theadClasses: 'table-dark',
             uniqueId: 'id',
-            pageSize: 50,
-            queryParams : function(params){
-                var offset = params.offset;
-                var limit = params.limit;
-                var page = (offset / limit) + 1;
-
-                return {
-                    'offset': offset,
-                    'rows':params.limit,
-                    'page' : page , 
-                };
-            }
+            
+            
 
         });
 

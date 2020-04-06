@@ -47,14 +47,9 @@ class PositionController extends Controller
 
         if(!Auth::check()) $positions = $positions->where('private' , 1);
 
-        $positions = $positions->paginate( $query['rows'] );
+        $positions = $positions->latest()->get();
 
-        return json_encode(array(
-            "page"      => $positions->currentPage(),
-            "total"     => $positions->lastPage(),
-            "records"   => $positions->total(),
-            "rows"      => $positions->items()
-        ));
+        return $positions;
     }
 
     /**
