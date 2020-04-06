@@ -125,6 +125,10 @@ class RecruiterlogController extends Controller
                 "value" => "fb",
                 "label" => "Facebook"
             ),
+            (object) array(
+                "value" => "email",
+                "label" => "Email"
+            ),
         );
     }
 

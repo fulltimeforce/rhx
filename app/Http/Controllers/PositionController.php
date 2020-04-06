@@ -35,6 +35,28 @@ class PositionController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
+    public function listpositions( Request $request ){
+
+        $query = $request->query();
+
+        $positions = Position::where( function($q){
+            if( !Auth::check() ){
+                $q->where('status' , 'enabled');
+            }
+        } );
+
+        if(!Auth::check()) $positions = $positions->where('private' , 1);
+
+        $positions = $positions->paginate( $query['rows'] );
+
+        return json_encode(array(
+            "page"      => $positions->currentPage(),
+            "total"     => $positions->lastPage(),
+            "records"   => $positions->total(),
+            "rows"      => $positions->items()
+        ));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

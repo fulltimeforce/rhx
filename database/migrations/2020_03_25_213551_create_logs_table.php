@@ -30,7 +30,8 @@ class CreateLogsTable extends Migration
                 'ulima' , 
                 'ricardopalma', 
                 'utp' , 
-                'fb']
+                'fb',
+                'email']
                 )->nullable();
             $table->text('link')->nullable();
             $table->boolean('filter')->default(false);

@@ -3,8 +3,11 @@
 @section('styles')
 
 
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
-<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/>
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('/datatable/jquery.dataTables.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/datatable/css/fixedColumns.dataTables.min.css') }}"/> -->
+
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
+<link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
 
 <style>
 /* The slider */
@@ -100,89 +103,14 @@ input:checked + .slider:before {
     <div class="row">
         <div class="col">
             <h1>Careers</h1>
+        </div>
+        <div class="col">
             @auth
             <a class="btn btn-secondary float-right" href="{{ route('positions.create') }}">New Position</a>
             @endauth
         </div>
     </div>
 
-    <!-- MODAL FILTER -->
-    <div class="modal fade" id="filterPosition" tabindex="-1" role="dialog" aria-labelledby="filterPositionLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="filterPositionLabel">FILTER CVs - <span id="position-name"></span></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-sm-5 col-12">
-                    <p>REQUIREMENTS</p>
-                    <ul class="list-group" id="requirements-list">
-                        <li class="list-group-item">Cras justo odio</li>
-                        <li class="list-group-item">Dapibus ac facilisis in</li>
-                        <li class="list-group-item">Morbi leo risus</li>
-                        <li class="list-group-item">Porta ac consectetur ac</li>
-                        <li class="list-group-item">Vestibulum at eros</li>
-                    </ul>
-                </div>
-                <div class="col-sm-7 col-12">
-                    <p>APPLICANTS</p>
-                    <table class="table" id="table-applicants">
-                        <thead>
-                            <tr>
-                                <th>NAME</th>
-                                <th>APPROVED</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </div>
-    </div>
-    </div>
-
-    <!-- MODAL CALL FILTER -->
-    <div class="modal fade" id="callFilter" tabindex="-1" role="dialog" aria-labelledby="callFilterLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-        <div class="modal-header text-center">
-            <h5 class="modal-title" id="callFilterLabel">CALL FILTERED - <span id="position-name-call">{positionName}</span></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col col-sm" style="height: 800px;">
-                    <table class="table row-border order-column" id="table-call-filter" style="height: 800px;width: 100%;">
-                        <thead class="table-dark">
-                            
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>   
-                    </table>
-
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="save-req-applicants">Save changes</button>
-        </div>
-        </div>
-    </div>
-    </div>
    
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
@@ -196,21 +124,10 @@ input:checked + .slider:before {
     
     <div class="col mb-4">
         @auth
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 col-sm-6">
-                        <h6>{{$position->name}}</h6>
-                    </div>
-                    <div class="col-12 col-sm-6 text-right">
-                        <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
-                        <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
-                        
-                        <a href="#" class="btn btn-primary card-link btn-copy-slug" title="Copied" data-toggle="tooltip" data-placement="top"  data-url="{{ $position->slug }}">Copy URL</a>
-                    </div>
-                </div> 
-            </div>
-        </div>
+
+        <table id="table-positions">
+        </table>
+
         @endauth
         @guest
         <div class="card">
@@ -251,20 +168,62 @@ input:checked + .slider:before {
 
 @section('javascript')
 
-<script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ asset('/datatable/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/datatable/js/dataTables.fixedColumns.min.js') }}"></script> -->
+
+<script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
         $('[data-toggle="tooltip"]').tooltip({
             trigger : 'click'
-        })
+        });
+
+
+        $("#table-positions").bootstrapTable('destroy').bootstrapTable({
+            height: 500,
+            pagination: true,
+            sidePagination: "server",
+            columns: [
+                { field: 'name', title: "Position" },
+                { field: 'id', title: "Actions" , width: 400 , formatter: function(value,rowData,index){
+                    
+                        var actions = '<a href="'+ "{{ route('positions.edit', ':id') }}" +'" class="btn btn-success card-link">Edit</a>';
+                        actions += '<a href="'+ "{{ route('positions.experts', ':id') }}" +'" class="btn btn-info card-link">Show applicants</a>';
+                        actions += '<a href="#" class="btn btn-primary card-link btn-copy-slug" title="Copied" data-toggle="tooltip" data-placement="top"  data-url="'+ rowData.slug +'">Copy URL</a>';
+                        actions = actions.replace(/:id/gi , rowData.id);
+                        return actions;
+                    
+                    } 
+                }
+            ],
+            showExtendedPagination: true,
+            totalNotFilteredField: 'totalNotFiltered',
+            url : "{{ route('positions.listpositions') }}",
+            theadClasses: 'table-dark',
+            uniqueId: 'id',
+            pageSize: 50,
+            queryParams : function(params){
+                var offset = params.offset;
+                var limit = params.limit;
+                var page = (offset / limit) + 1;
+
+                return {
+                    'offset': offset,
+                    'rows':params.limit,
+                    'page' : page , 
+                };
+            }
+
+        });
 
         $('[data-toggle="tooltip"]').on('shown.bs.tooltip', function () {
             setTimeout(() => {
                 $('[data-toggle="tooltip"]').tooltip('hide')
             }, 2000);
-        })
+        });
+
         $(".btn-apply-expert").on('click',function(ev){
             ev.preventDefault();
             var position = $(this).data("position");

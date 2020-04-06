@@ -142,14 +142,16 @@ a.badge-light:focus{
  
 @section('content')
 
-    <div class="row">
-        <div class="col-lg-12 mt-5">
-            <div class="float-left">
-                <h2>{{ $position->name }} Applicants</h2>
+    <div class="row mt-5">
+        <div class="col">
+            <h2 class="d-inline">{{ $position->name }} Applicants</h2>
+            <button class="btn btn-light rd-filter" data-value="null">Commercial</button>
+        </div>
+        <div class="col text-right">
+            <div class="form-group d-inline-block" style="width: 170px;">
+                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
             </div>
-            <div class="float-right">
-                <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
-            </div>
+            <a class="btn btn-primary align-top" href="{{ url('/') }}"> Back</a>
         </div>
     </div>
    
@@ -293,36 +295,6 @@ a.badge-light:focus{
     </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-4">
-            <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
-        </div>
-    </div>
-    @if( count($requirements) > 0 )
-    <div class="row mt-3">
-        <div class="col">
-            
-            <h5>Requirements:</h5>
-            <ul class="row">
-                @foreach( $requirements as $rid => $requirement )
-                    <li class="col-3">{{ $requirement->name }}</li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
-    @endif
-    <div class="row mt-3">
-        <div class="col">
-            <div class="btn-group" >
-
-                <button class="btn btn-light rd-filter" data-value="null">Commercial</button>
-                
-            </div>
-        </div>
-    </div>
     <div class="row mt-3">
         <div class="col">
             <table id="list-experts"></table>
