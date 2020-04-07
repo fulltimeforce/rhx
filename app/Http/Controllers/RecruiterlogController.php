@@ -133,6 +133,10 @@ class RecruiterlogController extends Controller
                 "value" => "email",
                 "label" => "Email"
             ),
+            (object) array(
+                "value" => "internal database",
+                "label" => "Internal Database"
+            ),
         );
     }
 
