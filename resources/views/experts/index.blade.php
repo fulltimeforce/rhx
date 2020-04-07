@@ -580,14 +580,18 @@ td.frozencell{
                     
                     if( _count_records < _total_records ){
                         _page++;
+                        let a_basic_level = $(".search-level.basic").val();
+                        let a_intermediate_level = $(".search-level.intermediate").val();
+                        let a_advanced_level = $(".search-level.advanced").val();
+                        var _text = $('#search-column-name').val();
                         var data = {
                                 'offset': _records,
                                 'rows': _records,
                                 'page' : _page , 
-                                'basic': '' , 
-                                'intermediate': '' ,
-                                'advanced' : '',
-                                'name' : ''
+                                'basic': _text == '' ? a_basic_level.join(',') : '', 
+                                'intermediate': _text == '' ? a_intermediate_level.join(',') : '',
+                                'advanced' : _text == '' ? a_advanced_level.join(',') : '',
+                                'name' : _text
                         };
                         $("#list-experts").bootstrapTable('showLoading');
                         $.ajax({
