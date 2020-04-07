@@ -357,6 +357,10 @@ td.frozencell{
             locale: "en"
         });
 
+        var _records = 50;
+        var _total_records = 0;
+        var _count_records = 0;
+
         function tablebootstrap_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
@@ -410,21 +414,23 @@ td.frozencell{
 
             $("#list-experts").bootstrapTable('destroy').bootstrapTable({
                 height: 500,
-                pagination: true,
+                // pagination: true,
                 sidePagination: "server",
                 columns: columns.concat(columns_info, columns_temp),
-                showExtendedPagination: true,
+                // showExtendedPagination: true,
                 totalNotFilteredField: 'totalNotFiltered',
                 url : "{{ route('expert.listtbootstrap') }}",
                 fixedColumns: true,
                 fixedNumber: 2,
                 theadClasses: 'table-dark',
                 uniqueId: 'id',
-                pageSize: 50,
+                // pageSize: 15,
                 ajaxOptions: {
                     complete: function(res){
                         console.log(res);
-                        $("#count-expert").html( res.responseJSON.total );
+                        _total_records = res.responseJSON.total;
+                        _count_records = _count_records + res.responseJSON.rows.length;
+                        $("#count-expert").html( _count_records );
 
                     },
                 },
@@ -437,8 +443,8 @@ td.frozencell{
                     var q_advan = a_keys_advan? a_keys_advan.join(',') : '';
                     return {
                         'offset': offset,
-                        'rows':params.limit,
-                        'page' : page , 
+                        'rows': _records,
+                        'page' : 1 , 
                         'basic': q_basic , 
                         'intermediate': q_inter ,
                         'advanced' : q_advan,
@@ -555,6 +561,62 @@ td.frozencell{
             });
 
         }
+        var loading = false;
+        var scroll_previus = 0;
+        var _page = 1;
+        
+        $("#list-experts").on('scroll-body.bs.table' , function(e, arg1){
+            // console.log(e);
+            
+            var _height = $(e.target).height();
+            var _positionScroll = $("#list-experts").bootstrapTable('getScrollPosition');
+            var _diff = 491;
+
+            if( scroll_previus != _positionScroll){
+                console.log( _positionScroll , _height );
+                console.log( _height - _positionScroll ); //491
+                
+                if( (_height - _positionScroll) == _diff ){
+                    
+                    if( _count_records < _total_records ){
+                        _page++;
+                        var data = {
+                                'offset': _records,
+                                'rows': _records,
+                                'page' : _page , 
+                                'basic': '' , 
+                                'intermediate': '' ,
+                                'advanced' : '',
+                                'name' : ''
+                        };
+                        $("#list-experts").bootstrapTable('showLoading');
+                        $.ajax({
+                            type:'GET',
+                            url: '{{ route("expert.listtbootstrap") }}',
+                            data: $.param(data),
+                            headers: {
+                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success:function(data){
+
+                                console.log(data);
+                                let _data = JSON.parse(data)
+                                $("#list-experts").bootstrapTable('append', _data.rows )
+                                
+                                _count_records = _count_records + _data.rows.length;
+                                $("#count-expert").html( _count_records );
+                                $("#list-experts").bootstrapTable('hideLoading')
+                            }
+                        });
+                    }
+                }
+                scroll_previus = _positionScroll
+            }
+            
+            
+            
+        })
 
         @if( $search )
             var basic = [];
@@ -657,7 +719,8 @@ td.frozencell{
                     }
                     )
                 );
-
+            _page = 1;
+            _count_records = 0;
             tablebootstrap_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '');
             
         });
@@ -676,7 +739,8 @@ td.frozencell{
         $('#search-column-name').on( 'keyup', delay(function (ev) {
             
             var text = $(this).val();
-
+            _page = 1;
+            _count_records = 0;
             tablebootstrap_filter( [], [] , [] , is_jqgrid , text );
             is_jqgrid = true;
 

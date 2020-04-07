@@ -285,7 +285,19 @@ a.badge-warning:focus{
             {   field: 'schedule', title: 'Schedule' , formatter: function(value,row,index) { return html_select_schedule( row.id , value ) }  },
             {   field: 'evaluate', title: 'Evaluate' , formatter: function(value,row,index) { return html_check_evaluate( row.id , row ) }  },
             {   field: 'platform', title: 'Platform' , formatter: function(value,row,index){ return row.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == row.platform)[0].label : ''; }   },
-            {   field: 'link', title: 'Link'   },
+            {   field: 'link', title: 'Link' , formatter: function(value,row,index){ 
+                var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+                if( !!pattern.test(value) ){
+                    return '<a href="'+value+'" target="_blank">'+value+'</a>';
+                }else{
+                    return value;
+                }
+             }  },
 
         ];
 
@@ -338,6 +350,7 @@ a.badge-warning:focus{
                 showExtendedPagination: true,
                 uniqueId: 'id',
                 pageSize: 25,
+                
                 totalNotFilteredField: 'totalNotFiltered',
                 url : "{{ route('recruiter.listlogs') }}",
                 queryParams : function(params){
