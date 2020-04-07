@@ -580,7 +580,6 @@ td.frozencell{
         $(window).on('scroll', function (e){
             
             if($(window).scrollTop() + $(window).height() == $(document).height()) {
-                console.log( "abajo" )
 
                 if( _count_records < _total_records ){
                     _page++;
