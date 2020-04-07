@@ -132,7 +132,9 @@ td.frozencell{
     color: #fff;
     background-color: #343a40;
 }
-
+.select2-container{
+    width: 100% !important;
+}
 </style>
 @endsection
 
@@ -292,9 +294,9 @@ td.frozencell{
     @endif
     <br>
     
-    <form action="{{ route('experts.filter') }}" method="POST">
+    <form action="{{ route('experts.filter') }}" class="row" method="POST">
         @csrf
-        <div class="form-group">
+        <div class="form-group col">
             <label for="basic_level">Basic</label>
             <select multiple id="basic_level" name="basic_level[]" class="form-control search-level basic" size="1">
                 @foreach( $basic as $tid => $tlabel)
@@ -302,7 +304,7 @@ td.frozencell{
                 @endforeach
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group col">
             <label for="intermediate_level">Intermediate</label>
             <select multiple id="intermediate_level" name="intermediate_level[]" class="form-control search-level intermediate" size="1">
                 @foreach( $intermediate as $tid => $tlabel)
@@ -310,7 +312,7 @@ td.frozencell{
                 @endforeach
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group col">
             <label for="advanced_level">Advanced</label>
             <select multiple id="advanced_level" name="advanced_level[]" class="form-control search-level advanced" size="1">
                 @foreach( $advanced as $tid => $tlabel)
@@ -318,17 +320,17 @@ td.frozencell{
                 @endforeach
             </select>
         </div>
-        <div class="form-group text-right">
-            <button type="button" class="btn btn-success" id="search">Search</button>
-        </div>
-    
+
     </form>
     <div class="row mb-4">
         <div class="col">
-            <h5>Experts: {{ $experts }} <span id="filter-count-expert" style="display: none;">- Filter : <span class="count-expert"></span></span></h5>
+            <h5>Experts: <span id="count-expert"></span></h5>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-4">
-            <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
+        <div class="col text-right">
+            <div class="form-group d-inline-block" style="max-width: 300px;">
+                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
+            </div>
+            <button type="button" class="btn btn-success" id="search" style="vertical-align: top;">Search</button>
         </div>
     </div>
     <div class="row">
@@ -419,6 +421,13 @@ td.frozencell{
                 theadClasses: 'table-dark',
                 uniqueId: 'id',
                 pageSize: 50,
+                ajaxOptions: {
+                    complete: function(res){
+                        console.log(res);
+                        $("#count-expert").html( res.responseJSON.total );
+
+                    },
+                },
                 queryParams : function(params){
                     var offset = params.offset;
                     var limit = params.limit;
@@ -633,7 +642,7 @@ td.frozencell{
 
 
         $('#search').on('click' , function(){
-            $("#filter-count-expert").hide();
+            
             $('#search-column-name').val('');
             a_basic_level = $(".search-level.basic").val();
             a_intermediate_level = $(".search-level.intermediate").val();
