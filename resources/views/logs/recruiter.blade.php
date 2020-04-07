@@ -124,6 +124,38 @@ a.badge-warning:focus{
             <p>{{ $message }}</p>
         </div>
     @endif
+
+    <div class="modal fade" id="listexperts" tabindex="-1" role="dialog" aria-labelledby="listexpertsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="listexpertsLabel">Select Expert</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-group">
+                        <input type="hidden" id="log-id-modal">
+                        <input type="text" class="form-control" id="search-experts" placeholder="Search">
+                    </div>  
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table id="list-experts"></table>
+                </div>
+            </div>
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
     
     <div class="row">
         <div class="col-12">
@@ -257,6 +289,43 @@ a.badge-warning:focus{
 
         ];
 
+        function table_list_experts( search_name ){
+            $("#list-experts").bootstrapTable('destroy').bootstrapTable({
+                height: 500,
+                pagination: true,
+                sidePagination: "server",
+                columns: [
+                    { field: 'fullname', title: "Expert" },
+                    { field: 'id', title: "Actions" , formatter: function(value,rowData,index){
+                        
+                        return '<a class="badge badge-primary btn-select-expert" data-expert="'+rowData.id+'" href="#">Select</a>\n';
+                    } },
+                ],
+                showExtendedPagination: true,
+                totalNotFilteredField: 'totalNotFiltered',
+                url : "{{ route('expert.listtbootstrap') }}",
+                theadClasses: 'table-dark',
+                uniqueId: 'id',
+                pageSize: 50,
+                queryParams : function(params){
+                    var offset = params.offset;
+                    var limit = params.limit;
+                    var page = (offset / limit) + 1;
+                    return {
+                        'offset': offset,
+                        'rows':params.limit,
+                        'page' : page , 
+                        'basic': [] , 
+                        'intermediate': [] ,
+                        'advanced' : [],
+                        'name' : search_name
+                    };
+                }
+
+            });
+        }
+        
+
         function update_table_logs(){
             $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
                 height: 500,
@@ -280,8 +349,26 @@ a.badge-warning:focus{
 
             });
         }
+
         update_table_logs();
         
+        function delay(callback, ms) {
+            var timer = 0;
+            return function() {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                callback.apply(context, args);
+                }, ms || 0);
+            };
+        }
+
+        $('#search-experts').on( 'keyup', delay(function (ev) {
+            var text = $(this).val();
+
+            table_list_experts( text );
+
+        } , 500 ));
 
         $("#save").on('click', function(ev){
             
@@ -490,7 +577,13 @@ a.badge-warning:focus{
 
         });
 
-        $('table').on('change' , '.form-dropdown' , function(ev){
+        var previus;
+        var select_expert = false;
+        $('table')
+        .on('focus' , '.form-dropdown' , function(ev){
+            previus = this.value;
+        })
+        .on('change' , '.form-dropdown' , function(ev){
             var id = $(this).data("id");
             var attr = $(this).data("name");
             var val = $(this).val();
@@ -498,18 +591,26 @@ a.badge-warning:focus{
             data_post["id"] = id;
             data_post[attr] = val;
             console.log(data_post);
-            $.ajax({
-                type:'POST',
-                url: "{{ route('recruiter.update') }}",
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: data_post,
-                success:function(data){
-
-                }
-            });
+            if( attr == 'contact' && val == 'filled form' ){
+                select_expert = false;
+                $('#listexperts').modal();
+                $("#log-id-modal").val(id);
+                
+            }else{
+                $.ajax({
+                    type:'POST',
+                    url: "{{ route('recruiter.update') }}",
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: data_post,
+                    success:function(data){
+                        
+                    }
+                });
+            }
+            
         });
 
 
@@ -612,6 +713,41 @@ a.badge-warning:focus{
             
             return html;
         }
+        
+        $('#listexperts').on('click' , '.btn-select-expert' , function(ev){
+            ev.preventDefault();
+            var expert_id = $(this).data("expert");
+            var log_id = $("#log-id-modal").val();
+            select_expert = false;
+            $.ajax({
+                type:'POST',
+                url: "{{ route('expert.log.union') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    expert_id : expert_id,
+                    log_id: log_id
+                },
+                success:function(data){
+                    select_expert = true;
+                    $("#listexperts").modal('hide');
+                }
+            });
+        });
+
+        $('#listexperts').on('hidden.bs.modal', function (e) {
+            console.log("fffff");
+            var id = $("#log-id-modal").val();
+            if(!select_expert){
+                $('.form-dropdown[data-id="'+id+'"]').val(previus);
+            }
+            $("#search-experts").val('');
+            $("#log-id-modal").val('');
+            $("#list-experts").bootstrapTable('destroy');
+        });
+
 
     });
 </script>

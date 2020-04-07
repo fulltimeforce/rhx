@@ -311,7 +311,8 @@ class Expert extends Model
         return Carbon::parse($value)->format(config('app.date_format'));
     }
 
-    public function log(){
-        return $this->belongsTo('App\Log' , 'id','expert_id');
+    public function logs(){
+        return $this->hasMany('App\Expertlog' , 'expert_id' , 'id');
     }
+
 }

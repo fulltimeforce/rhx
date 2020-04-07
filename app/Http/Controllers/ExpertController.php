@@ -23,7 +23,7 @@ class ExpertController extends Controller
     {
         //
         if(!Auth::check()) return redirect('login');
-        $_experts = $this->visibleExpert( Expert::with(['log'])->latest()->get() );
+        $_experts = $this->visibleExpert( Expert::with(['logs'])->latest()->get() );
         $experts = count($_experts);
         $query = $request->query();
 
@@ -405,7 +405,7 @@ class ExpertController extends Controller
         $thewholequery = null; 
         foreach($basic as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['log'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
                     $query->where($techid,'basic')->orWhere($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }else{
@@ -417,7 +417,7 @@ class ExpertController extends Controller
         }   
         foreach($intermediate as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['log'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
                     $query->where($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }else{
@@ -429,7 +429,7 @@ class ExpertController extends Controller
         }
         foreach($advanced as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['log'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
                     $query->where($techid,'advanced');  
                 });
             }else{
@@ -440,7 +440,7 @@ class ExpertController extends Controller
 
         }
 
-        $experts = Expert::with(['log'])->latest();
+        $experts = Expert::with(['logs'])->latest();
         if(!empty($thewholequery)) $experts = $thewholequery;
 
         // return view('experts.index')->with('experts',$experts)
@@ -603,7 +603,7 @@ class ExpertController extends Controller
 
         $input = $request->all();
         $fullname = $input['name'];
-        $experts = Expert::with(['log'])->where('fullname' , 'like' , '%'.$fullname.'%')->orderBy('created_at')->get();
+        $experts = Expert::with(['logs'])->where('fullname' , 'like' , '%'.$fullname.'%')->orderBy('created_at')->get();
 
         return response()->json( $this->visibleExpert($experts));
 
