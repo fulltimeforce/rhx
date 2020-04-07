@@ -333,7 +333,7 @@ td.frozencell{
             <button type="button" class="btn btn-success" id="search" style="vertical-align: top;">Search</button>
         </div>
     </div>
-    <div class="row mt-3">
+    <div class="row mb-4">
         <div class="col">
             <table id="list-experts"></table>
         </div>
@@ -357,7 +357,7 @@ td.frozencell{
             locale: "en"
         });
 
-        var _records = 10;
+        var _records = 50;
         var _total_records = 0;
         var _count_records = 0;
 
