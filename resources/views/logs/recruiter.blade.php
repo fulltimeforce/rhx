@@ -230,6 +230,11 @@ a.badge-warning:focus{
             </table>
             </form>
         </div>
+        <div class="col-12 text-right">
+            <div class="form-group d-inline-block" style="max-width: 300px;">
+                <input type="text" placeholder="Search By Expert" class="form-control" id="search-column-name">
+            </div>
+        </div>
         <div class="col-12">
             <table class="table row-border order-column" id="table-logs-fill"> 
             </table>
@@ -337,33 +342,91 @@ a.badge-warning:focus{
             });
         }
         
+        var _records = 10;
+        var _total_records = 0;
+        var _count_records = 0;
 
-        function update_table_logs(){
+        function update_table_logs( _search ){
             $("#table-logs-fill").bootstrapTable('destroy').bootstrapTable({
                 height: 500,
-                pagination: true,
+                // pagination: true,
                 sidePagination: "server",
                 columns: a_columns,
                 fixedColumns: true,
                 fixedNumber: 4,
                 theadClasses: 'table-dark',
-                showExtendedPagination: true,
+                // showExtendedPagination: true,
                 uniqueId: 'id',
-                pageSize: 25,
-                
+                // pageSize: 25,
+                ajaxOptions: {
+                    complete: function(res){
+                        console.log(res);
+                        _total_records = res.responseJSON.total;
+                        _count_records = _count_records + res.responseJSON.rows.length;
+
+                    },
+                },
                 totalNotFilteredField: 'totalNotFiltered',
                 url : "{{ route('recruiter.listlogs') }}",
                 queryParams : function(params){
-                    var offset = params.offset;
-                    var limit = params.limit;
-                    var page = (offset / limit) + 1;
-                    return {'offset': offset,'limit':params.limit,'page' : page};
+                    
+                    return { 'limit': _records ,'page' : 1 , 'name' : _search};
                 }
 
             });
         }
 
-        update_table_logs();
+        update_table_logs( '' );
+
+        var loading = false;
+        var scroll_previus = 0;
+        var _page = 1;
+
+        $("#table-logs-fill").on('scroll-body.bs.table' , function(e, arg1){
+            // console.log(e);
+            
+            var _height = $(e.target).height();
+            var _positionScroll = $("#table-logs-fill").bootstrapTable('getScrollPosition');
+            var _diff = 491;
+
+            if( scroll_previus != _positionScroll){
+                console.log( _positionScroll , _height );
+                console.log( _height - _positionScroll ); //491
+                
+                if( (_height - _positionScroll) == _diff ){
+                    
+                    if( _count_records < _total_records ){
+                        _page++;
+                        var _text = $('#search-column-name').val();
+                        var data = {
+                                'limit': _records,
+                                'page' : _page , 
+                                'name' : _text
+                        };
+                        $("#table-logs-fill").bootstrapTable('showLoading');
+                        $.ajax({
+                            type:'GET',
+                            url: '{{ route("recruiter.listlogs") }}',
+                            data: $.param(data),
+                            headers: {
+                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success:function(_data){
+
+                                $("#table-logs-fill").bootstrapTable('append', _data.rows )
+                                
+                                _count_records = _count_records + _data.rows.length;
+
+                                $("#table-logs-fill").bootstrapTable('hideLoading')
+                            }
+                        });
+                    }
+                }
+                scroll_previus = _positionScroll
+            }
+
+        })
         
         function delay(callback, ms) {
             var timer = 0;
@@ -375,6 +438,16 @@ a.badge-warning:focus{
                 }, ms || 0);
             };
         }
+
+        $('#search-column-name').on( 'keyup', delay(function (ev) {
+            
+            var text = $(this).val();
+            _page = 1;
+            _count_records = 0;
+            update_table_logs( text );
+            is_jqgrid = true;
+
+        } , 500 ));
 
         $('#search-experts').on( 'keyup', delay(function (ev) {
             var text = $(this).val();
@@ -396,8 +469,9 @@ a.badge-warning:focus{
                 success:function(data){
                     console.log(data);
                     // return;
-
-                    update_table_logs();
+                    _page = 1;
+                    _count_records = 0;
+                    update_table_logs( '' );
                     // $("#table-logs-fill").bootstrapTable('insertRow', {index: 0, row: data});
 
                     $_logs.push({
@@ -509,7 +583,9 @@ a.badge-warning:focus{
                     };
                     $_logs[index].platform = data.platform;
                     $_logs[index].link = data.link;
-                    update_table_logs();    
+                    _page = 1;
+                    _count_records = 0;
+                    update_table_logs( '' );    
                     // $("#table-logs-fill").bootstrapTable('updateByUniqueId', {id: data.id, row: data }).
                     // clean
                     $("#name").val('').focus();
@@ -538,7 +614,9 @@ a.badge-warning:focus{
                 success:function(data){
                     console.log(data);
                     // return;
-                    update_table_logs();
+                    _page = 1;
+                    _count_records = 0;
+                    update_table_logs( '' );
                     
                 }
             });

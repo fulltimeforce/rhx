@@ -333,7 +333,7 @@ td.frozencell{
             <button type="button" class="btn btn-success" id="search" style="vertical-align: top;">Search</button>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
         <div class="col">
             <table id="list-experts"></table>
         </div>
@@ -357,11 +357,44 @@ td.frozencell{
             locale: "en"
         });
 
-        var _records = 50;
+        var _records = 10;
         var _total_records = 0;
         var _count_records = 0;
 
-        function tablebootstrap_filter( a_keys_basic , a_keys_inter , a_keys_advan , _is_jqgrid , search_name ){
+        var _dataRows = [];
+
+        function ajax_experts( basic , intermediate , advanced , search_name , page){
+            var params = {
+                'rows': _records,
+                'page' : page , 
+                'basic': basic.join(',') , 
+                'intermediate': intermediate.join(',') ,
+                'advanced' : advanced.join(','),
+                'name' : search_name
+            };
+            $.ajax({
+                type:'GET',
+                url: '{{ route("expert.listtbootstrap") }}',
+                data: $.param(params),
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+
+                    let _data = JSON.parse(data)
+                    _total_records = _data.total;
+                    _count_records = _count_records + _data.rows.length;
+                    $("#count-expert").html( _count_records );
+                    _dataRows = _data.rows;
+                    tablebootstrap_filter( _data.rows , basic , intermediate , advanced );
+                    if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
+                    
+                }
+            });
+        }
+
+        function tablebootstrap_filter( data ,a_keys_basic , a_keys_inter , a_keys_advan ){
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
 
@@ -413,45 +446,13 @@ td.frozencell{
             @endforeach
 
             $("#list-experts").bootstrapTable('destroy').bootstrapTable({
-                height: 500,
-                // pagination: true,
-                sidePagination: "server",
+                height: undefined,
                 columns: columns.concat(columns_info, columns_temp),
-                // showExtendedPagination: true,
-                totalNotFilteredField: 'totalNotFiltered',
-                url : "{{ route('expert.listtbootstrap') }}",
+                data: data,
                 fixedColumns: true,
                 fixedNumber: 2,
                 theadClasses: 'table-dark',
-                uniqueId: 'id',
-                // pageSize: 15,
-                ajaxOptions: {
-                    complete: function(res){
-                        console.log(res);
-                        _total_records = res.responseJSON.total;
-                        _count_records = _count_records + res.responseJSON.rows.length;
-                        $("#count-expert").html( _count_records );
-
-                    },
-                },
-                queryParams : function(params){
-                    var offset = params.offset;
-                    var limit = params.limit;
-                    var page = (offset / limit) + 1;
-                    var q_basic = a_keys_basic? a_keys_basic.join(',') : '';
-                    var q_inter = a_keys_inter? a_keys_inter.join(',') : '';
-                    var q_advan = a_keys_advan? a_keys_advan.join(',') : '';
-                    return {
-                        'offset': offset,
-                        'rows': _records,
-                        'page' : 1 , 
-                        'basic': q_basic , 
-                        'intermediate': q_inter ,
-                        'advanced' : q_advan,
-                        'name' : search_name
-                    };
-                }
-
+                uniqueId: 'id'
             });
 
 
@@ -565,62 +566,64 @@ td.frozencell{
         var scroll_previus = 0;
         var _page = 1;
         
+        // =============================== LAZY LOADING SCROLL ================================= 
+
         $("#list-experts").on('scroll-body.bs.table' , function(e, arg1){
-            // console.log(e);
+            console.log(e);
             
             var _height = $(e.target).height();
             var _positionScroll = $("#list-experts").bootstrapTable('getScrollPosition');
             var _diff = 491;
 
-            if( scroll_previus != _positionScroll){
-                console.log( _positionScroll , _height );
-                console.log( _height - _positionScroll ); //491
-                
-                if( (_height - _positionScroll) == _diff ){
-                    
-                    if( _count_records < _total_records ){
-                        _page++;
-                        let a_basic_level = $(".search-level.basic").val();
-                        let a_intermediate_level = $(".search-level.intermediate").val();
-                        let a_advanced_level = $(".search-level.advanced").val();
-                        var _text = $('#search-column-name').val();
-                        var data = {
-                                'offset': _records,
-                                'rows': _records,
-                                'page' : _page , 
-                                'basic': _text == '' ? a_basic_level.join(',') : '', 
-                                'intermediate': _text == '' ? a_intermediate_level.join(',') : '',
-                                'advanced' : _text == '' ? a_advanced_level.join(',') : '',
-                                'name' : _text
-                        };
-                        $("#list-experts").bootstrapTable('showLoading');
-                        $.ajax({
-                            type:'GET',
-                            url: '{{ route("expert.listtbootstrap") }}',
-                            data: $.param(data),
-                            headers: {
-                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success:function(data){
+        });
 
-                                console.log(data);
-                                let _data = JSON.parse(data)
-                                $("#list-experts").bootstrapTable('append', _data.rows )
-                                
-                                _count_records = _count_records + _data.rows.length;
-                                $("#count-expert").html( _count_records );
-                                $("#list-experts").bootstrapTable('hideLoading')
-                            }
-                        });
-                    }
+        $(window).on('scroll', function (e){
+            
+            if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                console.log( "abajo" )
+
+                if( _count_records < _total_records ){
+                    _page++;
+                    let a_basic_level = $(".search-level.basic").val();
+                    let a_intermediate_level = $(".search-level.intermediate").val();
+                    let a_advanced_level = $(".search-level.advanced").val();
+                    var _text = $('#search-column-name').val();
+                    var data = {
+                            'offset': _records,
+                            'rows': _records,
+                            'page' : _page , 
+                            'basic': _text == '' ? a_basic_level.join(',') : '', 
+                            'intermediate': _text == '' ? a_intermediate_level.join(',') : '',
+                            'advanced' : _text == '' ? a_advanced_level.join(',') : '',
+                            'name' : _text
+                    };
+                    
+                    $.ajax({
+                        type:'GET',
+                        url: '{{ route("expert.listtbootstrap") }}',
+                        data: $.param(data),
+                        headers: {
+                            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success:function(data){
+
+                            console.log(data);
+                            let _data = JSON.parse(data);
+                            $("#list-experts").bootstrapTable('append', _data.rows );
+                            
+                            _count_records = _count_records + _data.rows.length;
+                            $("#count-expert").html( _count_records );
+                            
+                        }
+                    });
                 }
-                scroll_previus = _positionScroll
             }
-            
-            
-            
-        })
+        });
+
+        
+
+        // ================================================================================
 
         @if( $search )
             var basic = [];
@@ -635,7 +638,11 @@ td.frozencell{
             @foreach($advanced as $tid => $tlabel)
                 advanced.push( "{{$tid}}" );
             @endforeach
-            tablebootstrap_filter( basic, intermediate , advanced , false , '' );
+            
+            
+            ajax_experts( basic , intermediate , advanced , '' , 1);
+            
+            
         @endif
 
         $(".search-level").select2({
@@ -725,7 +732,7 @@ td.frozencell{
                 );
             _page = 1;
             _count_records = 0;
-            tablebootstrap_filter( a_basic_level, a_intermediate_level , a_advanced_level , is_jqgrid , '');
+            ajax_experts( a_basic_level, a_intermediate_level , a_advanced_level , '' , 1);
             
         });
 
@@ -745,7 +752,7 @@ td.frozencell{
             var text = $(this).val();
             _page = 1;
             _count_records = 0;
-            tablebootstrap_filter( [], [] , [] , is_jqgrid , text );
+            ajax_experts( [], [] , [] , text , 1 );
             is_jqgrid = true;
 
         } , 500 ));
