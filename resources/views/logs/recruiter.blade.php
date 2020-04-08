@@ -137,7 +137,7 @@ a.badge-primary:focus{
 @section('content')
     <div class="row">
         <div class="col">
-            <h1 class="d-inline-block">Logs</h1>
+            <h1 class="d-inline-block">Logs <span id="count-logs"></span></h1>
             
         </div>
     </div>
@@ -283,7 +283,7 @@ a.badge-primary:focus{
         </div>
 
         <div class="col-6">
-            <h5>Records: <span id="count-logs"></span></h5>
+            <h5>Records: </h5>
         </div>
         <div class="col-6 text-right">
             <div class="form-group d-inline-block" style="max-width: 300px;">
