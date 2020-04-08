@@ -131,6 +131,43 @@ a.badge-primary:focus{
     vertical-align: -webkit-baseline-middle;
 }
 
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #17a2b8;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #17a2b8 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 </style>
 @endsection
  
@@ -290,9 +327,10 @@ a.badge-primary:focus{
                 <input type="text" placeholder="Search By Expert" class="form-control" id="search-column-name">
             </div>
         </div>
-        <div class="col-12 mb-4">
+        <div class="col-12 text-center mb-5">
             <table class="table row-border order-column" id="table-logs-fill"> 
             </table>
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
 
     </div>
@@ -307,7 +345,7 @@ a.badge-primary:focus{
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
-
+        $('.lds-ring').hide();
         $('#date').datetimepicker({
             format: "{{ config('app.date_format_javascript') }}",
             locale: "en"
@@ -427,7 +465,7 @@ a.badge-primary:focus{
                     'page' : _page , 
                     'name' : _text
             };
-            
+            $('.lds-ring').show();
             $.ajax({
                 type:'GET',
                 url: '{{ route("recruiter.listlogs") }}',
@@ -442,6 +480,7 @@ a.badge-primary:focus{
                     _total_records = _data.total;
                     $("#count-logs").html(_data.total)
                     _count_records = _count_records + _data.rows.length;
+                    $('.lds-ring').hide();
                 }
             });
         }
@@ -459,7 +498,7 @@ a.badge-primary:focus{
                             'page' : _page , 
                             'name' : _text
                     };
-                    
+                    $('.lds-ring').show();
                     $.ajax({
                         type:'GET',
                         url: '{{ route("recruiter.listlogs") }}',
@@ -473,7 +512,7 @@ a.badge-primary:focus{
                             $("#table-logs-fill").bootstrapTable('append', _data.rows )
                             
                             _count_records = _count_records + _data.rows.length;
-
+                            $('.lds-ring').hide();
                             
                         }
                     });
