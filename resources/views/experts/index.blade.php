@@ -135,6 +135,44 @@ td.frozencell{
 .select2-container{
     width: 100% !important;
 }
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #17a2b8;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #17a2b8 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 </style>
 @endsection
 
@@ -324,7 +362,8 @@ td.frozencell{
     </form>
     <div class="row mb-4">
         <div class="col">
-            <h5>Experts: <span id="count-expert"></span></h5>
+            <h5>Experts: {{ $experts }}</h5>
+            <p>Result: <span id="count-expert"></span></p>
         </div>
         <div class="col text-right">
             <div class="form-group d-inline-block" style="max-width: 300px;">
@@ -333,9 +372,10 @@ td.frozencell{
             <button type="button" class="btn btn-success" id="search" style="vertical-align: top;">Search</button>
         </div>
     </div>
-    <div class="row mb-4">
-        <div class="col">
+    <div class="row mb-5">
+        <div class="col text-center">
             <table id="list-experts"></table>
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
     </div>
     
@@ -351,7 +391,7 @@ td.frozencell{
 <script type="text/javascript">
     
     $(document).ready(function () {
-
+        $(".lds-ring").hide();
         $('#interview_date').datetimepicker({
             format: "{{ config('app.date_format_javascript') }}",
             locale: "en"
@@ -364,6 +404,7 @@ td.frozencell{
         var _dataRows = [];
 
         function ajax_experts( basic , intermediate , advanced , search_name , page){
+            $(".lds-ring").show();
             var params = {
                 'rows': _records,
                 'page' : page , 
@@ -389,7 +430,7 @@ td.frozencell{
                     _dataRows = _data.rows;
                     tablebootstrap_filter( _data.rows , basic , intermediate , advanced );
                     if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
-                    
+                    $(".lds-ring").hide();
                 }
             });
         }
@@ -596,7 +637,7 @@ td.frozencell{
                             'advanced' : _text == '' ? a_advanced_level.join(',') : '',
                             'name' : _text
                     };
-                    
+                    $(".lds-ring").show();
                     $.ajax({
                         type:'GET',
                         url: '{{ route("expert.listtbootstrap") }}',
@@ -613,7 +654,7 @@ td.frozencell{
                             
                             _count_records = _count_records + _data.rows.length;
                             $("#count-expert").html( _count_records );
-                            
+                            $(".lds-ring").hide();
                         }
                     });
                 }
