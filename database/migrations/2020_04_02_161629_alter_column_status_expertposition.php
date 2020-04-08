@@ -23,9 +23,9 @@ class AlterColumnStatusExpertposition extends Migration
         Schema::table('expert_position', function (Blueprint $table) {
             //
             $table->enum('status' , 
-                ['not interviewed',
+                [
                 'disqualified',
-                'qualified'])->after('approve')->default('not interviewed');
+                'qualified'])->after('approve')->default('disqualified');
             
         });
     }

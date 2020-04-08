@@ -145,7 +145,7 @@ a.badge-light:focus{
     <div class="row mt-5">
         <div class="col">
             <h2 class="d-inline">{{ $position->name }} Applicants</h2>
-            <button class="btn btn-light rd-filter" data-value="null">Commercial</button>
+            <button class="btn btn-light rd-filter" data-value="null">Top</button>
         </div>
         <div class="col text-right">
             <div class="form-group d-inline-block" style="width: 170px;">
@@ -327,7 +327,7 @@ a.badge-light:focus{
                 clickToSelect: false,
                 formatter : function(value,rowData,index) {
                     var actions = '';
-                    actions += '<a class="badge expert_status badge-'+( rowData.status == 'not interviewed' ? 'secondary' : ( rowData.status == 'disqualified'? 'danger' : 'success' ) )+'  " data-id="'+rowData.id+'" data-value="'+rowData.status+'" href="#">Commercial</a>\n';
+                    actions += '<a class="badge expert_status badge-'+( rowData.status == 'qualified'? 'success' : 'secondary' )+'  " data-id="'+rowData.id+'" data-value="'+rowData.status+'" href="#">Top</a>\n';
                     actions += '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
                     actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+ "{{ route('home') }}" + '/'+rowData.file_path+'  ">Download</a>\n';
                     actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
@@ -533,18 +533,10 @@ a.badge-light:focus{
             var positionId = "{{ $positionId }}";
 
             $(this)
-                .removeClass('badge-light')
-                .removeClass('badge-success')
                 .removeClass('badge-secondary')
-                .removeClass('badge-danger');
+                .removeClass('badge-success')
 
-            if( status == 'not interviewed' ){
-
-                $(this).addClass('badge-danger');
-                $(this).data('value' , 'disqualified')
-                status = 'disqualified';
-
-            }else if( status == 'disqualified' ){
+            if( status == 'disqualified' ){
 
                 $(this).addClass('badge-success');
                 $(this).data('value' , 'qualified')
@@ -552,8 +544,8 @@ a.badge-light:focus{
             }else if( status == 'qualified' ){
 
                 $(this).addClass('badge-secondary');
-                $(this).data('value' , 'not interviewed')
-                status = 'not interviewed';
+                $(this).data('value' , 'disqualified')
+                status = 'disqualified';
             }
 
             $.ajax({
@@ -569,24 +561,6 @@ a.badge-light:focus{
                 }
             });
         })
-
-
-        function html_status_expert( _id , _status ){
-            var html = '';
-            html += '<div class="form-group">';
-            html += '    <select name="expert_status" class="form-control expert_status" style="width: 150px;" data-expert="'+_id+'" data-position="{{ $positionId }}">';
-            html += '        <option value=""></option>';
-            html += '        <option value="filter" '+( _status == 'filter' ? 'selected' : '' ) + '>Filter</option>';
-            html += '        <option value="called" '+( _status == 'called' ? 'selected' : '' ) + '>Called</option>';
-            html += '        <option value="scheduled" '+( _status == 'scheduled' ? 'selected' : '' ) + '>Scheduled</option>';
-            html += '        <option value="attended" '+( _status == 'attended' ? 'selected' : '' ) + '>Attended</option>';
-            html += '        <option value="approved" '+( _status == 'approved' ? 'selected' : '' ) + '>Approved</option>';
-            html += '        <option value="failed" '+( _status == 'failed' ? 'selected' : '' ) + '>Failed</option>';
-            html += '    </select>';
-            html += '</div>';
-
-            return html;
-        }
 
         $('.rd-filter').on("click" , function(ev){
 
