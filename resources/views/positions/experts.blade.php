@@ -145,7 +145,7 @@ a.badge-light:focus{
     <div class="row mt-5">
         <div class="col">
             <h2 class="d-inline">{{ $position->name }} Applicants</h2>
-            <button class="btn btn-light rd-filter" data-value="null">Top</button>
+            <button class="btn btn-secondary rd-filter" data-value="disqualified">Top</button>
         </div>
         <div class="col text-right">
             <div class="form-group d-inline-block" style="width: 170px;">
@@ -567,30 +567,18 @@ a.badge-light:focus{
             var status = $(this).data('value');
 
             $(this)
-                .removeClass('btn-light')
                 .removeClass('btn-success')
                 .removeClass('btn-secondary')
-                .removeClass('btn-danger');
 
-            if( status == null ){
-                $(this).addClass('btn-secondary');
-                $(this).data('value' , 'not interviewed')
-                status = 'not interviewed';
-            }else if( status == 'not interviewed' ){
-
-                $(this).addClass('btn-danger');
-                $(this).data('value' , 'disqualified')
-                status = 'disqualified';
-
-            }else if( status == 'disqualified' ){
+            if( status == 'disqualified' ){
 
                 $(this).addClass('btn-success');
                 $(this).data('value' , 'qualified')
                 status = 'qualified';
             }else if( status == 'qualified' ){
 
-                $(this).addClass('btn-light');
-                $(this).data('value' , null)
+                $(this).addClass('btn-secondary');
+                $(this).data('value' , 'disqualified')
                 status = '';
             }
 
