@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Recruiterlog;
 use App\Position;
+use App\Notelog;
 use Carbon\Carbon;
 
 class RecruiterlogController extends Controller
@@ -81,6 +82,39 @@ class RecruiterlogController extends Controller
         $id = $input["id"];
 
         Recruiterlog::where('id' , $id)->delete();
+    }
+
+    public function note( Request $request ){
+        $input = $request->all();
+        $log_id = $input['log_id'];
+        $type = $input['type'];
+        $note = Notelog::where(function($q) use ($log_id,$type){
+            $q
+                ->where("log_id" , $log_id)
+                ->where("type" , $type);
+        })->first();
+
+        return $note;
+    }
+
+    public function noteSave( Request $request ){
+        $input = $request->all();
+        $log_id = $input['log_id'];
+        $type = $input['type'];
+        $note = $input['note'];
+        $note = Notelog::where(function($q) use ($log_id,$type){
+            $q
+                ->where("log_id" , $log_id)
+                ->where("type" , $type);
+        })->first();
+        
+        if( !empty( $note ) ){
+            Notelog::where('id' , $note->id)->update($input);
+            return 'update';
+        }else{
+            Notelog::create($input);
+            return 'new';
+        }
     }
 
     private function platforms(){

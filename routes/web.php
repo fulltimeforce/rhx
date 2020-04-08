@@ -96,6 +96,8 @@ Route::post('/recruiter/delete','RecruiterlogController@deleteForm')->name('recr
 // expert log
 
 Route::post('/expert/logs/union','ExpertlogController@union')->name('expert.log.union');
+Route::post('/log/note','RecruiterlogController@note')->name('log.note');
+Route::post('/log/note/save','RecruiterlogController@noteSave')->name('log.note.save');
 
 /*
 ============================== ROUTE SIGNED ===========================================

@@ -103,9 +103,34 @@ a.badge-secondary:focus,
 a.badge-danger.focus, 
 a.badge-danger:focus,
 a.badge-warning.focus, 
-a.badge-warning:focus{
+a.badge-warning:focus,
+a.badge-primary.focus, 
+a.badge-primary:focus{
     box-shadow: none;
 }
+
+.btn-group>.badge:not(:last-child):not(.dropdown-toggle){
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.btn-group>.badge:not(:first-child){
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.btn-group>.badge:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.btn-group>.badge{
+    height: 21px;
+}
+.btn-group>.badge.badge-primary{
+    font-size: 9px;
+}
+.btn-group>.badge.badge-primary i.fas:before{
+    vertical-align: -webkit-baseline-middle;
+}
+
 </style>
 @endsection
  
@@ -150,6 +175,34 @@ a.badge-warning:focus{
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+    <!-- ============================ NOTES ============================-->
+    <div class="modal fade" id="noteLogModal" tabindex="-1" role="dialog" aria-labelledby="noteLogModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="noteLogModalLabel"><span id="log-name"></span> - Note</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">
+                    <textarea id="note-log" cols="30" rows="10" class="form-control"></textarea>
+                    <input type="hidden" id="log_id_note">
+                    <input type="hidden" id="log_type_note">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="saveNote">Save changes</button>
         </div>
         </div>
     </div>
@@ -228,6 +281,7 @@ a.badge-warning:focus{
             </table>
             </form>
         </div>
+
         <div class="col-6">
             <h5>Records: <span id="count-logs"></span></h5>
         </div>
@@ -777,10 +831,28 @@ a.badge-warning:focus{
 
         function html_check_filter( _id, _filter ){
             var html = '';
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.cv == null ? 'secondary' : (_filter.cv == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.cv+'" data-name="cv" data-id="'+_id+'">CV</a>\n';
+            html += '<a href="#" class="badge badge-primary check-note" data-name="cv" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+            
+            
+            
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.experience == null ? 'secondary' : (_filter.experience == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.experience+'" data-name="experience" data-id="'+_id+'">Experience</a>\n';
+            html += '<a href="#" class="badge badge-primary check-note" data-name="experience" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.communication == null ? 'secondary' : (_filter.communication == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.communication+'" data-name="communication" data-id="'+_id+'">Communication</a>\n';
+            html += '<a href="#" class="badge badge-primary check-note" data-name="communication" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-filter badge-'+ ( _filter.english == null ? 'secondary' : (_filter.english == 'approved' ? 'success' : 'danger') ) +'" data-value="'+_filter.english+'" data-name="english" data-id="'+_id+'">English</a>';
+            html += '<a href="#" class="badge badge-primary check-note" data-name="english" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
             return html;
         }
 
@@ -798,10 +870,21 @@ a.badge-warning:focus{
 
         function html_check_evaluate( _id , _evaluate){
             var html = '';
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.commercial == null ? 'secondary' : (_evaluate.commercial == 'approved' ? 'success' : ( _evaluate.commercial == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.commercial+'" data-name="commercial" data-id="'+_id+'">Commercial</a>\n';
+            html += '<a href="#" class="badge badge-primary check-note" data-name="commercial" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.technique == null ? 'secondary' : (_evaluate.technique == 'approved' ? 'success' : ( _evaluate.technique == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.technique+'" data-name="technique" data-id="'+_id+'">Technical</a>\n';
+            html += '<a href="#" class="badge badge-primary check-note" data-name="technique" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
+            html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.psychology == null ? 'secondary' : (_evaluate.psychology == 'approved' ? 'success' : ( _evaluate.psychology == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.psychology+'" data-name="psychology" data-id="'+_id+'">Psychological</a>\n';
-            
+            html += '<a href="#" class="badge badge-primary check-note" data-name="psychology" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
             return html;
         }
         
@@ -839,6 +922,65 @@ a.badge-warning:focus{
             $("#list-experts").bootstrapTable('destroy');
         });
 
+        $("table").on('click' , '.check-note' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var type = $(this).data("name");
+
+            var data_post = {};
+            data_post["log_id"] = id;
+            data_post["type"] = type;
+            console.log(data_post);
+            $.ajax({
+                type:'POST',
+                url: "{{ route('log.note') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data_post,
+                success:function(data){
+                    console.log(data)
+                    if(data){
+                        $("#note-log").val( data.note );
+                    }
+                    var index = $_logs.findIndex( f => f.id == id);
+                    $("#log_id_note").val( id );
+                    $("#log_type_note").val( type );
+                    $("#log-name").html( $_logs[index].expert );
+                    $("#noteLogModal").modal();
+
+                }
+            });
+
+        });
+
+        $("#saveNote").on('click' , function(){
+            var data_post = {
+                log_id: $("#log_id_note").val(),
+                type: $("#log_type_note").val(),
+                note: $("#note-log").val(),
+            };
+            $.ajax({
+                type:'POST',
+                url: "{{ route('log.note.save') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data_post,
+                success:function(data){
+                    $("#noteLogModal").modal('hide');
+                }
+            });
+        });
+
+        $('#noteLogModal').on('hidden.bs.modal', function (e) {
+            $("#log_id_note").val( '' );
+            $("#log_type_note").val( '' );
+            $("#log-name").html( '' );
+            $("#note-log").val( '' );
+        })
 
     });
 </script>
