@@ -179,7 +179,7 @@ td.frozencell{
 @section('content')
     <div class="row">
         <div class="col">
-            <h1>Experts</h1>
+            <h1>Experts ({{ $experts }})</h1>
         </div>
         <div class="col text-right">
             
@@ -362,7 +362,6 @@ td.frozencell{
     </form>
     <div class="row mb-4">
         <div class="col">
-            <h5>Experts: {{ $experts }}</h5>
             <p>Result: <span id="count-expert"></span></p>
         </div>
         <div class="col text-right">
