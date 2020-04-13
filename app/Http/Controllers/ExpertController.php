@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Expert;
 use App\Position;
+use App\Portfolio;
 use App\Log;
 use App\Interview;
 use Illuminate\Http\Request;
@@ -182,7 +183,7 @@ class ExpertController extends Controller
             $destinationPath = 'uploads/cv';
         
             $input = $request->all();
-            
+
             $newNameFile = '';
 
             $input["file_path"] = '';
@@ -207,7 +208,12 @@ class ExpertController extends Controller
                 unset( $input["signed"] );
                 unset( $input["log"] );
             }
+
+            $portfolio_link = isset( $input['link'] )? $input['link'] : array();
+            $portfolio_description = isset( $input['description'] )? $input['description'] : array();
             
+            unset( $input['link'] );
+            unset( $input['description'] );
 
             $input['fullname'] = ucwords(substr( $input['fullname'] , 0 , 244));
             $input['email_address'] = substr( $input['email_address'] , 0 , 244);
@@ -254,6 +260,17 @@ class ExpertController extends Controller
                     )
                 );
             }
+
+            if( count($portfolio_description) > 0 && $isCreated ){
+                Portfolio::where('expert_id' , $input['id'] )->delete();
+                foreach ( $portfolio_link as $key => $p ) {
+                    Portfolio::create(array(
+                        "expert_id" => $input['id'],
+                        "link" => $p,
+                        "description" => $portfolio_description[$key]
+                    )); 
+                }
+            }
     
             if(Auth::check()){
                 return redirect()->route('experts.home')
@@ -294,7 +311,11 @@ class ExpertController extends Controller
         //
         if(!Auth::check()) return redirect('login');
         // return $expert;
-        return view('experts.edit')->with('expert',$expert)->with('technologies',Expert::getTechnologies());
+        $portfolios = Portfolio::where('expert_id' , $expert->id )->get();
+        return view('experts.edit')
+            ->with('expert',$expert)
+            ->with('portfolios',$portfolios)
+            ->with('technologies',Expert::getTechnologies());
     }
 
     /**
@@ -333,6 +354,12 @@ class ExpertController extends Controller
 
             }
 
+            $portfolio_link = isset( $input['link'] )? $input['link'] : array();
+            $portfolio_description = isset( $input['description'] )? $input['description'] : array();
+            
+            unset( $input['link'] );
+            unset( $input['description'] );
+
             unset( $input["_token"] );
             unset( $input["file_cv"] );
 
@@ -358,6 +385,17 @@ class ExpertController extends Controller
                         'form' => 1
                     )
                 );
+            }
+
+            if( count($portfolio_description) > 0  ){
+                Portfolio::where('expert_id' , $expert->id )->delete();
+                foreach ( $portfolio_link as $key => $p ) {
+                    Portfolio::create(array(
+                        "expert_id" => $expert->id,
+                        "link" => $p,
+                        "description" => $portfolio_description[$key]
+                    )); 
+                }
             }
       
             return redirect()->route('experts.home')

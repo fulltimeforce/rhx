@@ -276,30 +276,6 @@ a.badge-primary:focus{
                             </select>
                         </div>
                     </td>
-
-                    <td>
-                        <div class="form-group" id="btn-form-save">
-                            <button type="button" id="save" class="btn btn-success">SAVE</button>
-                        </div>
-                        <div class="form-group" id="btn-form-edit" style="display:none;">
-                            <button type="button" id="edit" class="btn btn-success">Edit</button>
-                            <button type="button" id="clear" class="btn btn-info">Clear</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-group" style="position: relative;">
-                            <label for="info">Phone/Email</label>
-                            <input type="text" name="info" id="info" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="link">Link</label>
-                            <input type="text" name="link" id="link" class="form-control">
-                        </div>
-                    </td>
                     <td>
                         <div class="form-group">
                             <label for="platform">Platform</label>
@@ -313,7 +289,27 @@ a.badge-primary:focus{
                             </select>
                         </div>
                     </td>
-                    <td></td>
+                    <td>
+                        <div class="form-group" style="position: relative;">
+                            <label for="info">Phone/Email</label>
+                            <input type="text" name="info" id="info" class="form-control">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="link">Link</label>
+                            <input type="text" name="link" id="link" class="form-control">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group" id="btn-form-save">
+                            <button type="button" id="save" class="btn btn-success">SAVE</button>
+                        </div>
+                        <div class="form-group" id="btn-form-edit" style="display:none;">
+                            <button type="button" id="edit" class="btn btn-success">Edit</button>
+                            <button type="button" id="clear" class="btn btn-info">Clear</button>
+                        </div>
+                    </td>
                 </tr>
             </table>
             </form>

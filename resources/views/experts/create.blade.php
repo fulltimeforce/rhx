@@ -1,5 +1,14 @@
 @extends('layouts.app', ['controller' => 'expert-create'])
-  
+@section('styles')
+<style>
+#showURL{
+    word-break: break-all;
+}
+.txt-description {
+    white-space: pre-line;
+}
+</style>
+@endsection
 @section('content')
 <div class="row">
     <div class="col-lg-12 mt-5 mb-5">
@@ -122,7 +131,7 @@
             
         </div>
     </div>
-    @auth
+    
     <div class="form-row">
         <div class="form-group col-6 col-sm">
             <label for="linkedin">Linkedin</label>
@@ -145,7 +154,7 @@
             <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $expert->twitter }}">
         </div>
     </div>
-    @endauth
+    
     <div class="form-row">
         <div class="form-group col-12 col-sm-4">
             <label for="other_knowledge">¿Qué otros conocimientos tienes?</label>
@@ -199,6 +208,39 @@
         @endforeach
     @endforeach
     
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>Portfolio</h3>
+        </div>
+        <div class="col-12">
+            <div class="form-row mb-4">
+                <div class="col-12 col-md-8">
+                    <label for="portfolio-link">Link</label>
+                    <input type="text" class="form-control" id="portfolio-link">
+                </div>
+                <div class="col-12 col-md-8 mb-2">
+                    <label for="portfolio-description">Description</label>
+                    <textarea id="portfolio-description" class="form-control" rows="7"></textarea>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-success" type="button" id="add-portfolio">Add</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12" id="list-portfolio" >
+            <div class="card" >
+                <div class="card-header">
+                    <h5 class="card-title d-inline">:link</h5>
+                    <input type="hidden" name="link[]" value=":link">
+                    <button type="button" class="btn btn-danger float-right delete-portfolio"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                </div>
+                <div class="card-body">
+                    <p class="txt-description">:description</p>
+                    <input type="hidden" name="description[]" value=":description">
+                </div>
+            </div>
+        </div>
+    </div>
     
     <input type="hidden" name="position" value="{{$positionId}}">
     
@@ -215,6 +257,28 @@
                 format: "{{ config('app.date_format_javascript') }}",
                 locale: "en"
             });
+            var card = $("#list-portfolio").html();
+            $("#list-portfolio").html('');
+            $('#add-portfolio').on('click' ,function(ev){
+                
+                var link = $("#portfolio-link").val();
+                var description = $("#portfolio-description").val();
+
+                if( link != '' && description != '' ){
+                    var html = card;
+                    html = html.replace(/:link/gi , link);
+                    html = html.replace(/:description/gi , description);
+                    
+                    $("#list-portfolio").append(html);
+                    $("#portfolio-link").val('');
+                    $("#portfolio-description").val('');
+                }
+            });
+            $("#list-portfolio").on('click' , '.delete-portfolio' ,function(){
+                $(this).parent().parent().slideUp('slow' , function(){
+                    $(this).remove();
+                })
+            })
         });
     </script>
 
@@ -224,6 +288,8 @@
             var fileName = $(this).val();
             //replace the "Choose a file" label
             $(this).next('.custom-file-label').html(ev.target.files[0].name);
-        })
+        });
+
+
     </script>
 @endsection
