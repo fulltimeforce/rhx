@@ -28,7 +28,7 @@ class Expert extends Model
         'yii','yii2','kohana','nodejs','expressjs','mongoose','nextjs','nestjs','fabricjs' , 'd3js',
         //frontend
         'ajax','angularjs','css3','html5','jquery','less','reactjs','sass','scss','stylus','vuejs',
-        'javascript','angular345','angular678','typescript',
+        'javascript','angular345','angular678','typescript','gatsbyjs',
         //mobile
         'androidjava','androidkotlin','flutter','ionic','objectivec','reactnative','swift',
         'xamarin',
@@ -138,6 +138,7 @@ class Expert extends Model
                 'angular345'=>'Angular 3/4/5',
                 'angular678'=>'Angular 6/7/8',
                 'typescript'=>'Typescript',
+                'gatsbyjs'=>'GatsbyJS',
             ),
         ),
         'mobile' => array(
