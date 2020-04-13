@@ -8,6 +8,10 @@
 .txt-description {
     white-space: pre-line;
 }
+.card-header .card-title a{
+    vertical-align: middle;
+    text-decoration: underline;
+}
 </style>
 @endsection
    
@@ -223,7 +227,7 @@
         @foreach($portfolios as $pkey => $portfolio)
             <div class="card mb-1" >
                 <div class="card-header">
-                    <h5 class="card-title d-inline">{{ $portfolio->link }}</h5>
+                    <h5 class="card-title d-inline"><a href="{{ $portfolio->link }}">{{ $portfolio->link }}</a></h5>
                     <input type="hidden" name="link[]" value="{{ $portfolio->link }}">
                     <button type="button" class="btn btn-danger float-right delete-portfolio"><i class="fas fa-trash" aria-hidden="true"></i></button>
                 </div>
@@ -235,9 +239,9 @@
         @endforeach
         </div>
         <div class="col-12" id="edit-portfolio" >
-            <div class="card mb-1" >
+            <div class="card mb-2" >
                 <div class="card-header">
-                    <h5 class="card-title d-inline">:link</h5>
+                    <h5 class="card-title d-inline"><a href=":link">:link</a></h5>
                     <input type="hidden" name="link[]" value=":link">
                     <button type="button" class="btn btn-danger float-right delete-portfolio"><i class="fas fa-trash" aria-hidden="true"></i></button>
                 </div>
