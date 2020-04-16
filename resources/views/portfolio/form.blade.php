@@ -95,17 +95,21 @@
                 <div class="col-6">
                     <label for="project_categories">Category</label>
                     <select name="project_categories_{{ $project['index'] }}[]" class="form-control tag-categories sel-project-categories" multiple size="1">
+                        @if( !is_null($project['categories']) && $project['categories'] != '' )
                         @foreach( $project['categories'] as $category )
                             <option value="{{ $category }}" selected>{{ $category }}</option>
                         @endforeach
+                        @endif
                     </select>
                 </div>
                 <div class="col-6">
                     <label for="project_stacks">Stacks</label>
                     <select name="project_stacks_{{ $project['index'] }}[]" class="form-control tag-select sel-project-stacks" multiple size="1">
+                        @if( !is_null($project['stacks']) && $project['stacks'] != '' )
                         @foreach( $project['stacks'] as $stack )
                             <option value="{{ $stack }}" selected>{{ $stack }}</option>
                         @endforeach
+                        @endif
                     </select>
                 </div>
                 <div class="col-6">
