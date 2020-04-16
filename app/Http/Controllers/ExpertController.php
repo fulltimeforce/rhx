@@ -650,6 +650,8 @@ class ExpertController extends Controller
 
     public function portfolio( $expertId ){
 
+        if(!Auth::check()) return redirect('login');
+
         $count = Portfolioexpert::where( 'expert_id' , $expertId )->count();
 
         $expert = array();
@@ -692,19 +694,28 @@ class ExpertController extends Controller
 
         $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
 
-        if( Auth::check() ){
-            return view('portfolio.form' )
-                ->with('expert', $expert );
-        }
-        return view('portfolio.index' )
+        
+        return view('portfolio.form' )
             ->with('expert', $expert );
     }
+
+    public function portfolioPreview( $expertId ){
+
+        $count = Portfolioexpert::where( 'expert_id' , $expertId )->count();
+
+        if( $count == 0 ) abort(404);
+
+        $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
+
+        return view('portfolio.index' )
+            ->with('expert', $expert );
+
+    }   
 
     public function saveportfolio( Request $request ){
 
         $input = $request->all();
         // return $input;
-        $input["work"] = isset( $input["work"] )? implode( "," , $input["work"]  ) : null ;
 
         $input["projects"] = serialize($this->parsePorjects( $input ));
 

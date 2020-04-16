@@ -11,7 +11,8 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <h2>Expert - {{ $expert->fullname }}</h2>
+        <h2 class="d-inline">Expert - {{ $expert->fullname }}</h2>
+        <a href="{{ route('expert.portfolio.preview' , $expert->expert_id) }}" target="_blank" class="btn btn-info">Preview</a>
     </div>
 </div>
 
@@ -40,7 +41,7 @@
             </div>
             <div class="col-10 mb-2">
                 <label for="work">Position</label>
-                <input type="text" class="form-control" value="{{ $expert->work }}">
+                <input type="text" class="form-control" value="{{ $expert->work }}" name="work">
                 
             </div>
             <div class="col-6 mb-2">

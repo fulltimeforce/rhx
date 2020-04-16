@@ -28,6 +28,7 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 
 
 Route::get('/expert/{expertId}/resume','ExpertController@portfolio')->name('expert.portfolio');
+Route::get('/expert/{expertId}/preview','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
 /*
 ============================== ROUTES ACTION ============================================
 */ 
