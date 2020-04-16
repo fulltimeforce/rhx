@@ -58,7 +58,7 @@
     <div class="container">
       <div class="row personal-profile">
         <div class="col-md-4 personal-profile__avatar">
-          <img class="" src="{{ ( !is_null($expert->photo) )? route('home') .'/uploads/projects/'.$expert->photo : 'http://via.placeholder.com/350x400' }}" alt="avatar">
+          <img class="" src="{{ ( !is_null($expert->photo) && $expert->photo != '' )? route('home') .'/uploads/projects/'.$expert->photo : 'http://via.placeholder.com/350x400' }}" alt="avatar">
         </div>
         <div class="col-md-8">
           <p class="personal-profile__name"> {{ $expert->fullname }} </p>

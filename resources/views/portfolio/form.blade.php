@@ -341,6 +341,12 @@ $(document).ready(function (ev) {
 
     $("body").on('change' , '.upload-image' , function(ev){
         var file = this.files[0];
+        console.log( file.size);
+        if( file.size > 130000){
+            alert('Use a file size no more than 1M');
+            return;
+        }
+        
         var _this = $(this);
         var _formData = new FormData();
         _formData.append('file', file);
