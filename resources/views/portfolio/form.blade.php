@@ -372,7 +372,7 @@ $(document).ready(function (ev) {
     $("body").on('change' , '.upload-image' , function(ev){
         var file = this.files[0];
         console.log( file.size);
-        if( file.size > 430000){
+        if( file.size > 4300000){
             alert('Use a file size no more than 4M');
             return;
         }
