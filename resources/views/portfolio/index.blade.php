@@ -323,7 +323,8 @@
     </div>
   </div> -->
 <!--Contact-->
-
+@if( !is_null($expert->projects) && $expert->projects != '' )
+@if( count( unserialize($expert->projects) ) > 0 )
 <!-- Portfolio Modal -->
   @foreach( unserialize($expert->projects) as $pkey => $project )
   <div class="modal fade portfolio-modal" id="portfolioModal{{$project['index']}}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -359,7 +360,8 @@
     </div>
   </div>
   @endforeach
-
+  @endif
+    @endif
 
 <!-- Portfolio Modal -->
 
