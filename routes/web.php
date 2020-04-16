@@ -24,6 +24,10 @@ Route::resource('positions','PositionController',['except'=>['destroy']]);
 Route::get('/','PositionController@index')->name('home');
 Route::get('/logs', 'LogController@index')->name('logs.index');
 Route::get('positions/{positionId}/experts','PositionController@relations')->name('positions.experts');
+
+
+
+Route::get('/expert/{expertId}/resume','ExpertController@portfolio')->name('expert.portfolio');
 /*
 ============================== ROUTES ACTION ============================================
 */ 
@@ -63,8 +67,6 @@ Route::post('/logs/approvefilter', 'LogController@approveFilter')->name('logs.ap
 
 Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
 
-Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
-
 Auth::routes(['register' => false]);
 
 Route::post('/requirement/position', 'RequirementController@positionById')->name('requirement.position');
@@ -99,6 +101,10 @@ Route::post('/expert/logs/union','ExpertlogController@union')->name('expert.log.
 Route::post('/log/note','RecruiterlogController@note')->name('log.note');
 Route::post('/log/note/save','RecruiterlogController@noteSave')->name('log.note.save');
 
+//
+Route::post('/experts/portfolio/save','ExpertController@saveportfolio')->name('expert.saveportfolio');
+Route::post('/experts/portfolio/uploadproject','ExpertController@imageproject')->name('expert.uploadproject');
+
 /*
 ============================== ROUTE SIGNED ===========================================
 */
@@ -116,5 +122,10 @@ Route::get('/expert/register' , 'LogController@synchronization')->name('log.sync
 
 Auth::routes(['register' => false]);
 
+
+/*
+============================== ROUTE POSTS ===========================================
+*/
+Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
 
 

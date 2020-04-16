@@ -7,6 +7,7 @@ use App\Position;
 use App\Portfolio;
 use App\Log;
 use App\Interview;
+use App\Portfolioexpert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
@@ -645,6 +646,184 @@ class ExpertController extends Controller
 
         return response()->json( $this->visibleExpert($experts));
 
+    }
+
+    public function portfolio( $expertId ){
+
+        $count = Portfolioexpert::where( 'expert_id' , $expertId )->count();
+
+        $expert = array();
+
+        if( $count == 0 ){
+
+            $_expert = Expert::where( 'id' , $expertId )->first();
+
+            if( empty( $_expert ) ) abort(404);
+
+            Portfolioexpert::create(
+                array(
+                    "expert_id" => $expertId,
+                    'fullname' => $_expert->fullname,
+                    'work' => $_expert->focus,
+                    'age' => $_expert->age,
+                    'email' => $_expert->email_address,
+                    'address' => $_expert->address,
+                    'github' => $_expert->github,
+                    'linkedin' => $_expert->linkedin,
+                    'facebook' => $_expert->facebook,
+                )
+            );
+
+        }
+
+        $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
+
+        if( Auth::check() ){
+            return view('portfolio.form' )
+                ->with('expert', $expert );
+        }
+        return view('portfolio.index' )
+            ->with('expert', $expert );
+    }
+
+    public function saveportfolio( Request $request ){
+
+        $input = $request->all();
+        // return $input;
+        $input["work"] = isset( $input["work"] )? implode( "," , $input["work"]  ) : null ;
+
+        $input["projects"] = serialize($this->parsePorjects( $input ));
+
+        $input["education"] = serialize($this->parseEducations( $input ));
+
+        $input["employment"] = serialize($this->parseEmployments( $input ));
+
+        $input["skills"] = serialize($this->parseSkills( $input ));
+
+        // return $input;
+        Portfolioexpert::where( 'id' , $input['id'] )->update(
+            array(
+                "fullname" => $input["fullname"],
+                "work" => $input["work"],
+                "age" => $input["age"],
+                "email" => $input["email"],
+                "address" => $input["address"],
+                "github" => $input["github"],
+                "linkedin" => $input["linkedin"],
+                "facebook" => $input["facebook"],
+                "photo" => $input["photo"],
+                "description" => $input["description"],
+                "resume" => $input["resume"],
+                "education" => $input["education"],
+                "employment" => $input["employment"],
+                "skills" => $input["skills"],
+                "projects" => $input["projects"]
+            )
+        );
+
+        return redirect()->route('experts.home')
+                            ->with('success', 'Expert updated successfully.');
+
+    }
+
+    public function imageproject( Request $request ){
+
+        $file = $request->file("file");
+
+        $destinationPath = 'uploads/projects';
+        
+        $newNameFile = '';
+
+        if( $file ){
+
+            $nameFile = time().".".$file->getClientOriginalExtension();
+
+            $newNameFile = $destinationPath."/" . $nameFile;
+            
+            $file->move( $destinationPath, $newNameFile );
+
+            echo $nameFile;
+        }
+        
+        echo '';
+    }
+
+    private function parsePorjects( $_array ){
+
+        $len = count($_array['project_index']);
+        $projects = array();
+        for ($i=0; $i < $len; $i++) { 
+            if( !is_null($_array['project_title'][$i]) ){
+                $projects[] = array(
+                    "index"         => isset( $_array['project_index'][$i] )?$_array['project_index'][$i] : null,
+                    "title"         => isset( $_array['project_title'][$i] )?$_array['project_title'][$i] : null,
+                    "image_name"    => isset( $_array['project_image_name'][$i] )?$_array['project_image_name'][$i] : null,
+                    "description"   => isset( $_array['project_description'][$i] )?$_array['project_description'][$i] : null,
+                    "categories"    => isset( $_array['project_categories_'.$_array['project_index'][$i]  ] )?$_array['project_categories_'.$_array['project_index'][$i]  ] : null,
+                    "stacks"        => isset( $_array['project_stacks_'.$_array['project_index'][$i] ] )?$_array['project_stacks_'.$_array['project_index'][$i] ] : null,
+                    "url"           => isset( $_array['project_url'][$i] )?$_array['project_url'][$i] : null,
+                );
+            }
+            
+        }
+
+        return $projects;
+
+    }
+
+    private function parseEducations( $_array ){
+
+        $len = count($_array['education_university']);
+        $educations = array();
+        for ($i=0; $i < $len; $i++) { 
+            if( !is_null($_array['education_university'][$i]) ){
+                $educations[] = array(
+                    "university"    => isset($_array['education_university'][$i])? $_array['education_university'][$i] : null,
+                    "age_start"     => isset($_array['education_age_start'][$i])? $_array['education_age_start'][$i] : null,
+                    "age_end"       => isset($_array['education_age_end'][$i])? $_array['education_age_end'][$i] : null,
+                    "profession"    => isset($_array['education_profession'][$i])? $_array['education_profession'][$i] : null,
+                );
+            }
+            
+        }
+
+        return $educations;
+    }
+
+    private function parseEmployments( $_array ){
+
+        $len = count($_array['employment_workplace']);
+        $employments = array();
+        for ($i=0; $i < $len; $i++) { 
+            if( !is_null($_array['employment_workplace'][$i]) ){
+                $employments[] = array(
+                    "workplace"     => isset($_array['employment_workplace'][$i])? $_array['employment_workplace'][$i] : null,
+                    "age_start"     => isset($_array['employment_age_start'][$i])? $_array['employment_age_start'][$i] : null,
+                    "age_end"       => isset($_array['employment_age_end'][$i])? $_array['employment_age_end'][$i] : null,
+                    "occupation"    => isset($_array['employment_occupation'][$i])? $_array['employment_occupation'][$i] : null,
+                );
+            }
+            
+        }
+
+        return $employments;
+    }
+
+    private function parseSkills( $_array ){
+
+        $len = count($_array['skills_skill']);
+        $skills = array();
+        for ($i=0; $i < $len; $i++) { 
+            if( !is_null($_array['skills_skill'][$i]) ){
+                $skills[] = array(
+                    "skill" => $_array['skills_skill'][$i],
+                    "value" => $_array['skills_value'][$i],
+                );
+            }
+            
+        }
+
+        return $skills;
     }
 
 }

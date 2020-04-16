@@ -452,6 +452,7 @@ td.frozencell{
                         actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
                         actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
+                        actions += '<a class="badge badge-info" href="'+ "{{ route('expert.portfolio', ':id' ) }}"+ '">Preview</a>';
                         
                         actions = actions.replace(/:id/gi , rowData.id);
 
