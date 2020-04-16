@@ -39,15 +39,9 @@
                 <input type="number" value="{{ $expert->age }}" class="form-control" name="age">
             </div>
             <div class="col-10 mb-2">
-                <label for="work">Work</label>
+                <label for="work">Position</label>
+                <input type="text" class="form-control" value="{{ $expert->work }}">
                 
-                <select name="work[]" id="work" class="form-control tag-select" multiple size="1">
-                    @if( !is_null($expert->work) )
-                    @foreach( explode(',' , $expert->work ) as $work )
-                        <option value="{{ $work }}" selected>{{ $work }}</option>
-                    @endforeach
-                    @endif
-                </select>
             </div>
             <div class="col-6 mb-2">
                 <label for="email">Email</label>
@@ -65,10 +59,7 @@
                 <label for="linkedin">Linkedin</label>
                 <input type="text" class="form-control" value="{{ $expert->linkedin }}" name="linkedin">
             </div>
-            <div class="col-12">
-                <label for="facebook">Facebook</label>
-                <input type="text" class="form-control" value="{{ $expert->facebook }}" name="facebook">
-            </div>
+
         </div>
     </div>
     
@@ -101,7 +92,7 @@
                     <textarea name="project_description[]" rows="5" class="form-control txt-project-description">{{ $project['description'] }}</textarea>
                 </div>
                 <div class="col-6">
-                    <label for="project_categories">Categories</label>
+                    <label for="project_categories">Category</label>
                     <select name="project_categories_{{ $project['index'] }}[]" class="form-control tag-categories sel-project-categories" multiple size="1">
                         @foreach( $project['categories'] as $category )
                             <option value="{{ $category }}" selected>{{ $category }}</option>
@@ -146,7 +137,7 @@
                 <textarea name="project_description[]" rows="5" class="form-control project-description" ></textarea>
             </div>
             <div class="col-3">
-                <label for="project_categories">Categories</label>
+                <label for="project_categories">Category</label>
                 <select name="project_categories_{{ strtotime( date('Y-m-d H:i:s') ) }}[]"  class="form-control tag-categories project-categories" multiple size="1">
                 </select>
             </div>
@@ -168,11 +159,8 @@
         </div>
     </div>
     <div class="col-12 mb-4">
-        <h5>RESUME</h5>
+
         <div class="form-row mb-4" >
-            <div class="col-12 mb-4">
-                <textarea name="resume" id="resume" rows="5" class="form-control">{{ $expert->resume }}</textarea>
-            </div>
 
             <div class="col-12 mb-5">
                 <h5>Education</h5>
@@ -181,23 +169,19 @@
                 @if( !is_null($expert->education) && $expert->education != '' )
                 @foreach( unserialize($expert->education) as $pkey => $education )
                 
-                <div class="mb-3 card" >
+                <div class="mb-3 card w-100" >
                     <section class="form-row card-body">
                     <div class="col-4">
                         <label for="">University</label>
                         <input type="text" class="form-control education-university" name="education_university[]" value="{{ $education['university'] }}">
                     </div>
                     <div class="col-2">
-                        <label for="">Age Start</label>
-                        <input type="number" class="form-control education-age-start" name="education_age_start[]" value="{{ $education['age_start'] }}">
-                    </div>
-                    <div class="col-2">
-                        <label for="">Age End</label>
-                        <input type="number" class="form-control education-age-end" name="education_age_end[]" value="{{ $education['age_end'] }}">
+                        <label for="">Period</label>
+                        <input type="text" class="form-control education-period" name="education_period[]" value="{{ $education['period'] }}">
                     </div>
                     <div class="col-4">
-                        <label for="">Profession</label>
-                        <input type="text" class="form-control education-profession" name="education_profession[]" value="{{ $education['profession'] }}">
+                        <label for="">Description</label>
+                        <textarea name="education_description[]" rows="4" class="form-control education-description">{{ $education['description'] }}</textarea>
                     </div>
                     </section>
                 </div>
@@ -206,24 +190,22 @@
                 @endif
                 </section>
                 <section id="form-educations">
-                    <div class="mb-3 card section-form-educations" data-education="{{ strtotime( date('Y-m-d H:i:s') ) }}">
+                    <div class="mb-3 card w-100 section-form-educations" data-education="{{ strtotime( date('Y-m-d H:i:s') ) }}">
                     <section class="form-row card-body">
-                        <div class="col">
+                        <div class="col-4">
                             <label for="">University</label>
                             <input type="text" class="form-control education-university" name="education_university[]" >
                         </div>
                         <div class="col-2">
-                            <label for="">Age Start</label>
-                            <input type="number" class="form-control education-age-start" name="education_age_start[]" >
+                            <label for="">Period</label>
+                            <input type="text" class="form-control education-period" name="education_period[]" >
                         </div>
-                        <div class="col-2">
-                            <label for="">Age End</label>
-                            <input type="number" class="form-control education-age-end" name="education_age_end[]" >
-                        </div>
+                        
                         <div class="col-4">
-                            <label for="">Profession</label>
-                            <input type="text" class="form-control education-profession" name="education_profession[]" >
+                            <label for="">Description</label>
+                            <textarea name="education_description[]" rows="4" class="form-control education-description"></textarea>
                         </div>
+
                     </section>
                     </div>
                 </section>
@@ -240,19 +222,15 @@
                 <section class="" id="list-employments">
                 @if( !is_null($expert->employment) && $expert->employment != '' )
                 @foreach( unserialize($expert->employment) as $pkey => $employment )
-                    <div class="card mb-3" id="form-employments">
+                    <div class="card mb-3 w-100" id="form-employments">
                         <section class="form-row card-body">
-                        <div class="col">
+                        <div class="col-4">
                             <label for="">Workplace</label>
                             <input type="text" class="form-control employment-workplace" name="employment_workplace[]" value="{{ $employment['workplace'] }}">
                         </div>
-                        <div class="col-4">
-                            <label for="">Age Start</label>
-                            <input type="text" class="form-control employment-age-start" name="employment_age_start[]" value="{{ $employment['age_start'] }}">
-                        </div>
-                        <div class="col-4">
-                            <label for="">Age End</label>
-                            <input type="text" class="form-control employment-age-end" name="employment_age_end[]" value="{{ $employment['age_end'] }}">
+                        <div class="col-2">
+                            <label for="">Period</label>
+                            <input type="text" class="form-control employment-period" name="employment_period[]" value="{{ $employment['period'] }}">
                         </div>
                         <div class="col-4">
                             <label for="">Occupation</label>
@@ -265,19 +243,15 @@
                 @endif
                 </section>
                 <section id="form-employments">
-                    <div class="card mb-3 section-form-employments" data-employment="{{ strtotime( date('Y-m-d H:i:s') ) }}">
+                    <div class="card mb-3 w-100 section-form-employments" data-employment="{{ strtotime( date('Y-m-d H:i:s') ) }}">
                     <section class="form-row card-body">
-                        <div class="col">
+                        <div class="col-4">
                             <label for="">Workplace</label>
                             <input type="text" class="form-control employment-workplace" name="employment_workplace[]">
                         </div>
                         <div class="col-2">
-                            <label for="">Age Start</label>
-                            <input type="number" class="form-control employment-age-start" name="employment_age_start[]">
-                        </div>
-                        <div class="col-2">
-                            <label for="">Age End</label>
-                            <input type="number" class="form-control employment-age-end" name="employment_age_end[]">
+                            <label for="">Period</label>
+                            <input type="text" class="form-control employment-period" name="employment_period[]">
                         </div>
                         <div class="col-4">
                             <label for="">Occupation</label>
@@ -301,25 +275,17 @@
                 <div class="form-row mb-3"  >
                     <div class="col">
                         <label for="">Skill</label>
-                        <input type="text" class="form-control skills-skill" name="skills-skill[]" value="{{ $skill['skill'] }}">
+                        <input type="text" class="form-control skills-skill" name="skills_skill[]" value="{{ $skill['skill'] }}">
                     </div>
                     <div class="col">
+
                         <label for="">Value</label>
-                        <input type="range" class="form-control skills-value" min="0" max="100" step="10" name="skills-value[]" value="{{ $skill['value'] }}" >
+                        <select name="skills_value[]" id="" class="form-control skills-value">
+                            <option value="basic" {{ ($skill['value'] == 'basic')? 'selected' : ''   }} >Basic</option>
+                            <option value="intermediate"  {{ ($skill['value'] == 'intermediate')? 'selected' : ''   }}>Intermediate</option>
+                            <option value="advanced"  {{ ($skill['value'] == 'advanced')? 'selected' : ''   }}>Advanced</option>
+                        </select>
                         
-                        <datalist id="tickmarks">
-                        <option value="0" label="0">
-                        <option value="10" label="10">
-                        <option value="20" label="20">
-                        <option value="30" label="30">
-                        <option value="40" label="40">
-                        <option value="50" label="50">
-                        <option value="60" label="60">
-                        <option value="70" label="70">
-                        <option value="80" label="80">
-                        <option value="90" label="90">
-                        <option value="100" label="100%">
-                        </datalist>
                         
                     </div>
                     <div class="col"></div>
@@ -336,20 +302,11 @@
                         </div>
                         <div class="col">
                             <label for="">Value</label>
-                            <input type="range" list="tickmarks" class="form-control skills-value" min="0" max="100" step="10" name="skills_value[]">
-                            <datalist id="tickmarks">
-                            <option value="0" label="0">
-                            <option value="10" label="10">
-                            <option value="20" label="20">
-                            <option value="30" label="30">
-                            <option value="40" label="40">
-                            <option value="50" label="50">
-                            <option value="60" label="60">
-                            <option value="70" label="70">
-                            <option value="80" label="80">
-                            <option value="90" label="90">
-                            <option value="100" label="100%">
-                            </datalist>
+                            <select name="skills_value[]" id="" class="form-control skills-value">
+                                <option value="basic"  >Basic</option>
+                                <option value="intermediate"  >Intermediate</option>
+                                <option value="advanced"  >Advanced</option>
+                            </select>
                         </div>
                         <div class="col">
                         </div>
@@ -529,9 +486,9 @@ $(document).ready(function (ev) {
         var html_education = $("#form-educations").html();
         var _index = $("#form-educations").find('.section-form-educations').attr("data-education");
         var university = $("#form-educations").find('.education-university').val();
-        var age_star = $("#form-educations").find('.education-age-start').val();
-        var age_end = $("#form-educations").find('.education-age-end').val();
-        var profession = $("#form-educations").find('.education-profession').val();
+        var period = $("#form-educations").find('.education-period').val();
+
+        var description = $("#form-educations").find('.education-description').val();
         
         if( university.trim() == "" ){
             $("#form-educations").find('.education-university').focus();
@@ -545,19 +502,17 @@ $(document).ready(function (ev) {
         $("#list-educations").find( '.section-form-educations[data-education="'+_index+'"]' )
             .find('.education-university').val(university);
         $("#list-educations").find( '.section-form-educations[data-education="'+_index+'"]' )
-            .find('.education-age-start').val(age_star);
+            .find('.education-period').val(period);
+        
         $("#list-educations").find( '.section-form-educations[data-education="'+_index+'"]' )
-            .find('.education-age-end').val(age_end);
-        $("#list-educations").find( '.section-form-educations[data-education="'+_index+'"]' )
-            .find('.education-profession').val(profession);
+            .find('.education-description').val(description);
 
         $("#form-educations").find('.section-form-educations')
             .attr('data-education', n_index );
 
         $("#form-educations").find('.education-university').val('');
-        $("#form-educations").find('.education-age-start').val('');
-        $("#form-educations").find('.education-age-end').val('');
-        $("#form-educations").find('.education-profession').val('');
+        $("#form-educations").find('.education-period').val('');
+        $("#form-educations").find('.education-description').val('');
     });
 
 
@@ -565,8 +520,7 @@ $(document).ready(function (ev) {
         var html_employment = $("#form-employments").html();
         var _index = $("#form-employments").find('.section-form-employments').attr("data-employment");
         var workplace = $("#form-employments").find('.employment-workplace').val();
-        var age_star = $("#form-employments").find('.employment-age-start').val();
-        var age_end = $("#form-employments").find('.employment-age-end').val();
+        var period = $("#form-employments").find('.employment-period').val();
         var occupation = $("#form-employments").find('.employment-occupation').val();
 
         if( workplace.trim() == "" ){
@@ -581,9 +535,8 @@ $(document).ready(function (ev) {
         $("#list-employments").find( '.section-form-employments[data-employment="'+_index+'"]' )
             .find('.employment-workplace').val(workplace);
         $("#list-employments").find( '.section-form-employments[data-employment="'+_index+'"]' )
-            .find('.employment-age-start').val(age_star);
-        $("#list-employments").find( '.section-form-employments[data-employment="'+_index+'"]' )
-            .find('.employment-age-end').val(age_end);
+            .find('.employment-period').val(period);
+
         $("#list-employments").find( '.section-form-employments[data-employment="'+_index+'"]' )
             .find('.employment-occupation').val(occupation);
 
@@ -591,8 +544,7 @@ $(document).ready(function (ev) {
             .attr('data-employment', n_index );
 
         $("#form-employments").find('.employment-workplace').val('');
-        $("#form-employments").find('.employment-age-start').val('');
-        $("#form-employments").find('.employment-age-end').val('');
+        $("#form-employments").find('.employment-period').val('');
         $("#form-employments").find('.employment-occupation').val('');
     });
 

@@ -199,9 +199,9 @@
         @foreach( unserialize($expert->education) as $pkey => $education )
             <div class="resume-list__block">
             <p class="resume-list__block-title">{{ $education['university'] }} </p>
-            <p class="resume-list__block-date">{{ $education['age_start'] }} - {{ $education['age_end'] }}</p>
+            <p class="resume-list__block-date">{{ $education['period'] }} </p>
             <p>
-            {{ $education['profession'] }}
+            {{ $education['description'] }}
             </p>
             </div>
         @endforeach
@@ -220,7 +220,7 @@
         @foreach( unserialize($expert->employment) as $pkey => $employment )
             <div class="resume-list__block">
             <p class="resume-list__block-title">{{ $employment['workplace'] }}</p>
-            <p class="resume-list__block-date">{{ $employment['age_start'] }} - {{ $employment['age_end'] }}</p>
+            <p class="resume-list__block-date">{{ $employment['period'] }} </p>
             <p>
                 {{ $employment['occupation'] }}
             </p>
@@ -245,10 +245,11 @@
             <div class="progress-list__skill">
                 <p>
                     <span class="progress-list__skill-title">{{ $skill['skill'] }}</span>
-                    <span class="progress-list__skill-value">{{ $skill['value'] }}%</span>
+                    
                 </p>
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{{ $skill['value'] }}" aria-valuemin="0" aria-valuemax="100" >
+                
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{ ( ($skill['value'] == 'basic')? 30 : ( ($skill['value'] == 'intermediate')? 70 : 100) )   }}" aria-valuemin="0" aria-valuemax="100" >
                     </div>
                 </div>
             </div>

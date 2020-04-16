@@ -660,17 +660,31 @@ class ExpertController extends Controller
 
             if( empty( $_expert ) ) abort(404);
 
+            $skills = array();
+
+            foreach(Expert::getTechnologies() as $catid => $cat){
+                foreach($cat[1] as $techid => $techlabel){
+                    if( !is_null($_expert[$techid]) && $_expert[$techid]!= 'unknown' ){
+                        $skills[] = array(
+                            "skill" => $techlabel,
+                            "value" => $_expert[$techid]
+                        );
+                    }
+                }
+            }
+
             Portfolioexpert::create(
                 array(
                     "expert_id" => $expertId,
-                    'fullname' => $_expert->fullname,
-                    'work' => $_expert->focus,
-                    'age' => $_expert->age,
-                    'email' => $_expert->email_address,
-                    'address' => $_expert->address,
-                    'github' => $_expert->github,
-                    'linkedin' => $_expert->linkedin,
-                    'facebook' => $_expert->facebook,
+                    'fullname'  => $_expert->fullname,
+                    'work'      => $_expert->focus,
+                    'age'       => $_expert->age,
+                    'email'     => $_expert->email_address,
+                    'address'   => $_expert->address,
+                    'github'    => $_expert->github,
+                    'linkedin'  => $_expert->linkedin,
+                    'facebook'  => $_expert->facebook,
+                    'skills'    => serialize($skills),
                 )
             );
 
@@ -710,10 +724,8 @@ class ExpertController extends Controller
                 "address" => $input["address"],
                 "github" => $input["github"],
                 "linkedin" => $input["linkedin"],
-                "facebook" => $input["facebook"],
                 "photo" => $input["photo"],
                 "description" => $input["description"],
-                "resume" => $input["resume"],
                 "education" => $input["education"],
                 "employment" => $input["employment"],
                 "skills" => $input["skills"],
@@ -779,9 +791,8 @@ class ExpertController extends Controller
             if( !is_null($_array['education_university'][$i]) ){
                 $educations[] = array(
                     "university"    => isset($_array['education_university'][$i])? $_array['education_university'][$i] : null,
-                    "age_start"     => isset($_array['education_age_start'][$i])? $_array['education_age_start'][$i] : null,
-                    "age_end"       => isset($_array['education_age_end'][$i])? $_array['education_age_end'][$i] : null,
-                    "profession"    => isset($_array['education_profession'][$i])? $_array['education_profession'][$i] : null,
+                    "period"     => isset($_array['education_period'][$i])? $_array['education_period'][$i] : null,
+                    "description"    => isset($_array['education_description'][$i])? $_array['education_description'][$i] : null,
                 );
             }
             
@@ -798,8 +809,7 @@ class ExpertController extends Controller
             if( !is_null($_array['employment_workplace'][$i]) ){
                 $employments[] = array(
                     "workplace"     => isset($_array['employment_workplace'][$i])? $_array['employment_workplace'][$i] : null,
-                    "age_start"     => isset($_array['employment_age_start'][$i])? $_array['employment_age_start'][$i] : null,
-                    "age_end"       => isset($_array['employment_age_end'][$i])? $_array['employment_age_end'][$i] : null,
+                    "period"     => isset($_array['employment_period'][$i])? $_array['employment_period'][$i] : null,
                     "occupation"    => isset($_array['employment_occupation'][$i])? $_array['employment_occupation'][$i] : null,
                 );
             }
