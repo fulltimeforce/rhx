@@ -83,8 +83,8 @@
                 <div class="col-6">
                     <label for="">Image</label>
                     <div class="custom-file">
-                        <input type="file" class="form-control upload-image" name="project_image_file[]" id="project_image_file_">
-                        <label class="custom-file-label" for="customFile">Choose file</label>
+                        <input type="file" class="form-control upload-image" name="project_image_file[]" id="project_image_file_{{ $project['index'] }}">
+                        <label class="custom-file-label" for="project_image_file_{{ $project['index'] }}">Choose file</label>
                         <input type="hidden" name="project_image_name[]" value="{{ $project['image_name'] }}">
                     </div>
                 </div>
