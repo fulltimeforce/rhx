@@ -3,7 +3,9 @@
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <style>
-
+#form-skills .skill-delete{
+    display: none;
+}
 </style>
 
 @endsection
@@ -84,7 +86,7 @@
                     <label for="">Image</label>
                     <div class="custom-file">
                         <input type="file" class="form-control upload-image" name="project_image_file[]" id="project_image_file_{{ $project['index'] }}">
-                        <label class="custom-file-label" for="project_image_file_{{ $project['index'] }}">Choose file</label>
+                        <label class="custom-file-label" for="project_image_file_{{ $project['index'] }}">{{ (!is_null($project['image_name']) && $project['image_name'] != '') ? $project['image_name'] : 'Choose file' }}</label>
                         <input type="hidden" name="project_image_name[]" value="{{ $project['image_name'] }}">
                     </div>
                 </div>
@@ -293,7 +295,9 @@
                         
                         
                     </div>
-                    <div class="col"></div>
+                    <div class="col pt-4 pl-4">
+                        <a href="#" class="text-danger skill-delete"><i class="fas fa-trash"></i></a>
+                    </div>
                 </div>
                 
                 @endforeach
@@ -313,7 +317,8 @@
                                 <option value="advanced"  >Advanced</option>
                             </select>
                         </div>
-                        <div class="col">
+                        <div class="col pt-4 pl-4">
+                            <a href="#" class="text-danger skill-delete"><i class="fas fa-trash"></i></a>
                         </div>
                     </div>
                 </section>
@@ -586,6 +591,13 @@ $(document).ready(function (ev) {
         $("#form-skills").find('.skills-value').val('');
 
     });
+
+    $("body").on('click' , '.skill-delete', function(ev){
+        ev.preventDefault();
+        $(this).parent().parent().slideUp('fast' , function(){
+            $(this).remove();
+        })
+    })
 
 
     function html_options_tags( tags ){
