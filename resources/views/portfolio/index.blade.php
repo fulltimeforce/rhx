@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <title>{{ $expert->fullname }}</title>
-  <link rel="stylesheet" href="{{ asset('/portfolio/css/color.css') }}">
+  <link rel="stylesheet" href="{{ asset('/portfolio/css/color.css') }}?v={{ strtotime( date('Y-m-d H:i:s') ) }}">
   <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Inconsolata" rel="stylesheet">
   <link href="https://cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css" rel="stylesheet">
 </head>
@@ -136,7 +136,7 @@
     <div class="portfolio-cards">
       @foreach( unserialize($expert->projects) as $pkey => $project )
       <div class="row project-card" data-toggle="modal" data-target="#portfolioModal{{$project['index']}}" data-portfolio-tag="{{ isset($project['categories'][0]) ? $project['categories'][0] : 'empty' }}">
-        <div class="col-md-6 col-lg-5 project-card__img">
+        <div class="col-md-6 col-lg-5 project-card__img d-flex align-items-center">
           <img class="" src="{{ ( !is_null($project['image_name']) && $project['image_name'] != '' )? route('home') .'/uploads/projects/'.$project['image_name'] : route('home') .'/image/project-image.jpg' }}" alt="project-img">
         </div>
         <div class="col-md-6 col-lg-7 project-card__info">
