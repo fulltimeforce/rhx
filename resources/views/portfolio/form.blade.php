@@ -5,8 +5,14 @@
 <style>
 #form-skills .skill-delete,
 #form-employments .employment-delete,
-#form-educations .education-delete{
+#form-educations .education-delete,
+#form-project .project-delete{
     display: none;
+}
+.project-delete{
+    position: absolute;
+    top: 4px;
+    right: 19px;
 }
 </style>
 
@@ -79,6 +85,7 @@
             @foreach( unserialize($expert->projects) as $pkey => $project )
             <div class="mb-4 card">
                 <section class="form-row card-body">
+                <a href="#" class="text-danger project-delete"><i class="fas fa-trash"></i></a>
                 <div class="col-6">
                     <label for="project_title">Title</label>
                     <input type="text" class="form-control txt-project-title" name="project_title[]" value="{{ $project['title'] }}">
@@ -128,6 +135,7 @@
         <section id="form-project">
         <div class="mb-4 section-form-project card" data-project="{{ strtotime( date('Y-m-d H:i:s') ) }}">
             <section class="form-row card-body">
+            <a href="#" class="text-danger project-delete"><i class="fas fa-trash"></i></a>
             <div class="col-6">
                 <label for="project_title">Title</label>
                 <input type="text" class="form-control project-title" name="project_title[]" >
@@ -364,8 +372,8 @@ $(document).ready(function (ev) {
     $("body").on('change' , '.upload-image' , function(ev){
         var file = this.files[0];
         console.log( file.size);
-        if( file.size > 130000){
-            alert('Use a file size no more than 1M');
+        if( file.size > 430000){
+            alert('Use a file size no more than 4M');
             return;
         }
         
@@ -611,7 +619,13 @@ $(document).ready(function (ev) {
             $(this).remove();
         })
     })
-
+    $("body").on('click' , '.project-delete', function(ev){
+        ev.preventDefault();
+        $(this).parent().parent().slideUp('fast' , function(){
+            $(this).remove();
+        })
+    })
+    
     $("body").on('click' , '.employment-delete , .education-delete', function(ev){
         ev.preventDefault();
         $(this).parent().parent().parent().slideUp('fast' , function(){

@@ -172,7 +172,27 @@ td.frozencell{
   }
 }
 
-
+.btn-group>.badge:not(:last-child):not(.dropdown-toggle){
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.btn-group>.badge:not(:first-child){
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.btn-group>.badge:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.btn-group>.badge{
+    height: 21px;
+}
+.btn-group>.badge.badge-primary{
+    font-size: 9px;
+}
+.btn-group>.badge.badge-primary i.fas:before{
+    vertical-align: -webkit-baseline-middle;
+}
 </style>
 @endsection
 
@@ -452,8 +472,13 @@ td.frozencell{
                         actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
                         // actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
-                        actions += '<a class="badge badge-info" href="'+ "{{ route('expert.portfolio', ':id' ) }}"+ '">Resume</a>';
+                        // actions += '<a class="badge badge-info" href="'+ "{{ route('expert.portfolio', ':id' ) }}"+ '">Resume</a>';
                         
+                        actions += '<div class="btn-group" role="group">';
+                        actions += '<a href="'+ "{{ route('expert.portfolio', ':id' ) }}"+ '" class="badge badge-info" >Resume</a>\n';
+                        actions += '<a href="'+ "{{ route('expert.portfolio.preview', ':id' ) }}"+ '" class="badge badge-primary" target="_blank" ><i class="fas fa-pen"></i></a>';
+                        actions += '</div>';
+
                         actions = actions.replace(/:id/gi , rowData.id);
 
                         return actions;

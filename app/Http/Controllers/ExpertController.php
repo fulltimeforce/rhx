@@ -694,7 +694,6 @@ class ExpertController extends Controller
 
         $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
 
-        
         return view('portfolio.form' )
             ->with('expert', $expert );
     }
@@ -703,7 +702,43 @@ class ExpertController extends Controller
 
         $count = Portfolioexpert::where( 'expert_id' , $expertId )->count();
 
-        if( $count == 0 ) abort(404);
+        $expert = array();
+
+        if( $count == 0 ){
+
+            $_expert = Expert::where( 'id' , $expertId )->first();
+
+            if( empty( $_expert ) ) abort(404);
+
+            $skills = array();
+
+            foreach(Expert::getTechnologies() as $catid => $cat){
+                foreach($cat[1] as $techid => $techlabel){
+                    if( !is_null($_expert[$techid]) && $_expert[$techid]!= 'unknown' ){
+                        $skills[] = array(
+                            "skill" => $techlabel,
+                            "value" => $_expert[$techid]
+                        );
+                    }
+                }
+            }
+
+            Portfolioexpert::create(
+                array(
+                    "expert_id" => $expertId,
+                    'fullname'  => $_expert->fullname,
+                    'work'      => $_expert->focus,
+                    'age'       => $_expert->age,
+                    'email'     => $_expert->email_address,
+                    'address'   => $_expert->address,
+                    'github'    => $_expert->github,
+                    'linkedin'  => $_expert->linkedin,
+                    'facebook'  => $_expert->facebook,
+                    'skills'    => serialize($skills),
+                )
+            );
+
+        }
 
         $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
 
