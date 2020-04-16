@@ -3,7 +3,9 @@
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 <style>
-#form-skills .skill-delete{
+#form-skills .skill-delete,
+#form-employments .employment-delete,
+#form-educations .education-delete{
     display: none;
 }
 </style>
@@ -190,6 +192,9 @@
                         <label for="">Description</label>
                         <textarea name="education_description[]" rows="4" class="form-control education-description">{{ $education['description'] }}</textarea>
                     </div>
+                    <div class="col pt-4 pl-4">
+                        <a href="#" class="text-danger education-delete"><i class="fas fa-trash"></i></a>
+                    </div>
                     </section>
                 </div>
                 
@@ -212,7 +217,9 @@
                             <label for="">Description</label>
                             <textarea name="education_description[]" rows="4" class="form-control education-description"></textarea>
                         </div>
-
+                        <div class="col pt-4 pl-4">
+                            <a href="#" class="text-danger education-delete"><i class="fas fa-trash"></i></a>
+                        </div>
                     </section>
                     </div>
                 </section>
@@ -243,6 +250,9 @@
                             <label for="">Occupation</label>
                             <input type="text" class="form-control employment-occupation" name="employment_occupation[]" value="{{ $employment['occupation'] }}">
                         </div>
+                        <div class="col pt-4 pl-4">
+                            <a href="#" class="text-danger employment-delete"><i class="fas fa-trash"></i></a>
+                        </div>
                         </section>
                     </div>
 
@@ -263,6 +273,9 @@
                         <div class="col-4">
                             <label for="">Occupation</label>
                             <input type="text" class="form-control employment-occupation" name="employment_occupation[]">
+                        </div>
+                        <div class="col pt-4 pl-4">
+                            <a href="#" class="text-danger employment-delete"><i class="fas fa-trash"></i></a>
                         </div>
                     </section>
                     </div>
@@ -595,6 +608,13 @@ $(document).ready(function (ev) {
     $("body").on('click' , '.skill-delete', function(ev){
         ev.preventDefault();
         $(this).parent().parent().slideUp('fast' , function(){
+            $(this).remove();
+        })
+    })
+
+    $("body").on('click' , '.employment-delete , .education-delete', function(ev){
+        ev.preventDefault();
+        $(this).parent().parent().parent().slideUp('fast' , function(){
             $(this).remove();
         })
     })
