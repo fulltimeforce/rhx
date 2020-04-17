@@ -20,6 +20,9 @@ class Portfolioexpert extends Model
         'age',
         'email',
         'address',
+        'availability',
+        'slug',
+        'user_id',
         'github',
         'linkedin',
         'facebook',
@@ -32,5 +35,11 @@ class Portfolioexpert extends Model
         'projects', // serialize array
     ];
 
-    
+    public function expert() {
+        return $this->hasOne('App\Expert', 'id', 'expert_id');
+    }
+
+    public function user() {
+        return $this->hasOne('App\User', 'id', 'user_id');
+    }
 }

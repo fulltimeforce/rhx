@@ -62,6 +62,10 @@
                 <label for="address">Address</label>
                 <input type="text" class="form-control" value="{{ $expert->address }}" name="address">
             </div>
+            <div class="col-6">
+                <label for="availability">Availability</label>
+                <input type="text" class="form-control" value="{{ $expert->availability }}" name="availability">
+            </div>
             <div class="col-12">
                 <label for="github">Github</label>
                 <input type="text" class="form-control" value="{{ $expert->github }}" name="github">

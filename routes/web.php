@@ -27,8 +27,11 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 
 
 
-Route::get('/expert/{expertId}/resume','ExpertController@portfolio')->name('expert.portfolio');
-Route::get('/expert/{expertId}/preview','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
+Route::get('/expert/{id}/resume','ExpertController@portfolioForm')->name('expert.portfolio.form');
+Route::post('/expert/portfolio/save','ExpertController@portfolioSave')->name('expert.portfolio.save');
+
+Route::get('/resume','ExpertController@portfolioResume')->name('expert.portfolio.resume');
+
 /*
 ============================== ROUTES ACTION ============================================
 */ 
@@ -46,7 +49,7 @@ Route::get('positions/experts/list', 'PositionController@relationsExperts')->nam
 
 Route::post('expert/validate','ExpertController@validateEmail')->name('experts.validate');
 
-Route::post('expert/search','ExpertController@searchbyname')->name('experts.search');
+Route::get('expert/search','ExpertController@searchbyname')->name('experts.search');
 
 Route::post('expert/log','ExpertController@log')->name('experts.log');
 
@@ -105,7 +108,7 @@ Route::post('/log/note/save','RecruiterlogController@noteSave')->name('log.note.
 //
 Route::post('/experts/portfolio/save','ExpertController@saveportfolio')->name('expert.saveportfolio');
 Route::post('/experts/portfolio/uploadproject','ExpertController@imageproject')->name('expert.uploadproject');
-
+Route::get('/resume/list','ExpertController@portfolioResumeList')->name('expert.portfolio.resume.list');
 /*
 ============================== ROUTE SIGNED ===========================================
 */
@@ -128,5 +131,6 @@ Auth::routes(['register' => false]);
 ============================== ROUTE POSTS ===========================================
 */
 Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
+Route::get('/expert/{slug}','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
 
 

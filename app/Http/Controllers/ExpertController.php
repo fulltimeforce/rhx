@@ -444,7 +444,7 @@ class ExpertController extends Controller
         $thewholequery = null; 
         foreach($basic as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['resume'])->where(function($query) use($techid){
                     $query->where($techid,'basic')->orWhere($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }else{
@@ -456,7 +456,7 @@ class ExpertController extends Controller
         }   
         foreach($intermediate as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['resume'])->where(function($query) use($techid){
                     $query->where($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }else{
@@ -468,7 +468,7 @@ class ExpertController extends Controller
         }
         foreach($advanced as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['resume'])->where(function($query) use($techid){
                     $query->where($techid,'advanced');  
                 });
             }else{
@@ -479,7 +479,7 @@ class ExpertController extends Controller
 
         }
 
-        $experts = Expert::with(['logs'])->latest();
+        $experts = Expert::with(['resume'])->latest();
         if(!empty($thewholequery)) $experts = $thewholequery;
 
         // return view('experts.index')->with('experts',$experts)
@@ -640,17 +640,30 @@ class ExpertController extends Controller
 
     public function searchbyname( Request $request ){
 
-        $input = $request->all();
+        $input = $request->query();
         $fullname = $input['name'];
-        $experts = Expert::with(['logs'])->where('fullname' , 'like' , '%'.$fullname.'%')->orderBy('created_at')->get();
+        $experts = Expert::where('fullname' , 'like' , '%'.$fullname.'%')->orderBy('created_at')->get();
 
-        return response()->json( $this->visibleExpert($experts));
+        return response()->json( $experts );
 
     }
 
-    public function portfolio( $expertId ){
+    public function portfolioResume( Request $request ){
+        
 
-        if(!Auth::check()) return redirect('login');
+        return view('portfolio.index' );
+
+    }
+
+    public function portfolioResumeList( Request $request ){
+        $resumes = Portfolioexpert::with(['expert','user'])->latest()->get();
+
+        return $resumes;
+    }
+
+    public function portfolioSave( Request $request ){
+
+        $expertId = $request->input('expertId');
 
         $count = Portfolioexpert::where( 'expert_id' , $expertId )->count();
 
@@ -666,7 +679,7 @@ class ExpertController extends Controller
 
             foreach(Expert::getTechnologies() as $catid => $cat){
                 foreach($cat[1] as $techid => $techlabel){
-                    if( !is_null($_expert[$techid]) && $_expert[$techid]!= 'unknown' ){
+                    if( !is_null($_expert[$techid]) && $_expert[$techid] != 'unknown' && $_expert[$techid] != 'basic' && !in_array( $techid , array('english_speaking','english_writing','english_reading') ) ){
                         $skills[] = array(
                             "skill" => $techlabel,
                             "value" => $_expert[$techid]
@@ -687,62 +700,28 @@ class ExpertController extends Controller
                     'linkedin'  => $_expert->linkedin,
                     'facebook'  => $_expert->facebook,
                     'skills'    => serialize($skills),
+                    'slug'      => preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower( $_expert->fullname )),
+                    'user_id'   => Auth::id(),
                 )
             );
 
         }
 
-        $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
+    }
+
+    public function portfolioForm( $id ){
+
+        $expert = Portfolioexpert::where( 'id' , $id )->first();
 
         return view('portfolio.form' )
             ->with('expert', $expert );
     }
 
-    public function portfolioPreview( $expertId ){
+    public function portfolioPreview( $slug ){
 
-        $count = Portfolioexpert::where( 'expert_id' , $expertId )->count();
+        $expert = Portfolioexpert::where( 'slug' , $slug )->first();
 
-        $expert = array();
-
-        if( $count == 0 ){
-
-            $_expert = Expert::where( 'id' , $expertId )->first();
-
-            if( empty( $_expert ) ) abort(404);
-
-            $skills = array();
-
-            foreach(Expert::getTechnologies() as $catid => $cat){
-                foreach($cat[1] as $techid => $techlabel){
-                    if( !is_null($_expert[$techid]) && $_expert[$techid]!= 'unknown' ){
-                        $skills[] = array(
-                            "skill" => $techlabel,
-                            "value" => $_expert[$techid]
-                        );
-                    }
-                }
-            }
-
-            Portfolioexpert::create(
-                array(
-                    "expert_id" => $expertId,
-                    'fullname'  => $_expert->fullname,
-                    'work'      => $_expert->focus,
-                    'age'       => $_expert->age,
-                    'email'     => $_expert->email_address,
-                    'address'   => $_expert->address,
-                    'github'    => $_expert->github,
-                    'linkedin'  => $_expert->linkedin,
-                    'facebook'  => $_expert->facebook,
-                    'skills'    => serialize($skills),
-                )
-            );
-
-        }
-
-        $expert = Portfolioexpert::where( 'expert_id' , $expertId )->first();
-
-        return view('portfolio.index' )
+        return view('portfolio.template' )
             ->with('expert', $expert );
 
     }   
@@ -768,6 +747,7 @@ class ExpertController extends Controller
                 "age" => $input["age"],
                 "email" => $input["email"],
                 "address" => $input["address"],
+                "availability" => $input["availability"],
                 "github" => $input["github"],
                 "linkedin" => $input["linkedin"],
                 "photo" => $input["photo"],
@@ -775,11 +755,12 @@ class ExpertController extends Controller
                 "education" => $input["education"],
                 "employment" => $input["employment"],
                 "skills" => $input["skills"],
-                "projects" => $input["projects"]
+                "projects" => $input["projects"],
+                
             )
         );
 
-        return redirect()->route('experts.home')
+        return redirect()->route('expert.portfolio.resume')
                             ->with('success', 'Expert updated successfully.');
 
     }

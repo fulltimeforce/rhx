@@ -316,4 +316,7 @@ class Expert extends Model
         return $this->hasMany('App\Expertlog' , 'expert_id' , 'id');
     }
 
+    public function resume(){
+        return $this->hasOne('App\Portfolioexpert' , 'expert_id');
+    }
 }
