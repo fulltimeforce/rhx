@@ -392,8 +392,10 @@ td.frozencell{
         </div>
     </div>
     <div class="row mb-5">
-        <div class="col text-center">
+        <div class="col-12">
             <table id="list-experts"></table>
+        </div>
+        <div class="col-12 text-center">
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
     </div>
@@ -465,6 +467,7 @@ td.frozencell{
                     field: 'id',
                     title: "Actions",
                     valign: 'middle',
+                    align: 'left',
                     clickToSelect: false,
                     formatter : function(value,rowData,index) {
                         var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
@@ -494,7 +497,7 @@ td.frozencell{
                 { field: 'age', title: "Age" },
                 { field: 'phone', title: "Phone" },
                 { field: 'availability', title: "Availability" },
-                { field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : "S/. "+value;} },
+                { field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : (rowData.type_money == 'sol' ? 'S/' : '$') + ' ' +value;} },
                 { field: 'linkedin', title: "Linkedin" },
                 { field: 'github', title: "Github" },
                 { field: 'experience', title: "Experience" },

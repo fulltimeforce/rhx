@@ -13,7 +13,7 @@ class Expert extends Model
     protected $fillable = [
         'id','last_info_update','user_id','user_name','email_address','fullname','identification_number','birthday','phone','education','address',
         'github','linkedin','facebook','instagram','twitter','english_education','other_knowledge','wish_knowledge',
-        'availability','salary','focus',
+        'availability','salary', 'type_money','focus',
         //assessment
         'assessment1','result1','assessment2','result2','assessment3','result3',
         // english

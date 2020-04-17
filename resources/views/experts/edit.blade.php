@@ -122,7 +122,18 @@
             </div>
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="salary">Expectativa salarial</label>
-                <input type="text" name="salary" class="form-control" id="salary" value="{{$expert->salary}}">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $expert->type_money == 'sol' ? 'S/' : '$' }}</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
+                            <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
+                        </div>
+                    </div>
+                    <input type="hidden" name="type_money" value="{{ $expert->type_money }}" id="type_money">
+                    <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
+                </div>
+            
             </div>
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="availability">Disponibilidad</label>
@@ -290,7 +301,13 @@
                 })
             })
             
-
+            $('.change-money').on('click' , function(ev){
+                ev.preventDefault();
+                var type = $(this).data("money");
+                var label = $(this).html();
+                $(this).parent().parent().find('button').html(label);
+                $("#type_money").val(type);
+            })
 
         });
     </script>

@@ -118,11 +118,16 @@
         </div>
         <div class="form-group col-6 col-sm-4 col-lg-3">
             <label for="salary">Expectativa salarial</label>
-            <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="validationTooltipUsernamePrepend">S/.</span>
-            </div>
-            <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">S/</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
+                        <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
+                    </div>
+                </div>
+                <input type="hidden" name="type_money" value="sol" id="type_money">
+                <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
             </div>
         </div>
         <div class="form-group col-6 col-sm-4 col-lg-3">
@@ -278,6 +283,14 @@
                 $(this).parent().parent().slideUp('slow' , function(){
                     $(this).remove();
                 })
+            })
+            $('.change-money').on('click' , function(ev){
+                ev.preventDefault();
+                var type = $(this).data("money");
+                console.log(type);
+                var label = $(this).html();
+                $(this).parent().parent().find('button').html(label);
+                $("#type_money").val(type);
             })
         });
     </script>
