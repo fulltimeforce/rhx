@@ -28,7 +28,30 @@
         </div>
     </div>
 
-   
+    <div class="modal fade" id="resumeDelete" tabindex="-1" role="dialog" aria-labelledby="resumeDeleteLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="resumeDeleteLabel">Delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col">
+                <input type="hidden" id="modalResumeId">
+                <p>do you want to delete record?</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" id="confirmationDelete">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
@@ -104,6 +127,18 @@
         $('body').on('click', '.delete-resume' , function(ev){
           ev.preventDefault();
           var _id = $(this).data("id");
+          $("#modalResumeId").val(_id);
+          $("#resumeDelete").modal();
+        });
+        $('#resumeDelete').on('hidden.bs.modal', function (e) {
+          // do something...
+          $("#modalResumeId").val('');
+        })
+        $('#confirmationDelete').on('click' , function(ev){
+          var _id = $("#modalResumeId").val();
+          if(_id == '') {
+            $("#resumeDelete").modal('hide'); return;
+          }
           $.ajax({
               url:"{{ route('expert.portfolio.delete') }}",
               method:"POST",
@@ -116,6 +151,7 @@
               },
               success:function(data)
               {
+                $("#resumeDelete").modal('hide');
                 table_resume();
               }
           });
