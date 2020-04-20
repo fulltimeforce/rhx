@@ -313,7 +313,7 @@
               <dt>Phone:</dt>
               <dd><a href="tel:964220417">(+51) 964 220 417</a></dd>
               <dt>Skype:</dt>
-              <dd><a href="skype:bitsngeeks">Fulltimeforce</a></dd>
+              <dd><a href="skype:bitsngeeks">Bitsngeeks</a></dd>
               <dt>Email:</dt>
               <dd><a href="mailto:info@fulltimeforce.com">info@fulltimeforce.com</a></dd>
             </dl>
