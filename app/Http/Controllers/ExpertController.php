@@ -675,18 +675,32 @@ class ExpertController extends Controller
 
             if( empty( $_expert ) ) abort(404);
 
-            $skills = array();
-
+            $skills_ad = array();
+            $skills_in = array();
             foreach(Expert::getTechnologies() as $catid => $cat){
                 foreach($cat[1] as $techid => $techlabel){
-                    if( !is_null($_expert[$techid]) && $_expert[$techid] != 'unknown' && $_expert[$techid] != 'basic' && !in_array( $techid , array('english_speaking','english_writing','english_reading') ) ){
-                        $skills[] = array(
-                            "skill" => $techlabel,
-                            "value" => $_expert[$techid]
-                        );
+                    if( !is_null($_expert[$techid]) 
+                    && $_expert[$techid] != 'unknown' 
+                    && $_expert[$techid] != 'basic' 
+                    && !in_array( $techid , array('english_speaking','english_writing','english_reading') ) ){
+                        if( $_expert[$techid] == 'advanced' ){
+                            $skills_ad[] = array(
+                                "skill" => $techlabel,
+                                "id"    => $techid,
+                                "value" => $_expert[$techid]
+                            );
+                        }else{
+                            $skills_in[] = array(
+                                "skill" => $techlabel,
+                                "id"    => $techid,
+                                "value" => $_expert[$techid]
+                            );
+                        }
                     }
                 }
             }
+
+            $skills = array_merge($skills_ad, $skills_in);
 
             Portfolioexpert::create(
                 array(
