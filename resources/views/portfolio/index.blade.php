@@ -22,7 +22,7 @@
                 <select name="" id="experts" size="1" class="form-control"></select>
               </div>
               <div class="col">
-                <button class="btn btn-success" id="new-resume">New</button>
+                <button class="btn btn-success" id="new-resume">New Resume</button>
               </div>
             </div>
         </div>
@@ -101,6 +101,26 @@
           });
         })
 
+        $('body').on('click', '.delete-resume' , function(ev){
+          ev.preventDefault();
+          var _id = $(this).data("id");
+          $.ajax({
+              url:"{{ route('expert.portfolio.delete') }}",
+              method:"POST",
+              data: {
+                id : _id,
+              },
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success:function(data)
+              {
+                table_resume();
+              }
+          });
+        })
+
         function table_resume(){
           $("#table-resume").bootstrapTable('destroy').bootstrapTable({
             columns: [
@@ -111,7 +131,9 @@
                     
                         var actions = '<a href="'+ "{{ route('expert.portfolio.form', ':id') }}" +'" class="btn btn-success">Edit</a>';
                         actions += '  <a href="'+ "{{ route('home') }}" + "/expert/"+ rowData.slug +'" class="btn btn-info">View</a>';
-                        
+                        if( "{{ Auth::user()->role->id }}" == 1){
+                          actions += '  <a href="#" class="btn btn-danger delete-resume" data-id="'+rowData.id+'">Delete</a>';
+                        }
                         actions = actions.replace(/:id/gi , rowData.id);
                         return actions;
                     

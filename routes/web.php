@@ -29,6 +29,7 @@ Route::get('positions/{positionId}/experts','PositionController@relations')->nam
 
 Route::get('/expert/{id}/resume','ExpertController@portfolioForm')->name('expert.portfolio.form');
 Route::post('/expert/portfolio/save','ExpertController@portfolioSave')->name('expert.portfolio.save');
+Route::post('/expert/portfolio/delete','ExpertController@deleteResume')->name('expert.portfolio.delete');
 
 Route::get('/resume','ExpertController@portfolioResume')->name('expert.portfolio.resume');
 

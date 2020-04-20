@@ -787,6 +787,11 @@ class ExpertController extends Controller
         echo '';
     }
 
+    public function deleteResume( Request $request ){
+        $input = $request->all();
+        Portfolioexpert::where( 'id' , $input['id'] )->delete();
+    }
+
     private function parsePorjects( $_array ){
 
         $len = count($_array['project_index']);
@@ -862,5 +867,7 @@ class ExpertController extends Controller
 
         return $skills;
     }
+
+    
 
 }
