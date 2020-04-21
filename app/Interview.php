@@ -19,5 +19,9 @@ class Interview extends Model
     protected $hidden = [
         'user_id', 'created_at',
     ];
+
+    public function expert(){
+        return $this->hasOne('App\Expert', 'id', 'expert_id');
+    }
     
 }

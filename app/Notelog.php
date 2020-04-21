@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Notelog extends Model
 {
@@ -16,10 +17,16 @@ class Notelog extends Model
     protected $fillable = [
         'log_id',
         'type',
-        'note'
+        'note',
+        'date'
     ];
 
     public function log(){
         return $this->hasOne('App\Recruiterlog', 'id', 'log_id');
+    }
+
+    public function getDateAttribute($value)
+    {
+        return Carbon::parse($value)->format(config('app.date_format'));
     }
 }

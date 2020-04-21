@@ -88,6 +88,8 @@ class RecruiterlogController extends Controller
         $input = $request->all();
         $log_id = $input['log_id'];
         $type = $input['type'];
+        
+        
         $note = Notelog::where(function($q) use ($log_id,$type){
             $q
                 ->where("log_id" , $log_id)
@@ -102,6 +104,13 @@ class RecruiterlogController extends Controller
         $log_id = $input['log_id'];
         $type = $input['type'];
         $note = $input['note'];
+
+        if( $type == 'commercial' || $type == 'technique' || $type == 'psychology'){
+            $input['date'] = Carbon::createFromFormat(config('app.date_format'), $input['date'])->format('Y-m-d');
+        }else{
+            unset( $input['date'] );
+        }
+        
         $note = Notelog::where(function($q) use ($log_id,$type){
             $q
                 ->where("log_id" , $log_id)

@@ -223,14 +223,19 @@ a.badge-primary:focus{
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="noteLogModalLabel"><span id="log-name"></span> - Note</h5>
+            <h5 class="modal-title" id="noteLogModalLabel"><span id="log-name"></span> - <span id="type-name" class="text-capitalize"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col">
+                <div class="col-12" id="section-note-date">
+                    <label for="">Date</label>
+                    <input type="text" class="form-control" name="" id="date_note" data-toggle="datetimepicker" data-target="#date_note">
+                </div>
+                <div class="col-12">
+                    <label for="">Note</label>
                     <textarea id="note-log" cols="30" rows="10" class="form-control"></textarea>
                     <input type="hidden" id="log_id_note">
                     <input type="hidden" id="log_type_note">
@@ -239,7 +244,7 @@ a.badge-primary:focus{
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="saveNote">Save changes</button>
+            <button type="button" class="btn btn-primary" id="saveNote">Save</button>
         </div>
         </div>
     </div>
@@ -348,6 +353,10 @@ a.badge-primary:focus{
         });
         $('#date').val( moment().format("{{ config('app.date_format_javascript') }}") )
 
+        $('#date_note').datetimepicker({
+            format: "{{ config('app.date_format_javascript') }}",
+            locale: "en"
+        });
 
         var $_logs = {!! $logs !!};
 
@@ -976,14 +985,22 @@ a.badge-primary:focus{
                 data: data_post,
                 success:function(data){
                     console.log(data)
+                    $('#date_note').val( moment().format("{{ config('app.date_format_javascript') }}") );
                     if(data){
                         $("#note-log").val( data.note );
+                        $('#date_note').val( data.date == null?  moment().format("{{ config('app.date_format_javascript') }}") : data.date )
                     }
                     var index = $_logs.findIndex( f => f.id == id);
                     $("#log_id_note").val( id );
                     $("#log_type_note").val( type );
                     $("#log-name").html( $_logs[index].expert );
+                    $("#section-note-date").hide();
+                    $("#type-name").html(type);
+                    if( type == 'commercial' || type == 'technique' || type == 'psychology' ){
+                        $("#section-note-date").show();
+                    }
                     $("#noteLogModal").modal();
+                    
 
                 }
             });
@@ -995,6 +1012,7 @@ a.badge-primary:focus{
                 log_id: $("#log_id_note").val(),
                 type: $("#log_type_note").val(),
                 note: $("#note-log").val(),
+                date: $("#date_note").val(),
             };
             $.ajax({
                 type:'POST',
