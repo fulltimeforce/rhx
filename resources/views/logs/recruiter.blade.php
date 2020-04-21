@@ -360,6 +360,8 @@ a.badge-primary:focus{
 
         var $_logs = {!! $logs !!};
 
+        var search = "{{ $s }}";
+        $('#search-column-name').val( search );
         var a_columns = [
             {
                 field: 'id',
@@ -490,7 +492,7 @@ a.badge-primary:focus{
             });
         }
 
-        ajax_logs('');
+        ajax_logs( search );
 
         $(window).on('scroll', function (e){
             
@@ -542,7 +544,21 @@ a.badge-primary:focus{
             var text = $(this).val();
             _page = 1;
             _count_records = 0;
-            ajax_logs( text );
+            
+            search = text;
+            window.history.replaceState({
+                edwin: "Fulltimeforce"
+                }, "Page" , "{{ route('recruiter.log') }}" + '?'+ $.param(
+                    {   
+                        s : search , 
+                    }
+                    )
+                );
+            _page = 1;
+            _count_records = 0;
+            location.reload();
+
+            // ajax_logs( text );
             is_jqgrid = true;
 
         } , 500 ));
@@ -555,7 +571,7 @@ a.badge-primary:focus{
         } , 500 ));
 
         $("#save").on('click', function(ev){
-            
+            $('#search-column-name').val( '' );
             $.ajax({
                 type:'POST',
                 url: "{{ route('recruiter.save') }}",

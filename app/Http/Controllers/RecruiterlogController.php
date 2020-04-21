@@ -24,11 +24,16 @@ class RecruiterlogController extends Controller
         
     }
 
-    public function index(){
+    public function index( Request $request ){
+
         $positions = Position::where('status' , 'enabled')->latest()->get();
         $logs = Recruiterlog::all();
         $platforms = $this->platforms();
+        $query = $request->query();
+        $name = isset( $query['s'] )? $query['s'] : '';
+
         return view('logs.recruiter' , compact('logs') )
+            ->with('s', $name )
             ->with([
                 'positions' => $positions, 
                 'platforms' => $platforms

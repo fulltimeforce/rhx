@@ -250,7 +250,7 @@ td.frozencell{
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="interviews-expertLabel">INTERVIEWS - <span id="interview_expert_name">{expert Name}</span></h5>
+            <h5 class="modal-title" id="interviews-expertLabel"><span id="interview_expert_name">{expert Name}</span> - INTERVIEWS</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -349,7 +349,11 @@ td.frozencell{
 
         var _dataRows = [];
 
-        function ajax_experts( basic , intermediate , advanced , search_name , page){
+        var search_name = "{{ $name }}";
+
+        $("#search-column-name").val( search_name );
+
+        function ajax_experts( basic , intermediate , advanced , _search_name , page){
             $(".lds-ring").show();
             var params = {
                 'rows': _records,
@@ -357,7 +361,7 @@ td.frozencell{
                 'basic': basic.join(',') , 
                 'intermediate': intermediate.join(',') ,
                 'advanced' : advanced.join(','),
-                'name' : search_name
+                'name' : _search_name
             };
             $.ajax({
                 type:'GET',
@@ -447,8 +451,6 @@ td.frozencell{
                 theadClasses: 'table-dark',
                 uniqueId: 'id'
             });
-
-
 
             // =================== DELETE
 
@@ -637,8 +639,6 @@ td.frozencell{
             }
         });
 
-        
-
         // ================================================================================
 
         @if( $search )
@@ -655,8 +655,7 @@ td.frozencell{
                 advanced.push( "{{$tid}}" );
             @endforeach
             
-            
-            ajax_experts( basic , intermediate , advanced , '' , 1);
+            ajax_experts( basic , intermediate , advanced , search_name , 1);
             
             
         @endif
@@ -732,23 +731,25 @@ td.frozencell{
 
         $('#search').on('click' , function(){
             
-            $('#search-column-name').val('');
+            search_name = $('#search-column-name').val();
             a_basic_level = $(".search-level.basic").val();
             a_intermediate_level = $(".search-level.intermediate").val();
             a_advanced_level = $(".search-level.advanced").val(); 
             window.history.replaceState({
-                edwin: "fefsf"
+                edwin: "Fulltimeforce"
                 }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
                     {   search : true , 
                         basic: a_basic_level.join(","),
                         intermediate: a_intermediate_level.join(","),
-                        advanced: a_advanced_level.join(",")
+                        advanced: a_advanced_level.join(","),
+                        name: search_name
                     }
                     )
                 );
             _page = 1;
             _count_records = 0;
-            ajax_experts( a_basic_level, a_intermediate_level , a_advanced_level , '' , 1);
+            location.reload();
+            // ajax_experts( a_basic_level, a_intermediate_level , a_advanced_level , search_name , 1);
             
         });
 
@@ -768,7 +769,28 @@ td.frozencell{
             var text = $(this).val();
             _page = 1;
             _count_records = 0;
-            ajax_experts( [], [] , [] , text , 1 );
+            search_name = text;
+
+            search_name = $('#search-column-name').val();
+            a_basic_level = $(".search-level.basic").val();
+            a_intermediate_level = $(".search-level.intermediate").val();
+            a_advanced_level = $(".search-level.advanced").val(); 
+            window.history.replaceState({
+                edwin: "Fulltimeforce"
+                }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
+                    {   search : true , 
+                        basic: a_basic_level.join(","),
+                        intermediate: a_intermediate_level.join(","),
+                        advanced: a_advanced_level.join(","),
+                        name: search_name
+                    }
+                    )
+                );
+            _page = 1;
+            _count_records = 0;
+            location.reload();
+
+            // ajax_experts( [], [] , [] , search_name , 1 );
             is_jqgrid = true;
 
         } , 500 ));

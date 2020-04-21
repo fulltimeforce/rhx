@@ -33,6 +33,7 @@ class ExpertController extends Controller
         $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
         $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
         $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
+        $name = isset( $query['name'] )? $query['name'] : '';
 
         $basic = array();
         $intermediate = array();
@@ -48,6 +49,7 @@ class ExpertController extends Controller
 
         return view('experts.index',compact('experts'))
             ->with('search', $search )
+            ->with('name', $name )
             ->with('basic', $basic )
             ->with('intermediate', $intermediate )
             ->with('advanced', $advanced )
