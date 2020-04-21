@@ -271,8 +271,41 @@
           <h2 id="resume_header" class="section__title">General skills_</h2>
           
       </div>
+      @php
+        $_order_skills = array()
+      @endphp
+      @php
+        $_basic_skills = array()
+      @endphp
+      @php
+        $_intermediate_skills = array()
+      @endphp
+      @php
+        $_advanced_skills = array()
+      @endphp
 
       @foreach( unserialize($expert->skills) as $pkey => $skill )
+        @if( $skill['value'] == 'basic' )
+          @php
+            $_basic_skills[] = $skill
+          @endphp
+        @elseif( $skill['value'] == 'intermediate' )
+          @php
+            $_intermediate_skills[] = $skill
+          @endphp
+        @elseif( $skill['value'] == 'advanced' )
+          @php
+            $_advanced_skills[] = $skill
+          @endphp
+        @endif
+      @endforeach
+
+      @php
+        $_order_skills = array_merge( $_advanced_skills, $_intermediate_skills , $_basic_skills)
+
+      @endphp
+
+      @foreach( $_order_skills as $pkey => $skill )
       <div class="col-md-5">
           
           <div class="progress-list__skill">

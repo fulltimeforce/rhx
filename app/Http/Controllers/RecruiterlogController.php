@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Recruiterlog;
+use App\Expertlog;
 use App\Position;
 use App\Notelog;
 use Carbon\Carbon;
@@ -97,6 +98,35 @@ class RecruiterlogController extends Controller
         })->first();
 
         return $note;
+    }
+
+    public function listnote( Request $request ){
+
+        $input = $request->all();
+        $list_notes = array();
+
+        $logs = Expertlog::with(['log'])->where( 'expert_id' , $input['expertId'] )->get();
+
+        foreach ($logs as $lkey => $log) {
+            $recruiterlog = Recruiterlog::with(['position'])->where('id' , $log->log_id)->first();
+            $_notes = (object) array(
+                "position"  => $recruiterlog->position,
+                "date"      => $recruiterlog->date,
+                "notes"     => array(),
+                "log_id" => $log->id
+            );
+            $notes = Notelog::where("log_id", $log->log_id)->select("type","note")->get();
+            foreach ($notes as $nkey => $note) {
+                $_notes->notes[] = (object) array(
+                    "type" => $note->type,
+                    "note" => $note->note,
+                    "type_value" => $recruiterlog[$note->type]
+                );
+            }
+            $list_notes[] = $_notes;
+        }
+
+        return $list_notes;
     }
 
     public function noteSave( Request $request ){

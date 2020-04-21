@@ -22,4 +22,8 @@ class Expertlog extends Model
     public function expert(){
         return $this->hasOne('App\Expert', 'id', 'expert_id');
     }
+
+    public function log(){
+        return $this->hasOne('App\Recruiterlog', 'id', 'log_id');
+    }
 }
