@@ -45,11 +45,11 @@ class DatabaseSeeder extends Seeder
             
         // }
 
-        Recruiterlog::with(['expert'])->where('id' , '>', 37)->delete();
-        DB::table('expert_log')->where('log_id', '>' , 37 )->delete();
-        Notelog::where('log_id', '>' , 37 )->delete();
+        // Recruiterlog::with(['expert'])->where('id' , '>', 37)->delete();
+        // DB::table('expert_log')->where('log_id', '>' , 37 )->delete();
+        // Notelog::where('log_id', '>' , 37 )->delete();
 
-        $interviews = Interview::with(['expert'])->whereIn('user_id' , [5])->get();
+        $interviews = Interview::with(['expert'])->whereIn('user_id' , [1,6])->get();
         print_r("--------------");
         
         $log_expert=array();
