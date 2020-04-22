@@ -327,6 +327,7 @@ a.badge-primary:focus{
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <input type="text" placeholder="Search By Expert" class="form-control" id="search-column-name">
             </div>
+            <button class="btn btn-primary" id="search-log" type="button" style="vertical-align: top;">Buscar</button>
         </div>
         <div class="col-12 text-center mb-5">
             <table class="table row-border order-column" id="table-logs-fill"> 
@@ -539,9 +540,8 @@ a.badge-primary:focus{
             };
         }
 
-        $('#search-column-name').on( 'keyup', delay(function (ev) {
-            
-            var text = $(this).val();
+        $("#search-log").on('click' , function(){
+            var text = $('#search-column-name').val();
             _page = 1;
             _count_records = 0;
             
@@ -560,8 +560,8 @@ a.badge-primary:focus{
 
             // ajax_logs( text );
             is_jqgrid = true;
+        });
 
-        } , 500 ));
 
         $('#search-experts').on( 'keyup', delay(function (ev) {
             var text = $(this).val();
