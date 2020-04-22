@@ -764,38 +764,6 @@ td.frozencell{
             };
         }
 
-        $('#search-column-name').on( 'keyup', delay(function (ev) {
-            
-            var text = $(this).val();
-            _page = 1;
-            _count_records = 0;
-            search_name = text;
-
-            search_name = $('#search-column-name').val();
-            a_basic_level = $(".search-level.basic").val();
-            a_intermediate_level = $(".search-level.intermediate").val();
-            a_advanced_level = $(".search-level.advanced").val(); 
-            window.history.replaceState({
-                edwin: "Fulltimeforce"
-                }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
-                    {   search : true , 
-                        basic: a_basic_level.join(","),
-                        intermediate: a_intermediate_level.join(","),
-                        advanced: a_advanced_level.join(","),
-                        name: search_name
-                    }
-                    )
-                );
-            _page = 1;
-            _count_records = 0;
-            location.reload();
-
-            // ajax_experts( [], [] , [] , search_name , 1 );
-            is_jqgrid = true;
-
-        } , 500 ));
-
-
         // ===================== SHOW POSITIONS =====================
 
         $("#save-positions").on('click' , function(ev){
