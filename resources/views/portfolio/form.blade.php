@@ -98,7 +98,7 @@
                 <div class="col-6">
                     <label for="">Image</label>
                     <div class="custom-file">
-                        <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image" name="project_image_file[]" id="project_image_file_{{ $project['index'] }}">
+                        <input type="file" class="form-control upload-image" name="project_image_file[]" id="project_image_file_{{ $project['index'] }}">
                         <label class="custom-file-label" for="project_image_file_{{ $project['index'] }}">{{ (!is_null($project['image_name']) && $project['image_name'] != '') ? $project['image_name'] : 'Choose file' }}</label>
                         <input type="hidden" name="project_image_name[]" value="{{ $project['image_name'] }}">
                     </div>
@@ -146,70 +146,30 @@
                 <input type="hidden" class="project-index" name="project_index[]" value="{{ strtotime( date('Y-m-d H:i:s') ) }}">
             </div>
             <div class="col-6">
-                <label for="">URL</label>
-                <input type="text" name="project_url[]" class="form-control project-url">
-            </div>
-            <div class="col-12">
-                <label for="">Video</label>
-                <section class="list-videos">
-                </section>
-                <section >
-                    <div class="row">
-                        <div class="col-10">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fab fa-youtube"></i></span>
-                                </div>
-                                <input type="text" class="form-control project-video" name="project_video_0_{{ strtotime( date('Y-m-d H:i:s') ) }}_[]">
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <a href="#" class="btn btn-success add-video" data-time="{{ strtotime( date('Y-m-d H:i:s') ) }}" data-index="0"><i class="fas fa-plus"></i></a>
-                            <a href="#" class="btn btn-danger remove-video" ><i class="fas fa-trash"></i></a>
-                        </div>
-                    </div>
-                </section>
-            </div>
-            <div class="col-12">
                 <label for="">Image</label>
-                <section class="list-images">
-                </section>
-                <section>
-                    <div class="row mb-3">
-                        <div class="col-10">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-images"></i></span>
-                            </div>
-                            <div class="custom-file">
-                                <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image project-image" name="project_image_0[]" id="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">
-                                <label class="custom-file-label project-image-label" for="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">Choose file</label>
-                                <input type="hidden" name="project_image_name_0_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" class="upload-image-name">
-                            </div>
-                        </div>
-                        </div>
-                        <div class="col-2">
-                            <a href="#" class="btn btn-success add-image" data-time="{{ strtotime( date('Y-m-d H:i:s') ) }}" data-index="0"><i class="fas fa-plus"></i></a>
-                            <a href="#" class="btn btn-danger remove-image" ><i class="fas fa-trash"></i></a>
-                        </div>
-                    </div>
-                </section>
-
+                <div class="custom-file">
+                    <input type="file" class="form-control upload-image project-image" name="project_image[]" id="project_image_file_{{ strtotime( date('Y-m-d H:i:s') ) }}">
+                    <label class="custom-file-label project-image-label" for="project_image_file_{{ strtotime( date('Y-m-d H:i:s') ) }}">Choose file</label>
+                    <input type="hidden" name="project_image_name[]" class="upload-image-name">
+                </div>
             </div>
             <div class="col-12">
                 <label for="description">Description</label>
                 <textarea name="project_description[]" rows="5" class="form-control project-description" ></textarea>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <label for="project_categories">Category</label>
                 <select name="project_categories_{{ strtotime( date('Y-m-d H:i:s') ) }}[]"  class="form-control tag-categories project-categories" multiple size="1">
                 </select>
             </div>
-            <div class="col-8">
+            <div class="col-6">
                 <label for="project_stacks">Stacks</label>
                 <select name="project_stacks_{{ strtotime( date('Y-m-d H:i:s') ) }}[]"  class="form-control tag-select project-stacks" multiple size="1"></select>
             </div>
-            
+            <div class="col-3">
+                <label for="">URL</label>
+                <input type="text" name="project_url[]" class="form-control project-url">
+            </div>
             </section>
         </div>
         </section>
@@ -464,7 +424,6 @@ $(document).ready(function (ev) {
         }
     });
 
-    // ================================= PROJECT =======================
     
     $("#add-project").on('click' , function(ev){
         
@@ -561,6 +520,8 @@ $(document).ready(function (ev) {
         
     });
 
+    // ================================= PROJECT =======================
+    
     $("#add-education").on('click' , function(ev){
         
         var html_education = $("#form-educations").html();
@@ -594,6 +555,7 @@ $(document).ready(function (ev) {
         $("#form-educations").find('.education-period').val('');
         $("#form-educations").find('.education-description').val('');
     });
+
 
     $("#add-employment").on('click' , function(ev){
         var html_employment = $("#form-employments").html();
@@ -660,45 +622,20 @@ $(document).ready(function (ev) {
         $(this).parent().parent().slideUp('fast' , function(){
             $(this).remove();
         })
-    });
-
+    })
     $("body").on('click' , '.project-delete', function(ev){
         ev.preventDefault();
         $(this).parent().parent().slideUp('fast' , function(){
             $(this).remove();
         })
-    });
+    })
     
     $("body").on('click' , '.employment-delete , .education-delete', function(ev){
         ev.preventDefault();
         $(this).parent().parent().parent().slideUp('fast' , function(){
             $(this).remove();
         })
-    });
-
-    $('body').on('click' , '.add-image' , function(ev){
-        ev.preventDefault();
-        var index = $(this).data("index");
-        var time = $(this).data("time");
-        console.log(index , time);
-        var section_image = $(this).parent().parent();
-        var html_section_image = $(this).parent().parent().parent().html();
-
-        // insert image
-        $(this).parent().parent().parent().parent().find('.list-images').append( html_section_image );
-
-        $(this).parent().parent().find('.project-image')
-            .attr("name" , "project_image_"+index+"[]" )
-            .attr("id" , "project_image_file_"+index+"_"+time+"" );
-            
-        $(this).parent().parent().find('.project-image-label')
-            .attr("for" , "project_image_file_"+index+"_"+time )
-            .html('Choose file');
-
-        $(this).parent().parent().find('.upload-image-name')
-            .attr("name" , "project_image_name_"+index+"[]" )
-            
-    });
+    })
 
 
     function html_options_tags( tags ){

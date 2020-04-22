@@ -745,7 +745,7 @@ class ExpertController extends Controller
     public function saveportfolio( Request $request ){
 
         $input = $request->all();
-        return $input;
+        // return $input;
 
         $input["projects"] = serialize($this->parsePorjects( $input ));
 
