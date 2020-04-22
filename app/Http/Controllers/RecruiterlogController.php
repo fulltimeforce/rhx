@@ -25,7 +25,7 @@ class RecruiterlogController extends Controller
     }
 
     public function index( Request $request ){
-        
+
         if(!Auth::check()) return redirect('login');
         $positions = Position::where('status' , 'enabled')->latest()->get();
         $logs = Recruiterlog::all();
@@ -115,21 +115,24 @@ class RecruiterlogController extends Controller
 
         foreach ($logs as $lkey => $log) {
             $recruiterlog = Recruiterlog::with(['position'])->where('id' , $log->log_id)->first();
-            $_notes = (object) array(
-                "position"  => $recruiterlog->position,
-                "date"      => $recruiterlog->date,
-                "notes"     => array(),
-                "log_id" => $log->id
-            );
-            $notes = Notelog::where("log_id", $log->log_id)->select("type","note")->get();
-            foreach ($notes as $nkey => $note) {
-                $_notes->notes[] = (object) array(
-                    "type" => $note->type,
-                    "note" => $note->note,
-                    "type_value" => $recruiterlog[$note->type]
+            if( isset( $recruiterlog->id ) ){
+                $_notes = (object) array(
+                    "position"  => $recruiterlog->position,
+                    "date"      => $recruiterlog->date,
+                    "notes"     => array(),
+                    "log_id" => $log->id
                 );
+                $notes = Notelog::where("log_id", $log->log_id)->select("type","note")->get();
+                foreach ($notes as $nkey => $note) {
+                    $_notes->notes[] = (object) array(
+                        "type" => $note->type,
+                        "note" => $note->note,
+                        "type_value" => $recruiterlog[$note->type]
+                    );
+                }
+                $list_notes[] = $_notes;
             }
-            $list_notes[] = $_notes;
+            
         }
 
         return $list_notes;
