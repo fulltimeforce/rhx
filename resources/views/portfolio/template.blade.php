@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  >
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -191,7 +190,7 @@
               @if( !is_null($video) )
               <div class="carousel-item {{ $vkey == 0? 'active' : '' }}">
                 <div class="embed-responsive embed-responsive-16by9">
-                  <iframe class="embed-responsive-item" src="{{ $video }}" allowfullscreen></iframe>
+                  <iframe class="embed-responsive-item" width="560" height="315" src="{{ $video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
               </div>
               @endif
