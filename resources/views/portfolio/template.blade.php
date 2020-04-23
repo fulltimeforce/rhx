@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-Frame-Options" content="deny">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -177,7 +178,42 @@
       @foreach( unserialize($expert->projects) as $pkey => $project )
       <div class="row project-card" data-portfolio-tag="{{ isset($project['categories'][0]) ? $project['categories'][0] : 'empty' }}">
         <div class="col-md-6 col-lg-5 project-card__img d-flex align-items-center">
-          <img class="" src="{{ ( !is_null($project['image_name']) && $project['image_name'] != '' )? route('home') .'/uploads/projects/'.$project['image_name'] : route('home') .'/image/project-image.jpg' }}" alt="project-img">
+          <div id="carouselProject_{{ $project['index'] }}" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+              @foreach( array_merge($project['videos'] , $project['images'] ) as $vkey => $v )
+              @if( !is_null($v) )
+              <li data-target="#carouselProject_{{ $project['index'] }}" data-slide-to="{{$vkey}}" class="{{ $vkey == 0? 'active' : '' }}"></li>
+              @endif
+              @endforeach
+            </ol>
+            <div class="carousel-inner">
+              @foreach( $project['videos'] as $vkey => $video )
+              @if( !is_null($video) )
+              <div class="carousel-item {{ $vkey == 0? 'active' : '' }}">
+                <div class="embed-responsive embed-responsive-16by9">
+                  <iframe class="embed-responsive-item" src="{{ $video }}" allowfullscreen></iframe>
+                </div>
+              </div>
+              @endif
+              @endforeach
+              @foreach( $project['images'] as $vkey => $image )
+              @if( !is_null($image) )
+              <div class="carousel-item {{ ($vkey == 0 && count( $project['videos'] ) == 0)? 'active' : '' }} ">
+                <img class="d-block w-100" src="{{ route('home') .'/uploads/projects/'.$image }}" >
+              </div>
+              @endif
+              @endforeach
+            </div>
+            <a class="carousel-control-prev" href="#carouselProject_{{ $project['index'] }}" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselProject_{{ $project['index'] }}" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+          
         </div>
         <div class="col-md-6 col-lg-7 project-card__info">
           <h3 class="project-card__title">{{ $project['title'] }}</h3>

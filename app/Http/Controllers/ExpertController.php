@@ -745,8 +745,7 @@ class ExpertController extends Controller
     public function saveportfolio( Request $request ){
 
         $input = $request->all();
-        // return $input;
-
+        
         $input["projects"] = serialize($this->parsePorjects( $input ));
 
         $input["education"] = serialize($this->parseEducations( $input ));
@@ -813,15 +812,16 @@ class ExpertController extends Controller
         $len = count($_array['project_index']);
         $projects = array();
         for ($i=0; $i < $len; $i++) { 
-            if( !is_null($_array['project_title'][$i]) ){
+            if( !is_null( $_array['project_title'][$i] ) ){
                 $projects[] = array(
-                    "index"         => isset( $_array['project_index'][$i] )?$_array['project_index'][$i] : null,
-                    "title"         => isset( $_array['project_title'][$i] )?$_array['project_title'][$i] : null,
-                    "image_name"    => isset( $_array['project_image_name'][$i] )?$_array['project_image_name'][$i] : null,
-                    "description"   => isset( $_array['project_description'][$i] )?$_array['project_description'][$i] : null,
-                    "categories"    => isset( $_array['project_categories_'.$_array['project_index'][$i]  ] )?$_array['project_categories_'.$_array['project_index'][$i]  ] : null,
-                    "stacks"        => isset( $_array['project_stacks_'.$_array['project_index'][$i] ] )?$_array['project_stacks_'.$_array['project_index'][$i] ] : null,
-                    "url"           => isset( $_array['project_url'][$i] )?$_array['project_url'][$i] : null,
+                    "index"         => isset( $_array['project_index'][$i] )? $_array['project_index'][$i] : null,
+                    "title"         => isset( $_array['project_title'][$i] )? $_array['project_title'][$i] : null,
+                    "videos"        => isset( $_array['project_video_'. $_array['project_index'][$i] ] )? $_array['project_video_'. $_array['project_index'][$i] ] : array(),
+                    "images"        => isset( $_array['project_image_name_'. $_array['project_index'][$i] ] )? $_array['project_image_name_'. $_array['project_index'][$i] ] : array(),
+                    "description"   => isset( $_array['project_description'][$i] )? $_array['project_description'][$i] : null,
+                    "categories"    => isset( $_array['project_categories_'.$_array['project_index'][$i]  ] )? $_array['project_categories_'.$_array['project_index'][$i]  ] : null,
+                    "stacks"        => isset( $_array['project_stacks_'.$_array['project_index'][$i] ] )? $_array['project_stacks_'.$_array['project_index'][$i] ] : null,
+                    "url"           => isset( $_array['project_url'][$i] )? $_array['project_url'][$i] : null,
                 );
             }
             

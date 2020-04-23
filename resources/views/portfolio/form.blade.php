@@ -6,7 +6,11 @@
 #form-skills .skill-delete,
 #form-employments .employment-delete,
 #form-educations .education-delete,
-#form-project .project-delete{
+#form-project .project-delete,
+.list-videos .add-video,
+.list-images .add-image,
+.form-videos .remove-video,
+.form-images .remove-image{
     display: none;
 }
 .project-delete{
@@ -96,18 +100,103 @@
                     <input type="hidden" class="project-index" name="project_index[]" value="{{ $project['index'] }}">
                 </div>
                 <div class="col-6">
-                    <label for="">Image</label>
-                    <div class="custom-file">
-                        <input type="file" class="form-control upload-image" name="project_image_file[]" id="project_image_file_{{ $project['index'] }}">
-                        <label class="custom-file-label" for="project_image_file_{{ $project['index'] }}">{{ (!is_null($project['image_name']) && $project['image_name'] != '') ? $project['image_name'] : 'Choose file' }}</label>
-                        <input type="hidden" name="project_image_name[]" value="{{ $project['image_name'] }}">
-                    </div>
+                    <label for="">URL</label>
+                    <input type="text" name="project_url[]" class="form-control project-url" value="{{ $project['url'] }}">
                 </div>
+
+                <div class="col-12">
+                <label for="">Video</label>
+                    <section class="list-videos">
+                    @foreach( $project['videos'] as $vkey => $video )
+                        @if( !is_null( $video ) )
+                        <div class="row section-videos mb-3" data-video="{{ $vkey }}">
+                            <div class="col-10">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fab fa-youtube"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control project-video" name="project_video_{{ $project['index'] }}[]" value="{{ $video }}">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <a href="#" class="btn btn-success add-video" data-time="{{ $project['index'] }}" data-index="{{ $vkey }}"><i class="fas fa-plus"></i></a>
+                                <a href="#" class="btn btn-danger remove-video" ><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        @endif        
+                    @endforeach
+                    </section>
+                    <section class="form-videos">
+                        <div class="row section-videos mb-3" data-video="{{ count( $project['videos'] ) }}">
+                            <div class="col-10">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fab fa-youtube"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control project-video" name="project_video_{{ $project['index'] }}[]">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <a href="#" class="btn btn-success add-video" data-time="{{ $project['index'] }}" data-index="{{ count( $project['videos'] ) }}"><i class="fas fa-plus"></i></a>
+                                <a href="#" class="btn btn-danger remove-video" ><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-12">
+                    <label for="">Image</label>
+                    <section class="list-images">
+                    @foreach( $project['images'] as $ikey => $image )
+                        @if( !is_null($image) )
+                        <div class="row section-images mb-3" data-image="{{ $ikey }}">
+                            <div class="col-10">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-images"></i></span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image project-image" name="project_image_{{ $project['index'] }}[]" id="project_image_file_{{ $ikey }}_{{ $project['index'] }}">
+                                    <label class="custom-file-label project-image-label" for="project_image_file_{{ $ikey }}_{{ $project['index'] }}">{{ $image }}</label>
+                                    <input type="hidden" name="project_image_name_{{ $project['index'] }}[]" class="upload-image-name" value="{{ $image }}">
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-2">
+                                <a href="#" class="btn btn-success add-image" data-time="{{ $project['index'] }}" data-index="{{ $ikey }}"><i class="fas fa-plus"></i></a>
+                                <a href="#" class="btn btn-danger remove-image" ><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        @endif
+                    @endforeach
+                    </section>
+                    <section class="form-images">
+                        <div class="row section-images mb-3" data-image="0">
+                            <div class="col-10">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-images"></i></span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image project-image" name="project_image_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" id="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">
+                                    <label class="custom-file-label project-image-label" for="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">Choose file</label>
+                                    <input type="hidden" name="project_image_name_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" class="upload-image-name">
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-2">
+                                <a href="#" class="btn btn-success add-image" data-time="{{ strtotime( date('Y-m-d H:i:s') ) }}" data-index="0"><i class="fas fa-plus"></i></a>
+                                <a href="#" class="btn btn-danger remove-image" ><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
                 <div class="col-12">
                     <label for="description">Description</label>
                     <textarea name="project_description[]" rows="5" class="form-control txt-project-description">{{ $project['description'] }}</textarea>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                     <label for="project_categories">Category</label>
                     <select name="project_categories_{{ $project['index'] }}[]" class="form-control tag-categories sel-project-categories" multiple size="1">
                         @if( !is_null($project['categories']) && $project['categories'] != '' )
@@ -117,7 +206,7 @@
                         @endif
                     </select>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <label for="project_stacks">Stacks</label>
                     <select name="project_stacks_{{ $project['index'] }}[]" class="form-control tag-select sel-project-stacks" multiple size="1">
                         @if( !is_null($project['stacks']) && $project['stacks'] != '' )
@@ -127,10 +216,7 @@
                         @endif
                     </select>
                 </div>
-                <div class="col-6">
-                    <label for="">URL</label>
-                    <input type="text" name="project_url[]" class="form-control project-url" value="{{ $project['url'] }}">
-                </div>
+                
                 </section>
             </div>
             @endforeach
@@ -146,30 +232,70 @@
                 <input type="hidden" class="project-index" name="project_index[]" value="{{ strtotime( date('Y-m-d H:i:s') ) }}">
             </div>
             <div class="col-6">
+                <label for="">URL</label>
+                <input type="text" name="project_url[]" class="form-control project-url">
+            </div>
+            <div class="col-12">
+                <label for="">Video</label>
+                <section class="list-videos">
+                </section>
+                <section class="form-videos">
+                    <div class="row section-videos mb-3" data-video="0">
+                        <div class="col-10">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fab fa-youtube"></i></span>
+                                </div>
+                                <input type="text" class="form-control project-video" name="project_video_{{ strtotime( date('Y-m-d H:i:s') ) }}[]">
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <a href="#" class="btn btn-success add-video" data-time="{{ strtotime( date('Y-m-d H:i:s') ) }}" data-index="0"><i class="fas fa-plus"></i></a>
+                            <a href="#" class="btn btn-danger remove-video" ><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-12">
                 <label for="">Image</label>
-                <div class="custom-file">
-                    <input type="file" class="form-control upload-image project-image" name="project_image[]" id="project_image_file_{{ strtotime( date('Y-m-d H:i:s') ) }}">
-                    <label class="custom-file-label project-image-label" for="project_image_file_{{ strtotime( date('Y-m-d H:i:s') ) }}">Choose file</label>
-                    <input type="hidden" name="project_image_name[]" class="upload-image-name">
-                </div>
+                <section class="list-images">
+                </section>
+                <section class="form-images">
+                    <div class="row section-images mb-3" data-image="0">
+                        <div class="col-10">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-images"></i></span>
+                            </div>
+                            <div class="custom-file">
+                                <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image project-image" name="project_image_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" id="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">
+                                <label class="custom-file-label project-image-label" for="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">Choose file</label>
+                                <input type="hidden" name="project_image_name_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" class="upload-image-name">
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-2">
+                            <a href="#" class="btn btn-success add-image" data-time="{{ strtotime( date('Y-m-d H:i:s') ) }}" data-index="0"><i class="fas fa-plus"></i></a>
+                            <a href="#" class="btn btn-danger remove-image" ><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                </section>
+
             </div>
             <div class="col-12">
                 <label for="description">Description</label>
                 <textarea name="project_description[]" rows="5" class="form-control project-description" ></textarea>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 <label for="project_categories">Category</label>
                 <select name="project_categories_{{ strtotime( date('Y-m-d H:i:s') ) }}[]"  class="form-control tag-categories project-categories" multiple size="1">
                 </select>
             </div>
-            <div class="col-6">
+            <div class="col-8">
                 <label for="project_stacks">Stacks</label>
                 <select name="project_stacks_{{ strtotime( date('Y-m-d H:i:s') ) }}[]"  class="form-control tag-select project-stacks" multiple size="1"></select>
             </div>
-            <div class="col-3">
-                <label for="">URL</label>
-                <input type="text" name="project_url[]" class="form-control project-url">
-            </div>
+            
             </section>
         </div>
         </section>
@@ -424,6 +550,7 @@ $(document).ready(function (ev) {
         }
     });
 
+    // ================================= PROJECT =======================
     
     $("#add-project").on('click' , function(ev){
         
@@ -435,6 +562,9 @@ $(document).ready(function (ev) {
         var stacks = $("#form-project").find('.project-stacks').val();
         var image = $("#form-project").find('.upload-image-name').val();
         var url = $("#form-project").find('.project-url').val();
+
+        var videos_form = $("#form-project").find('.section-videos');
+        var images_form = $("#form-project").find('.section-images');
 
         if( title.trim() == "" ){
             $("#form-project").find('.project-title').focus();
@@ -460,11 +590,11 @@ $(document).ready(function (ev) {
         $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
             .find('.project-description').val(description);
 
-        $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
-            .find('.upload-image-label').html(image);
+        // $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
+        //     .find('.upload-image-label').html(image);
 
-        $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
-            .find('.upload-image-name').val(image);
+        // $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
+        //     .find('.upload-image-name').val(image);
         
         $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
             .find('.project-categories').html( html_options_tags(categories) ).select2({
@@ -480,11 +610,23 @@ $(document).ready(function (ev) {
         $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
             .find('.project-stacks').html( html_options_tags(stacks) ).select2(options_tags);
 
-        $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
-            .find('.project-image').attr("id" , "project_image_file_" + _index)  
-        
-       $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
-            .find('.project-image-label').attr("for" , "project_image_file_" + _index);
+        $.each( videos_form , function(index, value){
+            var index_video = $(this).attr("data-video");
+            var video_url = $(this).find(".project-video").val();
+            $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
+            .find('.section-videos[data-video="'+index_video+'"]').find('.project-video').val(video_url);
+        });
+
+        $.each( images_form , function(index, value){
+            var index_video = $(this).attr("data-image");
+            var video_url = $(this).find(".upload-image-name").val();
+            $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
+                .find('.section-videos[data-image="'+index_video+'"]')
+                .find('.upload-image-label').html(video_url);
+            $("#list-projects").find( '.section-form-project[data-project="'+_index+'"]' )
+                .find('.section-videos[data-image="'+index_video+'"]')
+                .find('.upload-image-name').val(video_url);
+        });
             
         // -------------------------------
         $("#form-project").find('.project-title').val('');
@@ -505,11 +647,27 @@ $(document).ready(function (ev) {
 
         $("#form-project").find('.project-index').val(n_index);
 
-        $("#form-project").find('.section-form-project')
-            .find('.project-image').attr("id" , "project_image_file_" + n_index)  
-        
-        $("#form-project").find('.section-form-project')
-            .find('.project-image-label').attr("for" , "project_image_file_" + n_index);
+        $("#form-project").find('.list-videos').html('');
+        $("#form-project").find('.section-videos').attr('data-video' , 0);
+        $("#form-project").find('.section-videos')
+            .find('.project-video').val('').attr('name' , 'project_video_'+n_index+'[]');
+        $("#form-project").find('.section-videos')
+            .find('.add-video')
+            .attr('data-time' , 'project_video_'+n_index)
+            .attr('data-index' , 0);
+
+        $("#form-project").find('.list-images').html('');
+        $("#form-project").find('.section-images').attr('data-image' , 0);
+        $("#form-project").find('.section-images')
+            .find('.project-image')
+            .attr('id' , 'project_image_file_0_'+n_index)
+            .attr('name' , 'project_image_'+n_index+'[]');
+        $("#form-project").find('.section-images')
+            .find('.project-image-label')
+            .attr('for' , 'project_image_file_0_'+n_index);
+        $("#form-project").find('.section-images')
+            .find('.upload-image-name').val('')
+            .attr('name' , 'project_image_name_'+n_index+'[]');
 
         $("#form-project").find('.section-form-project')
             .find('.project-categories').attr("name" , "project_categories_" + n_index + "[]");
@@ -520,8 +678,6 @@ $(document).ready(function (ev) {
         
     });
 
-    // ================================= PROJECT =======================
-    
     $("#add-education").on('click' , function(ev){
         
         var html_education = $("#form-educations").html();
@@ -555,7 +711,6 @@ $(document).ready(function (ev) {
         $("#form-educations").find('.education-period').val('');
         $("#form-educations").find('.education-description').val('');
     });
-
 
     $("#add-employment").on('click' , function(ev){
         var html_employment = $("#form-employments").html();
@@ -622,21 +777,70 @@ $(document).ready(function (ev) {
         $(this).parent().parent().slideUp('fast' , function(){
             $(this).remove();
         })
-    })
+    });
+
     $("body").on('click' , '.project-delete', function(ev){
         ev.preventDefault();
         $(this).parent().parent().slideUp('fast' , function(){
             $(this).remove();
         })
-    })
+    });
     
     $("body").on('click' , '.employment-delete , .education-delete', function(ev){
         ev.preventDefault();
         $(this).parent().parent().parent().slideUp('fast' , function(){
             $(this).remove();
-        })
-    })
+        });
+    });
 
+    $('body').on('click' , '.add-image' , function(ev){
+        ev.preventDefault();
+        var index = $(this).attr("data-index");
+        var time = $(this).data("time");
+        console.log(index , time);
+        var section_image = $(this).parent().parent();
+        var html_section_image = $(this).parent().parent().parent().html();
+
+        // insert image
+        $(this).parent().parent().parent().parent().find('.list-images').append( html_section_image );
+
+        $(this).parent().parent().find('.project-image')
+            // .attr("name" , "project_image_"+time+"[]" )
+            .attr("id" , "project_image_file_"+(parseInt(index)+1)+"_"+time+"" );
+            
+        $(this).parent().parent().find('.project-image-label')
+            .attr("for" , "project_image_file_"+(parseInt(index)+1)+"_"+time )
+            .html('Choose file');
+
+        $(this).parent().parent().attr("data-images" , parseInt(index) + 1 );
+
+        $(this).attr("data-index" , (parseInt(index)+1));
+
+        // $(this).parent().parent().find('.upload-image-name')
+        //     .attr("name" , "project_image_name_"+time+"[]" )
+            
+    });
+
+    $('body').on('click' , '.add-video' , function(ev){
+        ev.preventDefault();
+        var index = $(this).attr("data-index");
+        var time = $(this).data("time");
+        var url_video = $(this).parent().parent().find('.project-video').val();
+        
+        var html_section_video = $(this).parent().parent().parent().html();
+
+        $(this).parent().parent().parent().parent().find('.list-videos').append( html_section_video );
+
+        $("#form-project").find( '.section-form-project[data-project="'+time+'"]' )
+            .find('.list-videos .section-videos[data-video="'+index+'"]').find(".project-video").val(url_video);
+
+        $(this).parent().parent().attr("data-video" , parseInt(index) + 1 );
+
+        $(this).parent().parent().find('.project-video').val('');
+
+        $(this).attr("data-index" , (parseInt(index)+1));
+        
+    });
 
     function html_options_tags( tags ){
         // var a_tags = tags;
