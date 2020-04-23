@@ -22,7 +22,7 @@ class PositionController extends Controller
     public function index()
     {
         //
-        if(!Auth::check()) return redirect('login');
+        
         $positions = Position::where( function($q){
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');
