@@ -26,7 +26,7 @@
 <div class="row">
     <div class="col-12">
         <h2 class="d-inline">Expert - {{ $expert->fullname }}</h2>
-        <a href="{{ route('expert.portfolio.preview' , $expert->expert_id) }}" target="_blank" class="btn btn-info">Preview</a>
+        <a href="{{ route('home')}}/expert/template/{{ $expert->slug }}" target="_blank" class="btn btn-info">Preview</a>
     </div>
 </div>
 
@@ -170,21 +170,21 @@
                     @endforeach
                     </section>
                     <section class="form-images">
-                        <div class="row section-images mb-3" data-image="0">
+                        <div class="row section-images mb-3" data-image="{{ count( $project['images'] ) }}">
                             <div class="col-10">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="far fa-images"></i></span>
                                 </div>
                                 <div class="custom-file">
-                                    <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image project-image" name="project_image_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" id="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">
-                                    <label class="custom-file-label project-image-label" for="project_image_file_0_{{ strtotime( date('Y-m-d H:i:s') ) }}">Choose file</label>
-                                    <input type="hidden" name="project_image_name_{{ strtotime( date('Y-m-d H:i:s') ) }}[]" class="upload-image-name">
+                                    <input type="file" accept="image/png, image/jpeg, image/jpg" class="form-control upload-image project-image" name="project_image_{{ $project['index'] }}[]" id="project_image_file_{{ count( $project['images'] ) }}_{{ $project['index'] }}">
+                                    <label class="custom-file-label project-image-label" for="project_image_file_{{ count( $project['images'] ) }}_{{ $project['index'] }}">Choose file</label>
+                                    <input type="hidden" name="project_image_name_{{ $project['index'] }}[]" class="upload-image-name">
                                 </div>
                             </div>
                             </div>
                             <div class="col-2">
-                                <a href="#" class="btn btn-success add-image" data-time="{{ strtotime( date('Y-m-d H:i:s') ) }}" data-index="0"><i class="fas fa-plus"></i></a>
+                                <a href="#" class="btn btn-success add-image" data-time="{{ $project['index'] }}" data-index="{{ count( $project['images'] ) }}"><i class="fas fa-plus"></i></a>
                                 <a href="#" class="btn btn-danger remove-image" ><i class="fas fa-trash"></i></a>
                             </div>
                         </div>

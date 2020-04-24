@@ -181,7 +181,7 @@
             <ol class="carousel-indicators">
               @foreach( array_merge($project['videos'] , $project['images'] ) as $vkey => $v )
               @if( !is_null($v) )
-              <li data-target="#carouselProject_{{ $project['index'] }}" data-slide-to="{{$vkey}}" class="{{ $vkey == 0? 'active' : '' }}"></li>
+              <li data-target="#carouselProject_{{ $project['index'] }}" data-slide-to="{{$vkey}}" class="{{ $vkey == 1? 'active' : '' }}"></li>
               @endif
               @endforeach
             </ol>
@@ -197,7 +197,7 @@
               @endforeach
               @foreach( $project['images'] as $vkey => $image )
               @if( !is_null($image) )
-              <div class="carousel-item {{ ($vkey == 0 && count( $project['videos'] ) == 0)? 'active' : '' }} ">
+              <div class="carousel-item {{ ( $vkey == 1 && $project['videos'][0] == null )? 'active' : '' }} ">
                 <img class="d-block w-100" src="{{ route('home') .'/uploads/projects/'.$image }}" >
               </div>
               @endif
