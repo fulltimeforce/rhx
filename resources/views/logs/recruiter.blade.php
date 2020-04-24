@@ -562,6 +562,31 @@ a.badge-primary:focus{
             is_jqgrid = true;
         });
 
+        $("#search-column-name").keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                var text = $('#search-column-name').val();
+                _page = 1;
+                _count_records = 0;
+                
+                search = text;
+                window.history.replaceState({
+                    edwin: "Fulltimeforce"
+                    }, "Page" , "{{ route('recruiter.log') }}" + '?'+ $.param(
+                        {   
+                            s : search , 
+                        }
+                        )
+                    );
+                _page = 1;
+                _count_records = 0;
+                location.reload();
+
+                // ajax_logs( text );
+                is_jqgrid = true;
+            }
+        })
+
 
         $('#search-experts').on( 'keyup', delay(function (ev) {
             var text = $(this).val();
@@ -569,6 +594,8 @@ a.badge-primary:focus{
             table_list_experts( text );
 
         } , 500 ));
+
+        
 
         $("#save").on('click', function(ev){
             $('#search-column-name').val( '' );
