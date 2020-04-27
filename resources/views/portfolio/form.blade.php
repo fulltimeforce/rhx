@@ -26,7 +26,7 @@
 <div class="row">
     <div class="col-12">
         <h2 class="d-inline">Expert - {{ $expert->fullname }}</h2>
-        <a href="{{ route('home')}}/expert/template/{{ $expert->slug }}" target="_blank" class="btn btn-info">Preview</a>
+        <a href="{{ route('home')}}/expert/{{ $expert->slug }}" target="_blank" class="btn btn-info">Preview</a>
     </div>
 </div>
 
@@ -53,7 +53,11 @@
                 <label for="age">Age</label>
                 <input type="number" value="{{ $expert->age }}" class="form-control" name="age">
             </div>
-            <div class="col-10 mb-2">
+            <div class="col-2 mb-2">
+                <label for="slug">Slug</label>
+                <input type="text" value="{{ $expert->slug }}" class="form-control" name="slug">
+            </div>
+            <div class="col-8 mb-2">
                 <label for="work">Position</label>
                 <input type="text" class="form-control" value="{{ $expert->work }}" name="work">
                 

@@ -129,6 +129,6 @@ Auth::routes(['register' => false]);
 ============================== ROUTE POSTS ===========================================
 */
 Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
-Route::get('/expert/template/{slug}','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
+Route::get('/expert/{slug}','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
 
 

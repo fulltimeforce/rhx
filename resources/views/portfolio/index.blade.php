@@ -166,7 +166,7 @@
                 { field: 'id', title: "Actions" , width: 400 , formatter: function(value,rowData,index){
                     
                         var actions = '<a href="'+ "{{ route('expert.portfolio.form', ':id') }}" +'" class="btn btn-success">Edit</a>';
-                        actions += '  <a href="'+ "{{ route('home') }}" + "/expert/template/"+ rowData.slug +'" target="_blank" class="btn btn-info">View</a>';
+                        actions += '  <a href="'+ "{{ route('home') }}" + "/expert/"+ rowData.slug +'" target="_blank" class="btn btn-info">View</a>';
                         if( "{{ Auth::user()->role->id }}" == 1){
                           actions += '  <a href="#" class="btn btn-danger delete-resume" data-id="'+rowData.id+'">Delete</a>';
                         }
