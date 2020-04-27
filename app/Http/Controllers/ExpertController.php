@@ -760,6 +760,7 @@ class ExpertController extends Controller
                 "fullname" => $input["fullname"],
                 "work" => $input["work"],
                 "age" => $input["age"],
+                "slug" => $input["slug"],
                 "email" => $input["email"],
                 "address" => $input["address"],
                 "availability" => $input["availability"],
