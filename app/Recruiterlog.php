@@ -48,5 +48,8 @@ class Recruiterlog extends Model
         return $this->hasOne('App\User', 'id', 'user_id');
     }
 
+    public function experts(){
+        return $this->belongsToMany('App\Expert' , 'expert_log' , 'log_id' , 'expert_id');
+    }
     
 }

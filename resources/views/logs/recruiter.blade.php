@@ -386,7 +386,7 @@ a.badge-primary:focus{
             {   field: 'expert', title: 'Name' , class: 'frozencell'  },
             {   field: 'position.name', title: 'Position'   },
             {   field: 'info', title: 'Info'   },
-            {   field: 'contact', title: 'Contact', width: 150 , widthUnit: 'px' , formatter: function(value,row,index) { return html_select_contact( row.id , value ) }   },
+            {   field: 'contact', title: 'Contact', width: 150 , widthUnit: 'px' , formatter: function(value,row,index) { return html_select_contact( row.id , value , row.experts) }   },
             {   field: 'filter', title: 'Filter' , formatter: function(value,row,index) { return html_check_filter( row.id , row ) }  },
             {   field: 'schedule', title: 'Schedule' , formatter: function(value,row,index) { return html_select_schedule( row.id , value ) }  },
             {   field: 'evaluate', title: 'Evaluate' , formatter: function(value,row,index) { return html_check_evaluate( row.id , row ) }  },
@@ -899,20 +899,34 @@ a.badge-primary:focus{
 
         });
 
-        function html_select_contact( _id , _contact){
+        function html_select_contact( _id , _contact, _experts){
             var html = '';
-            html += '<div class="form-group">';
-            html += '    <select class="form-control form-dropdown" data-name="contact" data-id="'+_id+'" style="width: 200px;">';
-            html += '        <option value="" >Select option</option>';
-            html += '        <option value="contacted" '+(_contact=='contacted'? 'selected' : '' )+'>Contactado</option>';
-            html += '        <option value="not respond" '+(_contact=='not respond'? 'selected' : '' )+'>No Responde</option>';
-            html += '        <option value="dont want" '+(_contact=='dont want'? 'selected' : '' )+'>No desea</option>';
-            html += '        <option value="not available" '+(_contact=='not available'? 'selected' : '' )+'>No disponible</option>';
-            html += '        <option value="num email incorrect" '+(_contact=='num email incorrect'? 'selected' : '' )+'>Num/Email incorrecto</option>';
-            html += '        <option value="submitted form" '+(_contact=='submitted form'? 'selected' : '' )+'>Form enviado</option>';
-            html += '        <option value="filled form" '+(_contact=='filled form'? 'selected' : '' )+'>Form llenado</option>';
-            html += '    </select>';
-            html += '</div>';
+            if( _contact == 'filled form' && _experts.length > 0 ){
+                for (let index = 0; index < _experts.length; index++) {
+                    let params = $.param({
+                        'search' : true,
+                        'basic': "" , 
+                        'intermediate': "" ,
+                        'advanced' : "",
+                        'name' : _experts[index].fullname
+                    });
+                    html += '<p><a href="'+ '{{ route("experts.home") }}' +'?'+params+'" target="_blank">'+_experts[index].fullname+'</a>   <a href="#" class="text-danger remove-expert-log" data-log="'+_id+'" data-expert="'+_experts[index].id+'" ><i class="far fa-times-circle"></i></a></p>';
+                }
+            }else{
+                html += '<div class="form-group">';
+                html += '    <select class="form-control form-dropdown" data-name="contact" data-id="'+_id+'" style="width: 200px;">';
+                html += '        <option value="" >Select option</option>';
+                html += '        <option value="contacted" '+(_contact=='contacted'? 'selected' : '' )+'>Contactado</option>';
+                html += '        <option value="not respond" '+(_contact=='not respond'? 'selected' : '' )+'>No Responde</option>';
+                html += '        <option value="dont want" '+(_contact=='dont want'? 'selected' : '' )+'>No desea</option>';
+                html += '        <option value="not available" '+(_contact=='not available'? 'selected' : '' )+'>No disponible</option>';
+                html += '        <option value="num email incorrect" '+(_contact=='num email incorrect'? 'selected' : '' )+'>Num/Email incorrecto</option>';
+                html += '        <option value="submitted form" '+(_contact=='submitted form'? 'selected' : '' )+'>Form enviado</option>';
+                html += '        <option value="filled form" '+(_contact=='filled form'? 'selected' : '' )+'>Form llenado</option>';
+                html += '    </select>';
+                html += '</div>';
+            }
+            
             return html;
         }
 
@@ -994,6 +1008,7 @@ a.badge-primary:focus{
                 success:function(data){
                     select_expert = true;
                     $("#listexperts").modal('hide');
+                    location.reload();
                 }
             });
         });
@@ -1044,6 +1059,30 @@ a.badge-primary:focus{
                     }
                     $("#noteLogModal").modal();
                     
+                }
+            });
+
+        });
+
+        $('table').on('click' , '.remove-expert-log', function(ev){
+            ev.preventDefault();
+            var log = $(this).data("log");
+            var expert = $(this).data("expert");
+            let data_post = {
+                log : log,
+                expert: expert
+            };
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruiterlog.expert.delete') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: data_post,
+                success:function(data){
+                    console.log(data)
+                    location.reload();
 
                 }
             });

@@ -44,7 +44,7 @@ class RecruiterlogController extends Controller
 
     public function listlogs( Request $request ){
 
-        $logs = Recruiterlog::with(['user', 'position'])
+        $logs = Recruiterlog::with(['user', 'position', 'experts'])
             ->orderBy('created_at' , 'desc');
         if( !empty($request->query('name')) ){
             $logs->where('expert' , 'like' , '%'.$request->query('name').'%');
@@ -163,6 +163,24 @@ class RecruiterlogController extends Controller
             Notelog::create($input);
             return 'new';
         }
+    }
+
+    public function removeExpert( Request $request ){
+        $input = $request->all();
+
+        $expert = $input["expert"];
+        $log = $input["log"];
+
+        Recruiterlog::where('id' , $log)->update(
+            array(
+                "contact" => 'contacted'
+            )
+        );
+
+        Expertlog::where('log_id', $log)
+            ->where('expert_id' , $expert)
+            ->delete();
+
     }
 
     private function platforms(){

@@ -79,7 +79,7 @@ Route::post('/requirement/position', 'RequirementController@positionById')->name
 
 Route::post('interviews/recruiterlog', 'RecruiterlogController@listnote')->name('interviews.recruiterlog');
 
-
+Route::post('/recruiterlog/expert/remove', 'RecruiterlogController@removeExpert')->name('recruiterlog.expert.delete');
 Route::get('/schedules','LogController@schedules')->name('log.schedules');
 Route::post('/schedules/save','LogController@scheduleSave')->name('log.schedule.save');
 

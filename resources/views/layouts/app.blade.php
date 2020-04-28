@@ -76,10 +76,10 @@
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
+                                <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
+                                <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
                         @endauth
                         <!-- Authentication Links -->
@@ -101,6 +101,10 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    
+                                    <a class="dropdown-item" href="#">
+                                        Configuration
+                                    </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
