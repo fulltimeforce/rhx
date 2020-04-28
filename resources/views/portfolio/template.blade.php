@@ -177,7 +177,7 @@
       @foreach( unserialize($expert->projects) as $pkey => $project )
       <div class="row project-card" data-portfolio-tag="{{ isset($project['categories'][0]) ? $project['categories'][0] : 'empty' }}">
         <div class="col-md-6 col-lg-5 project-card__img d-flex align-items-center">
-          <div id="carouselProject_{{ $project['index'] }}" class="carousel slide" data-ride="carousel">
+          <div id="carouselProject_{{ $project['index'] }}" class="carousel slide w-100 h-100" >
             <ol class="carousel-indicators">
               @php
                 $videos__images_count = 0
@@ -191,15 +191,15 @@
               @endif
               @endforeach
             </ol>
-            <div class="carousel-inner">
+            <div class="carousel-inner w-100 h-100">
               @php
                 $videos_count = 0
               @endphp
               @foreach( $project['videos'] as $vkey => $video )
               @if( !is_null($video) )
-              <div class="carousel-item {{ $videos_count == 0? 'active' : '' }}">
-                <div class="embed-responsive embed-responsive-16by9">
-                  <iframe class="embed-responsive-item" width="560" height="315" src="{{ $video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <div class="w-100 h-100 carousel-item {{ $videos_count == 0? 'active' : '' }}">
+                <div class="w-100 h-100">
+                  <iframe class="w-100 h-100" src="{{ $video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
               </div>
               @php
@@ -213,8 +213,11 @@
               @endphp
               @foreach( $project['images'] as $vkey => $image )
               @if( !is_null($image) )
-              <div class="carousel-item {{ ( $images_count == 0 && $project['videos'][0] == null )? 'active' : '' }} ">
+              <div class="carousel-item h-100 {{ ( $images_count == 0 && $project['videos'][0] == null )? 'active' : '' }} ">
+                <div class="d-flex flex-wrap align-content-center h-100">
                 <img class="d-block w-100" src="{{ route('home') .'/uploads/projects/'.$image }}" >
+                </div>
+                
               </div>
               @php
                 $images_count++

@@ -652,7 +652,7 @@ class ExpertController extends Controller
 
     public function portfolioResume( Request $request ){
         
-
+        if(!Auth::check()) return redirect('login');
         return view('portfolio.index' );
 
     }
