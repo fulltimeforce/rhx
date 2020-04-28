@@ -846,6 +846,13 @@ $(document).ready(function (ev) {
         
     });
 
+    $('body').on('click', '.remove-video, .remove-image', function(ev){
+        ev.preventDefault();
+        $(this).parent().parent().slideUp('fast' , function(){
+            $(this).remove();
+        });
+    })  
+
     function html_options_tags( tags ){
         // var a_tags = tags;
         var html_options = ''; 
