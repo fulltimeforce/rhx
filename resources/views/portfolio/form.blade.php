@@ -109,7 +109,8 @@
                 </div>
 
                 <div class="col-12">
-                <label for="">Video</label>
+                    <label for="">Video</label>
+                    <p>Example : https://www.youtube.com/<b>embed</b>/<b>{ID}</b></p>
                     <section class="list-videos">
                     @foreach( $project['videos'] as $vkey => $video )
                         @if( !is_null( $video ) )
@@ -241,6 +242,7 @@
             </div>
             <div class="col-12">
                 <label for="">Video</label>
+                <p>Example : https://www.youtube.com/<b>embed</b>/<b>{ID}</b></p>
                 <section class="list-videos">
                 </section>
                 <section class="form-videos">
