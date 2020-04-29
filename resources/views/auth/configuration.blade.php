@@ -26,7 +26,7 @@
     background-repeat: no-repeat;
     background-position: 3px 2px;
     background-color: #dc3545;
-    background-image: url("../../public/image/icon-tick.svg");
+    background-image: url("../public/image/icon-tick.svg");
     display: block;
     position: absolute;
     left: 0;
