@@ -33,6 +33,31 @@ class LoginController extends Controller
      *
      * @return void
      */
+
+    protected function redirectTo()
+    {
+        
+        $page = '';
+        switch (auth()->user()->default_page) {
+            case 'resume':
+                $page = route('expert.portfolio.resume');
+                break;
+            case 'log':
+                $page = route('recruiter.log');
+                break;
+            case 'expert':
+                $page = route('experts.home');
+                break;
+            case 'careers':
+                $page = RouteServiceProvider::HOME;
+                break;
+            default:
+                $page = RouteServiceProvider::HOME;
+                break;
+        }
+        return $page;
+    }
+
     public function __construct()
     {
         $this->middleware('guest')->except('logout');

@@ -19,7 +19,26 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
-            return redirect(RouteServiceProvider::HOME);
+            $user = User::where('id' , Auth::id() )->first();
+            $page = '';
+            switch ($user->default_page) {
+                case 'resume':
+                    $page = 'expert.portfolio.resume';
+                    break;
+                case 'log':
+                    $page = 'recruiter.log';
+                    break;
+                case 'expert':
+                    $page = 'experts.home';
+                    break;
+                case 'careers':
+                    $page = RouteServiceProvider::HOME;
+                    break;
+                default:
+                    $page = RouteServiceProvider::HOME;
+                    break;
+            }
+            return redirect( $page );
         }
 
         return $next($request);

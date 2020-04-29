@@ -33,6 +33,10 @@ Route::post('/expert/portfolio/delete','ExpertController@deleteResume')->name('e
 
 Route::get('/resume','ExpertController@portfolioResume')->name('expert.portfolio.resume');
 
+Route::get('/user/configuration','UserController@configuration')->name('user.configuration');
+
+Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
+
 /*
 ============================== ROUTES ACTION ============================================
 */ 
@@ -91,7 +95,6 @@ Route::get('/expert/listtbootstrap','ExpertController@listtbootstrap')->name('ex
 
 //recruiter log
 
-Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
 Route::get('/recruiter/listlogs','RecruiterlogController@listlogs')->name('recruiter.listlogs');
 Route::post('/recruiter/save','RecruiterlogController@saveForm')->name('recruiter.save');
 Route::post('/recruiter/update','RecruiterlogController@updateForm')->name('recruiter.update');
@@ -121,6 +124,8 @@ Route::get('/applicant/register' , 'ExpertController@applicantRegister')->name('
 Route::get('/expert/register/signed' , 'LogController@synchronizationSigned')->name('log.synchronization.signed');
 Route::get('/expert/register' , 'LogController@synchronization')->name('log.synchronization')->middleware('signed');
 
+Route::post('/user/changepage','UserController@changePage')->name('user.changepage');
+Route::post('/user/changepassword','UserController@changePassword')->name('user.changepassword');
 
 Auth::routes(['register' => false]);
 
