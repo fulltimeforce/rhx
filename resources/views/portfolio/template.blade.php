@@ -200,7 +200,7 @@
           @endphp
           @endif
           @endforeach
-          <a href="{{ $project['url'] }}" target="_blank" class="project-card__link">ddddd{{ $project['url'] }}</a>
+          <a href="{{ $project['url'] }}" target="_blank" class="project-card__link">{{ $project['url'] }}</a>
         </div>
       </div>
       @endforeach
