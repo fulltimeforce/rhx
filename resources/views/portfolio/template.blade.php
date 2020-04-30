@@ -176,67 +176,8 @@
     <div class="portfolio-cards">
       @foreach( unserialize($expert->projects) as $pkey => $project )
       <div class="row project-card" data-portfolio-tag="{{ isset($project['categories'][0]) ? $project['categories'][0] : 'empty' }}">
-        <div class="col-md-6 col-lg-5 project-card__img d-flex align-items-center">
-          <div id="carouselProject_{{ $project['index'] }}" class="carousel slide w-100 h-100" >
-            <ol class="carousel-indicators">
-              @php
-                $videos__images_count = 0
-              @endphp
-              @foreach( array_merge($project['videos'] , $project['images'] ) as $vkey => $v )
-              @if( !is_null($v) )
-              <li data-target="#carouselProject_{{ $project['index'] }}" data-slide-to="{{$videos__images_count}}" class="{{ $videos__images_count == 0? 'active' : '' }}"></li>
-              @php
-                $videos__images_count++
-              @endphp
-              @endif
-              @endforeach
-            </ol>
-            <div class="carousel-inner w-100 h-100">
-              @php
-                $videos_count = 0
-              @endphp
-              @foreach( $project['videos'] as $vkey => $video )
-              @if( !is_null($video) )
-              <div class="w-100 h-100 carousel-item {{ $videos_count == 0? 'active' : '' }}">
-                <div class="w-100 h-100">
-                  <iframe class="w-100 h-100" src="{{ $video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-              </div>
-              @php
-                $videos_count++
-              @endphp
-              @endif
-              @endforeach
 
-              @php
-                $images_count = 0
-              @endphp
-              @foreach( $project['images'] as $vkey => $image )
-              @if( !is_null($image) )
-              <div class="carousel-item h-100 {{ ( $images_count == 0 && $project['videos'][0] == null )? 'active' : '' }} ">
-                <div class="d-flex flex-wrap align-content-center h-100">
-                <img class="d-block w-100" src="{{ route('home') .'/uploads/projects/'.$image }}" >
-                </div>
-                
-              </div>
-              @php
-                $images_count++
-              @endphp
-              @endif
-              @endforeach
-            </div>
-            <a class="carousel-control-prev" href="#carouselProject_{{ $project['index'] }}" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselProject_{{ $project['index'] }}" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
-          </div>
-          
-        </div>
-        <div class="col-md-6 col-lg-7 project-card__info">
+        <div class="col-md-12 project-card__info">
           <h3 class="project-card__title">{{ $project['title'] }}</h3>
           <p class="project-card__description">
           {{ $project['description'] }}
@@ -251,7 +192,15 @@
             
           </ul>
           @endif
-          <a href="{{ $project['url'] }}" target="_blank" class="project-card__link">{{ $project['url'] }}</a>
+          @foreach( array_merge($project['videos'] , $project['images'] ) as $vkey => $v )
+          @if( !is_null($v) )
+          <a class="project-card__link link_left" data-toggle="modal" data-target="#projectModal_{{ $project['index'] }}">Preview</a>
+          @php
+           break
+          @endphp
+          @endif
+          @endforeach
+          <a href="{{ $project['url'] }}" target="_blank" class="project-card__link">ddddd{{ $project['url'] }}</a>
         </div>
       </div>
       @endforeach
@@ -430,6 +379,85 @@
 <!--Contact-->
 
 <!-- Portfolio Modal -->
+@if( !is_null($expert->projects) && $expert->projects != '' )
+@if( count( unserialize($expert->projects) ) > 0 )
+@foreach( unserialize($expert->projects) as $pkey => $project )
+<!-- Modal -->
+<div class="modal fade" id="projectModal_{{ $project['index'] }}" tabindex="-1" role="dialog" aria-labelledby="projectModal_{{ $project['index'] }}Label" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="projectModal_{{ $project['index'] }}Label">{{ $project['title'] }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-4 pb-5">
+        <div id="carouselProject_{{ $project['index'] }}" class="carousel slide w-100 h-100" >
+            <ol class="carousel-indicators">
+              @php
+                $videos__images_count = 0
+              @endphp
+              @foreach( array_merge($project['videos'] , $project['images'] ) as $vkey => $v )
+              @if( !is_null($v) )
+              <li data-target="#carouselProject_{{ $project['index'] }}" data-slide-to="{{$videos__images_count}}" class="{{ $videos__images_count == 0? 'active' : '' }}"></li>
+              @php
+                $videos__images_count++
+              @endphp
+              @endif
+              @endforeach
+            </ol>
+            <div class="carousel-inner w-100 h-100">
+              @php
+                $videos_count = 0
+              @endphp
+              @foreach( $project['videos'] as $vkey => $video )
+              @if( !is_null($video) )
+              <div class="w-100 h-100 carousel-item {{ $videos_count == 0? 'active' : '' }}">
+                <div class="w-100 h-100" style="min-height: 350px;">
+                  <iframe class="w-100 h-100" style="min-height: 350px;" src="{{ $video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              </div>
+              @php
+                $videos_count++
+              @endphp
+              @endif
+              @endforeach
+
+              @php
+                $images_count = 0
+              @endphp
+              @foreach( $project['images'] as $vkey => $image )
+              @if( !is_null($image) )
+              <div class="carousel-item h-100 {{ ( $images_count == 0 && $project['videos'][0] == null )? 'active' : '' }} ">
+                <div class="d-flex flex-wrap align-content-center h-100">
+                <img class="d-block w-100" src="{{ route('home') .'/uploads/projects/'.$image }}" >
+                </div>
+                
+              </div>
+              @php
+                $images_count++
+              @endphp
+              @endif
+              @endforeach
+            </div>
+            <a class="carousel-control-prev" href="#carouselProject_{{ $project['index'] }}" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselProject_{{ $project['index'] }}" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+@endforeach
+@endif
+@endif
+
 
   <script src="{{ asset('/portfolio/js/jquery-2.2.4.min.js') }}"></script>
   <script src="{{ asset('/portfolio/js/popper.min.js') }}"></script>
