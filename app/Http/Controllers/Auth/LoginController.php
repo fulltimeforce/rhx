@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Socialite;
 
 class LoginController extends Controller
 {
@@ -62,4 +66,43 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    /**
+     * Redirect the user to the GitHub authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function redirectToProvider()
+    {
+        $parameters = ['access_type' => 'offline'];
+        return Socialite::driver('google')
+        ->scopes(["https://www.googleapis.com/auth/drive"])->with($parameters)->redirect();
+    }
+
+    /**
+     * Obtain the user information from GitHub.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleProviderCallback()
+    {
+        $auth_user = Socialite::driver('google')->stateless()->user();
+        $user = User::updateOrCreate(
+            ['email' => $auth_user->email], 
+            [
+                'access_token' => $auth_user->token,
+                'name'  => $auth_user->name
+            ]);
+        Auth::login($user, true);
+	    return redirect()->to('/');
+    }
+
+    public function logout( Request $request ){
+        session('g_token', '');
+        $this->guard()->logout();
+        $request->session()->invalidate();
+
+        return redirect('/'); 
+    }
+
 }

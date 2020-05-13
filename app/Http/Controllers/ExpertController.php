@@ -8,10 +8,17 @@ use App\Portfolio;
 use App\Log;
 use App\Interview;
 use App\Portfolioexpert;
+use App\Googl;
+use Exception;
+use Google_Client;
+use Google_Service_Drive;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Facades\File;
 
 class ExpertController extends Controller
 {
@@ -21,9 +28,21 @@ class ExpertController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    private $client;
+    private $drive;
+
+    public function __construct(Google_Client $client)
+    {
+        $this->middleware(function ($request, $next) use ($client) {
+            $client->refreshToken(Auth::user()->access_token);
+            $this->drive = new Google_Service_Drive($client);
+            return $next($request);
+        });
+    }
+
     public function index( Request $request )
     {
-        //
+        
         if(!Auth::check()) return redirect('login');
         $_experts = $this->visibleExpert( Expert::with(['logs'])->latest()->get() );
         $experts = count($_experts);
@@ -46,15 +65,30 @@ class ExpertController extends Controller
                 if( in_array( $techid , $a_advan ) ) $advanced = array_merge( $advanced ,array( $techid => $techlabel ));
             }
         }
-
+        $cli = new Googl;
+        // $this->client = $cli->client();
         return view('experts.index',compact('experts'))
             ->with('search', $search )
             ->with('name', $name )
             ->with('basic', $basic )
             ->with('intermediate', $intermediate )
             ->with('advanced', $advanced )
+            ->with('client', $cli->client() )
             ->with('technologies', Expert::getTechnologies() );
     }
+
+    public function uploadDrive( Request $request ){
+
+        
+        $cli = new Googl;
+        $this->client = $cli->client();
+        // $user=User::find(1);
+        // $this->client->setAccessToken(session('user.token'));
+        // $this->drive = $cli->drive($this->client);
+
+        print_r($this->client);
+
+    }   
 
     public function listjqgrid(Request $request){
 
@@ -357,6 +391,26 @@ class ExpertController extends Controller
 
             }
 
+            $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
+            $fileMetadata = new \Google_Service_Drive_DriveFile([
+                'name' => $name,
+                'parents' => array( env('GOOGLE_FOLDER_ID') )
+            ]);
+
+            $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
+            $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+
+            $_file = $this->drive->files->create($fileMetadata, [
+                'data' => $content,
+                'mimeType' => $mimeType,
+                'uploadType' => 'multipart',
+                'fields' => 'id'
+            ]);
+
+            if( $file ){
+                $file->move( $destinationPath, $newNameFile );
+            }
+
             $portfolio_link = isset( $input['link'] )? $input['link'] : array();
             $portfolio_description = isset( $input['description'] )? $input['description'] : array();
             
@@ -378,9 +432,7 @@ class ExpertController extends Controller
       
             $expert->update( $input );
 
-            if( $file ){
-                $file->move( $destinationPath, $newNameFile );
-            }
+            
 
             if( isset($input['position']) ){
                 Log::where('expert_id' , $expert->id)->update(

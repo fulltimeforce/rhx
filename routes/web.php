@@ -37,6 +37,13 @@ Route::get('/user/configuration','UserController@configuration')->name('user.con
 
 Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
 
+Route::get('login/google', 'Auth\LoginController@redirectToProvider');
+Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback');
+
+// Route::get('/login/google/auth' ,'UserController@googleLogin')->name('glogin');
+
+Route::post('/upload/drive','ExpertController@uploadDrive')->name('experts.upload.drive');
+
 /*
 ============================== ROUTES ACTION ============================================
 */ 

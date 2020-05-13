@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Googl;
 
 class UserController extends Controller
 {
+    private $client;
+
+    public function __construct(Request $request)
+    {
+       
+    }
+    
     public function configuration(){
 
         if(!Auth::check()) return redirect('login');
@@ -36,5 +44,42 @@ class UserController extends Controller
                 )
             );
         $this->middleware('guest')->except('logout');
+    }
+
+    public function googleLogin( Request $request ){
+
+        $cli = new Googl;
+        $this->client = $cli->client();
+        $google_oauthV2 = new \Google_Service_Oauth2( $this->client );
+        if ($request->get('code')){
+            $this->client->authenticate($request->get('code'));
+            $request->session()->put('token', $this->client->getAccessToken());
+        }
+        if ($request->session()->get('token'))
+        {
+            $this->client->setAccessToken($request->session()->get('token'));
+            session([
+                'user' => [
+                    'token' => $request->session()->get('token')
+                ]
+            ]);
+        }
+        if ($this->client->getAccessToken())
+        {
+            //For logged in user, get details from google using acces
+            $user=User::find(1);
+            $user->access_token=json_encode($request->session()->get('token'));
+            $user->save();               
+            dd("Successfully authenticated");
+        } else
+        {
+            $user=User::find(1);
+            $user->access_token="no";
+            $user->save();   
+            //For Guest user, get google login url
+            $authUrl = $this->client->createAuthUrl();
+            // return redirect()->to($authUrl);
+        }
+
     }
 }
