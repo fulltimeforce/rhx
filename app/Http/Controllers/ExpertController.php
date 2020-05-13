@@ -65,30 +65,15 @@ class ExpertController extends Controller
                 if( in_array( $techid , $a_advan ) ) $advanced = array_merge( $advanced ,array( $techid => $techlabel ));
             }
         }
-        $cli = new Googl;
-        // $this->client = $cli->client();
+        
         return view('experts.index',compact('experts'))
             ->with('search', $search )
             ->with('name', $name )
             ->with('basic', $basic )
             ->with('intermediate', $intermediate )
             ->with('advanced', $advanced )
-            ->with('client', $cli->client() )
             ->with('technologies', Expert::getTechnologies() );
     }
-
-    public function uploadDrive( Request $request ){
-
-        
-        $cli = new Googl;
-        $this->client = $cli->client();
-        // $user=User::find(1);
-        // $this->client->setAccessToken(session('user.token'));
-        // $this->drive = $cli->drive($this->client);
-
-        print_r($this->client);
-
-    }   
 
     public function listjqgrid(Request $request){
 
