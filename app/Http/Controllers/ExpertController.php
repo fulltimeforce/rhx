@@ -379,7 +379,7 @@ class ExpertController extends Controller
             $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
             $fileMetadata = new \Google_Service_Drive_DriveFile([
                 'name' => $name,
-                'parents' => array( env('GOOGLE_FOLDER_ID') )
+                // 'parents' => array( env('GOOGLE_FOLDER_ID') )
             ]);
 
             $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
