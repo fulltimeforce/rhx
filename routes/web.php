@@ -107,6 +107,8 @@ Route::post('/recruiter/save','RecruiterlogController@saveForm')->name('recruite
 Route::post('/recruiter/update','RecruiterlogController@updateForm')->name('recruiter.update');
 Route::post('/recruiter/delete','RecruiterlogController@deleteForm')->name('recruiter.delete');
 
+Route::post('/recruiter/upload/audio','RecruiterlogController@uploadAudio')->name('recruiter.upload.audio');
+
 // expert log
 
 Route::post('/expert/logs/union','ExpertlogController@union')->name('expert.log.union');

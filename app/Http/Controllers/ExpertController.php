@@ -33,11 +33,14 @@ class ExpertController extends Controller
 
     public function __construct(Google_Client $client)
     {
-        $this->middleware(function ($request, $next) use ($client) {
-            $client->refreshToken(Auth::user()->access_token);
-            $this->drive = new Google_Service_Drive($client);
-            return $next($request);
-        });
+        if( Auth::check() ){
+            $this->middleware(function ($request, $next) use ($client) {
+                $client->refreshToken(Auth::user()->access_token);
+                $this->drive = new Google_Service_Drive($client);
+                return $next($request);
+            });
+        }
+        
     }
 
     public function index( Request $request )
@@ -211,9 +214,27 @@ class ExpertController extends Controller
             $input["file_path"] = '';
             $isCreated = true;
             if( $file ){
-
-                $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $newNameFile = $destinationPath."/" . $_fileName;
                 $input["file_path"] = $newNameFile;
+            
+                if( Auth::check() ){
+                    $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
+                    $fileMetadata = new \Google_Service_Drive_DriveFile([
+                        'name' => $_fileName,
+                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+                    ]);
+
+                    $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
+                    $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+
+                    $_file = $this->drive->files->create($fileMetadata, [
+                        'data' => $content,
+                        'mimeType' => $mimeType,
+                        'uploadType' => 'multipart',
+                        'fields' => 'id'
+                    ]);
+                }
             }
 
             if( Auth::check() ){
@@ -371,29 +392,30 @@ class ExpertController extends Controller
 
             if( $file ){
 
-                $newNameFile = $destinationPath."/" . "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $newNameFile = $destinationPath."/" . $_fileName;
                 $input["file_path"] = $newNameFile;
 
-            }
-
-            $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
-            $fileMetadata = new \Google_Service_Drive_DriveFile([
-                'name' => $name,
-                // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-            ]);
-
-            $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
-            $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
-
-            $_file = $this->drive->files->create($fileMetadata, [
-                'data' => $content,
-                'mimeType' => $mimeType,
-                'uploadType' => 'multipart',
-                'fields' => 'id'
-            ]);
-
-            if( $file ){
                 $file->move( $destinationPath, $newNameFile );
+                if( Auth::check() ){
+                    $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
+                    $fileMetadata = new \Google_Service_Drive_DriveFile([
+                        'name' => $_fileName,
+                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+                    ]);
+
+                    $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
+                    $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+
+                    $_file = $this->drive->files->create($fileMetadata, [
+                        'data' => $content,
+                        'mimeType' => $mimeType,
+                        'uploadType' => 'multipart',
+                        'fields' => 'id'
+                    ]);
+                }
+            
+               
             }
 
             $portfolio_link = isset( $input['link'] )? $input['link'] : array();
@@ -605,11 +627,14 @@ class ExpertController extends Controller
             $position = 1;
         } 
 
-        $disabledInputs = array(
-            ''
-        );
 
-        return view('experts.edit')->with('expert', $expert)->with('position', $position)->with('technologies',Expert::getTechnologies());
+        $portfolios = Portfolio::where('expert_id' , $expert->id )->get();
+
+        return view('experts.edit')
+            ->with('expert', $expert)
+            ->with('position', $position)
+            ->with('portfolios', $portfolios)
+            ->with('technologies',Expert::getTechnologies());
     }
 
     public function applicantRegisterSigned() {

@@ -388,7 +388,7 @@ a.badge-primary:focus{
             {   field: 'info', title: 'Info'   },
             {   field: 'contact', title: 'Contact', width: 150 , widthUnit: 'px' , formatter: function(value,row,index) { return html_select_contact( row.id , value , row.experts) }   },
             {   field: 'filter', title: 'Filter' , formatter: function(value,row,index) { return html_check_filter( row.id , row ) }  },
-            {   field: 'schedule', title: 'Schedule' , formatter: function(value,row,index) { return html_select_schedule( row.id , value ) }  },
+            // {   field: 'schedule', title: 'Schedule' , formatter: function(value,row,index) { return html_select_schedule( row.id , value ) }  },
             {   field: 'evaluate', title: 'Evaluate' , formatter: function(value,row,index) { return html_check_evaluate( row.id , row ) }  },
             {   field: 'platform', title: 'Platform' , formatter: function(value,row,index){ return row.platform ? {!! json_encode($platforms) !!}.filter(f => f.value == row.platform)[0].label : ''; }   },
             {   field: 'link', title: 'Link' , formatter: function(value,row,index){ 
@@ -954,6 +954,15 @@ a.badge-primary:focus{
             html += '<a href="#" class="badge badge-primary check-note" data-name="english" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
             html += '</div>';
 
+            html += '<div class="btn-group mt-2" role="group">';
+            
+            html += '<label class="badge badge-success" for="audio-upload-'+_id+'">UPLOAD AUDIO</label>';
+            html += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-'+_id+'" data-type="filter" data-id="'+_id+'" style="display:none;" >';
+            if( _filter.filter_audio != null ){
+                html += '<a href="'+ "{{ route('home') }}" +'/'+_filter.filter_audio+'" download class="badge badge-primary " ><i class="fas fa-download"></i></a>';
+            }
+            html += '</div>';
+
             return html;
         }
 
@@ -984,6 +993,16 @@ a.badge-primary:focus{
             html += '<div class="btn-group" role="group">';
             html += '<a href="#" class="badge chk-evaluate badge-'+ ( _evaluate.psychology == null ? 'secondary' : (_evaluate.psychology == 'approved' ? 'success' : ( _evaluate.psychology == 'not approved' ? 'danger' : 'warning' ) ) ) +'" data-value="'+_evaluate.psychology+'" data-name="psychology" data-id="'+_id+'">Psychological</a>\n';
             html += '<a href="#" class="badge badge-primary check-note" data-name="psychology" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
+            html += '</div>';
+
+            html += '<div class="btn-group mt-2" role="group">';
+            
+            html += '<label class="badge badge-success" for="audio-upload-'+_id+'">UPLOAD AUDIO</label>';
+            html += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-'+_id+'" data-type="evaluate" data-id="'+_id+'" style="display:none;" >';
+            if( _evaluate.evaluate_audio != null){
+                html += '<a href="'+ "{{ route('home') }}" +'/'+_evaluate.evaluate_audio+'" download class="badge badge-primary " ><i class="fas fa-download"></i></a>';
+            }
+            
             html += '</div>';
 
             return html;
@@ -1115,6 +1134,41 @@ a.badge-primary:focus{
             $("#log_type_note").val( '' );
             $("#log-name").html( '' );
             $("#note-log").val( '' );
+        });
+
+        $('body').on('change' , '.audio-upload' , function(ev){
+            // ev.preventDefault();
+            var file = this.files[0];
+            var id = $(this).data("id");
+            var type = $(this).data("type");
+
+            var data_post = {};
+            data_post["log_id"] = id;
+            data_post["type"] = type;
+            
+            var _this = $(this);
+            var _formData = new FormData();
+            _formData.append('file', file);
+            _formData.append('log_id', id);
+            _formData.append('type', type);
+
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruiter.upload.audio') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: false,
+                cache: false,
+                processData: false,
+                data: _formData,
+                success:function(data){
+                    console.log(data)
+  
+                    
+                }
+            });
         })
 
     });

@@ -322,9 +322,12 @@
 
         $('#url-generate').on('click', function (ev) {
             ev.preventDefault();
+            var url = '{{ route("developer.edit.signed" , ":id") }}';
+            url = url.replace( ":id" , $(this).data("expert") );
+
             $.ajax({
                 type:'GET',
-                url:'/developer/edit/signed/'+ $(this).data("expert"),
+                url: url,
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

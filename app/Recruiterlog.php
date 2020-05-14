@@ -30,7 +30,9 @@ class Recruiterlog extends Model
         'schedule',
         'commercial',
         'technique',
-        'psychology'
+        'psychology',
+        'filter_audio',
+        'evaluate_audio'
         
     ];
 

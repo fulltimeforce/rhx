@@ -9,6 +9,10 @@ use App\Expertlog;
 use App\Position;
 use App\Notelog;
 use Carbon\Carbon;
+use Google_Client;
+use Google_Service_Drive;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class RecruiterlogController extends Controller
 {
@@ -18,10 +22,16 @@ class RecruiterlogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
+    
+    private $drive;
+
+    public function __construct(Google_Client $client)
     {
-        //
-        
+        $this->middleware(function ($request, $next) use ($client) {
+            $client->refreshToken(Auth::user()->access_token);
+            $this->drive = new Google_Service_Drive($client);
+            return $next($request);
+        });
     }
 
     public function index( Request $request ){
@@ -240,5 +250,49 @@ class RecruiterlogController extends Controller
         );
     }
 
+    public function uploadAudio( Request $request ){
 
+        $input = $request->all();
+
+        $log_id = $input['log_id'];
+        $type = $input['type'];
+
+        $file = $request->file("file");
+        
+        $destinationPath = 'uploads/audio';
+        
+        $input = $request->all();
+        
+        $newNameFile = '';
+
+        if( $file ){
+            $_fileName = "audio-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+            $newNameFile = $destinationPath."/" . $_fileName;
+            $input["file_path"] = $newNameFile;
+            $file->move( $destinationPath, $newNameFile );
+
+            $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
+            $fileMetadata = new \Google_Service_Drive_DriveFile([
+                'name' => $_fileName,
+                // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+            ]);
+
+            $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
+            $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+
+            $_file = $this->drive->files->create($fileMetadata, [
+                'data' => $content,
+                'mimeType' => $mimeType,
+                'uploadType' => 'multipart',
+                'fields' => 'id'
+            ]);
+            Recruiterlog::where('id' , $log_id)->update(
+                array( $type."_audio" => $newNameFile )
+            );
+        }
+
+        
+        
+        
+    }
 }
