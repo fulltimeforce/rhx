@@ -87,14 +87,18 @@ class LoginController extends Controller
     public function handleProviderCallback()
     {
         $auth_user = Socialite::driver('google')->stateless()->user();
-        $user = User::updateOrCreate(
-            ['email' => $auth_user->email], 
-            [
-                'access_token' => $auth_user->token,
-                'name'  => $auth_user->name
-            ]);
-        Auth::login($user, true);
-	    return redirect()->to('/');
+        if( User::where('email' , $auth_user->email )->count() > 0 ){
+            $user = User::updateOrCreate(
+                ['email' => $auth_user->email], 
+                [
+                    'access_token' => $auth_user->token,
+                    'name'  => $auth_user->name
+                ]);
+            Auth::login($user, true);
+            
+        }
+        return redirect()->to('/');
+        
     }
 
     public function logout( Request $request ){
