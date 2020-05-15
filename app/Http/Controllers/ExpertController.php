@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 
 use Vinkla\Hashids\Facades\Hashids;
-
+use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Storage;
 
 class ExpertController extends Controller
 {
@@ -396,23 +397,23 @@ class ExpertController extends Controller
                 $mimeType = $file->getMimeType();
                 $file->move( $destinationPath, $newNameFile );
                 if( Auth::check() ){
-                    $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
-                    $fileMetadata = new \Google_Service_Drive_DriveFile([
-                        'name' => $_fileName,
-                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-                    ]);
+                    
+                    // $fileMetadata = new \Google_Service_Drive_DriveFile([
+                    //     'name' => $_fileName,
+                    //     // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+                    // ]);
 
                     // $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
                     // $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
 
-                    $content = file_get_contents( $newNameFile );
+                    // $content = file_get_contents( $newNameFile );
 
-                    $_file = $this->drive->files->create($fileMetadata, [
-                        'data' => $content,
-                        'mimeType' => $mimeType,
-                        'uploadType' => 'multipart',
-                        'fields' => 'id'
-                    ]);
+                    // $_file = $this->drive->files->create($fileMetadata, [
+                    //     'data' => $content,
+                    //     'mimeType' => $mimeType,
+                    //     'uploadType' => 'multipart',
+                    //     'fields' => 'id'
+                    // ]);
                 }
             
                
@@ -425,7 +426,7 @@ class ExpertController extends Controller
             unset( $input['description'] );
 
             unset( $input["_token"] );
-            unset( $input["file_cv"] );
+            unset( $input["file_cv_update"] );
 
             $input['fullname'] = ucwords(substr( $input['fullname'] , 0 , 244));
             $input['email_address'] = substr( $input['email_address'] , 0 , 244);
@@ -438,8 +439,6 @@ class ExpertController extends Controller
             if(isset($input['result3']) ) $input['result3'] = substr( $input['result3'] , 0 , 244);
       
             $expert->update( $input );
-
-            
 
             if( isset($input['position']) ){
                 Log::where('expert_id' , $expert->id)->update(
