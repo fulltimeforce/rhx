@@ -12,7 +12,8 @@ use Carbon\Carbon;
 use Google_Client;
 use Google_Service_Drive;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
+use Illuminate\Contracts\Filesystem\Filesystem;
+
 
 class RecruiterlogController extends Controller
 {
@@ -269,30 +270,38 @@ class RecruiterlogController extends Controller
             $_fileName = "audio-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
             $newNameFile = $destinationPath."/" . $_fileName;
             $input["file_path"] = $newNameFile;
+            $mimeType = $file->getMimeType();
             $file->move( $destinationPath, $newNameFile );
 
-            $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
-            $fileMetadata = new \Google_Service_Drive_DriveFile([
-                'name' => $_fileName,
-                // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-            ]);
+            // $fileMetadata = new \Google_Service_Drive_DriveFile([
+            //     'name' => $_fileName,
+            //     // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+            // ]);
+            
+            // $content = file_get_contents( $newNameFile );
 
-            $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
-            $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
-
-            $_file = $this->drive->files->create($fileMetadata, [
-                'data' => $content,
-                'mimeType' => $mimeType,
-                'uploadType' => 'multipart',
-                'fields' => 'id'
-            ]);
+            // $_file = $this->drive->files->create($fileMetadata, [
+            //     'data' => $content,
+            //     'mimeType' => $mimeType,
+            //     'uploadType' => 'multipart',
+            //     'fields' => 'id'
+            // ]);
             Recruiterlog::where('id' , $log_id)->update(
                 array( $type."_audio" => $newNameFile )
             );
+            return array(
+                "file" => $newNameFile
+            );
         }
+        
+    }
 
-        
-        
-        
+    public function deleteAudio( Request $request ){
+        $input = $request->all();
+        $log_id = $input['log_id'];
+        $type = $input['type'];
+        Recruiterlog::where('id' , $log_id)->update(
+            array( $type."_audio" => null )
+        );
     }
 }

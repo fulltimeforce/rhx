@@ -217,6 +217,57 @@ a.badge-primary:focus{
     </div>
     </div>
 
+    <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="delete-audioLabel">Delete audio</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">
+                    Are you sure you want to delete this file?
+                    <input type="hidden" id="delete-audio-log">
+                    <input type="hidden" id="delete-audio-log-type">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+    <div class="modal fade" id="show-audio" tabindex="-1" role="dialog" aria-labelledby="show-audioLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">
+                    <audio src="" controls autoplay id="audio-play"></audio>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
 
     <!-- ============================ NOTES ============================-->
     <div class="modal fade" id="noteLogModal" tabindex="-1" role="dialog" aria-labelledby="noteLogModalLabel" aria-hidden="true">
@@ -323,6 +374,7 @@ a.badge-primary:focus{
         <div class="col-6">
             <h5>Records: </h5>
         </div>
+        
         <div class="col-6 text-right">
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <input type="text" placeholder="Search By Expert" class="form-control" id="search-column-name">
@@ -954,13 +1006,19 @@ a.badge-primary:focus{
             html += '<a href="#" class="badge badge-primary check-note" data-name="english" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
             html += '</div>';
 
-            html += '<div class="btn-group mt-2" role="group">';
             
-            html += '<label class="badge badge-success" for="audio-upload-'+_id+'">UPLOAD AUDIO</label>';
-            html += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-'+_id+'" data-type="filter" data-id="'+_id+'" style="display:none;" >';
-            if( _filter.filter_audio != null ){
-                html += '<a href="'+ "{{ route('home') }}" +'/'+_filter.filter_audio+'" download class="badge badge-primary " ><i class="fas fa-download"></i></a>';
-            }
+            
+            // html += '<label class="badge badge-'+ (_filter.filter_audio == null? 'secondary' : 'success' ) +'" for="audio-upload-'+_id+'">UPLOAD AUDIO</label>';
+            
+            html += '<div class="btn-group mt-2 btn-upload-audio '+( _filter.filter_audio == null ? '' : 'd-none')+'" role="group" data-id="'+_id+'" data-type="filter"> ';
+            html += '<label class="badge badge-secondary" for="audio-upload-filter-'+_id+'">Upload Audio</label>';
+            html += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-filter-'+_id+'" data-type="filter" data-id="'+_id+'" style="display:none;" >';
+            html += '</div>';
+        
+        
+            html += '<div class="btn-group btn-show-audio '+( _filter.filter_audio != null ? '' : 'd-none')+'" role="group" data-id="'+_id+'" data-type="filter">';
+            html += '<a href="#" class="badge badge-success show-audio" data-audio="'+_filter.filter_audio+'" data-type="filter" data-id="'+_id+'">Show Audio</a>';
+            html += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-type="filter" data-id="'+_id+'"><i class="fas fa-trash"></i></a>';
             html += '</div>';
 
             return html;
@@ -995,14 +1053,15 @@ a.badge-primary:focus{
             html += '<a href="#" class="badge badge-primary check-note" data-name="psychology" data-id="'+_id+'"><i class="fas fa-pen"></i></a>';
             html += '</div>';
 
-            html += '<div class="btn-group mt-2" role="group">';
-            
-            html += '<label class="badge badge-success" for="audio-upload-'+_id+'">UPLOAD AUDIO</label>';
-            html += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-'+_id+'" data-type="evaluate" data-id="'+_id+'" style="display:none;" >';
-            if( _evaluate.evaluate_audio != null){
-                html += '<a href="'+ "{{ route('home') }}" +'/'+_evaluate.evaluate_audio+'" download class="badge badge-primary " ><i class="fas fa-download"></i></a>';
-            }
-            
+            html += '<div class="btn-group mt-2 btn-upload-audio '+( _evaluate.evaluate_audio == null ? '' : 'd-none')+'" role="group" data-id="'+_id+'" data-type="evaluate"> ';
+            html += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+_id+'">Upload Audio</label>';
+            html += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+_id+'" data-type="evaluate" data-id="'+_id+'" style="display:none;" >';
+            html += '</div>';
+        
+        
+            html += '<div class="btn-group btn-show-audio '+( _evaluate.evaluate_audio != null ? '' : 'd-none')+'" role="group" data-id="'+_id+'" data-type="evaluate">';
+            html += '<a href="#" class="badge badge-success show-audio" data-audio="'+_evaluate.evaluate_audio+'" data-id="'+_id+'" data-type="evaluate">Show Audio</a>';
+            html += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-type="evaluate" data-id="'+_id+'"><i class="fas fa-trash"></i></a>';
             html += '</div>';
 
             return html;
@@ -1165,10 +1224,66 @@ a.badge-primary:focus{
                 data: _formData,
                 success:function(data){
                     console.log(data)
-  
+                    $('.btn-upload-audio[data-id="'+id+'"][data-type="'+type+'"]').addClass("d-none");
+                    $('.btn-show-audio[data-id="'+id+'"][data-type="'+type+'"]').removeClass("d-none");
+                    $('.show-audio[data-id="'+id+'"][data-type="'+type+'"]').attr("data-audio" , data.file)
                     
                 }
             });
+        })
+
+        $("body").on('click' , '.confirmation-upload-delete' , function(ev){
+            ev.preventDefault();
+            var id = $(this).data("id");
+            var type = $(this).data("type");
+
+            $("#delete-audio-log").val(id);
+            $("#delete-audio-log-type").val(type);
+
+            $("#delete-audio").modal();
+
+        })
+
+        $('#delete-audio').on('hidden.bs.modal', function (e) {
+            $("#delete-audio-log").val("");
+            $("#delete-audio-log-type").val("");
+        })
+
+        $("#deleteAudio").on('click' , function(){
+
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruiter.delete.audio') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    log_id : $("#delete-audio-log").val(),
+                    type: $("#delete-audio-log-type").val()
+                },
+                success:function(data){
+                    console.log(data)
+                    var id = $("#delete-audio-log").val();
+                    var id = $("#delete-audio-log-type").val();
+                    $('.btn-upload-audio[data-id="'+id+'"][data-type="'+type+'"]').removeClass("d-none");
+                    $('.btn-show-audio[data-id="'+id+'"][data-type="'+type+'"]').addClass("d-none");
+                    $("#delete-audio").modal('hide');
+                }
+            });
+
+        });
+
+        $('body').on('click' , '.show-audio' ,function(ev){
+            ev.preventDefault();
+            var audio = $(this).data("audio");
+            var h = "{{ route('home') }}";
+            $("#audio-play").attr("src" , h+'/'+audio);
+            $("#show-audio").modal();
+        })
+
+        $('#show-audio').on('hidden.bs.modal', function (e) {
+            $("#audio-play").attr("src" , "");
         })
 
     });
