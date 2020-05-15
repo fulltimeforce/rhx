@@ -270,7 +270,7 @@ class RecruiterlogController extends Controller
             $_fileName = "audio-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
             $newNameFile = $destinationPath."/" . $_fileName;
             $input["file_path"] = $newNameFile;
-            $mimeType = $file->getMimeType();
+            // $mimeType = $file->getMimeType();
             $file->move( $destinationPath, $newNameFile );
 
             // $fileMetadata = new \Google_Service_Drive_DriveFile([

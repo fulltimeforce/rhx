@@ -219,7 +219,7 @@ class ExpertController extends Controller
                 $mimeType = $file->getMimeType();
                 $file->move( $destinationPath, $newNameFile );
                 if( Auth::check() ){
-                    $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
+                    // $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
                     $fileMetadata = new \Google_Service_Drive_DriveFile([
                         'name' => $_fileName,
                         // 'parents' => array( env('GOOGLE_FOLDER_ID') )
@@ -393,7 +393,7 @@ class ExpertController extends Controller
                 $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $newNameFile = $destinationPath."/" . $_fileName;
                 $input["file_path"] = $newNameFile;
-
+                $mimeType = $file->getMimeType();
                 $file->move( $destinationPath, $newNameFile );
                 if( Auth::check() ){
                     $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
@@ -402,8 +402,10 @@ class ExpertController extends Controller
                         // 'parents' => array( env('GOOGLE_FOLDER_ID') )
                     ]);
 
-                    $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
-                    $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+                    // $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
+                    // $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+
+                    $content = file_get_contents( $newNameFile );
 
                     $_file = $this->drive->files->create($fileMetadata, [
                         'data' => $content,
