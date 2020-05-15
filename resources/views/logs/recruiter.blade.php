@@ -1265,7 +1265,7 @@ a.badge-primary:focus{
                 success:function(data){
                     console.log(data)
                     var id = $("#delete-audio-log").val();
-                    var id = $("#delete-audio-log-type").val();
+                    var type = $("#delete-audio-log-type").val();
                     $('.btn-upload-audio[data-id="'+id+'"][data-type="'+type+'"]').removeClass("d-none");
                     $('.btn-show-audio[data-id="'+id+'"][data-type="'+type+'"]').addClass("d-none");
                     $("#delete-audio").modal('hide');

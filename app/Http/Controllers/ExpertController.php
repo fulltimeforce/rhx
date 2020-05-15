@@ -15,9 +15,9 @@ use Google_Service_Drive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+
 use Vinkla\Hashids\Facades\Hashids;
-use Illuminate\Support\Facades\File;
+
 
 class ExpertController extends Controller
 {
