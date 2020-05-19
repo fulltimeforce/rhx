@@ -191,6 +191,7 @@ class ExpertController extends Controller
     public function store(Request $request)
     {
         //
+
         try {
             //code...
 
@@ -323,6 +324,8 @@ class ExpertController extends Controller
             }
 
         } catch (Exception $exception) {
+
+            return $exception->getMessage();
             return back()->withError($exception->getMessage())->withInput();
         }
         
