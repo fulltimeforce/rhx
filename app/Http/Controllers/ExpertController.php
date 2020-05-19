@@ -217,27 +217,33 @@ class ExpertController extends Controller
             if( $file ){
                 $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $newNameFile = $destinationPath."/" . $_fileName;
-                $input["file_path"] = $newNameFile;
+                
+                $link_local = "https://workat.fulltimeforce.com/";
+                $input["file_path"] = $link_local . $newNameFile;
                 // $mimeType = $file->getMimeType();
                 $file->move( $destinationPath, $newNameFile );
                 if( Auth::check() ){
-                    // $name = gettype($file) === 'object' ? $file->getClientOriginalName() : $file;
-                    // $fileMetadata = new \Google_Service_Drive_DriveFile([
-                    //     'name' => $_fileName,
-                    //     // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-                    // ]);
-
-                    // $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
-                    // $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
-
-                    // $content = file_get_contents( $newNameFile );
                     
-                    // $_file = $this->drive->files->create($fileMetadata, [
-                    //     'data' => $content,
-                    //     'mimeType' => $mimeType,
-                    //     'uploadType' => 'multipart',
-                    //     'fields' => 'id'
-                    // ]);
+                    $fileMetadata = new \Google_Service_Drive_DriveFile([
+                        'name' => $_fileName,
+                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+                    ]);
+
+                    $content = file_get_contents( $newNameFile );
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file( $finfo , $newNameFile );
+                    
+                    $_file = $this->drive->files->create($fileMetadata, [
+                        'data' => $content,
+                        'mimeType' => $mimeType,
+                        'uploadType' => 'multipart',
+                        'fields' => 'id'
+                    ]);
+
+                    $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/view?usp=sharing";
+                    $input["file_path"] = $link_drive;
+
+                    unlink( $newNameFile );
                 }
             }
 
@@ -396,30 +402,37 @@ class ExpertController extends Controller
 
                 $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $newNameFile = $destinationPath."/" . $_fileName;
-                $input["file_path"] = $newNameFile;
+
+                $link_local = "https://workat.fulltimeforce.com/";
+                $input["file_path"] = $link_local . $newNameFile;
+
                 $mimeType = $file->getMimeType();
                 $file->move( $destinationPath, $newNameFile );
+
                 if( Auth::check() ){
                     
-                    // $fileMetadata = new \Google_Service_Drive_DriveFile([
-                    //     'name' => $_fileName,
-                    //     // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-                    // ]);
+                    $fileMetadata = new \Google_Service_Drive_DriveFile([
+                        'name' => $_fileName,
+                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+                    ]);
 
-                    // $content = gettype($file) === 'object' ?  File::get($file) : Storage::get($file);
-                    // $mimeType = gettype($file) === 'object' ? File::mimeType($file) : Storage::mimeType($file);
+                    $content = file_get_contents( $newNameFile );
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file( $finfo , $newNameFile );
 
-                    // $content = file_get_contents( $newNameFile );
+                    $_file = $this->drive->files->create($fileMetadata, [
+                        'data' => $content,
+                        'mimeType' => $mimeType,
+                        'uploadType' => 'multipart',
+                        'fields' => 'id'
+                    ]);
 
-                    // $_file = $this->drive->files->create($fileMetadata, [
-                    //     'data' => $content,
-                    //     'mimeType' => $mimeType,
-                    //     'uploadType' => 'multipart',
-                    //     'fields' => 'id'
-                    // ]);
+                    $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/view?usp=sharing";
+                    $input["file_path"] = $link_drive;
+
+                    unlink( $newNameFile );
                 }
             
-               
             }
 
             $portfolio_link = isset( $input['link'] )? $input['link'] : array();

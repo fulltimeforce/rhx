@@ -74,7 +74,7 @@ class LoginController extends Controller
      */
     public function redirectToProvider()
     {
-        $parameters = ['access_type' => 'offline'];
+        $parameters = ['access_type' => 'offline', "prompt" => "consent select_account"];
         return Socialite::driver('google')
         ->scopes(["https://www.googleapis.com/auth/drive"])->with($parameters)->redirect();
     }
@@ -87,12 +87,14 @@ class LoginController extends Controller
     public function handleProviderCallback()
     {
         $auth_user = Socialite::driver('google')->stateless()->user();
+        // dd($auth_user);
+        // return "dddd";
         $page = '/';
         if( User::where('email' , $auth_user->email )->count() > 0 ){
             $user = User::updateOrCreate(
                 ['email' => $auth_user->email], 
                 [
-                    'access_token' => $auth_user->token,
+                    'access_token' => $auth_user->refreshToken,
                     'name'  => $auth_user->name
                 ]);
             Auth::login($user, true);

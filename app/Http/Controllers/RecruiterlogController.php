@@ -8,11 +8,11 @@ use App\Recruiterlog;
 use App\Expertlog;
 use App\Position;
 use App\Notelog;
+use App\User;
 use Carbon\Carbon;
 use Google_Client;
 use Google_Service_Drive;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Contracts\Filesystem\Filesystem;
 
 
 class RecruiterlogController extends Controller
@@ -29,7 +29,8 @@ class RecruiterlogController extends Controller
     public function __construct(Google_Client $client)
     {
         $this->middleware(function ($request, $next) use ($client) {
-            $client->refreshToken(Auth::user()->access_token);
+            $user = User::find(5);
+            $client->refreshToken( $user->access_token );
             $this->drive = new Google_Service_Drive($client);
             return $next($request);
         });
@@ -270,27 +271,38 @@ class RecruiterlogController extends Controller
             $_fileName = "audio-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
             $newNameFile = $destinationPath."/" . $_fileName;
             $input["file_path"] = $newNameFile;
-            // $mimeType = $file->getMimeType();
+            
             $file->move( $destinationPath, $newNameFile );
 
-            // $fileMetadata = new \Google_Service_Drive_DriveFile([
-            //     'name' => $_fileName,
-            //     // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-            // ]);
+            $fileMetadata = new \Google_Service_Drive_DriveFile([
+                'name' => $_fileName,
+                // 'parents' => array( env('GOOGLE_FOLDER_ID') )
+            ]);
             
-            // $content = file_get_contents( $newNameFile );
+            // $content = gettype($file) === 'object' ?  \File::get($file) : Storage::get($file);
+            // $mimeType = gettype($file) === 'object' ? \File::mimeType($file) : Storage::mimeType($file);
 
-            // $_file = $this->drive->files->create($fileMetadata, [
-            //     'data' => $content,
-            //     'mimeType' => $mimeType,
-            //     'uploadType' => 'multipart',
-            //     'fields' => 'id'
-            // ]);
+            $content = file_get_contents( $newNameFile );
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file( $finfo , $newNameFile );
+
+            $_file = $this->drive->files->create($fileMetadata, [
+                'data' => $content,
+                'mimeType' => $mimeType,
+                'uploadType' => 'media',
+                'fields' => 'id'
+            ]);
+
+            unlink( $newNameFile );
+
+            $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/view?usp=sharing";
+
             Recruiterlog::where('id' , $log_id)->update(
-                array( $type."_audio" => $newNameFile )
+                array( $type."_audio" => $link_drive )
             );
+
             return array(
-                "file" => $newNameFile
+                "file" => $link_drive,
             );
         }
         
