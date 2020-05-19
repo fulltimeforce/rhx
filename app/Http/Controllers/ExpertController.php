@@ -325,7 +325,7 @@ class ExpertController extends Controller
 
         } catch (Exception $exception) {
 
-            return $exception->getMessage();
+            // return $exception->getMessage();
             return back()->withError($exception->getMessage())->withInput();
         }
         
