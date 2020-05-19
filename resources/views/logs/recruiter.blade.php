@@ -1277,7 +1277,7 @@ a.badge-primary:focus{
             ev.preventDefault();
             var audio = $(this).data("audio");
             var h = "{{ route('home') }}";
-            $("#audio-play").attr("src" , h+'/'+audio);
+            $("#audio-play").attr("src" , audio);
             $("#show-audio").modal();
         })
 
