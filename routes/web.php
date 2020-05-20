@@ -20,6 +20,9 @@
 */ 
 Route::resource('experts','ExpertController');
 Route::get('/experts', 'ExpertController@index')->name('experts.home');
+
+Route::get('/expert/confirmation', 'ExpertController@confirmation')->name('experts.confirmation');
+
 Route::resource('positions','PositionController',['except'=>['destroy']]);
 Route::get('/','PositionController@index')->name('home');
 Route::get('/logs', 'LogController@index')->name('logs.index');

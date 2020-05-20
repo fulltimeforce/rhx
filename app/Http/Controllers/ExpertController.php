@@ -175,19 +175,26 @@ class ExpertController extends Controller
 
     public function store(Request $request)
     {
-        //
 
+        $validator = $request->validate( [
+            'file_cv'           => 'mimes:pdf,doc,docx|max:2048',
+            'phone'             => 'required|numeric',
+            'birthday'          => 'date_format:'.config('app.date_format_php'),
+            'last_info_update'  => 'date_format:'.config('app.date_format_php'),
+            'availability'      => 'date_format:'.config('app.date_format_php'),
+            // 'email_address' => 'required|email:rfc,dns'
+        ]);
+        
+        if( !is_array($validator) ){
+            if ($validator->fails()) {
+                return back()
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+        }    
+        
         try {
             //code...
-
-            $request->validate( [
-                'file_cv'           => 'mimes:pdf,doc,docx|max:2048',
-                'phone'             => 'required|numeric',
-                'birthday'          => 'date_format:'.config('app.date_format_php'),
-                'last_info_update'  => 'date_format:'.config('app.date_format_php'),
-                'availability'      => 'date_format:'.config('app.date_format_php'),
-                // 'email_address' => 'required|email:rfc,dns'
-            ]);
 
             $file = $request->file("file_cv");
 
@@ -293,17 +300,21 @@ class ExpertController extends Controller
                 return redirect()->route('experts.home')
                             ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
             }else{
-                return redirect()->route('positions.index')
-                            ->with('success', $isCreated ? 'Expert created successfully.' : 'Expert updated successfully.');
+                return redirect()->route('experts.confirmation');
+                            
             }
 
         } catch (Exception $exception) {
-
+            
             // return $exception->getMessage();
-            return back()->withError($exception->getMessage())->withInput();
+            return back()->withErrors($exception->getMessage())->withInput();
         }
         
         
+    }
+
+    public function confirmation(){
+        return view('experts.confirmation');
     }
 
     /**
@@ -348,16 +359,26 @@ class ExpertController extends Controller
     {
         //
         // if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
-        try {
-            $request->validate([
-                'file_cv_update' => 'mimes:pdf,doc,docx|max:2048',
-                'phone' => 'required|numeric',
-                'birthday'          => 'date_format:'.config('app.date_format_php'),
-                'last_info_update'  => 'date_format:'.config('app.date_format_php'),
-                'availability'      => 'date_format:'.config('app.date_format_php'),
-                // 'email_address' => 'required|email:rfc,dns'
-            ]);
 
+        $validator = $request->validate( [
+            'file_cv'           => 'mimes:pdf,doc,docx|max:2048',
+            'phone'             => 'required|numeric',
+            'birthday'          => 'date_format:'.config('app.date_format_php'),
+            'last_info_update'  => 'date_format:'.config('app.date_format_php'),
+            'availability'      => 'date_format:'.config('app.date_format_php'),
+            // 'email_address' => 'required|email:rfc,dns'
+        ]);
+        
+        if( !is_array($validator) ){
+            if ($validator->fails()) {
+                return back()
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+        }    
+
+        try {
+            
             $file = $request->file("file_cv_update");
 
             $destinationPath = 'uploads/cv';
