@@ -25,19 +25,22 @@ class RecruiterlogController extends Controller
      */
     
     private $drive;
+    private $client;
 
-    public function __construct(Google_Client $client)
+    public function __construct(Google_Client $_client)
     {
-        $this->middleware(function ($request, $next) use ($client) {
+        
+        $this->middleware(function ($request, $next) use ($_client) {
             $user = User::find(5);
-            $client->refreshToken( $user->access_token );
-            $this->drive = new Google_Service_Drive($client);
+            $_client->refreshToken( $user->access_token );
+            $this->drive = new Google_Service_Drive($_client);
+            $this->client = $_client;
             return $next($request);
         });
     }
 
     public function index( Request $request ){
-
+        
         if(!Auth::check()) return redirect('login');
         $positions = Position::where('status' , 'enabled')->latest()->get();
         $logs = Recruiterlog::all();
