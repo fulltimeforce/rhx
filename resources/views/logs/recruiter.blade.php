@@ -256,7 +256,7 @@ a.badge-primary:focus{
         <div class="modal-body">
             <div class="row">
                 <div class="col">
-                    <iframe src="https://drive.google.com/file/d/1fnTv5HrMYzKFIXGC7n5HKFfk7kaZs1Ab/preview" width="100%" height="100" id="audio-play" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="" width="100%" height="100" id="audio-play" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     
                 </div>
             </div>
