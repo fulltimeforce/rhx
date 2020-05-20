@@ -270,7 +270,7 @@ class RecruiterlogController extends Controller
         if( $file ){
             $_fileName = "audio-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
             $newNameFile = $destinationPath."/" . $_fileName;
-            $input["file_path"] = $newNameFile;
+            
             
             $file->move( $destinationPath, $newNameFile );
 
@@ -295,7 +295,7 @@ class RecruiterlogController extends Controller
 
             unlink( $newNameFile );
 
-            $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/view?usp=sharing";
+            $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/preview";
 
             Recruiterlog::where('id' , $log_id)->update(
                 array( $type."_audio" => $link_drive )
