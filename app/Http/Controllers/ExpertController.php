@@ -449,7 +449,7 @@ class ExpertController extends Controller
                             ->with('success','Expert updated successfully');
 
         } catch (Exception $exception) {
-            return back()->withError($exception->getMessage())->withInput();
+            return back()->withErrors($exception->getMessage())->withInput();
         }
         
     }
