@@ -399,7 +399,7 @@ td.frozencell{
                     clickToSelect: false,
                     formatter : function(value,rowData,index) {
                         var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
-                        actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'  ">Download</a>\n';
+                        actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'" target="_blank">Download</a>\n';
                         actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
                         actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';

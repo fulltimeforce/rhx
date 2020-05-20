@@ -24,20 +24,6 @@ class RecruiterlogController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    private $drive;
-    private $client;
-
-    public function __construct(Google_Client $_client)
-    {
-        
-        $this->middleware(function ($request, $next) use ($_client) {
-            $user = User::find(5);
-            $_client->refreshToken( $user->access_token );
-            $this->drive = new Google_Service_Drive($_client);
-            $this->client = $_client;
-            return $next($request);
-        });
-    }
 
     public function index( Request $request ){
         
@@ -275,37 +261,21 @@ class RecruiterlogController extends Controller
             $newNameFile = $destinationPath."/" . $_fileName;
             
             
-            $file->move( $destinationPath, $newNameFile );
-
-            $fileMetadata = new \Google_Service_Drive_DriveFile([
-                'name' => $_fileName,
-                // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-            ]);
+            // $file->move( $destinationPath, $newNameFile );
+            $path = $request->file("file")->store("audio" , "s3");
             
-            // $content = gettype($file) === 'object' ?  \File::get($file) : Storage::get($file);
-            // $mimeType = gettype($file) === 'object' ? \File::mimeType($file) : Storage::mimeType($file);
+            $path_s3 = Storage::disk("s3")->url($path);
 
-            $content = file_get_contents( $newNameFile );
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mimeType = finfo_file( $finfo , $newNameFile );
+            Storage::disk("s3")->put($path , file_get_contents( $request->file("file") ) , 'public' );
 
-            $_file = $this->drive->files->create($fileMetadata, [
-                'data' => $content,
-                'mimeType' => $mimeType,
-                'uploadType' => 'media',
-                'fields' => 'id'
-            ]);
-
-            unlink( $newNameFile );
-
-            $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/preview";
+            Storage::delete( $path );
 
             Recruiterlog::where('id' , $log_id)->update(
-                array( $type."_audio" => $link_drive )
+                array( $type."_audio" => $path_s3 )
             );
 
             return array(
-                "file" => $link_drive,
+                "file" => $path_s3,
             );
         }
         

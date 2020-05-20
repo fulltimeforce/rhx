@@ -28,21 +28,6 @@ class ExpertController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $client;
-    private $drive;
-
-    // public function __construct(Google_Client $client)
-    // {
-    //     if( Auth::check() ){
-    //         $this->middleware(function ($request, $next) use ($client) {
-    //             $client->refreshToken(Auth::user()->access_token);
-    //             $this->drive = new Google_Service_Drive($client);
-    //             return $next($request);
-    //         });
-    //     }
-        
-    // }
-
     public function index( Request $request )
     {
         
@@ -218,33 +203,16 @@ class ExpertController extends Controller
                 $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $newNameFile = $destinationPath."/" . $_fileName;
                 
-                $link_local = "https://workat.fulltimeforce.com/";
-                $input["file_path"] = $link_local . $newNameFile;
-                // $mimeType = $file->getMimeType();
-                $file->move( $destinationPath, $newNameFile );
-                if( Auth::check() ){
-                    
-                    $fileMetadata = new \Google_Service_Drive_DriveFile([
-                        'name' => $_fileName,
-                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-                    ]);
+                $path = $request->file("file_cv")->store("cv" , "s3");
+            
+                $path_s3 = Storage::disk("s3")->url($path);
 
-                    $content = file_get_contents( $newNameFile );
-                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                    $mimeType = finfo_file( $finfo , $newNameFile );
-                    
-                    $_file = $this->drive->files->create($fileMetadata, [
-                        'data' => $content,
-                        'mimeType' => $mimeType,
-                        'uploadType' => 'multipart',
-                        'fields' => 'id'
-                    ]);
+                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_cv") ) , 'public' );
 
-                    $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/view?usp=sharing";
-                    $input["file_path"] = $link_drive;
+                Storage::delete( $path );
 
-                    unlink( $newNameFile );
-                }
+                $input["file_path"] = $path_s3;
+                
             }
 
             if( Auth::check() ){
@@ -402,36 +370,17 @@ class ExpertController extends Controller
 
                 $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $newNameFile = $destinationPath."/" . $_fileName;
-
-                $link_local = "https://workat.fulltimeforce.com/";
-                $input["file_path"] = $link_local . $newNameFile;
-
-                $mimeType = $file->getMimeType();
-                $file->move( $destinationPath, $newNameFile );
-
-                if( Auth::check() ){
                     
-                    $fileMetadata = new \Google_Service_Drive_DriveFile([
-                        'name' => $_fileName,
-                        // 'parents' => array( env('GOOGLE_FOLDER_ID') )
-                    ]);
+                $path = $request->file("file_cv_update")->store("cv" , "s3");
+        
+                $path_s3 = Storage::disk("s3")->url($path);
 
-                    $content = file_get_contents( $newNameFile );
-                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                    $mimeType = finfo_file( $finfo , $newNameFile );
+                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_cv_update") ) , 'public' );
 
-                    $_file = $this->drive->files->create($fileMetadata, [
-                        'data' => $content,
-                        'mimeType' => $mimeType,
-                        'uploadType' => 'multipart',
-                        'fields' => 'id'
-                    ]);
+                Storage::delete( $path );
 
-                    $link_drive = "https://drive.google.com/file/d/" . $_file->id . "/view?usp=sharing";
-                    $input["file_path"] = $link_drive;
-
-                    unlink( $newNameFile );
-                }
+                $input["file_path"] = $path_s3;
+                
             
             }
 

@@ -256,8 +256,8 @@ a.badge-primary:focus{
         <div class="modal-body">
             <div class="row">
                 <div class="col">
-                    <iframe src="" width="100%" height="100" id="audio-play" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     
+                    <audio src="" controls autoplay id="audio-play"></audio>
                 </div>
             </div>
         </div>
