@@ -79,7 +79,8 @@
         </div>
         <div class="form-group col-6 col-sm-2">
             <label for="birthday">Fecha de nacimiento</label>
-            <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{ $expert->birthday }}">
+            {!! Form::text('birthday',date('m/d/Y'),['class'=>'form-control date' , 'data-toggle'=> 'datetimepicker', 'data-target'=>'#birthday','id'=>'birthday']) !!}
+            
         </div>
         
     </div>
@@ -106,7 +107,7 @@
             @auth
             {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date','disabled'=>'disabled']) !!}
             @else
-            {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date']) !!}
+            {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date', 'disabled'=>'disabled']) !!}
             @endauth
         </div>
     </div>
