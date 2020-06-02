@@ -306,7 +306,7 @@ textarea.form-control{
             <div class="form-row">
             @foreach($category[1] as $key => $value)
             
-                <div class="col-12 col-md">
+                <div class="col-12 col-md-4">
                     <label for="">{{$value}}</label>
                     <select name="{{$key}}" id="{{$key}}" class="form-control">
                         <option value="unknown">No lo manejo</option>
