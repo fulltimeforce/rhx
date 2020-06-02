@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60" height="60" viewBox="0 0 60 60">
+  <defs>
+    <clipPath id="clip-path">
+      <path id="Trazado_52421" data-name="Trazado 52421" d="M350,185h60v60H350Z" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="Grupo_15199" data-name="Grupo 15199" transform="translate(-350 -185)" clip-path="url(#clip-path)">
+    <path id="Trazado_52414" data-name="Trazado 52414" d="M398.568,233H361.432A7.45,7.45,0,0,1,354,225.541V202.456A7.45,7.45,0,0,1,361.432,195h37.136A7.45,7.45,0,0,1,406,202.456v23.076A7.458,7.458,0,0,1,398.568,233Zm-37.136-33.622a3.08,3.08,0,0,0-3.07,3.081v23.076a3.08,3.08,0,0,0,3.07,3.081h37.136a3.08,3.08,0,0,0,3.07-3.081V202.456a3.08,3.08,0,0,0-3.07-3.081Z" fill="#495665"/>
+    <path id="Trazado_52415" data-name="Trazado 52415" d="M387.646,239H372.354a2.188,2.188,0,0,1,0-4.375h15.292a2.188,2.188,0,0,1,0,4.375Z" fill="#495665"/>
+    <path id="Trazado_52416" data-name="Trazado 52416" d="M396.24,206H362.38v6.46h33.86Z" fill="#f9c22b"/>
+    <path id="Trazado_52417" data-name="Trazado 52417" d="M378.21,223.76H362v-9.04h16.21Zm-15.21-1h14.21v-7.04H363Z" fill="#f9c22b"/>
+    <path id="Trazado_52418" data-name="Trazado 52418" d="M377.357,215.2,362.37,222.38l.433.9,14.986-7.185Z" fill="#f9c22b"/>
+    <path id="Trazado_52419" data-name="Trazado 52419" d="M362.8,215.349l-.433.9,14.989,7.206.433-.9Z" fill="#f9c22b"/>
+    <path id="Trazado_52420" data-name="Trazado 52420" d="M396.11,223.76h-16.2v-9.04h16.21v9.04Zm-15.2-1h14.21v-7.04H380.91Z" fill="#f9c22b"/>
+  </g>
+</svg>

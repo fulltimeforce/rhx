@@ -127,11 +127,16 @@ class ExpertController extends Controller
             
             $expert = $this->getModelFormat();
         }
-
+        $position = (object) array();
+        if( !empty($request->query('positionId')) ){
+            
+            $position = Position::find( $request->query('positionId') );
+        }
+        
         $positionId = !empty($request->query('positionId')) ? $request->query('positionId') : "";
 
         $expert->email_address = $request->query('e') !== "" ? base64_decode( $request->query('e') ) : "";
-        return view('experts.create' )->with('positionId', $positionId )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+        return view('experts.create' )->with('position', $position )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
     }
 
     private function getModelFormat(){
@@ -161,7 +166,7 @@ class ExpertController extends Controller
         $email = $request->input('email');
         $positionId = $request->input('positionId'); 
         
-        if( Expert::where("email_address" , $email)->count() > 0 ){
+        if( Expert::where("email_address" , $email)->count() > 0 && $email != '' ){
             
             $expert = Expert::where("email_address" , $email)->first();
 

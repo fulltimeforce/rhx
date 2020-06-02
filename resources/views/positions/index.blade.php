@@ -10,8 +10,61 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
 
 <style>
-/* The slider */
 
+.section-positions{
+    margin-top: -7rem !important;
+    padding: 0 7rem;
+}
+.section-positions .card-position{
+    padding-top: 13px;
+    padding-bottom: 13px;
+}
+.section-positions .card-position a{
+    color: #000000;
+
+}
+.section-positions .card-position{
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+}
+.card-position .position-icon{
+    vertical-align: top;
+}
+.card-position .position-body h4{
+    color: #000000;
+    font-family: "OpenSans-Bold";
+    margin-bottom: 1.35rem;
+}
+.card-position .position-body p{
+    font-size: 13px;
+    
+}
+.card-position .position-body{
+    width: calc( 100% - 64px );
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+@media (max-width: 992px) {
+    .banner-home{
+        padding: 4rem 5rem 8rem;
+    }
+    .section-positions {
+        margin-top: -5rem !important;
+        padding: 0px 1rem;
+    }
+}
+@media (max-width: 576px) {
+    .banner-home {
+        padding: 3rem 1rem 3rem;
+    }
+    .section-positions {
+        margin-top: -3rem !important;
+        padding: 0px 1rem;
+    }
+}
+/*************** The slider ***********/
 .switch {
   position: relative;
   display: inline-block;
@@ -100,17 +153,16 @@ input:checked + .slider:before {
 @endsection
 
 @section('content')
+    @auth
     <div class="row">
         <div class="col">
             <h1>Careers</h1>
         </div>
         <div class="col">
-            @auth
             <a class="btn btn-secondary float-right" href="{{ route('positions.create') }}">New Position</a>
-            @endauth
         </div>
     </div>
-
+    @endauth
    
     @if ($message = Session::get('success'))
         <div class="alert alert-success">
@@ -119,49 +171,44 @@ input:checked + .slider:before {
     @endif
     <br>
     <div class="row row-cols-1 ">
-    
-    @foreach($positions as $pid => $position)
-    
+    @auth
     <div class="col mb-4">
-        @auth
-
         <table id="table-positions">
         </table>
-
-        @endauth
-        @guest
-        <div class="card">
-            <div class="card-header" data-toggle="collapse" href="#position-{{$position->id}}" role="button" aria-expanded="true" aria-controls="position-{{$position->id}}">
-                <h4>{{$position->name}}</h4>
-            </div>
-            <div class="card-body">
-                <div class="card-text collapse show" id="position-{{$position->id}}">{!! nl2br($position->description) !!}</div>
-            </div>
-            <div class="card-footer">
-                @guest
-                <div class="row">
-                    <div class="offset-sm-8 col-sm-4 offset-4 col-8">
-                        <div class="input-group">
-                            <input type="email" name="email_{{$pid}}"  placeholder="Enter your email to apply" class="form-control d-inline">
-                            <div class="input-group-append">
-                                <a href="#" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn btn-outline-primary float-right btn-apply-expert">Apply!</a> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @else
-                <a href="{{ route('positions.edit', $position->id) }}" class="btn btn-success card-link">Edit</a>
-                <a href="{{ route('positions.experts', $position->id) }}" class="btn btn-info card-link">Show applicants</a>
-                
-                <a href="#" class="btn btn-primary card-link btn-copy-slug" title="Copied" data-toggle="tooltip" data-placement="top"  data-url="{{ $position->slug }}">Copy URL</a>
-                @endguest
-                <!-- btn-position-filter ,  btn-call-filter -->
-            </div>
-        </div>
-        @endguest
     </div>
-    
-    @endforeach
+    @endauth
+    @guest
+
+    <div class="mb-4">
+        <section class="text-center banner-home">
+            <h4>La familia #FULLTIMEFORCE sigue creciendo y nos encontramos en la búsqueda de los mejores talentos</h4>
+            <div class="form-group">
+                <input type="text" id="search-position" placeholder="Buscar puesto" class="form-control">
+                <i class="svg-icon svg-icon-search icons-addon-input"></i>
+            </div>
+        </section>
+    </div>
+    <section class="section-positions">
+        <div class="row">
+        @foreach($positions as $pid => $position)
+        <div class="col-12 col-sm-6 col-lg-4 mb-4">
+            <section class="card card-position ">
+                <a href="#" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn-apply-expert">
+                    <div class="position-icon d-inline-block">
+                        <i class="svg-icon svg-icon-{{$position->icon}}"></i>
+                    </div>
+                    <div class="position-body d-inline-block">
+                        <h4>{{$position->name}}</h4>
+                        <p>Haz <b>Clic Aqui</b> para ver los requeriminetos</p>
+                    </div> 
+                </a>
+            </section>
+        </div>
+        @endforeach
+        </div>
+    </section>
+
+    @endguest
     
     </div>
 @endsection
@@ -179,11 +226,19 @@ input:checked + .slider:before {
         $('[data-toggle="tooltip"]').tooltip({
             trigger : 'click'
         });
+        $("#search-position + i").on("click" , function(){
+            window.history.replaceState({
+                edwin: "Fulltimeforce"
+                }, "Page" , "{{ route('home') }}" + '?'+ $.param(
+                    {   s : $("#search-position").val() , 
+                    }
+                    )
+                );
 
-
+            location.reload();
+        })
         $("#table-positions").bootstrapTable('destroy').bootstrapTable({
 
-            
             columns: [
                 { field: 'name', title: "Position" },
                 { field: 'id', title: "Actions" , width: 400 , formatter: function(value,rowData,index){
@@ -216,12 +271,12 @@ input:checked + .slider:before {
             ev.preventDefault();
             var position = $(this).data("position");
             var positionId = $(this).data("positionid");
-            
-            var email = $("input[name='email_"+position+"']").val();
-            if( !isEmail(email) ){
-                $("input[name='email_"+position+"']").focus();
-                $("input[name='email_"+position+"']").addClass('is-invalid');
-            }else{
+            var email = "";
+            // var email = $("input[name='email_"+position+"']").val();
+            // if( !isEmail(email) ){
+            //     $("input[name='email_"+position+"']").focus();
+            //     $("input[name='email_"+position+"']").addClass('is-invalid');
+            // }else{
                 $("input[name='email_"+position+"']").removeClass('is-invalid');
                 $.ajax({
                     type:'POST',
@@ -237,7 +292,7 @@ input:checked + .slider:before {
 
                     }
                 });
-            }
+            // }
             
         })
 

@@ -7,254 +7,364 @@
 .txt-description {
     white-space: pre-line;
 }
+.section-form{
+    margin-top: -7rem !important;
+    padding: 0 15px;
+    background-color: #FFFFFF;
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 15px; 
+}
+input.form-control,
+input.custom-file-input,
+select.form-control,
+textarea.form-control{
+    border: 1px solid #39A8DF;
+}
+.btn.btn-outline-secondary.dropdown-toggle{
+    border: 1px solid #39A8DF;
+    background-color: #39A8DF;
+    color: #FFFFFF;
+}
+.nav-tabs-technologies{
+    overflow-x: scroll;
+    flex-wrap: initial;
+    overflow-y: hidden;
+}
+.nav-tabs-technologies li a.nav-link{
+    white-space: nowrap;
+    border: 0;
+    border-radius: 0;
+    color: #FFF;
+    font-size: 14px;
+    padding: .7rem 0 0.7rem 1.5rem;
+}
+.nav-tabs-technologies li a.nav-link span{
+    border-right: 1px solid rgba(196, 196, 196, 0.17);
+    padding-right: 1.7rem;
+    display: block;
+}
+.nav-tabs-technologies li a.nav-link.active{
+    color: #4E6B8B;
+    background-color: #FFFFFF;
+}
+.nav-tabs-technologies li.nav-item{
+    background: #4E6B8B;
+    
+}
+.tab-pane{
+    padding: 5rem 2rem;
+}
+.icon-position{
+    vertical-align: top;
+}
+.body-position{
+    width: calc( 100% - 64px );
+}
+
+@media (max-width: 992px) {
+    .banner-home{
+        padding: 4rem 5rem 8rem;
+    }
+    
+}
+@media (max-width: 576px) {
+    .banner-home {
+        padding: 2rem 1rem 6rem;
+    }
+    .section-form{
+        margin-top: -3rem !important;
+        margin: 0 10px;
+        width: calc( 100% - 20px );
+    }
+    .tab-pane{
+        padding: 3rem 1rem;
+    }
+}
 </style>
 @endsection
 @section('content')
+
+
 <div class="row">
-    <div class="col-lg-12 mt-5 mb-5">
-        <div class="float-left">
-            @isset($positionName)
-            <h2>Apply to {{ $positionName }}</h2>
-            @endisset
-            @empty($positionName)
-            @auth
-            <h2>New Expert</h2>
-            @endauth
-            @endempty
-            
-        </div>
+
+<div class="mb-4 w-100">
+    <section class="text-center banner-home w-100">
         <div class="float-right">
-            <a class="btn btn-primary" href="{{ url('/') }}"> Back</a>
+            <a class="" href="{{ url('/') }}"> <i class="svg-icon svg-icon-arrow-prev"></i></a>
         </div>
-    </div>
+    </section>
 </div>
 
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-<form action="{{ route('experts.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    <div class="row">
-        <div class="col mb-5">
-            <h3 class="">Información General</h3>
-            @if ($expert->id != '')
-            <span>Actualiza tu información</span> 
-            @endif
-        </div>
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" name="file_cv" id="file_cv" accept="application/msword, application/pdf, .doc, .docx">
-                <label class="custom-file-label" for="file_cv">UPLOAD CV (max 2M)</label>
+<section class="section-form">
+    
+    @if( $position )
+    <div class="row mt-5 mb-5">
+        <div class="col-12">
+            <div class="icon-position d-inline-block">
+                <i class="svg-icon svg-icon-{{$position->icon}}"></i>
+            </div>
+            <div class="body-position d-inline-block">
+                <h2>{{ $position->name }}</h2>
+                @guest
+                <p>Requisitos:</p>
+                <p>{!! nl2br($position->description) !!}</p>
+                @endguest
+                @auth
+                <h2>New Expert</h2>
+                @endauth
             </div>
         </div>
     </div>
-    @isset($signed )
-    <div class="row">
-        <div class="col">
-            <input type="hidden" name="signed" value="{{ $signed }}">
-            <input type="hidden" name="logid" value="{{ $log }}">
+    @endif
+    
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-    </div>
-    @endisset
-    <div class="form-row">
-        <div class="form-group col-12 col-sm-4">
-            <label for="fullname">Nombre completo</label>
-            <input type="text" name="fullname" id="fullname" class="form-control" value="{{ $expert->fullname }}" required> 
+    @endif
+
+    <form action="{{ route('experts.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="row">
+            <div class="col mb-5">
+                <h3 class="">Información General</h3>
+                @if ($expert->id != '')
+                <span>Actualiza tu información</span> 
+                @endif
+            </div>
+            
         </div>
-        <div class="form-group col-12 col-sm-4">
-            <label for="email_address">Email</label>
-            <input type="text" name="email_address" class="form-control" id="email_address" value="{{ $expert->email_address }}" required >
+        @isset($signed )
+        <div class="row">
+            <div class="col">
+                <input type="hidden" name="signed" value="{{ $signed }}">
+                <input type="hidden" name="logid" value="{{ $log }}">
+            </div>
         </div>
-        <div class="form-group col-6 col-sm-2">
-            <label for="identification_number">DNI/CE/Pasaporte</label>
-            <input type="text" name="identification_number" class="form-control" id="identification_number" value="{{ $expert->identification_number }}">
+        @endisset
+        <div class="form-row">
+            <div class="form-group col-12 col-sm-4">
+                <label for="fullname">Nombre completo *</label>
+                <input type="text" name="fullname" id="fullname" class="form-control" value="{{ $expert->fullname }}" required> 
+            </div>
+            <div class="form-group col-12 col-sm-4">
+                <label for="email_address">Email *</label>
+                <input type="text" name="email_address" class="form-control" id="email_address" value="{{ $expert->email_address }}" required >
+            </div>
+            <div class="form-group col-sm-6 col-md-2">
+                <label for="identification_number">DNI/CE/Pasaporte</label>
+                <input type="text" name="identification_number" class="form-control" id="identification_number" value="{{ $expert->identification_number }}">
+            </div>
+            <div class="form-group col-sm-6 col-md-2">
+                <label for="birthday">Fecha de nacimiento</label>
+                {!! Form::text('birthday',date('m/d/Y'),['class'=>'form-control date' , 'data-toggle'=> 'datetimepicker', 'data-target'=>'#birthday','id'=>'birthday']) !!}
+                
+            </div>
+            
         </div>
-        <div class="form-group col-6 col-sm-2">
-            <label for="birthday">Fecha de nacimiento</label>
-            {!! Form::text('birthday',date('m/d/Y'),['class'=>'form-control date' , 'data-toggle'=> 'datetimepicker', 'data-target'=>'#birthday','id'=>'birthday']) !!}
+        <div class="form-row">
+            <div class="form-group col-12 col-sm-4">
+                <label for="education">Universidad/Instituto - Carrera</label>
+                <input type="text" name="education" class="form-control" id="education" value="{{ $expert->education }}">
+            </div>
+            <div class="form-group col-12 col-sm-4">
+                <label for="english_education">¿Donde aprendiste inglés?</label>
+                <select name="english_education" class="form-control" id="english_education" value="{{ $expert->english_education }}">
+                    <option value=""></option> 
+                    <option value="self">Independiente</option> 
+                    <option value="academy">ICPNA, Británico, Idiomas Católica</option>
+                    <option value="university">Universidad o instituto</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="phone">Teléfono/Celular</label>
+                <input type="text" name="phone" class="form-control" id="phone" value="{{ $expert->phone }}" required>
+            </div>
+            @auth
+            {!! Form::hidden('last_info_update',date('m/d/Y'),['class'=>'form-control date','disabled'=>'disabled']) !!}
+            @else
+            {!! Form::hidden('last_info_update',date('m/d/Y'),['class'=>'form-control date', 'disabled'=>'disabled']) !!}
+            @endauth
+        </div>
+        <div class="form-row"> 
+            <div class="form-group col-12 col-sm-4">
+                <label for="address">País - Ciudad</label>
+                <input type="text" name="address" class="form-control" id="address" value="{{ $expert->address }}">
+                
+            </div>
+            <div class="form-group col-12 col-sm-6 col-lg-4">
+                <label for="salary"><b>Expectativa salarial</b></label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">S/</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
+                            <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
+                        </div>
+                    </div>
+                    <input type="hidden" name="type_money" value="sol" id="type_money">
+                    <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
+                </div>
+            </div>
+            <div class="form-group col-12 col-sm-6 col-sm-4 col-lg-4">
+                <label for="availability"><b>Disponibilidad</b></label>
+                {!! Form::text('availability', date('m/d/Y'), ['class'=>'form-control date','id'=>'availability', 'data-toggle'=> 'datetimepicker', 'data-target'=> '#availability']) !!}
+            </div>
             
         </div>
         
-    </div>
-    <div class="form-row">
-        <div class="form-group col-12 col-sm-4">
-            <label for="education">Universidad/Instituto - Carrera</label>
-            <input type="text" name="education" class="form-control" id="education" value="{{ $expert->education }}">
-        </div>
-        <div class="form-group col-12 col-sm-4">
-            <label for="english_education">¿Donde aprendiste inglés?</label>
-            <select name="english_education" class="form-control" id="english_education" value="{{ $expert->english_education }}">
-                <option value=""></option> 
-                <option value="self">Independiente</option> 
-                <option value="academy">ICPNA, Británico, Idiomas Católica</option>
-                <option value="university">Universidad o instituto</option>
-            </select>
-        </div>
-        <div class="form-group col">
-            <label for="phone">Teléfono/Celular</label>
-            <input type="text" name="phone" class="form-control" id="phone" value="{{ $expert->phone }}" required>
-        </div>
-        <div class="form-group col">
-            <label for="last_info_update">Última actualización</label>
-            @auth
-            {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date','disabled'=>'disabled']) !!}
-            @else
-            {!! Form::text('last_info_update',date('m/d/Y'),['class'=>'form-control date', 'disabled'=>'disabled']) !!}
-            @endauth
-        </div>
-    </div>
-    <div class="form-row"> 
-        <div class="form-group col-12 col-sm-4 col-lg-6">
-            <label for="address">País - Ciudad</label>
-            <input type="text" name="address" class="form-control" id="address" value="{{ $expert->address }}">
-            
-        </div>
-        <div class="form-group col-6 col-sm-4 col-lg-3">
-            <label for="salary">Expectativa salarial</label>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">S/</button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
-                        <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
-                    </div>
-                </div>
-                <input type="hidden" name="type_money" value="sol" id="type_money">
-                <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
-            </div>
-        </div>
-        <div class="form-group col-6 col-sm-4 col-lg-3">
-            <label for="availability">Disponibilidad</label>
-            {!! Form::text('availability', date('m/d/Y'), ['class'=>'form-control date','id'=>'availability', 'data-toggle'=> 'datetimepicker', 'data-target'=> '#availability']) !!}
-            
-        </div>
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group col-6 col-sm">
-            <label for="linkedin">Linkedin</label>
-            <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{ $expert->linkedin }}">
-        </div>
-        <div class="form-group col-6 col-sm">
-            <label for="github">Github</label>
-            <input type="text" name="github" class="form-control" id="github" value="{{ $expert->github }}">
-        </div>
-        <div class="form-group col-6 col-sm">
-            <label for="instagram">Instagram</label>
-            <input type="text" name="instagram" class="form-control" id="instagram" value="{{ $expert->instagram }}">
-        </div>
-        <div class="form-group col-6 col-sm">
-            <label for="facebook">Facebook</label>
-            <input type="text" name="facebook" class="form-control" id="facebook" value="{{ $expert->facebook }}">
-        </div>
-        <div class="form-group col-6 col-sm">
-            <label for="twitter">Twitter</label>
-            <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $expert->twitter }}">
-        </div>
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group col-12 col-sm-4">
-            <label for="other_knowledge">¿Qué otros conocimientos tienes?</label>
-            <input type="text" name="other_knowledge" class="form-control" id="other_knowledge" value="{{ $expert->other_knowledge }}">
-        </div>
-        <div class="form-group col-12 col-sm-4">
-            <label for="wish_knowledge">¿Qué te gustaría aprender?</label>
-            <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{ $expert->wish_knowledge }}">
-        </div>
-        <div class="form-group col">
-            <label for="focus">Has tenido mayor experience en:</label>
-            <select name="focus" class="form-control" id="focus" value="{{ $expert->focus }}">
-                <option value=""></option> 
-                <option value="fullstack">Fullstack</option>
-                <option value="backend">Backend</option>
-                <option value="frontend">Frontend</option>
-                <option value="mobile">Mobile</option>
-                <option value="devops">DevOps</option>
-                <option value="game">Games</option>
-            </select>
-        </div>
-    </div>
-    
-    @foreach($technologies as $categoryid => $category)
-        <h3>{{$category[0]}}</h3>
-        <br>
-        @foreach($category[1] as $key => $value)
-        <fieldset class="form-group">
-            <div class="form-row">
-                <legend class="col-form-label col-5 col-md-3 pt-0">{{$value}}</legend>
-                <div class="col-7 col-md-9">
-                    <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}u" value="unknown" {{ ($expert->$key=="unknown")? "checked" : "" }}>
-                        <label class="form-check-label" for="{{$key}}u">No lo manejo</label>
-                    </div>
-                    <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}b" value="basic" {{ ($expert->$key=="basic")? "checked" : "" }}>
-                        <label class="form-check-label" for="{{$key}}b">Básico</label>
-                    </div>
-                    <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}i" value="intermediate" {{ ($expert->$key=="intermediate")? "checked" : "" }}>
-                        <label class="form-check-label" for="{{$key}}i">Intermedio</label>
-                    </div>
-                    <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}a" value="advanced" {{ ($expert->$key=="advanced")? "checked" : "" }}>
-                        <label class="form-check-label" for="{{$key}}a">Avanzado</label>
-                    </div>
+        <div class="form-row mb-4">
+            <div class="col-10">
+                <b>Adjunta tu CV aqui</b>
+                <div class="custom-file mt-2">
+                    <input type="file" class="custom-file-input" name="file_cv" id="file_cv" accept="application/msword, application/pdf, .doc, .docx">
+                    <label class="custom-file-label" for="file_cv">Aun no has cargado ningun archivo (max 2M)</label>
                 </div>
             </div>
-        </fieldset>
+            <div class="col-2 text-center pt-4">
+                <i class="svg-icon svg-icon-small svg-icon-upload"></i>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="col">
+                <p><b>Redes Sociales</b></p>
+                <div class="form-group row">
+                    <label class="col-12 col-md-3" for="linkedin"><i class="svg-icon svg-icon-low svg-icon-linkedin"></i> Linkedin</label>
+                    <div class="col-12 col-md-9">
+                        <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{ $expert->linkedin }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-12 col-md-3" for="github"><i class="svg-icon svg-icon-low svg-icon-github"></i> Github</label>
+                    <div class="col-12 col-md-9">
+                        <input type="text" name="github" class="form-control" id="github" value="{{ $expert->github }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-12 col-md-3" for="twitter"> <i class="svg-icon svg-icon-low svg-icon-twitter"></i>Twitter</label>
+                    <div class="col-12 col-md-9">
+                        <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $expert->twitter }}">
+                    </div>
+                </div>
+
+                <input type="hidden" name="instagram" class="form-control" id="instagram" value="{{ $expert->instagram }}">
+                <input type="hidden" name="facebook" class="form-control" id="facebook" value="{{ $expert->facebook }}">
+            </div>
+        </div>
+        
+        <div class="form-row mb-4">
+            <div class="col-12">
+                <p><b>Conocimientos y Habilidades</b></p>
+            </div>
+            <div class="form-group col-12 col-sm-4">
+                <label for="other_knowledge">¿Qué otros conocimientos tienes?</label>
+                <input type="text" name="other_knowledge" class="form-control" id="other_knowledge" value="{{ $expert->other_knowledge }}">
+            </div>
+            <div class="form-group col-12 col-sm-4">
+                <label for="wish_knowledge">¿Qué te gustaría aprender?</label>
+                <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{ $expert->wish_knowledge }}">
+            </div>
+            <div class="form-group col">
+                <label for="focus">Has tenido mayor experience en:</label>
+                <select name="focus" class="form-control" id="focus" value="{{ $expert->focus }}">
+                    <option value=""></option> 
+                    <option value="fullstack">Fullstack</option>
+                    <option value="backend">Backend</option>
+                    <option value="frontend">Frontend</option>
+                    <option value="mobile">Mobile</option>
+                    <option value="devops">DevOps</option>
+                    <option value="game">Games</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="mb-4">
+            <p><b>Nivel de Conocimientos</b></p>
+        </div>
+        <ul class="nav nav-tabs nav-tabs-technologies" id="myTab" role="tablist">
+        @foreach($technologies as $categoryid => $category)
+            <li class="nav-item">
+                <a class="nav-link {{ $categoryid == 'english'? 'active' : '' }}" id="profile-tab_{{$categoryid}}" data-toggle="tab" href="#content__{{$categoryid}}" role="tab" aria-controls="content__{{$categoryid}}" aria-selected="false"><span>{{$category[0]}}</span></a>
+            </li>
+            @foreach($category[1] as $key => $value)
+            @endforeach
         @endforeach
-    @endforeach
-    
-    <div class="row mb-3">
-        <div class="col-12">
-            <h3>Portfolio</h3>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+        @foreach($technologies as $categoryid => $category)
+            <div class="tab-pane fade {{ $categoryid == 'english'? 'show active' : '' }}" id="content__{{$categoryid}}" role="tabpanel" aria-labelledby="content__{{$categoryid}}-tab"> 
+            <div class="form-row">
+            @foreach($category[1] as $key => $value)
+            
+                <div class="col-12 col-md">
+                    <label for="">{{$value}}</label>
+                    <select name="{{$key}}" id="{{$key}}" class="form-control">
+                        <option value="unknown">No lo manejo</option>
+                        <option value="basic">Básico</option>
+                        <option value="intermediate">Intermedio</option>
+                        <option value="advanced">Avanzado</option>
+                    </select>
+                </div>
+                
+            @endforeach
+            </div>
+            </div>
+        @endforeach
         </div>
-        <div class="col-12">
-            <div class="form-row mb-4">
-                <div class="col-12 col-md-8">
-                    <label for="portfolio-link">Link</label>
-                    <input type="text" class="form-control" id="portfolio-link">
+        <div class="row mb-3">
+            <div class="col-12 mb-3">
+                <b>Portfolio</b>
+            </div>
+            <div class="col-12">
+                <div class="form-row mb-4">
+                    <div class="col-12 col-md-8">
+                        <label for="portfolio-link">Introducir dirección URL</label>
+                        <input type="text" class="form-control" id="portfolio-link">
+                    </div>
+                    <div class="col-12 col-md-8 mb-2">
+                        <label for="portfolio-description">Introducir description del proyecto</label>
+                        <textarea id="portfolio-description" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-transparent" type="button" id="add-portfolio">Add</button>
+                    </div>
                 </div>
-                <div class="col-12 col-md-8 mb-2">
-                    <label for="portfolio-description">Description</label>
-                    <textarea id="portfolio-description" class="form-control" rows="7"></textarea>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-success" type="button" id="add-portfolio">Add</button>
+            </div>
+            <div class="col-12" id="list-portfolio" >
+                <div class="card mb-2" >
+                    <div class="card-header">
+                        <h5 class="card-title d-inline"><a href=":link">:link</a></h5>
+                        <input type="hidden" name="link[]" value=":link">
+                        <button type="button" class="btn btn-danger float-right delete-portfolio"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="card-body">
+                        <p class="txt-description">:description</p>
+                        <input type="hidden" name="description[]" value=":description">
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12" id="list-portfolio" >
-            <div class="card mb-2" >
-                <div class="card-header">
-                    <h5 class="card-title d-inline"><a href=":link">:link</a></h5>
-                    <input type="hidden" name="link[]" value=":link">
-                    <button type="button" class="btn btn-danger float-right delete-portfolio"><i class="fas fa-trash" aria-hidden="true"></i></button>
-                </div>
-                <div class="card-body">
-                    <p class="txt-description">:description</p>
-                    <input type="hidden" name="description[]" value=":description">
-                </div>
-            </div>
+        @if( $position )
+        <input type="hidden" name="position" value="{{$position->id}}">
+        @endif
+        <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-    </div>
     
-    <input type="hidden" name="position" value="{{$positionId}}">
-    
-    <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-   
-</form>
+    </form>
 @endsection
+</section>
+</div>
+
 
 @section('javascript')
     <script type="text/javascript">

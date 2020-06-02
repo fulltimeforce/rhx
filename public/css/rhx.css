@@ -1,3 +1,170 @@
 #logo {
     height: 50px;
 }
+
+@font-face {
+    font-family:"OpenSans-Bold";
+    src: url("../workat/fonts/OpenSans-Bold.ttf") format("truetype");
+}
+@font-face {
+    font-family:"OpenSans-ExtraBold";
+    src: url("../workat/fonts/OpenSans-ExtraBold.ttf") format("truetype");
+}
+@font-face {
+    font-family:"OpenSans-Light";
+    src: url("../workat/fonts/OpenSans-Light.ttf") format("truetype");
+}
+@font-face {
+    font-family:"OpenSans-Regular";
+    src: url("../workat/fonts/OpenSans-Regular.ttf") format("truetype");
+}
+@font-face {
+    font-family:"OpenSans-SemiBold";
+    src: url("../workat/fonts/OpenSans-SemiBold.ttf") format("truetype");
+}
+
+h2{
+    font-family: "OpenSans-Bold";
+}
+h3{
+    font-family: "OpenSans-SemiBold";
+}
+
+/* ============================== STYLES ===================================*/
+body{
+    font-family: "OpenSans-Regular" !important;
+}
+
+
+.navbar-light .navbar-nav .nav-link.nav-login{
+    background: #FFFFFF;
+    border: 1px solid #39A8DF;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    font-size: 13px;
+    padding: 0.5rem 1.5rem;
+    color: #39A8DF;
+}
+
+.banner-home{
+    padding: 5rem 13rem 9rem;
+    background-image: url('../workat/banner_home.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    color: #FFFFFF;
+
+}
+.banner-home h4{
+    margin-bottom: 2rem;
+}
+.banner-home .form-group{
+    padding-left: 2rem;
+    padding-right: 2rem;
+    position: relative;
+}
+.icons-addon-input{
+    width: 23px;
+    height: 23px;
+    position: absolute;
+    right: 3rem;
+    top: 8px;
+}
+.banner-home .form-group input{
+    border-radius: 15px;
+    padding-left: 20px;
+    padding-right: 44px;
+}
+
+.btn.btn-transparent{
+    background-color: #FFFFFF;
+    color: #39A8DF;
+    border: 1px solid #39A8DF;
+}
+
+.svg-icon{
+    background-repeat: no-repeat;
+    width: 58px;
+    height: 100px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.svg-icon-small{
+    width: 46px;
+    height: 46px;
+    background-size: 40px;
+}
+.svg-icon-low{
+    width: 25px;
+    height: 25px;
+    background-size: 25px;
+}
+/******************************************************************/
+.svg-icon-mobile_developer{
+    background-image: url('../workat/iconos/mobile_developer.svg');
+}
+.svg-icon-net_developer{
+    background-image: url('../workat/iconos/net_developer.svg');
+}
+.svg-icon-backend_developer{
+    background-image: url('../workat/iconos/backend_developer.svg');
+}
+.svg-icon-flutter_developer{
+    background-image: url('../workat/iconos/flutter_developer.svg');
+}
+.svg-icon-frontend_developer{
+    background-image: url('../workat/iconos/frontend_developer.svg');
+}
+.svg-icon-fullstack_developer{
+    background-image: url('../workat/iconos/fullstack_developer.svg');
+}
+.svg-icon-mobile_ios_developer{
+    background-image: url('../workat/iconos/mobile_ios_developer.svg');
+}
+.svg-icon-nodejs_developer{
+    background-image: url('../workat/iconos/nodejs_developer.svg');
+}
+.svg-icon-senior_python_developer{
+    background-image: url('../workat/iconos/senior_python_developer.svg');
+}
+.svg-icon-senior_react.js_developer{
+    background-image: url('../workat/iconos/senior_react.js_developer.svg');
+}
+.svg-icon-shopify_developer{
+    background-image: url('../workat/iconos/shopify_developer.svg');
+}
+.svg-icon-unity_3d{
+    background-image: url('../workat/iconos/unity_3d.svg');
+}
+.svg-icon-wordpress_developer{
+    background-image: url('../workat/iconos/wordpress_developer.svg');
+}
+/******************************************************************/
+.svg-icon-search{
+    background-image: url('../workat/iconos_svg_general/buscar.svg');
+}
+
+.svg-icon-arrow-next{
+    width: 46px;
+    height: 46px;
+    background-image: url('../workat/flechas/flecha-next.svg');
+    background-size: 40px;
+}
+.svg-icon-arrow-prev{
+    width: 46px;
+    height: 46px;
+    background-image: url('../workat/flechas/flecha-prev.svg');
+    background-size: 40px;
+}
+.svg-icon-upload{
+    background-image: url('../workat/iconos/upload_file.svg');
+}
+.svg-icon-twitter{
+    background-image: url('../workat/iconos_svg_general/Twitter.svg');
+}
+.svg-icon-github{
+    background-image: url('../workat/iconos_svg_general/Github.svg');
+}
+.svg-icon-linkedin{
+    background-image: url('../workat/iconos_svg_general/Linkedin.svg');
+}

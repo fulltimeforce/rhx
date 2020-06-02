@@ -19,13 +19,16 @@ class PositionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
         //
-        
-        $positions = Position::where( function($q){
+        $query = $request->query();
+        $positions = Position::where( function($q) use ($query){
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');
+            }
+            if( isset($query['s']) ){
+                $q->where('name' , 'LIKE', '%'.$query['s'].'%');
             }
         } );
 
@@ -38,7 +41,7 @@ class PositionController extends Controller
 
     public function listpositions( Request $request ){
 
-        $query = $request->query();
+        
 
         $positions = Position::where( function($q){
             if( !Auth::check() ){
