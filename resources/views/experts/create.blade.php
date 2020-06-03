@@ -350,7 +350,7 @@ textarea.form-control{
         </div>
         <div class="row mb-3">
             <div class="col-12 mb-3">
-                <b>Portfolio</b>
+                <b>Portafolio</b>
             </div>
             <div class="col-12">
                 <div class="form-row mb-4">
