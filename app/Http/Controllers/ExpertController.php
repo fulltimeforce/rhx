@@ -495,7 +495,7 @@ class ExpertController extends Controller
         $thewholequery = null; 
         foreach($basic as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['resume'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
                     $query->where($techid,'basic')->orWhere($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }else{
@@ -507,7 +507,7 @@ class ExpertController extends Controller
         }   
         foreach($intermediate as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['resume'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
                     $query->where($techid,'intermediate')->orWhere($techid,'advanced');  
                 });
             }else{
@@ -519,7 +519,7 @@ class ExpertController extends Controller
         }
         foreach($advanced as $techid){
             if(empty($thewholequery)) {
-                $thewholequery = Expert::with(['resume'])->where(function($query) use($techid){
+                $thewholequery = Expert::with(['logs'])->where(function($query) use($techid){
                     $query->where($techid,'advanced');  
                 });
             }else{
@@ -530,7 +530,7 @@ class ExpertController extends Controller
 
         }
 
-        $experts = Expert::with(['resume'])->latest();
+        $experts = Expert::with(['logs'])->latest();
         if(!empty($thewholequery)) $experts = $thewholequery;
 
         // return view('experts.index')->with('experts',$experts)

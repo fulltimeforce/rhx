@@ -69,9 +69,9 @@
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs2') }}</a>
                             </li> -->
                             @endif
-                            </li><li class="nav-item">
+                            <!-- </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('expert.portfolio.resume') }}">{{ __('Resume') }}</a>
-                            </li>
+                            </li> -->
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>

@@ -213,6 +213,27 @@ td.frozencell{
     <!--  
         /*========================================== MODALS ==========================================*/
     -->
+
+    <div class="modal fade" id="audiosModal" tabindex="-1" role="dialog" aria-labelledby="audiosModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="audiosModalLabel">Audios</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col" id="list-audios"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
     <!--  
         /*========================================== POSITONS BY EXPERT ==========================================*/
     -->
@@ -350,6 +371,9 @@ td.frozencell{
 
         var search_name = "{{ $name }}";
 
+        var audios_filter = [];
+        var audios_evaluate = [];
+
         $("#search-column-name").val( search_name );
 
         function ajax_experts( basic , intermediate , advanced , _search_name , page){
@@ -403,10 +427,32 @@ td.frozencell{
                         actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
                         actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
-                        if( rowData.resume == null){
-                            actions += '<span class="badge badge-secondary" >Resume</span>\n';
-                        }else{
-                            actions += '<span class="badge badge-success" >Resume</span>\n';
+                        // if( rowData.resume == null){
+                        //     actions += '<span class="badge badge-secondary" >Resume</span>\n';
+                        // }else{
+                        //     actions += '<span class="badge badge-success" >Resume</span>\n';
+                        // }
+                        var audios_f_count = 0; 
+                        var audios_e_count = 0; 
+                        if( rowData.logs.length > 0 ){
+                            for (let i = 0; i < rowData.logs.length; i++) {
+                                
+                                if( rowData.logs[i].filter_audio != null ){
+                                    audios_filter.push( { expert_id: rowData.id , audio : rowData.logs[i].filter_audio } );
+                                    audios_f_count++;
+                                }
+                                if( rowData.logs[i].evaluate_audio != null ){
+                                    audios_evaluate.push( { expert_id: rowData.id , audio : rowData.logs[i].evaluate_audio } );
+                                    audios_e_count++; 
+                                }
+                                
+                            }
+                        }
+                        if( audios_f_count > 0){
+                            actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" data-audio="filter" href="#">Filter Audio</a>';
+                        }
+                        if( audios_e_count > 0){
+                            actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" data-audio="evaluate" href="#">Evaluate Audio</a>';
                         }
                         
                         actions = actions.replace(/:id/gi , rowData.id);
@@ -532,6 +578,28 @@ td.frozencell{
             });
 
         }
+
+        $('table').on('click', '.btn-list-audio', function(ev){
+            ev.preventDefault();
+            var expert_id = $(this).data("id");
+            var type_audio = $(this).data("audio");
+            $("#list-audios").html('');
+            var html='';
+            var list_audios = type_audio == 'filter' ? audios_filter : audios_evaluate;
+
+            list_audios = list_audios.filter( f => f.expert_id == expert_id );
+            console.log(list_audios);
+            var html = '';
+            for (let index = 0; index < list_audios.length; index++) {
+                html += '<audio src="'+list_audios[index].audio+'" controls></audio><br>';
+            }
+
+            $("#list-audios").html(html);
+            $("#audiosModal").modal();
+        })
+        $('#audiosModal').on('hidden.bs.modal', function (e) {
+            $("#list-audios").html('');
+        })
 
         function card_interviews( _interview ){
             var html = '';

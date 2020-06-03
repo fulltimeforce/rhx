@@ -313,7 +313,7 @@ class Expert extends Model
     }
 
     public function logs(){
-        return $this->hasMany('App\Expertlog' , 'expert_id' , 'id');
+        return $this->belongsToMany('App\Recruiterlog' , 'expert_log' , 'expert_id' , 'log_id');
     }
 
     public function resume(){
