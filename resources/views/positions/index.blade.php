@@ -199,7 +199,7 @@ input:checked + .slider:before {
                     </div>
                     <div class="position-body d-inline-block">
                         <h4>{{$position->name}}</h4>
-                        <p>Haz <b>Clic Aqui</b> para ver los requeriminetos</p>
+                        <p>Haz <b>Click Aquí</b> para ver los requeriminetos</p>
                     </div> 
                 </a>
             </section>
