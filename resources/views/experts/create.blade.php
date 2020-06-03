@@ -18,7 +18,7 @@
     border-radius: 15px; 
 }
 input.form-control,
-input.custom-file-input,
+input.custom-file-input + label,
 select.form-control,
 textarea.form-control{
     border: 1px solid #39A8DF;
@@ -28,10 +28,9 @@ textarea.form-control{
     background-color: #39A8DF;
     color: #FFFFFF;
 }
-.nav-tabs-technologies{
-    /* overflow-x: scroll;
-    flex-wrap: initial;
-    overflow-y: hidden; */
+
+.nav-tabs-technologies li{
+    width: 14.28%;
 }
 .nav-tabs-technologies li a.nav-link{
     white-space: nowrap;
@@ -39,11 +38,12 @@ textarea.form-control{
     border-radius: 0;
     color: #FFF;
     font-size: 14px;
-    padding: .7rem 0 0.7rem 1.5rem;
+    padding: .7rem 0 0.7rem 0;
+    text-align: center;
+    
 }
 .nav-tabs-technologies li a.nav-link span{
     border-right: 1px solid rgba(196, 196, 196, 0.17);
-    padding-right: 1.7rem;
     display: block;
 }
 .nav-tabs-technologies li a.nav-link.active{
@@ -79,7 +79,9 @@ textarea.form-control{
     .banner-home{
         padding: 4rem 5rem 8rem;
     }
-    
+    .nav-tabs-technologies li{
+        width: 33.33%;
+    }
 }
 @media (max-width: 576px) {
     .banner-home {
@@ -92,6 +94,19 @@ textarea.form-control{
     }
     .tab-pane{
         padding: 1rem 1rem 3rem;
+    }
+    .nav-tabs-technologies{
+        overflow-x: scroll;
+        flex-wrap: initial;
+        overflow-y: hidden;
+    }
+    .nav-tabs-technologies li{
+        width: auto;
+        
+    }
+    .nav-tabs-technologies li a.nav-link{
+        padding-right: 1rem;
+        padding-left: 1rem;
     }
 }
 </style>
