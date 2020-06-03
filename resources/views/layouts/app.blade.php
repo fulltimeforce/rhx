@@ -87,7 +87,7 @@
 
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link nav-login" href="{{ route('login.google') }}">{{ __('Login') }}</a>
+                                <a class="nav-link nav-login" href="{{ route('login.google') }}">{{ __('Iniciar sesión') }}</a>
                             </li>
 
 

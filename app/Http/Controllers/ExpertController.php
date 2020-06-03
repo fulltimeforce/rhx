@@ -8,6 +8,8 @@ use App\Portfolio;
 use App\Log;
 use App\Interview;
 use App\Portfolioexpert;
+use App\Recruiterlog;
+use App\Expertlog;
 use Exception;
 use Google_Client;
 use Google_Service_Drive;
@@ -186,7 +188,7 @@ class ExpertController extends Controller
             'phone'             => 'required|numeric',
             'birthday'          => 'date_format:'.config('app.date_format_php'),
             'last_info_update'  => 'date_format:'.config('app.date_format_php'),
-            'availability'      => 'date_format:'.config('app.date_format_php'),
+            // 'availability'      => 'date_format:'.config('app.date_format_php'),
             // 'email_address' => 'required|email:rfc,dns'
         ]);
         
@@ -265,7 +267,7 @@ class ExpertController extends Controller
                 unset( $input["file_cv"] );
                 
                 if( isset($input['last_info_update']) ) $input['last_info_update'] = date("Y-m-d H:i:s" , strtotime($input['last_info_update']));
-                if( isset($input['availability']) ) $input['availability'] = date("Y-m-d H:i:s" , strtotime($input['availability']));
+                // if( isset($input['availability']) ) $input['availability'] = date("Y-m-d H:i:s" , strtotime($input['availability']));
                 if( isset($input['birthday']) ) $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));
                
                 Expert::where("email_address" , $input['email_address'])->update($input);
@@ -370,7 +372,7 @@ class ExpertController extends Controller
             'phone'             => 'required|numeric',
             'birthday'          => 'date_format:'.config('app.date_format_php'),
             'last_info_update'  => 'date_format:'.config('app.date_format_php'),
-            'availability'      => 'date_format:'.config('app.date_format_php'),
+            // 'availability'      => 'date_format:'.config('app.date_format_php'),
             // 'email_address' => 'required|email:rfc,dns'
         ]);
         
@@ -858,6 +860,39 @@ class ExpertController extends Controller
     public function deleteResume( Request $request ){
         $input = $request->all();
         Portfolioexpert::where( 'id' , $input['id'] )->delete();
+    }
+
+    public function listaudios( Request $request ){
+        $input = $request->all();
+
+        $logs = Expertlog::with('log')->where('expert_id' , $input['id'])->get();
+        $array = array();
+        foreach ($logs as $key => $log) {
+            $position = null;
+            if( $log->log->position_id != null && $log->log->position_id != '' ){
+
+                $position = Position::find( $log->log->position_id );
+                
+            }
+            if( $log->log->filter_audio != null ){
+                $array[] = (object) array(
+                    "expert_id" => $input['id'],
+                    "position_name" => $position != null ? $position->name : "None",
+                    "type" => "Filter",
+                    "audio" => $log->log->filter_audio
+                ); 
+            }
+            if( $log->log->evaluate_audio != null ){
+                $array[] = (object) array(
+                    "expert_id" => $input['id'],
+                    "position_name" => $position != null ? $position->name : "None",
+                    "type" => "Evaluate",
+                    "audio" => $log->log->evaluate_audio
+                ); 
+            }
+        }
+
+        return $array;
     }
 
     private function parsePorjects( $_array ){

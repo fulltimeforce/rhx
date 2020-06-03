@@ -284,17 +284,17 @@ class Expert extends Model
         return Carbon::parse($value)->format(config('app.date_format'));
     }
     
-    public function setAvailabilityAttribute($value)
-    {
-        if(!empty($value))
-            $this->attributes['availability'] = Carbon::createFromFormat(config('app.date_format'), $value)->format('Y-m-d');
+    // public function setAvailabilityAttribute($value)
+    // {
+    //     if(!empty($value))
+    //         $this->attributes['availability'] = Carbon::createFromFormat(config('app.date_format'), $value)->format('Y-m-d');
         
-    }
+    // }
 
-    public function getAvailabilityAttribute($value)
-    {
-        return Carbon::parse($value)->format(config('app.date_format'));
-    }
+    // public function getAvailabilityAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format(config('app.date_format'));
+    // }
 
     public function setBirthdayAttribute($value)
     {
@@ -313,6 +313,7 @@ class Expert extends Model
     }
 
     public function logs(){
+        
         return $this->belongsToMany('App\Recruiterlog' , 'expert_log' , 'expert_id' , 'log_id');
     }
 

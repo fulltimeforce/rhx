@@ -147,4 +147,4 @@ Auth::routes(['register' => false]);
 Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
 Route::get('/expert/{slug}','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
 
-
+Route::post('/expert/audioslog','ExpertController@listaudios')->name('expert.audioslog');

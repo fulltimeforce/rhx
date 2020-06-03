@@ -137,7 +137,14 @@
             </div>
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="availability">Disponibilidad</label>
-                <input type="text" name="availability" class="form-control date" id="availability" data-toggle="datetimepicker" data-target="#availability" value="{{$expert->availability}}">
+                <select name="availability" id="availability" class="form-control">
+                    <option value="Inmediata"   {{ $expert->availability == 'Inmediata' ? 'checked' : '' }}>Inmediata</option>
+                    <option value="1 semana"    {{ $expert->availability == '1 semana' ? 'checked' : '' }}>1 semana</option>
+                    <option value="2 semanas"   {{ $expert->availability == '2 semanas' ? 'checked' : '' }}>2 semanas</option>
+                    <option value="3 semanas"   {{ $expert->availability == '3 semanas' ? 'checked' : '' }}>3 semanas</option>
+                    <option value="1 mes o más" {{ $expert->availability == '1 mes o más' ? 'checked' : '' }}>1 mes o más</option>
+                </select>
+                
             </div>
         </div>
         <div class="form-row">

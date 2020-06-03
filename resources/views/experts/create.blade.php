@@ -29,9 +29,9 @@ textarea.form-control{
     color: #FFFFFF;
 }
 .nav-tabs-technologies{
-    overflow-x: scroll;
+    /* overflow-x: scroll;
     flex-wrap: initial;
-    overflow-y: hidden;
+    overflow-y: hidden; */
 }
 .nav-tabs-technologies li a.nav-link{
     white-space: nowrap;
@@ -55,7 +55,7 @@ textarea.form-control{
     
 }
 .tab-pane{
-    padding: 5rem 2rem;
+    padding: 2rem 2rem 5rem;
 }
 .icon-position{
     vertical-align: top;
@@ -63,7 +63,18 @@ textarea.form-control{
 .body-position{
     width: calc( 100% - 64px );
 }
-
+.selection-tech-options{
+    color: #000000;
+    font-size: 13px;
+}
+.selection-tech-options a{
+    padding: 0 .65rem;
+    color: #000000;
+    text-decoration: none;
+}
+.selection-tech-options a:hover{
+    font-weight: 600;
+}
 @media (max-width: 992px) {
     .banner-home{
         padding: 4rem 5rem 8rem;
@@ -80,7 +91,7 @@ textarea.form-control{
         width: calc( 100% - 20px );
     }
     .tab-pane{
-        padding: 3rem 1rem;
+        padding: 1rem 1rem 3rem;
     }
 }
 </style>
@@ -156,7 +167,7 @@ textarea.form-control{
                 <input type="text" name="fullname" id="fullname" class="form-control" value="{{ $expert->fullname }}" required> 
             </div>
             <div class="form-group col-12 col-sm-4">
-                <label for="email_address">Email *</label>
+                <label for="email_address">Correo electrónico *</label>
                 <input type="text" name="email_address" class="form-control" id="email_address" value="{{ $expert->email_address }}" required >
             </div>
             <div class="form-group col-sm-6 col-md-2">
@@ -216,17 +227,24 @@ textarea.form-control{
             </div>
             <div class="form-group col-12 col-sm-6 col-sm-4 col-lg-4">
                 <label for="availability"><b>Disponibilidad</b></label>
-                {!! Form::text('availability', date('m/d/Y'), ['class'=>'form-control date','id'=>'availability', 'data-toggle'=> 'datetimepicker', 'data-target'=> '#availability']) !!}
+                <select name="availability" id="availability" class="form-control">
+                    <option value="Inmediata">Inmediata</option>
+                    <option value="1 semana">1 semana</option>
+                    <option value="2 semanas">2 semanas</option>
+                    <option value="3 semanas">3 semanas</option>
+                    <option value="1 mes o más">1 mes o más</option>
+                </select>
+                
             </div>
             
         </div>
         
         <div class="form-row mb-4">
             <div class="col-10">
-                <b>Adjunta tu CV aqui</b>
+                <b>Adjunta tu CV aquí</b>
                 <div class="custom-file mt-2">
                     <input type="file" class="custom-file-input" name="file_cv" id="file_cv" accept="application/msword, application/pdf, .doc, .docx">
-                    <label class="custom-file-label" for="file_cv">Aun no has cargado ningun archivo (max 2M)</label>
+                    <label class="custom-file-label" for="file_cv">Aún no has cargado ningún archivo (max 2M)</label>
                 </div>
             </div>
             <div class="col-2 text-center pt-4">
@@ -250,7 +268,7 @@ textarea.form-control{
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-12 col-md-3" for="twitter"> <i class="svg-icon svg-icon-low svg-icon-twitter"></i>Twitter</label>
+                    <label class="col-12 col-md-3" for="twitter"> <i class="svg-icon svg-icon-low svg-icon-twitter"></i> Twitter</label>
                     <div class="col-12 col-md-9">
                         <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $expert->twitter }}">
                     </div>
@@ -303,12 +321,21 @@ textarea.form-control{
         <div class="tab-content" id="myTabContent">
         @foreach($technologies as $categoryid => $category)
             <div class="tab-pane fade {{ $categoryid == 'english'? 'show active' : '' }}" id="content__{{$categoryid}}" role="tabpanel" aria-labelledby="content__{{$categoryid}}-tab"> 
+            <div class="row mb-4">
+                <div class="col text-right selection-tech-options">
+                    <span><b>Todas:</b></span>
+                    <a href="#" class="select-all" data-val="unknown" data-cat="{{$categoryid}}">No lo manejo</a>
+                    <a href="#" class="select-all" data-val="basic" data-cat="{{$categoryid}}">Básico</a>
+                    <a href="#" class="select-all" data-val="intermediate" data-cat="{{$categoryid}}">Intermedio</a>
+                    <a href="#" class="select-all" data-val="advanced" data-cat="{{$categoryid}}">Avanzado</a>
+                </div>
+            </div>
             <div class="form-row">
             @foreach($category[1] as $key => $value)
             
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4 mb-3">
                     <label for="">{{$value}}</label>
-                    <select name="{{$key}}" id="{{$key}}" class="form-control">
+                    <select name="{{$key}}" id="{{$key}}" class="form-control selection-tech" data-cat="{{$categoryid}}">
                         <option value="unknown">No lo manejo</option>
                         <option value="basic">Básico</option>
                         <option value="intermediate">Intermedio</option>
@@ -327,16 +354,16 @@ textarea.form-control{
             </div>
             <div class="col-12">
                 <div class="form-row mb-4">
-                    <div class="col-12 col-md-8">
+                    <div class="col-12 col-md-8 mb-3">
                         <label for="portfolio-link">Introducir dirección URL</label>
                         <input type="text" class="form-control" id="portfolio-link">
                     </div>
                     <div class="col-12 col-md-8 mb-2">
-                        <label for="portfolio-description">Introducir description del proyecto</label>
+                        <label for="portfolio-description">Introducir descripción del proyecto</label>
                         <textarea id="portfolio-description" class="form-control" rows="5"></textarea>
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-transparent" type="button" id="add-portfolio">Add</button>
+                        <button class="btn btn-transparent" type="button" id="add-portfolio">Agregar</button>
                     </div>
                 </div>
             </div>
@@ -357,7 +384,7 @@ textarea.form-control{
         @if( $position )
         <input type="hidden" name="position" value="{{$position->id}}">
         @endif
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     
     </form>
@@ -402,6 +429,13 @@ textarea.form-control{
                 var label = $(this).html();
                 $(this).parent().parent().find('button').html(label);
                 $("#type_money").val(type);
+            })
+
+            $('.select-all').on('click', function(ev){
+                ev.preventDefault();
+                var val = $(this).data('val');
+                var cat = $(this).data('cat');
+                $(".selection-tech[ data-cat='"+cat+"']").val(val);
             })
         });
     </script>

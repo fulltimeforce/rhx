@@ -215,8 +215,8 @@ td.frozencell{
     -->
 
     <div class="modal fade" id="audiosModal" tabindex="-1" role="dialog" aria-labelledby="audiosModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content ">
         <div class="modal-header">
             <h5 class="modal-title" id="audiosModalLabel">Audios</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -225,7 +225,16 @@ td.frozencell{
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col" id="list-audios"></div>
+                <div class="col" >
+                    <table id="list-audios" class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Position</th><th>Description</th><th>Audio</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -373,6 +382,7 @@ td.frozencell{
 
         var audios_filter = [];
         var audios_evaluate = [];
+        var audios = [];
 
         $("#search-column-name").val( search_name );
 
@@ -432,29 +442,22 @@ td.frozencell{
                         // }else{
                         //     actions += '<span class="badge badge-success" >Resume</span>\n';
                         // }
-                        var audios_f_count = 0; 
-                        var audios_e_count = 0; 
+                        var audios__count = 0; 
+                         
                         if( rowData.logs.length > 0 ){
                             for (let i = 0; i < rowData.logs.length; i++) {
-                                
                                 if( rowData.logs[i].filter_audio != null ){
-                                    audios_filter.push( { expert_id: rowData.id , audio : rowData.logs[i].filter_audio } );
-                                    audios_f_count++;
+                                    audios__count++;
                                 }
                                 if( rowData.logs[i].evaluate_audio != null ){
-                                    audios_evaluate.push( { expert_id: rowData.id , audio : rowData.logs[i].evaluate_audio } );
-                                    audios_e_count++; 
+                                    audios__count++; 
                                 }
-                                
                             }
                         }
-                        if( audios_f_count > 0){
-                            actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" data-audio="filter" href="#">Filter Audio</a>';
+                        if( audios__count > 0){
+                            actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" href="#">Audio</a>';
                         }
-                        if( audios_e_count > 0){
-                            actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" data-audio="evaluate" href="#">Evaluate Audio</a>';
-                        }
-                        
+
                         actions = actions.replace(/:id/gi , rowData.id);
 
                         return actions;
@@ -582,23 +585,35 @@ td.frozencell{
         $('table').on('click', '.btn-list-audio', function(ev){
             ev.preventDefault();
             var expert_id = $(this).data("id");
-            var type_audio = $(this).data("audio");
-            $("#list-audios").html('');
-            var html='';
-            var list_audios = type_audio == 'filter' ? audios_filter : audios_evaluate;
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("expert.audioslog") }}',
+                data: {id : expert_id },
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(list_audios){
 
-            list_audios = list_audios.filter( f => f.expert_id == expert_id );
-            console.log(list_audios);
-            var html = '';
-            for (let index = 0; index < list_audios.length; index++) {
-                html += '<audio src="'+list_audios[index].audio+'" controls></audio><br>';
-            }
+                    $("#list-audios tbody").html('');
+                    var html='';
 
-            $("#list-audios").html(html);
-            $("#audiosModal").modal();
+                    for (let index = 0; index < list_audios.length; index++) {
+                        html += '<tr>';
+                        html += '<td>'+list_audios[index].position_name+'</td>';
+                        html += '<td>'+list_audios[index].type+'</td>';
+                        html += '<td><audio src="'+list_audios[index].audio+'" controls></audio></td>';
+                        html += '</tr>';
+                    }
+
+                    $("#list-audios tbody").html(html);
+                    $("#audiosModal").modal();
+                }
+            });
+            
         })
         $('#audiosModal').on('hidden.bs.modal', function (e) {
-            $("#list-audios").html('');
+            $("#list-audios tbody").html('');
         })
 
         function card_interviews( _interview ){
