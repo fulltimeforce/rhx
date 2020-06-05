@@ -660,7 +660,7 @@ class ExpertController extends Controller
 
             $expert = $this->getModelFormat();
         
-            return view('experts.create' )->with('positionId', $position->id )->with('positionName' , $position->name )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+            return view('experts.create' )->with('position', $position )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
         }else{
             abort(404);
         }
