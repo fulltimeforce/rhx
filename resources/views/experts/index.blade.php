@@ -197,7 +197,7 @@ main{
     position: relative;
 }
 .buble-audio{
-    position: absolute;
+    position: fixed;
     padding: .7rem;
     z-index: 2;
     background: #FFFFFF;
