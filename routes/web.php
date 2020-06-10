@@ -64,6 +64,8 @@ Route::post('expert/validate','ExpertController@validateEmail')->name('experts.v
 
 Route::get('expert/search','ExpertController@searchbyname')->name('experts.search');
 
+Route::post('expert/selection','ExpertController@selectionExpert')->name('experts.selection');
+
 Route::post('expert/log','ExpertController@log')->name('experts.log');
 
 Route::post('positions/enabled','PositionController@enabled')->name('positions.enabled');
@@ -148,3 +150,7 @@ Route::get('/position/{slug}','ExpertController@isSlug')->name('position.slug');
 Route::get('/expert/{slug}','ExpertController@portfolioPreview')->name('expert.portfolio.preview');
 
 Route::post('/expert/audioslog','ExpertController@listaudios')->name('expert.audioslog');
+
+Route::get('experts.home', function () {
+    return redirect('experts');
+});

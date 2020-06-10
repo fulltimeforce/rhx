@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ExpertController extends Controller
@@ -43,7 +44,9 @@ class ExpertController extends Controller
         $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
         $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
         $name = isset( $query['name'] )? $query['name'] : '';
-
+        $audio = isset( $query['audio'] )? filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) : true;
+        $selection = isset( $query['selection'] )? filter_var($query['selection'] , FILTER_VALIDATE_BOOLEAN) : true;
+        
         $basic = array();
         $intermediate = array();
         $advanced = array();
@@ -58,6 +61,8 @@ class ExpertController extends Controller
         
         return view('experts.index',compact('experts'))
             ->with('search', $search )
+            ->with('audio', $audio )
+            ->with('selection', $selection )
             ->with('name', $name )
             ->with('basic', $basic )
             ->with('intermediate', $intermediate )
@@ -100,15 +105,34 @@ class ExpertController extends Controller
         if( isset( $query['basic'] ) ) $basic = $query['basic'] != ''? explode("," , $query['basic']) : array()  ;
         if( isset( $query['intermediate'] ) ) $intermediate = $query['intermediate'] != ''? explode("," , $query['intermediate']) : array()  ;
         if( isset( $query['advanced'] ) ) $advanced = $query['advanced'] != ''? explode("," , $query['advanced']) : array()  ;
-
+        $experts = null;
+        
         $experts = $this->filter($basic , $intermediate, $advanced);
-        $experts->where('fullname' , 'like' , '%'.$query['name'].'%');
+
+        $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
+
+        if( filter_var($query['selection'] , FILTER_VALIDATE_BOOLEAN)  ){
+            $experts->where('experts.selection' , 1 );
+        }
+
+        if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
+            $experts
+                ->distinct()
+                ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
+                ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
+                ->whereNotNull( 'recruiter_logs.filter_audio' )
+                ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+                ->select('experts.*');
+        }
+        
+        
         $expert =  $experts->paginate( $query['rows'] );
+        $rows = $expert->items();
 
         return json_encode(array(
-            "total" => $expert->total(),
+            "total" => count($rows),
             "totalNotFiltered" => $expert->total(),
-            "rows" => $expert->items()
+            "rows" => $rows
         ));
     }
 
@@ -485,6 +509,19 @@ class ExpertController extends Controller
 
         Expert::where('id' , $id)->delete();
 
+    }
+
+    public function selectionExpert( Request $request){
+        $id = $request->input('expertId');
+        $selection = $request->input('selection');
+
+        Expert::where('id' , $id)->update(array(
+            "selection" => filter_var($selection , FILTER_VALIDATE_BOOLEAN) ? 1 : 0
+        ));
+
+        return response()->json(array(
+            "selection" => $selection
+        ));
     }
 
     private function filter($basic = array() , $intermediate = array() , $advanced = array() )

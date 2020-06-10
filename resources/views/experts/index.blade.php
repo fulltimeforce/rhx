@@ -193,6 +193,41 @@ td.frozencell{
 .btn-group>.badge.badge-primary i.fas:before{
     vertical-align: -webkit-baseline-middle;
 }
+main{
+    position: relative;
+}
+.buble-audio{
+    position: absolute;
+    padding: .7rem;
+    z-index: 2;
+    background: #FFFFFF;
+    right: 15px;
+    bottom: 16px;
+    max-width: 350px;
+    width: 100%;
+    border: 1px solid #000;
+    font-size: 14px;
+}
+.section-audio{
+    position: relative;
+}
+.buble-audio p{
+    margin-bottom: 3px;
+}
+.section-audio .close-audio{
+    position: absolute;
+    right: -12px;
+    top: -25px;
+    background: #FFF;
+    z-index: 4;
+    font-size: 24px;
+    line-height: 1;
+    border-radius: 27px;
+}
+.speed-audio{
+    font-size: 12px;
+    margin-bottom: 5px;
+}
 </style>
 @endsection
 
@@ -214,34 +249,20 @@ td.frozencell{
         /*========================================== MODALS ==========================================*/
     -->
 
-    <div class="modal fade" id="audiosModal" tabindex="-1" role="dialog" aria-labelledby="audiosModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content ">
-        <div class="modal-header">
-            <h5 class="modal-title" id="audiosModalLabel">Audios</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+    <div id="audio-bublle" class="buble-audio" style="display: none;">
+        <div class="section-audio">
+            <button type="button" class="close-audio" >
+                <span aria-hidden="true">&times;</span>
             </button>
+            <table id="list-audios" class="table table-dark">
+                <thead>
+                    <tr>
+                        <th>Audio</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col" >
-                    <table id="list-audios" class="table table-dark">
-                        <thead>
-                            <tr>
-                                <th>Position</th><th>Description</th><th>Audio</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </div>
-    </div>
     </div>
     <!--  
         /*========================================== POSITONS BY EXPERT ==========================================*/
@@ -339,6 +360,10 @@ td.frozencell{
             <p>Result: <span id="count-expert"></span></p>
         </div>
         <div class="col text-right">
+            <input type="checkbox" name="selection" id="selection">
+            <label for="selection">Selecionados</label>
+            <input type="checkbox" name="audio" id="audio">
+            <label for="audio">Con audio</label>
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
             </div>
@@ -383,6 +408,7 @@ td.frozencell{
         var audios_filter = [];
         var audios_evaluate = [];
         var audios = [];
+        var isSearch = false;
 
         $("#search-column-name").val( search_name );
 
@@ -394,7 +420,9 @@ td.frozencell{
                 'basic': basic.join(',') , 
                 'intermediate': intermediate.join(',') ,
                 'advanced' : advanced.join(','),
-                'name' : _search_name
+                'name' : _search_name,
+                'selection' : $("#selection").is(":checked"),
+                'audio': $("#audio").is(":checked")
             };
             $.ajax({
                 type:'GET',
@@ -442,6 +470,8 @@ td.frozencell{
                         // }else{
                         //     actions += '<span class="badge badge-success" >Resume</span>\n';
                         // }
+
+                        
                         var audios__count = 0; 
                          
                         if( rowData.logs.length > 0 ){
@@ -457,6 +487,8 @@ td.frozencell{
                         if( audios__count > 0){
                             actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" href="#">Audio</a>';
                         }
+
+                        actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection ? 'badge-primary':'badge-secondary' )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selecionado</a>';
 
                         actions = actions.replace(/:id/gi , rowData.id);
 
@@ -580,6 +612,33 @@ td.frozencell{
                 
             });
 
+            // ========================================
+            $("table tbody").on('click' , 'a.btn-selection' , function(ev){
+                ev.preventDefault();
+                var expertId = $(this).attr("data-id");
+                var expertSelection = $(this).attr("data-selection");
+                console.log(expertSelection , "expertSelection")
+                var $this = $(this)
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("experts.selection") }}',
+                    data: {expertId : expertId , selection: parseInt(expertSelection) == 0? true : false },
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        $this.removeClass("badge-secondary").removeClass("badge-primary");
+                        if(  data.selection == "true" ){
+                            $this.addClass("badge-primary");
+                        }else{
+                            $this.addClass("badge-secondary");
+                        }
+                        $this.attr("data-selection" , data.selection  == "true" ? 1 : 0)
+                    }
+                });
+            })
+
         }
 
         $('table').on('click', '.btn-list-audio', function(ev){
@@ -599,21 +658,40 @@ td.frozencell{
                     var html='';
 
                     for (let index = 0; index < list_audios.length; index++) {
-                        html += '<tr>';
-                        html += '<td>'+list_audios[index].position_name+'</td>';
-                        html += '<td>'+list_audios[index].type+'</td>';
-                        html += '<td><audio src="'+list_audios[index].audio+'" controls></audio></td>';
+                        html += '<tr data-audio="'+index+'">';
+                        // html += '<td>'+list_audios[index].position_name+'</td>';
+                        // html += '<td>'+list_audios[index].type+'</td>';
+                        html += '<td> <p>'+list_audios[index].position_name+' - '+list_audios[index].type+'</p>';
+                        html += '<a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="2">x2.0</a>'
+                        html += '<audio id="audio-player-'+index+'" src="'+list_audios[index].audio+'" controls></audio></td>';
                         html += '</tr>';
                     }
 
                     $("#list-audios tbody").html(html);
-                    $("#audiosModal").modal();
+                    // $("#audiosModal").modal({
+                    //     backdrop: 'static'
+                    // });
+                    $("#audio-bublle").show("slow")
                 }
             });
             
         })
-        $('#audiosModal').on('hidden.bs.modal', function (e) {
-            $("#list-audios tbody").html('');
+        // $('#audiosModal').on('hidden.bs.modal', function (e) {
+        //     $("#list-audios tbody").html('');
+        // })
+
+        $(".section-audio .close-audio").on('click' , function(){
+            $("#audio-bublle").hide("slow" , function(){
+                $("#list-audios tbody").html('');
+            })
+        })
+
+        $("body").on('click' , 'a.speed-audio' , function(ev){
+            ev.preventDefault();
+            var speed = $(this).data("speed");
+            var index = $(this).parent().parent().data("audio");
+            console.log( parseFloat( speed ) , speed )
+            document.getElementById("audio-player-"+index).playbackRate = parseFloat(speed);
         })
 
         function card_interviews( _interview ){
@@ -722,6 +800,17 @@ td.frozencell{
         });
 
         // ================================================================================
+        $("#audio").prop( 'checked' , false )
+        @if( $audio )
+            
+            $("#audio").prop( 'checked' , true )
+        @endif
+
+        $("#selection").prop( 'checked' , false )
+        @if( $selection )
+            
+            $("#selection").prop( 'checked' , true )
+        @endif
 
         @if( $search )
             var basic = [];
@@ -738,8 +827,9 @@ td.frozencell{
             @endforeach
             
             ajax_experts( basic , intermediate , advanced , search_name , 1);
-            
-            
+        @else
+
+            ajax_experts( [] , [] , [] , '' , 1);
         @endif
 
         $(".search-level").select2({
@@ -824,6 +914,8 @@ td.frozencell{
                         basic: a_basic_level.join(","),
                         intermediate: a_intermediate_level.join(","),
                         advanced: a_advanced_level.join(","),
+                        audio: $("#audio").is(":checked"),
+                        selection : $("#selection").is(":checked"),
                         name: search_name
                     }
                     )
@@ -849,6 +941,8 @@ td.frozencell{
                             basic: a_basic_level.join(","),
                             intermediate: a_intermediate_level.join(","),
                             advanced: a_advanced_level.join(","),
+                            audio: $("#audio").is(":checked"),
+                            selection : $("#selection").is(":checked"),
                             name: search_name
                         }
                         )
