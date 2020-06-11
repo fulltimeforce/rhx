@@ -488,7 +488,9 @@ a.badge-primary:focus{
                         'basic': [] , 
                         'intermediate': [] ,
                         'advanced' : [],
-                        'name' : search_name
+                        'name' : search_name,
+                        'audio': 'false',
+                        'selection': 'false'
                     };
                 }
 
