@@ -361,7 +361,7 @@ main{
         </div>
         <div class="col text-right">
             <input type="hidden" name="selection" id="selection" value="{{ $selection }}">
-            <btn class="btn {{ $selection == 1 ? 'btn-secondary' : ( $selection == 2 ? 'btn-danger' : 'btn-success' ) }}" id="change-selected">Selected</btn>
+            <btn class="btn {{ $selection == 1 ? 'btn-secondary' : ( $selection == 2 ? 'btn-danger' : ( $selection == 3 ? 'btn-warning' : 'btn-success' ) ) }}" id="change-selected">Selected</btn>
             <input type="checkbox" name="audio" id="audio">
             <label for="audio">With audio</label>
             <div class="form-group d-inline-block" style="max-width: 300px;">
@@ -488,7 +488,7 @@ main{
                             actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" href="#">Audio</a>';
                         }
 
-                        actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : 'badge-success' ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
+                        actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
 
                         actions = actions.replace(/:id/gi , rowData.id);
 
@@ -623,7 +623,8 @@ main{
                 switch( parseInt(expertSelection) ){
                     case 1: select = 2;break;
                     case 2: select = 3;break;
-                    case 3: select = 1;break;
+                    case 3: select = 4;break;
+                    case 4: select = 1;break;
                 }
 
                 $.ajax({
@@ -637,12 +638,13 @@ main{
                     success:function(data){
                         $this.removeClass("badge-secondary")
                             .removeClass("badge-danger")
+                            .removeClass("badge-warning")
                             .removeClass("badge-success");
-                        
                         switch( select ){
                             case 1: $this.addClass("badge-secondary");break;
                             case 2: $this.addClass("badge-danger");break;
-                            case 3: $this.addClass("badge-success");break;
+                            case 3: $this.addClass("badge-warning");break;
+                            case 4: $this.addClass("badge-success");break;
                         }
                         $this.attr("data-selection" , select )
                     }
@@ -655,15 +657,18 @@ main{
             switch( parseInt( $("#selection").val() ) ){
                 case 1: $("#selection").val(2);break;
                 case 2: $("#selection").val(3);break;
-                case 3: $("#selection").val(1);break;
+                case 3: $("#selection").val(4);break;
+                case 4: $("#selection").val(1);break;
             }
             $(this).removeClass("btn-secondary")
                             .removeClass("btn-danger")
+                            .removeClass("btn-warning")
                             .removeClass("btn-success");
             switch( parseInt( $("#selection").val() ) ){
                 case 1: $(this).addClass("btn-secondary");break;
                 case 2: $(this).addClass("btn-danger");break;
-                case 3: $(this).addClass("btn-success");break;
+                case 3: $(this).addClass("btn-warning");break;
+                case 4: $(this).addClass("btn-success");break;
             }
 
             search_name = $('#search-column-name').val();
