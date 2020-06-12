@@ -490,7 +490,7 @@ a.badge-primary:focus{
                         'advanced' : [],
                         'name' : search_name,
                         'audio': 'false',
-                        'selection': 'false'
+                        'selection': 1
                     };
                 }
 
