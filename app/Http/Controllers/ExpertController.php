@@ -45,7 +45,7 @@ class ExpertController extends Controller
         $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
         $name = isset( $query['name'] )? $query['name'] : '';
         $audio = isset( $query['audio'] )? filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) : true;
-        $selection = isset( $query['selection'] )? filter_var($query['selection'] , FILTER_VALIDATE_BOOLEAN) : true;
+        $selection = isset( $query['selection'] )? $query['selection'] : 3;
         
         $basic = array();
         $intermediate = array();
@@ -111,8 +111,8 @@ class ExpertController extends Controller
 
         $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
 
-        if( filter_var($query['selection'] , FILTER_VALIDATE_BOOLEAN)  ){
-            $experts->where('experts.selection' , 1 );
+        if( $query['selection'] != 1  ){
+            $experts->where('experts.selection' , intval( $query['selection']  ) );
         }
 
         if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
@@ -516,7 +516,7 @@ class ExpertController extends Controller
         $selection = $request->input('selection');
 
         Expert::where('id' , $id)->update(array(
-            "selection" => filter_var($selection , FILTER_VALIDATE_BOOLEAN) ? 1 : 0
+            "selection" => intval($selection)
         ));
 
         return response()->json(array(

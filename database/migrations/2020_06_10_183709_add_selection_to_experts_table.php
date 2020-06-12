@@ -15,7 +15,8 @@ class AddSelectionToExpertsTable extends Migration
     {
         Schema::table('experts', function (Blueprint $table) {
             //
-            $table->boolean('selection')->after('id')->default(false);
+            $table->integer('selection')->after('id')->default(1);
+            
         });
     }
 
