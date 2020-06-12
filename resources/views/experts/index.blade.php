@@ -665,6 +665,27 @@ main{
                 case 2: $(this).addClass("btn-danger");break;
                 case 3: $(this).addClass("btn-success");break;
             }
+
+            search_name = $('#search-column-name').val();
+            a_basic_level = $(".search-level.basic").val();
+            a_intermediate_level = $(".search-level.intermediate").val();
+            a_advanced_level = $(".search-level.advanced").val(); 
+            window.history.replaceState({
+                edwin: "Fulltimeforce"
+                }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
+                    {   search : true , 
+                        basic: a_basic_level.join(","),
+                        intermediate: a_intermediate_level.join(","),
+                        advanced: a_advanced_level.join(","),
+                        audio: $("#audio").is(":checked"),
+                        selection : $("#selection").val(),
+                        name: search_name
+                    }
+                    )
+                );
+            _page = 1;
+            _count_records = 0;
+            location.reload();
         })
 
         $('table').on('click', '.btn-list-audio', function(ev){
