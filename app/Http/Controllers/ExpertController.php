@@ -45,7 +45,7 @@ class ExpertController extends Controller
         $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
         $name = isset( $query['name'] )? $query['name'] : '';
         $audio = isset( $query['audio'] )? filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) : true;
-        $selection = isset( $query['selection'] )? $query['selection'] : 3;
+        $selection = isset( $query['selection'] )? $query['selection'] : 4;
         
         $basic = array();
         $intermediate = array();
