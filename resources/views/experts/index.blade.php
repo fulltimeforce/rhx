@@ -825,7 +825,9 @@ main{
                             'basic': _text == '' ? a_basic_level.join(',') : '', 
                             'intermediate': _text == '' ? a_intermediate_level.join(',') : '',
                             'advanced' : _text == '' ? a_advanced_level.join(',') : '',
-                            'name' : _text
+                            'name' : _text,
+                            'selection' : $("#selection").val(),
+                            'audio': $("#audio").is(":checked")
                     };
                     $(".lds-ring").show();
                     $.ajax({
