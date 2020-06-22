@@ -435,7 +435,7 @@ main{
                 success:function(data){
 
                     let _data = JSON.parse(data)
-                    _total_records = _data.total;
+                    _total_records = _data.totalNotFiltered;
                     _count_records = _count_records + _data.rows.length;
                     $("#count-expert").html( _count_records );
                     _dataRows = _data.rows;
