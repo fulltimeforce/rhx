@@ -54,7 +54,8 @@ Route::post('/experts/filter', 'ExpertController@filter')->name('experts.filter'
 Route::post('/experts/store', 'ExpertController@store')->name('experts.store');
 Route::post('/experts/deleteExpert', 'ExpertController@deleteExpert')->name('experts.deleteExpert');
 Route::get('expert/technologies','ExpertController@technologies')->name('expert.technologies');
-
+Route::post('expert/fce','ExpertController@getFce')->name('experts.fce');
+Route::post('expert/fce/save','ExpertController@saveFce')->name('experts.fce.save');
 Route::post('positions/experts', 'PositionController@experts')->name('positions.experts.attach');
 Route::get('position/listpositions', 'PositionController@listpositions')->name('positions.listpositions');
 

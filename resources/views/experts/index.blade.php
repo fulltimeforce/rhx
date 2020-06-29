@@ -264,6 +264,67 @@ main{
             </table>
         </div>
     </div>
+
+    <!--  
+        /*========================================== FCE ==========================================*/
+    -->
+    <div class="modal fade" id="fceExpert" tabindex="-1" role="dialog" aria-labelledby="fceExpertLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fceExpertLabel">FCE</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="expert_index">
+                    
+                    <form class="col" id="form_fce">
+                        <input type="hidden" id="expert_id" name="expert_id">
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label for="fce_grammar_vocabulary">Grammar & Vocabulary</label>
+                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_grammar_vocabulary" name="fce_grammar_vocabulary">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="fce_discourse_management">Discourse Management</label>
+                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_discourse_management" name="fce_discourse_management">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="fce_pronunciation">Pronunciation</label>
+                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_pronunciation" name="fce_pronunciation">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="fce_interactive_communication">Interactive Communication</label>
+                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_interactive_communication" name="fce_interactive_communication">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="fce_total">TOTAL</label>
+                                <input type="text" class="form-control" id="fce_total" name="fce_total" readonly>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="fce_overall">Overall level</label>
+                                <input type="text" class="form-control" id="fce_overall" name="fce_overall">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="fce_comments">Comments</label>
+                                <textarea class="form-control" cols="30" rows="10" id="fce_comments" name="fce_comments"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="save-fce" class="btn btn-primary">Save</button>
+            </div>
+            
+        </div>
+    </div>
+    </div>
     <!--  
         /*========================================== POSITONS BY EXPERT ==========================================*/
     -->
@@ -462,7 +523,7 @@ main{
                     formatter : function(value,rowData,index) {
                         var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
                         actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'" target="_blank">Download</a>\n';
-                        actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
+                        // actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
                         actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
                         // if( rowData.resume == null){
@@ -470,7 +531,8 @@ main{
                         // }else{
                         //     actions += '<span class="badge badge-success" >Resume</span>\n';
                         // }
-
+                        
+                        actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
                         
                         var audios__count = 0; 
                          
@@ -506,6 +568,7 @@ main{
                 { field: 'phone', title: "Phone" },
                 { field: 'availability', title: "Availability" },
                 { field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : (rowData.type_money == 'sol' ? 'S/' : '$') + ' ' +value;} },
+                { field: 'fce_overall', title: "Overall text", formatter : function(value,rowData,index) { return rowData.fce_overall == '' ? '-' : '<span title="'+rowData.fce_total+'" >'+rowData.fce_overall+'</span>' } },
                 { field: 'linkedin', title: "Linkedin" },
                 { field: 'github', title: "Github" },
                 { field: 'experience', title: "Experience" },
@@ -650,8 +713,72 @@ main{
                     }
                 });
             })
+            
+            $("table tbody").on('click' , 'a.btn-fce' , function(ev){
+                ev.preventDefault();
+                var expertId = $(this).attr("data-id");
+                var index = $(this).attr("data-index");
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("experts.fce") }}',
+                    data: {expertId : expertId },
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
 
+                        $('#fce_grammar_vocabulary').val(data.fce_grammar_vocabulary)
+                        $('#fce_discourse_management').val(data.fce_discourse_management)
+                        $('#fce_pronunciation').val(data.fce_pronunciation)
+                        $('#fce_interactive_communication').val(data.fce_interactive_communication)
+                        $('#fce_total').val(data.fce_total)
+                        $('#fce_overall').val(data.fce_overall)
+                        $('#fce_comments').val(data.fce_comments)
+                        $('#expert_index').val(index)
+                        $('#expert_id').val(expertId)
+                        $('#fceExpert').modal();
+                    }
+                });
+            })
+
+            $('.total-fce').bind('keyup mouseup'  , function(){
+                console.log("ddd");
+                total = 0
+                $.each( $('.total-fce') , function(i, value){
+                    total += parseFloat($(value).val())
+                });
+                total = total.toFixed(2)
+                $("#fce_total").val(total)
+
+            })
         }
+
+        $("#save-fce").on('click', function(){
+            var expertId = $("#expert_id").val();
+            var index = $("#expert_index").val();
+            var fce_overall = $("#fce_overall").val();
+            var fce_total = $("#fce_total").val();
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("experts.fce.save") }}',
+                data: $('#form_fce').serialize(),
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+
+                    $("#list-experts").bootstrapTable('updateRow', {
+                        index: index,
+                        row: {
+                            fce_overall : fce_overall == '' ? '-' : '<span title="'+fce_total+'" >'+fce_overall+'</span>'
+                        }
+                    });
+                    $("#fceExpert").modal('hide');
+                }
+            });
+        })
 
         $("#change-selected").on('click' , function(ev){
             switch( parseInt( $("#selection").val() ) ){

@@ -932,6 +932,25 @@ class ExpertController extends Controller
         return $array;
     }
 
+    public function getFce( Request $request ){
+        $input = $request->all();
+
+        $fces = Expert::find($input['expertId']);
+    
+        return $fces;
+    }
+
+    public function saveFce( Request $request ){
+        $input = $request->all();
+        $id = $input['expert_id'];
+        unset( $input['expert_id'] );
+        $save = Expert::where( 'id' , $id )->update( 
+            $input
+         );
+    
+        return $save;
+    }
+
     private function parsePorjects( $_array ){
 
         $len = count($_array['project_index']);
