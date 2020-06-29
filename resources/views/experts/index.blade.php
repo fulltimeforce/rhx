@@ -272,7 +272,7 @@ main{
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="fceExpertLabel">FCE</h5>
+                <h5 class="modal-title" id="fceExpertLabel">FCE - <span id="fce_expert_name"></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -737,6 +737,8 @@ main{
                         $('#fce_comments').val(data.fce_comments)
                         $('#expert_index').val(index)
                         $('#expert_id').val(expertId)
+
+                        $("#fce_expert_name").html(data.fullname)
                         $('#fceExpert').modal();
                     }
                 });
