@@ -902,7 +902,7 @@ class ExpertController extends Controller
     public function listaudios( Request $request ){
         $input = $request->all();
 
-        $logs = Expertlog::with('log')->where('expert_id' , $input['id'])->get();
+        $logs = Expertlog::with('log' , 'expert')->where('expert_id' , $input['id'])->get();
         $array = array();
         foreach ($logs as $key => $log) {
             $position = null;

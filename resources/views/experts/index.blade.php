@@ -257,7 +257,7 @@ main{
             <table id="list-audios" class="table table-dark">
                 <thead>
                     <tr>
-                        <th>Audio</th>
+                        <th><span id="audio_expert_name"></span></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -547,7 +547,7 @@ main{
                             }
                         }
                         if( audios__count > 0){
-                            actions += '<a class="badge badge-primary btn-list-audio" data-id="'+rowData.id+'" href="#">Audio</a>';
+                            actions += '<a class="badge badge-primary btn-list-audio" data-name="'+rowData.fullname+'" data-id="'+rowData.id+'" href="#">Audio</a>';
                         }
 
                         actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
@@ -823,6 +823,7 @@ main{
         $('table').on('click', '.btn-list-audio', function(ev){
             ev.preventDefault();
             var expert_id = $(this).data("id");
+            var expert_name = $(this).data("name");
             $.ajax({
                 type: 'POST',
                 url: '{{ route("expert.audioslog") }}',
@@ -835,7 +836,7 @@ main{
 
                     $("#list-audios tbody").html('');
                     var html='';
-
+                    $("#audio_expert_name").html(expert_name);
                     for (let index = 0; index < list_audios.length; index++) {
                         html += '<tr data-audio="'+index+'">';
                         // html += '<td>'+list_audios[index].position_name+'</td>';
