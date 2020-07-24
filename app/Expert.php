@@ -11,7 +11,14 @@ class Expert extends Model
     protected $keyType = 'string';
     //
     protected $fillable = [
-        'id','selection','last_info_update','user_id','user_name','fce_grammar_vocabulary','fce_discourse_management','fce_pronunciation', 'fce_interactive_communication','fce_total','fce_overall','fce_comments',
+        'id','selection','last_info_update','user_id','user_name',
+        //fce
+        'fce_grammar_vocabulary','fce_discourse_management','fce_pronunciation', 'fce_interactive_communication',
+        'fce_total','fce_overall',
+        'fce_grammatical_forms','fce_vocabulary','fce_stretch_of_language','fce_repetition','fce_cohesive_devices',
+        'fce_hesitation','fce_contributions','fce_intonation','fce_phonological_features','fce_intelligible',
+        'fce_interaction','fce_initiative',
+        //
         'email_address','fullname','identification_number','birthday','phone','education','address',
         'github','linkedin','facebook','instagram','twitter','english_education','other_knowledge','wish_knowledge',
         'availability','salary', 'type_money','focus',
