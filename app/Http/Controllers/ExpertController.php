@@ -906,11 +906,14 @@ class ExpertController extends Controller
         $array = array();
         foreach ($logs as $key => $log) {
             $position = null;
-            if( $log->log->position_id != null && $log->log->position_id != '' ){
+            if( isset($log->log->position_id) ){
+                if( $log->log->position_id != null && $log->log->position_id != '' ){
 
-                $position = Position::find( $log->log->position_id );
-                
+                    $position = Position::find( $log->log->position_id );
+                    
+                }
             }
+            
             if( $log->log->filter_audio != null ){
                 $array[] = (object) array(
                     "expert_id" => $input['id'],
@@ -935,20 +938,62 @@ class ExpertController extends Controller
     public function getFce( Request $request ){
         $input = $request->all();
 
+        $logs = Expertlog::with('log' , 'expert')->where('expert_id' , $input['expertId'])->get();
+        $array = array();
+        foreach ($logs as $key => $log) {
+            $position = null;
+            if( isset($log->log->position_id) ){
+                if( $log->log->position_id != null && $log->log->position_id != '' ){
+
+                    $position = Position::find( $log->log->position_id );
+                    
+                }
+            }
+            
+            if( $log->log->filter_audio != null ){
+                $array[] = (object) array(
+                    "expert_id" => $input['expertId'],
+                    "position_name" => $position != null ? $position->name : "None",
+                    "type" => "Filter",
+                    "audio" => $log->log->filter_audio
+                ); 
+            }
+            if( $log->log->evaluate_audio != null ){
+                $array[] = (object) array(
+                    "expert_id" => $input['expertId'],
+                    "position_name" => $position != null ? $position->name : "None",
+                    "type" => "Evaluate",
+                    "audio" => $log->log->evaluate_audio
+                ); 
+            }
+        }
+
         $fces = Expert::find($input['expertId']);
     
-        return $fces;
+        return array(
+            "audios" => $array,
+            "fces"   => $fces
+        );
     }
 
     public function saveFce( Request $request ){
         $input = $request->all();
+
+        $input['grammar_vocabulary'] = ( Expert::getFceValue($input['grammatical_forms']) + Expert::getFceValue($input['vocabulary']) ) / 2;
+        $input['discourse_management'] = ( Expert::getFceValue($input['stretch_language']) + Expert::getFceValue($input['cohesive_devices']) + Expert::getFceValue($input['hesitation']) + Expert::getFceValue($input['organizations_ideas']) ) / 4;
+        $input['pronunciation'] = ( Expert::getFceValue($input['intonation']) + Expert::getFceValue($input['phonological_features']) + Expert::getFceValue($input['intelligible']) ) / 3;
+        $input['interactive_communication'] = Expert::getFceValue($input['interaction']);
+        
+        $input['fce_total'] = ($input['grammar_vocabulary'] + $input['discourse_management'] + $input['pronunciation'] + $input['interactive_communication']) / 4;
+        $input['fce_overall'] = Expert::calculateOveral($input['fce_total']);
+        
         $id = $input['expert_id'];
         unset( $input['expert_id'] );
         $save = Expert::where( 'id' , $id )->update( 
             $input
-         );
+        );
     
-        return $save;
+        return $input;
     }
 
     private function parsePorjects( $_array ){
