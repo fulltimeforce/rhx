@@ -1465,7 +1465,7 @@ main{
         $(window).on('scroll', function (e){
             
             if($(window).scrollTop() + $(window).height() == $(document).height()) {
-                console.log( _count_records , _total_records, _before_rows , _records "##################" );
+                console.log( _count_records , _total_records, _before_rows , _records , "##################" );
                 if( _count_records < _total_records && _before_rows == _records ){
                     _page++;
                     let a_basic_level = $(".search-level.basic").val();
