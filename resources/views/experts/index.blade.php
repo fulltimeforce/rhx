@@ -897,6 +897,8 @@ main{
         var _total_records = 0;
         var _count_records = 0;
 
+        var _before_rows = 0;
+
         var _dataRows = [];
 
         var search_name = "{{ $name }}";
@@ -932,6 +934,7 @@ main{
 
                     let _data = JSON.parse(data)
                     _total_records = _data.totalNotFiltered;
+                    _before_rows = _data.total;
                     _count_records = _count_records + _data.rows.length;
                     $("#count-expert").html( _count_records );
                     _dataRows = _data.rows;
@@ -1462,8 +1465,8 @@ main{
         $(window).on('scroll', function (e){
             
             if($(window).scrollTop() + $(window).height() == $(document).height()) {
-
-                if( _count_records < _total_records ){
+                console.log( _count_records , _total_records, "##################" );
+                if( _count_records < _total_records && _before_rows == _records ){
                     _page++;
                     let a_basic_level = $(".search-level.basic").val();
                     let a_intermediate_level = $(".search-level.intermediate").val();
@@ -1493,6 +1496,7 @@ main{
 
                             console.log(data);
                             let _data = JSON.parse(data);
+                            _before_rows = _data.total;
                             $("#list-experts").bootstrapTable('append', _data.rows );
                             
                             _count_records = _count_records + _data.rows.length;
