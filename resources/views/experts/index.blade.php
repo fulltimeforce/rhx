@@ -1463,8 +1463,8 @@ main{
         });
 
         $(window).on('scroll', function (e){
-            
-            if($(window).scrollTop() + $(window).height() == $(document).height()) {
+            console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
+            if($(window).scrollTop() + $(window).height() >= $(document).height()) {
                 console.log( _count_records , _total_records, _before_rows , _records , "##################" );
                 if( _count_records < _total_records && _before_rows == _records ){
                     _page++;
