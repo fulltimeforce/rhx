@@ -935,6 +935,52 @@ class ExpertController extends Controller
         return $array;
     }
 
+    public function listFce( Request $request ){
+
+        if(!Auth::check()) return redirect('login');
+        
+        $query = $request->query();
+
+        
+        $name = isset( $query['name'] )? $query['name'] : '';
+
+        return view('fce.index')
+            ->with('name', $name );
+    }
+
+    public function listfcebootstratp( Request $request ){
+        
+        $query = $request->query();
+
+        $experts = null;
+        
+        $experts = $this->filter(array() , array(), array());
+
+        $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
+
+        $experts->where('experts.fce_total' , '=' , 0);
+
+        if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
+            $experts
+                ->distinct()
+                ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
+                ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
+                ->whereNotNull( 'recruiter_logs.filter_audio' )
+                ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+                ->select('experts.*');
+        }
+        
+        $expert =  $experts->paginate( $query['rows'] );
+        $rows = $expert->items();
+
+        return json_encode(array(
+            "total" => count($rows),
+            "totalNotFiltered" => $expert->total(),
+            "rows" => $rows
+        ));
+
+    }
+
     public function getFce( Request $request ){
         $input = $request->all();
 

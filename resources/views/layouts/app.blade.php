@@ -75,6 +75,9 @@
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('experts.fce.menu') }}">{{ __('FCE') }}</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
                             </li>
