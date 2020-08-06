@@ -969,7 +969,7 @@ class ExpertController extends Controller
                 ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
                 ->select('experts.*');
         }
-        
+         
         $expert =  $experts->paginate( $query['rows'] );
         $rows = $expert->items();
 
