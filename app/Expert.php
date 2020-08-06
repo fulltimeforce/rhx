@@ -57,7 +57,7 @@ class Expert extends Model
         '3dmodeling','csharpu','animation','physics','networking','vr','graphics','ui',
         //Others
         'git','svn', 'file_path'
-    ];
+    ]; 
 
     protected static $technologies = array(
         'english' => array(
