@@ -958,7 +958,7 @@ class ExpertController extends Controller
 
         $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
 
-        $experts->where('experts.fce_total' , '=' , 0);
+        $experts->where('experts.fce_overall' , 'like' , '-');
 
         if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
             $experts
