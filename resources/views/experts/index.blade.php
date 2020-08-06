@@ -970,7 +970,7 @@ main{
                         //     actions += '<span class="badge badge-success" >Resume</span>\n';
                         // }
                         
-                        actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
+                        // actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
                         
                         var audios__count = 0; 
                          

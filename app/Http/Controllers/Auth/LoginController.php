@@ -52,6 +52,9 @@ class LoginController extends Controller
             case 'expert':
                 $page = route('experts.home');
                 break;
+            case 'fce':
+                $page = route('experts.fce.menu');
+                break;
             case 'careers':
                 $page = RouteServiceProvider::HOME;
                 break;
