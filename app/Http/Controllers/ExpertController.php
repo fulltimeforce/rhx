@@ -35,6 +35,7 @@ class ExpertController extends Controller
     {
         
         if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role->id >= 3) return redirect('/expert/fce');
         $_experts = $this->visibleExpert( Expert::with(['logs'])->latest()->get() );
         $experts = count($_experts);
         $query = $request->query();
@@ -744,6 +745,7 @@ class ExpertController extends Controller
     public function portfolioResume( Request $request ){
         
         if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role->id >= 3) return redirect('/expert/fce');
         return view('portfolio.index' );
 
     }

@@ -114,6 +114,9 @@ class LoginController extends Controller
                 case 'careers':
                     $page = '/';
                     break;
+                case 'fce':
+                    $page = '/expert/fce';
+                    break;
                 default:
                     $page = '/';
                     break;
