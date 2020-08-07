@@ -826,7 +826,7 @@ $(document).ready(function () {
                     clickToSelect: false,
                     formatter : function(value,rowData,index) {
                         
-                        var actions = '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
+                        var actions = '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Evaluate</a>\n';
                         
                         actions = actions.replace(/:id/gi , rowData.id);
 
