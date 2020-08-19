@@ -21,7 +21,6 @@ class PositionController extends Controller
      */
     public function index( Request $request )
     {
-        //
         $query = $request->query();
         $positions = Position::where( function($q) use ($query){
             if( !Auth::check() ){
@@ -40,9 +39,6 @@ class PositionController extends Controller
     }
 
     public function listpositions( Request $request ){
-
-        
-
         $positions = Position::where( function($q){
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');

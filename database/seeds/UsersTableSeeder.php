@@ -54,9 +54,9 @@ class UsersTableSeeder extends Seeder
             //     // 'created_at' => date(),
             // ],
             [
-                'name' => "Luisana",
-                'email' => 'luisana.moncada@fulltimeforce.com',
-                'password' => bcrypt('hTB3hlfme7'),
+                'name' => "Jesus Suarez",
+                'email' => 'jisaac07@gmail.com',
+                'password' => bcrypt('120892'),
                 // 'created_at' => date(),
             ]
         ]);

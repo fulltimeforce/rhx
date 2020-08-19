@@ -144,6 +144,7 @@ class ExpertController extends Controller
      */
     public function create(Request $request)
     {
+        
         // if(!Auth::check()) return redirect('login');
         // return $request->query('expertId');
         $expert = (object) array();
@@ -169,8 +170,8 @@ class ExpertController extends Controller
     private function getModelFormat(){
         $expert = new Expert();
         $a = [];
-        foreach ($expert->getFillable() as $k => $f) {
-            $a[$f] = "";
+        foreach ($expert->getFillable() as $k) {
+            $a[$k] = "";
         }
         return (object) $a;
     }
@@ -389,7 +390,6 @@ class ExpertController extends Controller
      */
     public function update(Request $request, Expert $expert)
     {
-        //
         // if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
 
         $validator = $request->validate( [
@@ -412,7 +412,7 @@ class ExpertController extends Controller
         try {
             
             $file = $request->file("file_cv_update");
-
+           
             $destinationPath = 'uploads/cv';
         
             $input = $request->all();
@@ -425,7 +425,7 @@ class ExpertController extends Controller
                 $newNameFile = $destinationPath."/" . $_fileName;
                     
                 $path = $request->file("file_cv_update")->store("cv" , "s3");
-        
+                
                 $path_s3 = Storage::disk("s3")->url($path);
 
                 Storage::disk("s3")->put($path , file_get_contents( $request->file("file_cv_update") ) , 'public' );
@@ -697,7 +697,6 @@ class ExpertController extends Controller
         if($is){
 
             $expert = $this->getModelFormat();
-        
             return view('experts.create' )->with('position', $position )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
         }else{
             abort(404);

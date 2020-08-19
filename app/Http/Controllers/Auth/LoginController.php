@@ -90,7 +90,6 @@ class LoginController extends Controller
     public function handleProviderCallback()
     {
         $auth_user = Socialite::driver('google')->stateless()->user();
-        // dd($auth_user);
         // return "dddd";
         $page = '/';
         if( User::where('email' , $auth_user->email )->count() > 0 ){
@@ -105,7 +104,7 @@ class LoginController extends Controller
                 case 'resume':
                     $page = '/resume';
                     break;
-                case 'log':
+                case 'log': 
                     $page = '/recruiter/log';
                     break;
                 case 'expert':

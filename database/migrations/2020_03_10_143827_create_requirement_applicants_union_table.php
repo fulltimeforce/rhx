@@ -17,7 +17,7 @@ class CreateRequirementApplicantsUnionTable extends Migration
             $table->bigIncrements('id');
             $table->char('log_id' , 16);
             $table->foreign('log_id')->references('id')->on('logs');
-            $table->integer('requirement_id');
+            $table->bigInteger('requirement_id')->unsigned();
             $table->foreign('requirement_id')->references('id')->on('requirements');
             $table->integer('order');
             $table->text('description')->nullable();

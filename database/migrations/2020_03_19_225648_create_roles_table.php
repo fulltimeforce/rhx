@@ -23,32 +23,13 @@ class CreateRolesTable extends Migration
             $table->timestamps();
         });
 
-        DB::table('roles')->insert(array(
-            array(
-                "name"  => "SUPERADMIN",
-                "created_at" => date("Y-m-d H:i:s"),
-                "updated_at" => date("Y-m-d H:i:s"),
-            ),
-            array(
-                "name"  => "RECRUITER",
-                "created_at" => date("Y-m-d H:i:s"),
-                "updated_at" => date("Y-m-d H:i:s"),
-            ),
-        ));
-
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->integer('role_id');
+            $table->bigInteger('role_id')->unsigned()->nullable();
+            $table->foreign('role_id')->references('id')->on('roles');
         });
 
-        foreach ( User::all() as $key => $user) {
-            if($user->id == 1 ){
-                User::where('id',$user->id)->update(array('role_id' => 1));
-            }else{
-                User::where('id',$user->id)->update(array('role_id' => 2));
-            }
-            
-        }
+       
     }
 
     /**

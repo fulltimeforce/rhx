@@ -40,5 +40,4 @@ return [
         'redirect_uris' => [env('GOOGLE_REDIRECT')],
         'app_name' => "rhx-workat"
     ]
-
 ];

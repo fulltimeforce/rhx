@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Expert;
+use App\Position;
+use Illuminate\Support\Str;
 
-class ExpertsTableSeeder extends Seeder
+class PositionTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,6 +13,6 @@ class ExpertsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Expert::class, 100)->create();
+        factory(App\Position::class, 10)->create();
     }
 }

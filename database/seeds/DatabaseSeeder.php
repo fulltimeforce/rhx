@@ -15,10 +15,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
-        // $resumes = DB
-
-        $resumes = DB::table('portfolio_expert')->get();
+        $this->call(UsersTableSeeder::class);
+        $this->call(RoleTableSeeder::class);
+        $this->call(PositionTableSeeder::class);
+        $this->call(ExpertsTableSeeder::class);
+        $this->call(LogsTableSeeder::class);
+        //TODO CHECK to see if we can create portfolio dummy data.
+        /* $resumes = DB::table('portfolio_expert')->get();
 
         foreach ($resumes as $key => $resume) {
             if( !is_null( $resume->projects ) && $resume->projects != '' ){
@@ -44,14 +47,11 @@ class DatabaseSeeder extends Seeder
                         "projects" => serialize($n_projects)
                     )
                 );
-            }
-            
+            }   
         }
 
         // Recruiterlog::with(['expert'])->where('id' , '>', 37)->delete();
         // DB::table('expert_log')->where('log_id', '>' , 37 )->delete();
-        // Notelog::where('log_id', '>' , 37 )->delete();
-
-        
+        // Notelog::where('log_id', '>' , 37 )->delete(); */
     }
 }

@@ -19,12 +19,12 @@ class CreateRequirementsTable extends Migration
             $table->bigIncrements('id');
             $table->text('name')->nullable();
             $table->char('position_id' , 16)->nullable();
-            $table->integer('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
 
-        foreach ( Requirement::getDefault() as $key => $requirement) {
+        /* foreach ( Requirement::getDefault() as $key => $requirement) {
             DB::table('requirements')->insert(
                 array(
                     'name' => $requirement,
@@ -33,9 +33,7 @@ class CreateRequirementsTable extends Migration
                     'created_at' => date("Y-m-d H:i:s")
                 )
             );
-        }  
-
-        
+        }  */ 
     }
 
     /**

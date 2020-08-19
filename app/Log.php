@@ -89,6 +89,7 @@ class Log extends Model
             "label" => "Facebook"
         )
     );
+    
     public static function getPlataforms(){
         return self::$platforms;
     }
