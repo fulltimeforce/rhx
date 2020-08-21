@@ -111,7 +111,6 @@ class ExpertController extends Controller
         $experts = $this->filter($basic , $intermediate, $advanced);
 
         $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
-
         if( $query['selection'] != 1  ){
             $experts->where('experts.selection' , intval( $query['selection']  ) );
         }
@@ -984,8 +983,7 @@ class ExpertController extends Controller
 
     public function getFce( Request $request ){
         $input = $request->all();
-
-        $logs = Expertlog::with('log' , 'expert')->where('expert_id' , $input['expertId'])->get();
+        $logs = Expertlog::with('log' , 'expert')->whereHas('log')->where('expert_id' , $input['expertId'])->get();
         $array = array();
         foreach ($logs as $key => $log) {
             $position = null;
