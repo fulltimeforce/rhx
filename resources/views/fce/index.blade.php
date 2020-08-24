@@ -815,8 +815,6 @@ $(document).ready(function () {
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
 
-            console.log(a_keys_filter);
-
             var columns = [
                 {
                     field: 'id',

@@ -295,466 +295,11 @@ main{
                         </thead>
                         <tbody></tbody>
                     </table>
-                    <form class="col" id="form_fce">
-                        <input type="hidden" id="expert_id" name="expert_id">
-                        <div class="row tab-fce fce-active" data-tab="1">
-                            <!-- <div class="form-group col-6">
-                                <label for="fce_grammar_vocabulary">Grammar & Vocabulary</label>
-                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_grammar_vocabulary" name="fce_grammar_vocabulary">
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="fce_discourse_management">Discourse Management</label>
-                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_discourse_management" name="fce_discourse_management">
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="fce_pronunciation">Pronunciation</label>
-                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_pronunciation" name="fce_pronunciation">
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="fce_interactive_communication">Interactive Communication</label>
-                                <input type="number" step="0.01" min="0" class="form-control total-fce" id="fce_interactive_communication" name="fce_interactive_communication">
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="fce_total">TOTAL</label>
-                                <input type="text" class="form-control" id="fce_total" name="fce_total" readonly>
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="fce_overall">Overall level</label>
-                                <input type="text" class="form-control" id="fce_overall" name="fce_overall">
-                            </div>
-                            <div class="form-group col-12">
-                                <label for="fce_comments">Comments</label>
-                                <textarea class="form-control" cols="30" rows="10" id="fce_comments" name="fce_comments"></textarea>
-                            </div> -->
-                            <div class="col-12 mb-4">
-                                <h3>Grammar & Vocabulary</h3>
-                                <b>Grammatical Forms</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="fce_comments">Wide range simple and complex</label>
-                                    <input type="radio" class="col-3" name="grammatical_forms" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="fce_comments">Simple and some complex</label>
-                                    <input type="radio" class="col-3" name="grammatical_forms" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="fce_comments">Simple and attempt complex</label>
-                                    <input type="radio" class="col-3" name="grammatical_forms" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="fce_comments">Good at simple</label>
-                                    <input type="radio" class="col-3" name="grammatical_forms" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="fce_comments">Sufficient at simple</label>
-                                    <input type="radio" class="col-3" name="grammatical_forms" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="fce_comments">Limited at simple</label>
-                                    <input type="radio" class="col-3" name="grammatical_forms" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="2">
-                            
-                            <div class="col-12 mb-4">
-                                <h3>Grammar & Vocabulary</h3>
-                                <b>Vocabulary</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="vocabulary">Unfamiliar and abstract topics</label>
-                                    <input type="radio" class="col-3" name="vocabulary" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="vocabulary">Unfamiliar topics vocabulary</label>
-                                    <input type="radio" class="col-3" name="vocabulary" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="vocabulary">Good range of technical topics vocabulary</label>
-                                    <input type="radio" class="col-3" name="vocabulary" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="vocabulary">Some technical topics vocabulary</label>
-                                    <input type="radio" class="col-3" name="vocabulary" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="vocabulary">Everyday situations vocabulary</label>
-                                    <input type="radio" class="col-3" name="vocabulary" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="vocabulary">Isolated word and phrases vocabulary</label>
-                                    <input type="radio" class="col-3" name="vocabulary" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="3">
-                            <div class="col-12 mb-4">
-                                <h3>Discourse Management</h3>
-                                <b>Stretch of Language</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="stretch_language">Extended stretches with ease</label>
-                                    <input type="radio" class="col-3" name="stretch_language" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="stretch_language">Extended stretches with some difficulty</label>
-                                    <input type="radio" class="col-3" name="stretch_language" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="stretch_language">Attempt extended stretches</label>
-                                    <input type="radio" class="col-3" name="stretch_language" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="stretch_language">Extended beyond short responses</label>
-                                    <input type="radio" class="col-3" name="stretch_language" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="stretch_language">Rather short responses</label>
-                                    <input type="radio" class="col-3" name="stretch_language" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="stretch_language">Always short responses</label>
-                                    <input type="radio" class="col-3" name="stretch_language" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="4">
-                            <div class="col-12 mb-4">
-                                <h3>Discourse Management</h3>
-                                <b>Cohesive Devices</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="cohesive_devices">Wide range of cohesive devices</label>
-                                    <input type="radio" class="col-3" name="cohesive_devices" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="cohesive_devices">Some range of cohesive devices</label>
-                                    <input type="radio" class="col-3" name="cohesive_devices" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="cohesive_devices">Basis cohesive but fluent outcome</label>
-                                    <input type="radio" class="col-3" name="cohesive_devices" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="cohesive_devices">Basic cohesive devices</label>
-                                    <input type="radio" class="col-3" name="cohesive_devices" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="cohesive_devices">Very few cohesive devices</label>
-                                    <input type="radio" class="col-3" name="cohesive_devices" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="cohesive_devices">Almost zero use of cohesive devices</label>
-                                    <input type="radio" class="col-3" name="cohesive_devices" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="5">
-                            <div class="col-12 mb-4">
-                                <h3>Discourse Management</h3>
-                                <b>Hesitation</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="hesitation">No hesitation at all</label>
-                                    <input type="radio" class="col-3" name="hesitation" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="hesitation">Very little hesitation</label>
-                                    <input type="radio" class="col-3" name="hesitation" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="hesitation">Little hesitation</label>
-                                    <input type="radio" class="col-3" name="hesitation" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="hesitation">Some hesitation</label>
-                                    <input type="radio" class="col-3" name="hesitation" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="hesitation">Obvious hesitation</label>
-                                    <input type="radio" class="col-3" name="hesitation" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="hesitation">Lots of hesitation</label>
-                                    <input type="radio" class="col-3" name="hesitation" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="6">
-                            <div class="col-12 mb-4">
-                                <h3>Discourse Management</h3>
-                                <b>Organizations of Ideas</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="organizations_ideas">Relevant, coherent and varied</label>
-                                    <input type="radio" class="col-3" name="organizations_ideas" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="organizations_ideas">Relevant and clear organizations of ideas</label>
-                                    <input type="radio" class="col-3" name="organizations_ideas" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="organizations_ideas">Relevant</label>
-                                    <input type="radio" class="col-3" name="organizations_ideas" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="organizations_ideas">Mostly relevant</label>
-                                    <input type="radio" class="col-3" name="organizations_ideas" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="organizations_ideas">Some relevant</label>
-                                    <input type="radio" class="col-3" name="organizations_ideas" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="organizations_ideas">Some relevant but limited by use of language</label>
-                                    <input type="radio" class="col-3" name="organizations_ideas" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="7">
-                            <div class="col-12 mb-4">
-                                <h3>Pronunciation</h3>
-                                <b>Intonation</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intonation">Always appropriate. Perfect</label>
-                                    <input type="radio" class="col-3" name="intonation" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intonation">Almost appropriate with minor mistakes</label>
-                                    <input type="radio" class="col-3" name="intonation" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intonation">Generally appropriate</label>
-                                    <input type="radio" class="col-3" name="intonation" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intonation">Sometimes appropriate + some mistakes</label>
-                                    <input type="radio" class="col-3" name="intonation" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intonation">Appropriate in rare ocassions</label>
-                                    <input type="radio" class="col-3" name="intonation" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intonation">Always flat</label>
-                                    <input type="radio" class="col-3" name="intonation" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="8">
-                            <div class="col-12 mb-4">
-                                <h3>Pronunciation</h3>
-                                <b>Phonological features</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="phonological_features">Perfection</label>
-                                    <input type="radio" class="col-3" name="phonological_features" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="phonological_features">Clearly articulated</label>
-                                    <input type="radio" class="col-3" name="phonological_features" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="phonological_features">Some mistakes when try to articulate</label>
-                                    <input type="radio" class="col-3" name="phonological_features" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="phonological_features">Some control</label>
-                                    <input type="radio" class="col-3" name="phonological_features" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="phonological_features">Limited control</label>
-                                    <input type="radio" class="col-3" name="phonological_features" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="phonological_features">Almost no control</label>
-                                    <input type="radio" class="col-3" name="phonological_features" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="9">
-                            <div class="col-12 mb-4">
-                                <h3>Pronunciation</h3>
-                                <b>Intelligible</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intelligible">Sounds like native</label>
-                                    <input type="radio" class="col-3" name="intelligible" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intelligible">Almost like native</label>
-                                    <input type="radio" class="col-3" name="intelligible" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intelligible">Intelligible</label>
-                                    <input type="radio" class="col-3" name="intelligible" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intelligible">Mostly intelligible</label>
-                                    <input type="radio" class="col-3" name="intelligible" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intelligible">Intelligible with difficulty for the listener</label>
-                                    <input type="radio" class="col-3" name="intelligible" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="intelligible">Often unintelligible</label>
-                                    <input type="radio" class="col-3" name="intelligible" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row tab-fce" data-tab="10">
-                            <div class="col-12 mb-4">
-                                <h3>Interactive Communication</h3>
-                                <b>Interaction</b>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="interaction">Widens scope/negotiates an outcome</label>
-                                    <input type="radio" class="col-3" name="interaction" value="C2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="interaction">Maintains scope/negotiates an outcome</label>
-                                    <input type="radio" class="col-3" name="interaction" value="C1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="interaction">Maintains scope/outcome unconcluded</label>
-                                    <input type="radio" class="col-3" name="interaction" value="B2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="interaction">Having problem with keeping scope</label>
-                                    <input type="radio" class="col-3" name="interaction" value="B1">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="interaction">Maintain simple exchanges w/ some difficulty</label>
-                                    <input type="radio" class="col-3" name="interaction" value="A2">
-                                </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <div class="row">
-                                    <label class="col-9" for="interaction">Considerable difficulty keeping simple exchanges</label>
-                                    <input type="radio" class="col-3" name="interaction" value="A1">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <p class="mb-5 text-danger" id="error-fce-form" style="display: none;">*You must select all options</p>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="prev-fce" class="btn btn-primary" data-fce="1" style="display: none;">Prev</button>
-                <button type="button" id="next-fce" class="btn btn-primary" data-fce="1">Next</button>
-                <button type="button" id="save-fce" class="btn btn-success" style="display: none;">Save</button>
             </div>
             
         </div>
@@ -949,8 +494,6 @@ main{
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
 
-            console.log(a_keys_filter);
-
             var columns = [
                 {
                     field: 'id',
@@ -964,17 +507,20 @@ main{
                         // actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
                         actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
+                        //actions += '<a class="badge badge-primary btn-audio-expert" data-id="'+rowData.id+'" href="#">Audio</a>'
                         // if( rowData.resume == null){
                         //     actions += '<span class="badge badge-secondary" >Resume</span>\n';
                         // }else{
                         //     actions += '<span class="badge badge-success" >Resume</span>\n';
                         // }
                         
-                        // actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
+                        //actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
                         
-                        var audios__count = 0; 
-                         
-                        if( rowData.logs.length > 0 ){
+                        var hasAudios = !! rowData.logs.filter(log => log.filter_audio || log.evaluate).length 
+                        if ( hasAudios) {
+                            actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Audio</a>\n';
+                        }
+                        /* if(rowData.logs.length > 0 ){
                             for (let i = 0; i < rowData.logs.length; i++) {
                                 if( rowData.logs[i].filter_audio != null ){
                                     audios__count++;
@@ -985,8 +531,8 @@ main{
                             }
                         }
                         if( audios__count > 0){
-                            // actions += '<a class="badge badge-primary btn-list-audio" data-name="'+rowData.fullname+'" data-id="'+rowData.id+'" href="#">Audio</a>';
-                        }
+                            actions += '<a class="badge badge-primary btn-list-audio" data-name="'+rowData.fullname+'" data-id="'+rowData.id+'" href="#">Audio</a>';
+                        } */
 
                         actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
 
@@ -1051,7 +597,6 @@ main{
                         $("#list-experts").bootstrapTable('removeByUniqueId',id);
                     }
                 });
-
             });
             // =============== POSITIONS
 
@@ -1118,7 +663,6 @@ main{
                 ev.preventDefault();
                 var expertId = $(this).attr("data-id");
                 var expertSelection = $(this).attr("data-selection");
-                console.log(expertSelection , "expertSelection")
                 var $this = $(this)
                 var select = 1;
                 switch( parseInt(expertSelection) ){
