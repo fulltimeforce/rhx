@@ -1009,6 +1009,13 @@ $(document).ready(function () {
             
         });
 
+        $("body").on('click' , 'a.speed-audio' , function(ev){
+            ev.preventDefault();
+            var speed = $(this).data("speed");
+            var index = $(this).parent().parent().data("audio");
+            console.log( parseFloat( speed ) , speed )
+            document.getElementById("audio-player-"+index).playbackRate = parseFloat(speed);
+        })
         ajax_experts( [] , [] , [] , search_name , 1);
 
         $(window).on('scroll', function (e){
