@@ -126,7 +126,7 @@ textarea.form-control{
 
 <section class="section-form">
     
-    @if( $position )
+    @if( isset($position) )
     <div class="row mt-5 mb-5">
         <div class="col-12">
             <div class="icon-position d-inline-block">
@@ -396,7 +396,7 @@ textarea.form-control{
                 </div>
             </div>
         </div>
-        @if( $position )
+        @if( isset($position) )
         <input type="hidden" name="position" value="{{$position->id}}">
         @endif
         <button type="submit" class="btn btn-primary">Guardar</button>
