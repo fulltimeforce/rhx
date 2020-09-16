@@ -69,6 +69,9 @@
                                 <a class="nav-link" href="{{ route('logs.index') }}">{{ __('Logs2') }}</a>
                             </li> -->
                             </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('user.menu') }}">{{ __('Users') }}</a>
+                            </li>
+                            </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.tech.menu') }}">{{ __('TECH') }}</a>
                             </li>
                             @endif
