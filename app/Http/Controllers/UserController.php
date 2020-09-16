@@ -68,7 +68,7 @@ class UserController extends Controller
     public function configuration(){
 
         if(!Auth::check()) return redirect('login');
-        if(Auth::user()->role_id != 1) return redirect('login');
+        //if(Auth::user()->role_id != 1) return redirect('login');
         $user = User::where('id' , Auth::id() )->first();
         $fce_lvls = Config::getAllFceValue();
         $current_config = Config::first();
