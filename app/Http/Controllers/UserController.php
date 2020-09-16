@@ -22,6 +22,7 @@ class UserController extends Controller
 
     public function index(Request $request){
         if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id != 1) return redirect('login');
         $query = $request->query();
         $name = isset($query['name']) ? $query['name'] : '';
         $roles = Role::all();
