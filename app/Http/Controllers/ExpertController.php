@@ -10,6 +10,7 @@ use App\Interview;
 use App\Portfolioexpert;
 use App\Recruiterlog;
 use App\Expertlog;
+use App\Config;
 use Exception;
 use Google_Client;
 use Google_Service_Drive;
@@ -87,7 +88,6 @@ class ExpertController extends Controller
         $experts->where('fullname' , 'like' , '%'.$query['name'].'%');
         $expert =  $experts->paginate( $query['rows'] );
 
-        // return $expert;
         return json_encode(array(
             "page"      => $expert->currentPage(),
             "total"     => $expert->lastPage(),
@@ -95,7 +95,7 @@ class ExpertController extends Controller
             "rows"      => $expert->items()
         ));
     }
-
+    // sends list for smart table of experts
     public function listtbootstrap(Request $request){
         $query = $request->query();
 
@@ -151,7 +151,6 @@ class ExpertController extends Controller
             
             $expert = Expert::where("id" , $request->query('expertId') )->first();
         }else{
-            
             $expert = $this->getModelFormat();
         }
         $position = (object) array();
@@ -174,7 +173,7 @@ class ExpertController extends Controller
         }
         return (object) $a;
     }
-
+    // shows aplication form for a position - HAS BUG
     public function apply($positionId = null){
         if(empty($positionId)) return redirect('login');
         $position = Position::find($positionId);
@@ -190,6 +189,7 @@ class ExpertController extends Controller
      */
 
     public function validateEmail(Request $request ){
+        return;
         $email = $request->input('email');
         $positionId = $request->input('positionId'); 
         
@@ -941,9 +941,8 @@ class ExpertController extends Controller
         
         $query = $request->query();
 
-        
         $name = isset( $query['name'] )? $query['name'] : '';
-
+        
         return view('fce.index')
             ->with('name', $name );
     }
@@ -1041,6 +1040,53 @@ class ExpertController extends Controller
         return $input;
     }
 
+    public function listTech(Request $request){
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id != 1) return redirect('login');
+        $query = $request->query();
+        $name = isset($query['name']) ? $query['name'] : '';
+
+        return view('tech.index')->with('name',$name);
+    }
+
+    public function listTechBootstrap(Request $request){
+        $query = $request->query();
+        $fce_lower = Config::first()->fce_lower_overall;
+        
+        if($fce_lower){
+            $fces = Config::getListFceSuperior($fce_lower);
+        }else{
+            $fces = [''];
+        }
+
+        $experts = null;
+        $experts = $this->filter(array() , array(), array());
+
+        $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
+
+        $experts->whereIn('experts.fce_overall' , $fces);
+
+        // if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
+        //     $experts
+        //         ->distinct()
+        //         ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
+        //         ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
+        //         ->whereNotNull( 'recruiter_logs.filter_audio' )
+        //         ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+        //         ->select('experts.*');
+        // }
+         
+        $expert =  $experts->paginate( $query['rows'] );
+        $rows = $expert->items();
+
+        return json_encode(array(
+            "total" => count($rows),
+            "totalNotFiltered" => $expert->total(),
+            "rows" => $rows
+        ));
+    }
+
+    // get Projects out of input
     private function parsePorjects( $_array ){
 
         $len = count($_array['project_index']);
@@ -1064,7 +1110,7 @@ class ExpertController extends Controller
         return $projects;
 
     }
-
+    // get Educations out of input
     private function parseEducations( $_array ){
 
         $len = count($_array['education_university']);
@@ -1082,7 +1128,7 @@ class ExpertController extends Controller
 
         return $educations;
     }
-
+    // get Employments out of input
     private function parseEmployments( $_array ){
 
         $len = count($_array['employment_workplace']);
@@ -1100,7 +1146,7 @@ class ExpertController extends Controller
 
         return $employments;
     }
-
+    // get Skills out of input
     private function parseSkills( $_array ){
 
         $len = count($_array['skills_skill']);

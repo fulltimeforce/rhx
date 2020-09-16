@@ -297,6 +297,10 @@ class Expert extends Model
         return self::$fce_values[$key];
     }
 
+    public static function getAllFceValue(){
+        return self::$fce_values_total;
+    }
+
     public static function calculateOveral($total){
         foreach (self::$fce_values_total as $k => $v) {
             if( $v[0] <= $total && $v[1] > $total ){

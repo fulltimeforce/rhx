@@ -36,7 +36,10 @@ Route::post('/expert/portfolio/delete','ExpertController@deleteResume')->name('e
 
 Route::get('/resume','ExpertController@portfolioResume')->name('expert.portfolio.resume');
 
-Route::get('/user/configuration','UserController@configuration')->name('user.configuration');
+Route::get('users','UserController@index')->name('user.menu');
+Route::get('users/bootstrap','UserController@usersBootstrap')->name('user.list');
+Route::get('user/configuration','UserController@configuration')->name('user.configuration');
+Route::post('user/save','UserController@save')->name("user.save");
 
 Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
 
@@ -44,6 +47,9 @@ Route::get('login/google', 'Auth\LoginController@redirectToProvider')->name('log
 Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback');
 
 Route::post('/upload/drive','ExpertController@uploadDrive')->name('experts.upload.drive');
+
+Route::get('expert/tech','ExpertController@listTech')->name('experts.tech.menu');
+Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('experts.tech.list');
 
 /*
 ============================== ROUTES ACTION ============================================
@@ -142,6 +148,9 @@ Route::get('/expert/register' , 'LogController@synchronization')->name('log.sync
 
 Route::post('/user/changepage','UserController@changePage')->name('user.changepage');
 Route::post('/user/changepassword','UserController@changePassword')->name('user.changepassword');
+
+//config
+Route::post('/config/changefcelevel','ConfigController@changeFceLevel')->name("config.changefcelevel");
 
 Auth::routes(['register' => false]);
 

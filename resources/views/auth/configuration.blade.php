@@ -111,10 +111,24 @@
     </div>
 
     <div class="row">
-        <div class="col">
+        @if(Auth::user()->role->id == 1)
+        <div class="col-4">
+            <h5 class="mb-3">Lower English Level</h5>
+            <div class="form-row">
+                <div class="col">
+                    <select class="form-control mb-4" id="select-lower-fce-lvl">
+                        @foreach($fce_levels as $k => $fce_val)
+                        <option value="{{$k}}" {{$current_config->fce_lower_overall == $k ? 'selected':'' }} >{{$k}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        @endif
+        <div class="col-4">
             <h5 class="mb-3">Change Password:</h5>
             <div class="form-row">
-                <div class="col-4">
+                <div class="col">
                     <input type="password" class="form-control mb-4" id="txt-new-password" >
                     <button class="btn btn-success" id="change-password">Submit</button>
                 </div>
@@ -162,6 +176,21 @@
                 data: { password : password }   ,
                 success:function(data){
                     location.reload();
+                }
+            });
+        })
+        $("#select-lower-fce-lvl").on("change",function(){
+            var fce_level = $(this).val();
+            console.log(fce_level);
+            $.ajax({
+                type:"POST",
+                url: "{{ route('config.changefcelevel') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: { fce : fce_level }   ,
+                success:function(data){
                 }
             });
         })
