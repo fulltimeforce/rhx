@@ -65,6 +65,27 @@ class UserController extends Controller
         $user = User::create($input);
         return array("status"=>"success");
     }
+    public function editForm(Request $request){
+        $input = $request->all();
+        $user = User::find($input['userId']);
+        $roles = Role::all();
+        $fce_labels = Expert::getAllFceValue();
+        return ["user"=>$user, "roles"=>$roles, "fce_labels"=>$fce_labels];
+    }
+    public function update(Request $request){
+        $input = $request->all();
+        $id = $input["id"];
+        unset( $input["id"] );
+        $log = User::where('id' , $id)->update($input);
+
+        return User::find( $id );
+    }
+    public function delete(Request $request){
+        $input = $request->all();
+        $id = $input["userId"];
+
+        User::where('id' , $id)->delete();
+    }
     
     public function configuration(){
 

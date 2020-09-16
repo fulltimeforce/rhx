@@ -241,18 +241,56 @@
 <!--  
         /*========================================== FCE ==========================================*/
     -->
-<div class="modal fade" id="new_user" tabindex="-1" role="dialog" aria-labelledby="techExpertLabel" aria-hidden="true">
+<div class="modal fade" id="edit_user_modal" tabindex="-1" role="dialog" aria-labelledby="techExpertLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="techExpertLabel">Nuevo Usuario</h5>
+            <h5 class="modal-title" id="techExpertLabel">Edit: <span id="modal-user-name">{USER}</span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
+          <form action="" name="modal-form-edit" id="modal-form-edit">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Name</label>
+                  <input type="text" name="name" id="user-name" class="form-control">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" name="email" id="user-email" class="form-control">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Role</label>
+                  <select class="form-control" id="user-role" name="role_id">
+                    <option value="-">...</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group">
+                  <label>Default Page</label>
+                  <select class="form-control" id="user-default-page" name="default_page">
+                    <option value="-">...</option>
+                  </select>
+                </div>
+              </div>
+              <input type="hidden" name="id" id="modal-user-id">
+            </div>
+          </form>
         </div>
         <div class="modal-footer">
+          <div class="row">
+            <div class="col-12">
+              <button class="btn btn-primary" id="modal-edit-save">Save</button>
+            </div>
+          </div>
         </div>
     </div>
 </div>
@@ -395,6 +433,18 @@ $(document).ready(function () {
 
     function tablebootstrap_filter( data ){
         var columns = [
+            {
+              field: 'id', 
+              title: "Accion",
+              width: 100,
+              formatter : function(value,rowData,index) {                        
+                    var actions = '<a class="badge badge-info btn-edit-user" data-id="'+rowData.id+'" data-name="'+rowData.name+'" data-index="'+index+'" href="#">Edit</a>\n';
+                    actions += '<a class="badge badge-danger btn-delete-user" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Delete</a>\n';
+                    actions = actions.replace(/:id/gi , rowData.id);
+                    return actions;
+                },
+              class: 'frozencell'
+            },
             { field: 'name', title: "Name", width: 150 , class: 'frozencell'},
             { field: 'email', title: "Email", width: 150, class: 'frozencell'},
             { field: 'role_name', title: "Role", width: 150, class: 'frozencell'}
@@ -406,6 +456,72 @@ $(document).ready(function () {
             data: data,
             theadClasses: 'table-dark',
             uniqueId: 'id'
+        });
+        // =================== DELETE
+
+        $("table tbody").on('click', 'a.btn-delete-user' , function(ev){
+          ev.preventDefault();
+          var id = $(this).data("id");
+          var confirmed = confirm("Are you sure you want to delete this user?");
+          if(confirmed){
+            $.ajax({
+                type:'POST',
+                url: '{{ route("user.delete") }}',
+                data: {userId : id},
+                headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                  $("#list-users").bootstrapTable('removeByUniqueId',id);
+                }
+            });
+          }
+        });
+        $("table tbody").on("click","a.btn-edit-user",function(ev){
+          ev.preventDefault();
+          var user_name = $(this).data("name")
+          var user_id = $(this).data("id");
+          $("#modal-user-name").html(user_name);
+          $("#modal-user-id").val(user_id);
+          $.ajax({
+            type: 'POST',
+            url: '{{ route("user.editForm") }}',
+            data: {userId : user_id },
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(editForm){
+                var user = editForm.user;
+                var roles = editForm.roles;
+                var fce_labels = editForm.fce_labels;
+                // reset values
+                $("#user-name").val("");
+                $("#user-email").val("");
+                $("#user-role").html("");
+                $("#user-default-page").html("");
+
+                // set values
+                $("#user-name").val(user.name);
+                $("#user-email").val(user.email);
+
+                var roles_options = "";
+                for (let index = 0; index < roles.length; index++) {
+                  roles_options += '<option value="'+roles[index].id+'" '+ (user.role_id == roles[index].id? 'selected':'') +' >'+roles[index].name+' </option>';
+                }
+                $("#user-role").html(roles_options);
+
+                var default_pages = "";
+                var pages = ['log','expert','careers','resume'];
+                for (let index = 0; index < pages.length; index++) {
+                  default_pages += '<option value="'+pages[index]+'" '+ (user.default_page == pages[index]? 'selected':'') +' >'+pages[index]+' </option>';
+                }
+                $("#user-default-page").html(default_pages);
+                // call modal
+                $("#edit_user_modal").modal();
+            }
+          });
         });
     }
 
@@ -426,27 +542,47 @@ $(document).ready(function () {
         location.reload();        
     });
 
+    $("#edit_user_modal").on("click","#modal-edit-save",function(ev){
+      ev.preventDefault();
+      var postData = $("#modal-form-edit input, #modal-form-edit select ").serialize();
+      $.ajax({
+        type:"POST",
+        url: "{{ route('user.update') }}",
+        headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: postData,
+        success:function(data){
+          //console.log(data);
+          $("#edit_user_modal").hide();
+          location.reload();
+        }
+      });
+    });
+
     ajax_experts(search_name , 1);
 
     $("#save").on('click', function(ev){
-            $('#search-column-name').val( '' );
-            $.ajax({
-                type:'POST',
-                url: "{{ route('user.save') }}",
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data:  $("#new-user input , #new-user select").serialize() ,
-                success:function(data){
-                    console.log(data['status']);
-                    if(data['status'] == 'success'){
-                      location.reload();
-                    }
-                }
-            });
+      $('#search-column-name').val( '' );
+      $.ajax({
+          type:'POST',
+          url: "{{ route('user.save') }}",
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          data:  $("#new-user input , #new-user select").serialize() ,
+          success:function(data){
+              console.log(data['status']);
+              if(data['status'] == 'success'){
+                location.reload();
+              }
+          }
+      });
+    });
 
-        });
+
 
     $(window).on('scroll', function (e){
         console.log( $(window).scrollTop() + $(window).height() , $(document).height() )

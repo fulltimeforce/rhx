@@ -40,6 +40,9 @@ Route::get('users','UserController@index')->name('user.menu');
 Route::get('users/bootstrap','UserController@usersBootstrap')->name('user.list');
 Route::get('user/configuration','UserController@configuration')->name('user.configuration');
 Route::post('user/save','UserController@save')->name("user.save");
+Route::post('user/update','UserController@update')->name("user.update");
+Route::post('user/editForm','UserController@editForm')->name("user.editForm");
+Route::post('user/delete','UserController@delete')->name("user.delete");
 
 Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
 
