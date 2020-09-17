@@ -53,6 +53,7 @@ Route::post('/upload/drive','ExpertController@uploadDrive')->name('experts.uploa
 
 Route::get('expert/tech','ExpertController@listTech')->name('experts.tech.menu');
 Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('experts.tech.list');
+// Route::get('expert/tech/show','ExpertController@showTech')->name('experts.tech.show');
 
 /*
 ============================== ROUTES ACTION ============================================

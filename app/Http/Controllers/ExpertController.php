@@ -89,7 +89,6 @@ class ExpertController extends Controller
             }
         }
         return ["expert"=>$expert,"basic"=>$basic,"intermediate"=>$intermediate,"advanced"=>$advanced];
-        // return $expert;
     }
 
     public function listjqgrid(Request $request){

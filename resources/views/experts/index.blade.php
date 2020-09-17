@@ -384,107 +384,117 @@
     <div class="modal" id="info-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="interviews-expertLabel"><span class="show_expert_name">{expert Name}</span> - INFO</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <!-- Basic Info -->
-            <div class="row">
-                <div class="col-sm-6">
-                    <label class="font-weight-bold">Name</label>
-                    <h5 class="show_expert_name"></h5>
-                </div>
-                <div class="col-sm-6">
-                    <label class="font-weight-bold">Email</label>
-                    <h5 class="show_expert_email"></h5>
-                </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="interviews-expertLabel"><span class="show_expert_name">{expert Name}</span> - INFO</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <hr/>
-            <!-- Additional info -->
-            <div class="row">
-                <div class="col-6 col-sm-2">
-                    <label class="font-weight-bold">Age</label>
-                    <p class="show_expert_age"></p>
-                </div>
-                <div class="col-6 col-sm-3">
-                    <label class="font-weight-bold">Phone</label>
-                    <p class="show_expert_phone"></p>
-                </div>
-                <div class="col-6 col-sm-3">
-                    <label class="font-weight-bold">Availability</label>
-                    <p class="show_expert_availability"></p>
-                </div>
-                <div class="col-6 col-sm-2">
-                    <label class="font-weight-bold">Salary</label>
-                    <p class="show_expert_salary"></p>
-                </div>
-                <div class="col-6 col-sm-2">
-                    <label class="font-weight-bold">FCE</label>
-                    <p class="show_expert_fce"></p>
-                </div>
-            </div>
-            <hr/>
-            <!-- Links -->
-            <div class="row">
-                <div class="col-sm-6">
-                    <label class="font-weight-bold">LinkedIn</label><br>
-                    <a class="show_expert_linkedin" href="#">https://www.linkedin.com/in/jos%C3%A9-carlos-quichiz-santome-257371b4</a>
-                </div>
-                <div class="col-sm-6">
-                    <label class="font-weight-bold">Github</label><br>
-                    <a class="show_expert_github" href="#">https://github.com/josecarlosqs/</a>
-                </div>
-            </div>
-            <hr/>
-            <!-- English Proficiency -->
-            <div class="row">
-                <div class="col-12">
-                    <h5>English</h5>
-                </div>
-                <div class="col-md-4">
-                    <label class="font-weight-bold">Speaking</label>
-                    <!-- <p>advanced</p> -->
-                    <div class="progress">
-                        <div class="progress-bar show_expert_eng_speak" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" >Intermediate</div>
+            <div class="modal-body">
+                <!-- Basic Info -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="font-weight-bold">Name</label>
+                        <h5 class="show_expert_name"></h5>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="font-weight-bold">Email</label>
+                        <h5 class="show_expert_email"></h5>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="font-weight-bold">Writing</label>
-                    <div class="progress">
-                        <div class="progress-bar show_expert_eng_write" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" >Intermediate</div>
+                <hr/>
+                <!-- Additional info -->
+                <div class="row">
+                    <div class="col-6 col-sm-2">
+                        <label class="font-weight-bold">Age</label>
+                        <p class="show_expert_age"></p>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <label class="font-weight-bold">Phone</label>
+                        <p class="show_expert_phone"></p>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <label class="font-weight-bold">Availability</label>
+                        <p class="show_expert_availability"></p>
+                    </div>
+                    <div class="col-6 col-sm-2">
+                        <label class="font-weight-bold">Salary</label>
+                        <p class="show_expert_salary"></p>
+                    </div>
+                    <div class="col-6 col-sm-2">
+                        <label class="font-weight-bold">FCE</label>
+                        <p class="show_expert_fce"></p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="font-weight-bold">Reading</label>
-                    <div class="progress">
-                        <div class="progress-bar show_expert_eng_read" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" >Advanced</div>
+                <hr/>
+                <!-- Links -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="font-weight-bold">LinkedIn</label><br>
+                        <a class="show_expert_linkedin" href="#"></a>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="font-weight-bold">Github</label><br>
+                        <a class="show_expert_github" href="#"></a>
+                    </div>
+                </div>
+                <hr/>
+                <!-- English Proficiency -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5>English</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="font-weight-bold">Speaking</label>
+                        <!-- <p>advanced</p> -->
+                        <div class="progress">
+                            <div class="progress-bar show_expert_eng_speak" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="font-weight-bold">Writing</label>
+                        <div class="progress">
+                            <div class="progress-bar show_expert_eng_write" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="font-weight-bold">Reading</label>
+                        <div class="progress">
+                            <div class="progress-bar show_expert_eng_read" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" ></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Technologies -->
+                <hr/>
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Techonologies</h5>
+                    </div>
+                    <hr>
+                    <div class="col-12">
+                        <h6>Advanced</h6>
+                        <p class="show_expert_adv_tech"></p>
+                    </div>
+                    <div class="col-12">
+                        <h6>Intermediate</h6>
+                        <p class="show_expert_int_tech"></p>
+                    </div>
+                    <div class="col-12">
+                        <h6>Basic</h6>
+                        <p class="show_expert_bsc_tech"></p>
                     </div>
                 </div>
             </div>
-            <!-- Technologies -->
-            <hr/>
-            <div class="row">
-                <div class="col-12">
-                    <h5>Techonologies</h5>
-                </div>
-                <hr>
-                <div class="col-12">
-                    <h6>Advanced</h6>
-                    <p class="show_expert_adv_tech"></p>
-                </div>
-                <div class="col-12">
-                    <h6>Intermediate</h6>
-                    <p class="show_expert_int_tech"></p>
-                </div>
-                <div class="col-12">
-                    <h6>Basic</h6>
-                    <p class="show_expert_bsc_tech"></p>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-6">
+                      <button class="btn btn-outline-secondary btn-prev-expert" data-id=""><</button>
+                    </div>
+                    <div class="col-6">
+                      <button class="btn btn-outline-secondary btn-next-expert" data-id="">></button>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
     </div>
@@ -574,6 +584,7 @@
         var _before_rows = 0;
 
         var _dataRows = [];
+        var _idMap = [];
 
         var search_name = "{{ $name }}";
 
@@ -612,6 +623,9 @@
                     _count_records = _count_records + _data.rows.length;
                     $("#count-expert").html( _count_records );
                     _dataRows = _data.rows;
+                    for (var i = 0; _dataRows.length > i ; i++) {
+                      _idMap.push(_dataRows[i].id);
+                    }
                     tablebootstrap_filter( _data.rows , basic , intermediate , advanced );
                     if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                     $(".lds-ring").hide();
@@ -760,6 +774,8 @@
                         $(".show_expert_adv_tech").html(adv_tech);
                         $(".show_expert_int_tech").html(int_tech);
                         $(".show_expert_bsc_tech").html(bsc_tech);
+                        $(".btn-prev-expert").attr("data-id",expert.id);
+                        $(".btn-next-expert").attr("data-id",expert.id);
 
                         $("#info-expert").modal();
                     }
@@ -1193,6 +1209,105 @@
 
         });
 
+        $("#info-expert").on("click",".btn-prev-expert",function(ev){
+          ev.preventDefault();
+          var id = $(this).attr("data-id");
+          var prev = getPrevId(id);
+          if(prev != "-"){
+            loadModalExpert(prev);
+          }
+        });
+
+        $("#info-expert").on("click",".btn-next-expert",function(ev){
+          ev.preventDefault();
+          var id = $(this).attr("data-id");
+          var next = getNextId(id);
+          if(next!="-"){
+            loadModalExpert(next);
+          }
+        });
+
+        function loadModalExpert(id){
+          $.ajax({
+            type:"POST",
+            url: '{{ route("experts.show") }}',
+            data:{id: id},
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+                var expert = data.expert;
+                // set data
+                $(".show_expert_name").html(expert.fullname)
+                $(".show_expert_email").html(expert.email_address);
+                $(".show_expert_age").html(expert.age);
+                $(".show_expert_phone").html(expert.phone);
+                $(".show_expert_availability").html(expert.availability);
+                $(".show_expert_salary").html(expert.salary);
+                $(".show_expert_fce").html(expert.fce_overall);
+                $("a.show_expert_linkedin").html(expert.linkedin);
+                $("a.show_expert_linkedin").attr("href",expert.linkedin);
+                $("a.show_expert_github").html(expert.github);
+                $("a.show_expert_github").attr("href",expert.github);
+                $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
+                $(".show_expert_eng_speak").html(expert.english_speaking);
+
+                $(".show_expert_eng_write").html(expert.english_writing);
+                $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+
+                $(".show_expert_eng_read").html(expert.english_reading);
+                $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                var adv_tech = [];
+                var int_tech = [];
+                var bsc_tech = [];
+                for(i=0;data.advanced.length > i; i++){
+                    var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+                    adv_tech.push(span);
+                }
+                for(i=0;data.intermediate.length > i; i++){
+                    var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+                    int_tech.push(span);
+                }
+                for(i=0;data.basic.length > i; i++){
+                    var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+                    bsc_tech.push(span);
+                }
+                $(".show_expert_adv_tech").html(adv_tech);
+                $(".show_expert_int_tech").html(int_tech);
+                $(".show_expert_bsc_tech").html(bsc_tech);
+                $(".btn-prev-expert").attr("data-id",expert.id);
+                $(".btn-next-expert").attr("data-id",expert.id);
+            }
+          });
+        }
+        function getNextId(id){
+          var currIdFound = false;
+          for (var i = 0; i < _idMap.length; i++) {
+            if(currIdFound){
+              return _idMap[i];
+            }
+            if (_idMap[i]==id) {
+              currIdFound = true;
+            }
+          }
+          return "-";
+        }
+        function getPrevId(id){
+          console.log(id);
+          console.log(_idMap.length);
+          for (var i = 0; i < _idMap.length; i++) {
+            if (_idMap[i]==id && _idMap[0] != id) {
+              i--;
+              return _idMap[i];
+            }else{
+              if(i == _idMap.length-1){
+                return "-";
+              }
+            }
+          }
+        }
+
         $(window).on('scroll', function (e){
             console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
             if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -1227,6 +1342,9 @@
 
                             let _data = JSON.parse(data);
                             _before_rows = _data.total;
+                            for (var i = 0; _data.rows.length > i ; i++) {
+                              _idMap.push(_data.rows[i].id);
+                            }
                             $("#list-experts").bootstrapTable('append', _data.rows );
                             
                             _count_records = _count_records + _data.rows.length;
