@@ -37,6 +37,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected static $status = [
+        "DISABLED" => 0,
+        "ENABLED" => 1
+    ];
+
     public function fk_log() {
         return $this->hasMany('App\User', 'user_id', 'id');
     }

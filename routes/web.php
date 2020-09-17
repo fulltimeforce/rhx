@@ -42,7 +42,7 @@ Route::get('user/configuration','UserController@configuration')->name('user.conf
 Route::post('user/save','UserController@save')->name("user.save");
 Route::post('user/update','UserController@update')->name("user.update");
 Route::post('user/editForm','UserController@editForm')->name("user.editForm");
-Route::post('user/delete','UserController@delete')->name("user.delete");
+Route::post('user/delete','UserController@switchStatus')->name("user.switch");
 
 Route::get('/recruiter/log','RecruiterlogController@index')->name('recruiter.log');
 

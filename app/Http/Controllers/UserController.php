@@ -57,11 +57,10 @@ class UserController extends Controller
     public function save(Request $request){
         $input = $request->all();
         if (!isset($input["name"]) ||
-            !isset($input["password"]) ||
             !isset($input["email"])) {
             return array("status"=>"denied");
         }
-        $input['password'] = Hash::make($input['password']);
+        //$input['password'] = Hash::make($input['password']);
         $user = User::create($input);
         return array("status"=>"success");
     }
@@ -80,11 +79,23 @@ class UserController extends Controller
 
         return User::find( $id );
     }
-    public function delete(Request $request){
+    public function switchStatus(Request $request){
         $input = $request->all();
         $id = $input["userId"];
+        $status = $input['status'];
+        switch ($status) {
+            case 'ENABLED':
+                $status = 'DISABLED';
+                break;
+            case 'DISABLED':
+                $status = 'ENABLED';
+                break;
+            default:break;
+        }
 
-        User::where('id' , $id)->delete();
+        User::where('id' , $id)->update(
+            array("status"=>$status)
+        );
     }
     
     public function configuration(){

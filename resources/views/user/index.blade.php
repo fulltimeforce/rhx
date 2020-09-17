@@ -318,11 +318,12 @@
                     <input type="email" name="email" id="email" class="form-control">
                 </div>
             </td>
-            <td>
+            {{--<td>
                 <div class="form-group" style="position: relative;">
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password" class="form-control">
                 </div>
+            --}}
             </td>
             <td>
                 <div class="form-group">
@@ -439,15 +440,30 @@ $(document).ready(function () {
               width: 100,
               formatter : function(value,rowData,index) {                        
                     var actions = '<a class="badge badge-info btn-edit-user" data-id="'+rowData.id+'" data-name="'+rowData.name+'" data-index="'+index+'" href="#">Edit</a>\n';
-                    actions += '<a class="badge badge-danger btn-delete-user" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Delete</a>\n';
+                    if(rowData.status == "ENABLED"){
+                      actions += '<a class="badge badge-danger btn-switch-status-user" href="#" data-id="'+rowData.id+'" data-status="'+rowData.status+'" data-name="'+rowData.name+'">Disable</a>\n';
+                    }else{
+                      actions += '<a class="badge badge-warning btn-switch-status-user" href="#" data-id="'+rowData.id+'" data-status="'+rowData.status+'" data-name="'+rowData.name+'">Restore</a>\n';
+                    }
                     actions = actions.replace(/:id/gi , rowData.id);
                     return actions;
                 },
-              class: 'frozencell'
+              class: 'frozencell',
             },
             { field: 'name', title: "Name", width: 150 , class: 'frozencell'},
             { field: 'email', title: "Email", width: 150, class: 'frozencell'},
-            { field: 'role_name', title: "Role", width: 150, class: 'frozencell'}
+            { field: 'role_name', title: "Role", width: 150, class: 'frozencell'},
+            /*{ 
+              field: 'status', 
+              title: 'Status', 
+              width: 50, 
+              class: 'frozencell',
+              formatter : function(value,rowData,index) {                        
+                    var actions = '<span>'+rowData.status+'</span>';
+                    actions = actions.replace(/:id/gi , rowData.id);
+                    return actions;
+                },
+            },*/
         ];
         
         $("#list-users").bootstrapTable('destroy').bootstrapTable({
@@ -459,21 +475,24 @@ $(document).ready(function () {
         });
         // =================== DELETE
 
-        $("table tbody").on('click', 'a.btn-delete-user' , function(ev){
+        $("table tbody").on('click', 'a.btn-switch-status-user' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
-          var confirmed = confirm("Are you sure you want to delete this user?");
+          var status = $(this).data("status");
+          var name = $(this).data("name");
+          var confirmed = confirm("Are you sure you want to "+ (status=="ENABLED"?"disable":"enable") +": "+name+"?");
           if(confirmed){
             $.ajax({
                 type:'POST',
-                url: '{{ route("user.delete") }}',
-                data: {userId : id},
+                url: '{{ route("user.switch") }}',
+                data: {userId : id, status: status},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                  $("#list-users").bootstrapTable('removeByUniqueId',id);
+                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
+                  location.reload();
                 }
             });
           }
@@ -539,7 +558,7 @@ $(document).ready(function () {
             );
         _page = 1;
         _count_records = 0;
-        location.reload();        
+        location.reload();
     });
 
     $("#edit_user_modal").on("click","#modal-edit-save",function(ev){

@@ -92,7 +92,7 @@ class LoginController extends Controller
         $auth_user = Socialite::driver('google')->stateless()->user();
         // return "dddd";
         $page = '/';
-        if( User::where('email' , $auth_user->email )->count() > 0 ){
+        if( User::where('email' , $auth_user->email )->where('status','ENABLED')->count() > 0 ){
             $user = User::updateOrCreate(
                 ['email' => $auth_user->email], 
                 [
