@@ -1078,23 +1078,10 @@ class ExpertController extends Controller
         }else{
             $fces = [''];
         }
-
-        $experts = null;
-        $experts = $this->filter(array() , array(), array());
-
-        $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
+        $experts = Expert::where('experts.fullname' , 'like' , '%'.$query['name'].'%');
 
         $experts->whereIn('experts.fce_overall' , $fces);
-
-        // if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
-        //     $experts
-        //         ->distinct()
-        //         ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
-        //         ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
-        //         ->whereNotNull( 'recruiter_logs.filter_audio' )
-        //         ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
-        //         ->select('experts.*');
-        // }
+        $experts->orderBy("fce_total","DESC");
          
         $expert =  $experts->paginate( $query['rows'] );
         $rows = $expert->items();
