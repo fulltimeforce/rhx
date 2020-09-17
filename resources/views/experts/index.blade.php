@@ -722,26 +722,6 @@
                     },
                     success:function(data){
                         var expert = data.expert;
-                        // return;
-                        // clear data
-                        // $(".show_expert_name").html("");
-                        // $(".show_expert_email").html("");
-                        // $(".show_expert_age").html("");
-                        // $(".show_expert_phone").html("");
-                        // $(".show_expert_availability").html("");
-                        // $(".show_expert_salary").html("");
-                        // $(".show_expert_fce").html("");
-                        // $("a.show_expert_linkedin").html("");
-                        // $("a.show_expert_linkedin").attr("href","");
-                        // $("a.show_expert_github").html("");
-                        // $("a.show_expert_github").attr("href","");
-                        // $(".show_expert_eng_speak").html("");
-                        // $(".show_expert_eng_write").html("");
-                        // $(".show_expert_eng_read").html("");
-                        // $(".show_expert_adv_tech").html("");
-                        // $(".show_expert_int_tech").html("");
-                        // $(".show_expert_bsc_tech").html("");
-
                         // set data
                         $(".show_expert_name").html(expert.fullname)
                         $(".show_expert_email").html(expert.email_address);
