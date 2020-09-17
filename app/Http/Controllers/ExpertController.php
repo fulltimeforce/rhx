@@ -72,6 +72,26 @@ class ExpertController extends Controller
             ->with('technologies', Expert::getTechnologies() );
     }
 
+    public function showExpert(Request $request){
+        $input = $request->all();
+        // $experts = $this->filter($basic , $intermediate, $advanced);
+        $expert = Expert::find($input["id"]);
+        $basic = [];
+        $intermediate = [];
+        $advanced = [];
+        $technologies = Expert::getTechnologies();
+        foreach ($technologies as $catgId => $catg) {
+            foreach ($catg[1] as $techId => $techLabel) {
+                if($catgId == "english"){continue;}
+                if($expert[$techId] == "basic"){$basic[] = $techLabel;}
+                if($expert[$techId] == "intermediate"){$intermediate[] = $techLabel;}
+                if($expert[$techId] == "advanced"){$advanced[] = $techLabel;}
+            }
+        }
+        return ["expert"=>$expert,"basic"=>$basic,"intermediate"=>$intermediate,"advanced"=>$advanced];
+        // return $expert;
+    }
+
     public function listjqgrid(Request $request){
 
         $query = $request->query();

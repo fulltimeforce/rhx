@@ -7,233 +7,253 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
  
 <style>
-caption{
-    /* caption-side: top !important; */
-    width: max-content !important;
-    border: 1px solid;
-    margin-bottom: 1.5rem;
-}
-#showURL{
-    word-break: break-all;
-}
-#allexperts tbody tr td:nth-child(2){
-    text-transform: capitalize;
-}
-.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
-    border: 1px solid #007bff;
-    color: #FFF !important;
-    background: #007bff;
-}
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover{
-    background-color: #e9ecef;
-    background: #e9ecef;
-    border: 1px solid #dee2e6;
-    color: #0056b3;
-}
+    caption{
+        /* caption-side: top !important; */
+        width: max-content !important;
+        border: 1px solid;
+        margin-bottom: 1.5rem;
+    }
+    #showURL{
+        word-break: break-all;
+    }
+    #allexperts tbody tr td:nth-child(2){
+        text-transform: capitalize;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+        border: 1px solid #007bff;
+        color: #FFF !important;
+        background: #007bff;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+        background-color: #e9ecef;
+        background: #e9ecef;
+        border: 1px solid #dee2e6;
+        color: #0056b3;
+    }
 
-.slider {
-  border: none;
-  position: relative;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  width: 125px;
-}
+    .slider {
+      border: none;
+      position: relative;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      width: 125px;
+    }
 
-.slider-checkbox {
-  display: none;
-}
+    .slider-checkbox {
+      display: none;
+    }
 
-.slider-label {
-  border: 0;
-  border-radius: 20px;
-  cursor: pointer;
-  display: block;
-  overflow: hidden;
-}
+    .slider-label {
+      border: 0;
+      border-radius: 20px;
+      cursor: pointer;
+      display: block;
+      overflow: hidden;
+    }
 
-.slider-inner {
-  display: block;
-  margin-left: -100%;
-  transition: margin 0.3s ease-in 0s;
-  width: 200%;
-}
+    .slider-inner {
+      display: block;
+      margin-left: -100%;
+      transition: margin 0.3s ease-in 0s;
+      width: 200%;
+    }
 
-.slider-inner:before,
-.slider-inner:after {
-  box-sizing: border-box;
-  display: block;
-  float: left;
-  font-family: sans-serif;
-  font-size: 14px;
-  font-weight: bold;
-  height: 30px;
-  line-height: 30px;
-  padding: 0;
-  width: 50%;
-}
+    .slider-inner:before,
+    .slider-inner:after {
+      box-sizing: border-box;
+      display: block;
+      float: left;
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      height: 30px;
+      line-height: 30px;
+      padding: 0;
+      width: 50%;
+    }
 
-.slider-inner:before {
-  background-color: #007bff;
-  color: #fff;
-  content: "APPROVED";
-  padding-left: .75em;
-}
+    .slider-inner:before {
+      background-color: #007bff;
+      color: #fff;
+      content: "APPROVED";
+      padding-left: .75em;
+    }
 
-.slider-inner:after {
-  background-color: #dc3545;
-  color: #FFF;
-  content: "FAILED";
-  padding-right: .75em;
-  text-align: right;
-}
+    .slider-inner:after {
+      background-color: #dc3545;
+      color: #FFF;
+      content: "FAILED";
+      padding-right: .75em;
+      text-align: right;
+    }
 
-.slider-circle {
-  background-color: #FFF;
-  border: 0;
-  border-radius: 20px;
-  bottom: 0;
-  display: block;
-  margin: 5px;
-  position: absolute;
-  right: 91px;
-  top: 0;
-  transition: all 0.3s ease-in 0s; 
-  width: 20px;
-}
+    .slider-circle {
+      background-color: #FFF;
+      border: 0;
+      border-radius: 20px;
+      bottom: 0;
+      display: block;
+      margin: 5px;
+      position: absolute;
+      right: 91px;
+      top: 0;
+      transition: all 0.3s ease-in 0s; 
+      width: 20px;
+    }
 
-.slider-checkbox:checked + .slider-label .slider-inner {
-  margin-left: 0;
-}
+    .slider-checkbox:checked + .slider-label .slider-inner {
+      margin-left: 0;
+    }
 
-.slider-checkbox:checked + .slider-label .slider-circle {
-  background-color: #FFFFFF;
-  right: 0; 
-}
-td.stickout{
-    background-color: yellow;
-}
-td.frozencell{
-    background-color : #fafafa;
-}
-.dataTables_filter{
-    display: none;
-}
-.txt-description{
-    white-space: pre-line;
-}
-.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td,
-.ui-jqgrid .ui-jqgrid-htable thead th div{
-    white-space: normal;
-}
-.ui-jqgrid .table-bordered th.ui-th-ltr{
-    color: #fff;
-    background-color: #343a40;
-}
-.select2-container{
-    width: 100% !important;
-}
+    .slider-checkbox:checked + .slider-label .slider-circle {
+      background-color: #FFFFFF;
+      right: 0; 
+    }
+    td.stickout{
+        background-color: yellow;
+    }
+    td.frozencell{
+        background-color : #fafafa;
+    }
+    .dataTables_filter{
+        display: none;
+    }
+    .txt-description{
+        white-space: pre-line;
+    }
+    .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td,
+    .ui-jqgrid .ui-jqgrid-htable thead th div{
+        white-space: normal;
+    }
+    .ui-jqgrid .table-bordered th.ui-th-ltr{
+        color: #fff;
+        background-color: #343a40;
+    }
+    .select2-container{
+        width: 100% !important;
+    }
 
-.lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border: 8px solid #17a2b8;
-  border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #17a2b8 transparent transparent transparent;
-}
-.lds-ring div:nth-child(1) {
-  animation-delay: -0.45s;
-}
-.lds-ring div:nth-child(2) {
-  animation-delay: -0.3s;
-}
-.lds-ring div:nth-child(3) {
-  animation-delay: -0.15s;
-}
-@keyframes lds-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
+    .lds-ring {
+      display: inline-block;
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .lds-ring div {
+      box-sizing: border-box;
+      display: block;
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      margin: 8px;
+      border: 8px solid #17a2b8;
+      border-radius: 50%;
+      animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      border-color: #17a2b8 transparent transparent transparent;
+    }
+    .lds-ring div:nth-child(1) {
+      animation-delay: -0.45s;
+    }
+    .lds-ring div:nth-child(2) {
+      animation-delay: -0.3s;
+    }
+    .lds-ring div:nth-child(3) {
+      animation-delay: -0.15s;
+    }
+    @keyframes lds-ring {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
 
-.btn-group>.badge:not(:last-child):not(.dropdown-toggle){
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-.btn-group>.badge:not(:first-child){
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-.btn-group>.badge:not(:first-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-.btn-group>.badge{
-    height: 21px;
-}
-.btn-group>.badge.badge-primary{
-    font-size: 9px;
-}
-.btn-group>.badge.badge-primary i.fas:before{
-    vertical-align: -webkit-baseline-middle;
-}
-main{
-    position: relative;
-}
-.buble-audio{
-    position: fixed;
-    padding: .7rem;
-    z-index: 2;
-    background: #FFFFFF;
-    right: 15px;
-    bottom: 16px;
-    max-width: 350px;
-    width: 100%;
-    border: 1px solid #000;
-    font-size: 14px;
-}
-.section-audio{
-    position: relative;
-}
-.buble-audio p{
-    margin-bottom: 3px;
-}
-.section-audio .close-audio{
-    position: absolute;
-    right: -12px;
-    top: -25px;
-    background: #FFF;
-    z-index: 4;
-    font-size: 24px;
-    line-height: 1;
-    border-radius: 27px;
-}
-.speed-audio{
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-.tab-fce{
-    display: none;
-}
-.tab-fce.fce-active{
-    display: flex;
-}
+    .btn-group>.badge:not(:last-child):not(.dropdown-toggle){
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .btn-group>.badge:not(:first-child){
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    .btn-group>.badge:not(:first-child) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    .btn-group>.badge{
+        height: 21px;
+    }
+    .btn-group>.badge.badge-primary{
+        font-size: 9px;
+    }
+    .btn-group>.badge.badge-primary i.fas:before{
+        vertical-align: -webkit-baseline-middle;
+    }
+    main{
+        position: relative;
+    }
+    .buble-audio{
+        position: fixed;
+        padding: .7rem;
+        z-index: 2;
+        background: #FFFFFF;
+        right: 15px;
+        bottom: 16px;
+        max-width: 350px;
+        width: 100%;
+        border: 1px solid #000;
+        font-size: 14px;
+    }
+    .section-audio{
+        position: relative;
+    }
+    .buble-audio p{
+        margin-bottom: 3px;
+    }
+    .section-audio .close-audio{
+        position: absolute;
+        right: -12px;
+        top: -25px;
+        background: #FFF;
+        z-index: 4;
+        font-size: 24px;
+        line-height: 1;
+        border-radius: 27px;
+    }
+    .speed-audio{
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+    .tab-fce{
+        display: none;
+    }
+    .tab-fce.fce-active{
+        display: flex;
+    }
+    .tech{
+        display: inline-block;
+        padding: 5px;
+        
+        border-radius: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .tech_adv{
+        background-color: #536afc;
+        color: white;
+    }
+    .tech_int{
+        background-color: #e8ff63;
+        color: black;
+    }
+    .tech_bsc{
+        background-color: gray;
+        color: white;
+    }
 </style>
 @endsection
 
@@ -359,6 +379,116 @@ main{
     </div>
     </div>
     <!--  
+        /*========================================== EXPERT INFORMATION ==========================================*/
+    -->
+    <div class="modal" id="info-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="interviews-expertLabel"><span class="show_expert_name">{expert Name}</span> - INFO</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Basic Info -->
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="font-weight-bold">Name</label>
+                    <h5 class="show_expert_name"></h5>
+                </div>
+                <div class="col-sm-6">
+                    <label class="font-weight-bold">Email</label>
+                    <h5 class="show_expert_email"></h5>
+                </div>
+            </div>
+            <hr/>
+            <!-- Additional info -->
+            <div class="row">
+                <div class="col-6 col-sm-2">
+                    <label class="font-weight-bold">Age</label>
+                    <p class="show_expert_age"></p>
+                </div>
+                <div class="col-6 col-sm-3">
+                    <label class="font-weight-bold">Phone</label>
+                    <p class="show_expert_phone"></p>
+                </div>
+                <div class="col-6 col-sm-3">
+                    <label class="font-weight-bold">Availability</label>
+                    <p class="show_expert_availability"></p>
+                </div>
+                <div class="col-6 col-sm-2">
+                    <label class="font-weight-bold">Salary</label>
+                    <p class="show_expert_salary"></p>
+                </div>
+                <div class="col-6 col-sm-2">
+                    <label class="font-weight-bold">FCE</label>
+                    <p class="show_expert_fce"></p>
+                </div>
+            </div>
+            <hr/>
+            <!-- Links -->
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="font-weight-bold">LinkedIn</label><br>
+                    <a class="show_expert_linkedin" href="#">https://www.linkedin.com/in/jos%C3%A9-carlos-quichiz-santome-257371b4</a>
+                </div>
+                <div class="col-sm-6">
+                    <label class="font-weight-bold">Github</label><br>
+                    <a class="show_expert_github" href="#">https://github.com/josecarlosqs/</a>
+                </div>
+            </div>
+            <hr/>
+            <!-- English Proficiency -->
+            <div class="row">
+                <div class="col-12">
+                    <h5>English</h5>
+                </div>
+                <div class="col-md-4">
+                    <label class="font-weight-bold">Speaking</label>
+                    <!-- <p>advanced</p> -->
+                    <div class="progress">
+                        <div class="progress-bar show_expert_eng_speak" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" >Intermediate</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="font-weight-bold">Writing</label>
+                    <div class="progress">
+                        <div class="progress-bar show_expert_eng_write" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" >Intermediate</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="font-weight-bold">Reading</label>
+                    <div class="progress">
+                        <div class="progress-bar show_expert_eng_read" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" >Advanced</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Technologies -->
+            <hr/>
+            <div class="row">
+                <div class="col-12">
+                    <h5>Techonologies</h5>
+                </div>
+                <hr>
+                <div class="col-12">
+                    <h6>Advanced</h6>
+                    <p class="show_expert_adv_tech"></p>
+                </div>
+                <div class="col-12">
+                    <h6>Intermediate</h6>
+                    <p class="show_expert_int_tech"></p>
+                </div>
+                <div class="col-12">
+                    <h6>Basic</h6>
+                    <p class="show_expert_bsc_tech"></p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!--  
         /*========================================== FORM ==========================================*/
     -->
     @if ($message = Session::get('success'))
@@ -394,7 +524,6 @@ main{
                 @endforeach
             </select>
         </div>
-
     </form>
     <div class="row mb-4">
         <div class="col">
@@ -533,7 +662,7 @@ main{
                         if( audios__count > 0){
                             actions += '<a class="badge badge-primary btn-list-audio" data-name="'+rowData.fullname+'" data-id="'+rowData.id+'" href="#">Audio</a>';
                         } */
-
+                        actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" >Show</a>';
                         actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
 
                         actions = actions.replace(/:id/gi , rowData.id);
@@ -560,7 +689,6 @@ main{
 
             @foreach($technologies as $categoryid => $category)
                 @foreach($category[1] as $techid => $techlabel)
-                    
                     if ( a_keys_filter.filter(f => f=='{{$techid}}').length > 0 ){
                         columns.push( { field: '{{$techid}}', title: "{{$techlabel}}", class: 'stickout' } );
                     }else{
@@ -577,6 +705,85 @@ main{
                 fixedNumber: 2,
                 theadClasses: 'table-dark',
                 uniqueId: 'id'
+            });
+
+            // =================== SHOW
+            $("table tbody").on("click", "a.btn-show",function(ev){
+                ev.preventDefault();
+                var expertId = $(this).attr("data-id");
+                var expertName = $(this).attr("data-name");
+                $.ajax({
+                    type:"POST",
+                    url: '{{ route("experts.show") }}',
+                    data:{id: expertId},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        var expert = data.expert;
+                        // return;
+                        // clear data
+                        // $(".show_expert_name").html("");
+                        // $(".show_expert_email").html("");
+                        // $(".show_expert_age").html("");
+                        // $(".show_expert_phone").html("");
+                        // $(".show_expert_availability").html("");
+                        // $(".show_expert_salary").html("");
+                        // $(".show_expert_fce").html("");
+                        // $("a.show_expert_linkedin").html("");
+                        // $("a.show_expert_linkedin").attr("href","");
+                        // $("a.show_expert_github").html("");
+                        // $("a.show_expert_github").attr("href","");
+                        // $(".show_expert_eng_speak").html("");
+                        // $(".show_expert_eng_write").html("");
+                        // $(".show_expert_eng_read").html("");
+                        // $(".show_expert_adv_tech").html("");
+                        // $(".show_expert_int_tech").html("");
+                        // $(".show_expert_bsc_tech").html("");
+
+                        // set data
+                        $(".show_expert_name").html(expert.fullname)
+                        $(".show_expert_email").html(expert.email_address);
+                        $(".show_expert_age").html(expert.age);
+                        $(".show_expert_phone").html(expert.phone);
+                        $(".show_expert_availability").html(expert.availability);
+                        $(".show_expert_salary").html(expert.salary);
+                        $(".show_expert_fce").html(expert.fce_overall);
+                        $("a.show_expert_linkedin").html(expert.linkedin);
+                        $("a.show_expert_linkedin").attr("href",expert.linkedin);
+                        $("a.show_expert_github").html(expert.github);
+                        $("a.show_expert_github").attr("href",expert.github);
+                        $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
+                        $(".show_expert_eng_speak").html(expert.english_speaking);
+
+                        $(".show_expert_eng_write").html(expert.english_writing);
+                        $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+
+                        $(".show_expert_eng_read").html(expert.english_reading);
+                        $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                        var adv_tech = [];
+                        var int_tech = [];
+                        var bsc_tech = [];
+                        for(i=0;data.advanced.length > i; i++){
+                            var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+                            adv_tech.push(span);
+                        }
+                        for(i=0;data.intermediate.length > i; i++){
+                            var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+                            int_tech.push(span);
+                        }
+                        for(i=0;data.basic.length > i; i++){
+                            var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+                            bsc_tech.push(span);
+                        }
+                        $(".show_expert_adv_tech").html(adv_tech);
+                        $(".show_expert_int_tech").html(int_tech);
+                        $(".show_expert_bsc_tech").html(bsc_tech);
+
+                        $("#info-expert").modal();
+                    }
+                });
             });
 
             // =================== DELETE
@@ -694,7 +901,7 @@ main{
                         $this.attr("data-selection" , select )
                     }
                 });
-            })
+            });
             
             $("table tbody").on('click' , 'a.btn-fce' , function(ev){
                 ev.preventDefault();
@@ -763,7 +970,7 @@ main{
                         $('#fceExpert').modal();
                     }
                 });
-            })
+            });
 
             $('.total-fce').bind('keyup mouseup'  , function(){
                 console.log("ddd");
@@ -774,7 +981,7 @@ main{
                 total = total.toFixed(2)
                 $("#fce_total").val(total)
 
-            })
+            });
         }
 
         $("#prev-fce").on('click' , function(ev){
@@ -1277,8 +1484,8 @@ main{
             $('#form-btn-save').show();
 
         });
-
     });
  
 </script>   
+
 @endsection
