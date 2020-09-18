@@ -76,6 +76,17 @@ class ExpertController extends Controller
         $input = $request->all();
         // $experts = $this->filter($basic , $intermediate, $advanced);
         $expert = Expert::find($input["id"]);
+        $logs = Expertlog::with('log' , 'expert')->whereHas('log')->where('expert_id' , $input["id"])->get();
+        $audios = array();
+        foreach ($logs as $key => $log) {
+            if( $log->log->filter_audio != null ){
+                $audios[] = (object) array(
+                    "expert_id" => $input['id'],
+                    "type" => "Filter",
+                    "audio" => $log->log->filter_audio
+                ); 
+            }
+        }
         $basic = [];
         $intermediate = [];
         $advanced = [];
@@ -88,7 +99,7 @@ class ExpertController extends Controller
                 if($expert[$techId] == "advanced"){$advanced[] = $techLabel;}
             }
         }
-        return ["expert"=>$expert,"basic"=>$basic,"intermediate"=>$intermediate,"advanced"=>$advanced];
+        return ["expert"=>$expert,"basic"=>$basic,"intermediate"=>$intermediate,"advanced"=>$advanced, "audios"=>$audios];
     }
 
     public function listjqgrid(Request $request){

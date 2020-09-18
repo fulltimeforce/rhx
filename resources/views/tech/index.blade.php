@@ -252,6 +252,18 @@
       background-color: gray;
       color: white;
   }
+  #list-expert-audios{
+      background-color: #03132e;
+      padding: 5px;
+      text-align: center;
+  }
+  .info-speed-audio{
+      font-size: 12px;
+      margin-bottom: 5px;
+  }
+  .expert-audio{
+      margin: 5px 5px 5px 5px;
+  }
 </style>
 @endsection
 
@@ -328,13 +340,25 @@
           <hr/>
           <!-- Links -->
           <div class="row">
-              <div class="col-sm-6">
+              <!--<div class="col-sm-6">
                   <label class="font-weight-bold">LinkedIn</label><br>
                   <a class="show_expert_linkedin" href="#"></a>
               </div>
               <div class="col-sm-6">
                   <label class="font-weight-bold">Github</label><br>
                   <a class="show_expert_github" href="#"></a>
+              </div>-->
+              <div class="col-12 col-sm-4">
+                  <label class="font-weight-bold">Links</label>
+                  <p>
+                      <!-- <a class="show_expert_github" href="#"><i class="fa fa-github"></i></a>
+                      <a class="show_expert_linkedin" href="#"><i class="fa fa-linkedin-square"></i></a> -->
+                      <a class="show_expert_github" href="#"><button class="btn btn-primary">Github</button></a>
+                      <a class="show_expert_linkedin" href="#"><button class="btn btn-primary">LinkedIn</button></a>
+                  </p>
+              </div>
+              <div id="list-expert-audios" class="col-12 col-sm-8 dark-player">
+                  <div class="row"></div>
               </div>
           </div>
           <hr/>
@@ -402,7 +426,7 @@
 
 <div class="row">
     <div class="col">
-        <h1>Experts </h1>
+        <h1>TECH</h1>
     </div>
 </div>
 <div class="row mb-4">
@@ -538,12 +562,12 @@ $(document).ready(function () {
                 $(".show_expert_age").html(expert.age);
                 $(".show_expert_phone").html(expert.phone);
                 $(".show_expert_availability").html(expert.availability);
-                $(".show_expert_salary").html(expert.salary);
+                $(".show_expert_salary").html((expert.type_money == 'sol' ? 'S/' : '$') + ' ' +(expert.salary!=null?expert.salary:0));
                 $(".show_expert_fce").html(expert.fce_overall);
-                $("a.show_expert_linkedin").html(expert.linkedin);
-                $("a.show_expert_linkedin").attr("href",expert.linkedin);
-                $("a.show_expert_github").html(expert.github);
-                $("a.show_expert_github").attr("href",expert.github);
+                $("a.show_expert_linkedin").attr("href",(expert.linkedin!=undefined?expert.linkedin:"#"));
+                $("a.show_expert_linkedin").html((expert.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                $("a.show_expert_github").attr("href",(expert.github!=undefined?expert.github:"#"));
+                $("a.show_expert_github").html((expert.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
                 $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
                 $(".show_expert_eng_speak").html(expert.english_speaking);
 
@@ -552,6 +576,17 @@ $(document).ready(function () {
 
                 $(".show_expert_eng_read").html(expert.english_reading);
                 $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                var html='';
+                if(data.audios){
+                    for (let index = 0; index < data.audios.length; index++) {
+                        html+='<div class="col-12"><div class="expert-audio" data-audio="'+index+'">';
+                        html+='<p style="color:white; text-align: left">Audio '+(index+1)+': '+data.audios[index].type+'</p>'
+                        html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                        html += '<audio id="info-audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
+                        html+='</div></div>';
+                    }
+                }
+                $("#list-expert-audios>.row").html(html);
                 var adv_tech = [];
                 var int_tech = [];
                 var bsc_tech = [];
@@ -578,12 +613,30 @@ $(document).ready(function () {
           });
         });
     }
+    $("#info-expert").on('click' , 'a.info-speed-audio' , function(ev){
+      ev.preventDefault();
+      var speed = $(this).data("speed");
+      var index = $(this).parent().data("audio");
+      console.log( parseFloat( speed ) , speed )
+      document.getElementById("info-audio-player-"+index).playbackRate = parseFloat(speed);
+    })
+
     $("#info-expert").on("click",".btn-prev-expert",function(ev){
       ev.preventDefault();
       var id = $(this).attr("data-id");
       var prev = getPrevId(id);
       if(prev != "-"){
         loadModalExpert(prev);
+      }
+    });
+    $("#info-expert").on("keydown",function(ev){
+      // ev.preventDefault();
+      if(ev.keyCode == 37){
+        var id = $(".btn-prev-expert").attr("data-id");
+        var prev = getPrevId(id);
+        if(prev != "-"){
+          loadModalExpert(prev);
+        }
       }
     });
 
@@ -595,60 +648,83 @@ $(document).ready(function () {
         loadModalExpert(next);
       }
     });
-    function loadModalExpert(id){
-      $.ajax({
-        type:"POST",
-        url: '{{ route("experts.show") }}',
-        data:{id: id},
-        headers: {
-            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success:function(data){
-            var expert = data.expert;
-            // set data
-            $(".show_expert_name").html(expert.fullname)
-            $(".show_expert_email").html(expert.email_address);
-            $(".show_expert_age").html(expert.age);
-            $(".show_expert_phone").html(expert.phone);
-            $(".show_expert_availability").html(expert.availability);
-            $(".show_expert_salary").html(expert.salary);
-            $(".show_expert_fce").html(expert.fce_overall);
-            $("a.show_expert_linkedin").html(expert.linkedin);
-            $("a.show_expert_linkedin").attr("href",expert.linkedin);
-            $("a.show_expert_github").html(expert.github);
-            $("a.show_expert_github").attr("href",expert.github);
-            $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
-            $(".show_expert_eng_speak").html(expert.english_speaking);
 
-            $(".show_expert_eng_write").html(expert.english_writing);
-            $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
-
-            $(".show_expert_eng_read").html(expert.english_reading);
-            $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
-            var adv_tech = [];
-            var int_tech = [];
-            var bsc_tech = [];
-            for(i=0;data.advanced.length > i; i++){
-                var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
-                adv_tech.push(span);
-            }
-            for(i=0;data.intermediate.length > i; i++){
-                var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
-                int_tech.push(span);
-            }
-            for(i=0;data.basic.length > i; i++){
-                var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
-                bsc_tech.push(span);
-            }
-            $(".show_expert_adv_tech").html(adv_tech);
-            $(".show_expert_int_tech").html(int_tech);
-            $(".show_expert_bsc_tech").html(bsc_tech);
-            $(".btn-prev-expert").attr("data-id",expert.id);
-            $(".btn-next-expert").attr("data-id",expert.id);
+    $("#info-expert").on("keydown",function(ev){
+      // ev.preventDefault();
+      if(ev.keyCode == 39){
+        var id = $(".btn-next-expert").attr("data-id");
+        var next = getNextId(id);
+        if(next!="-"){
+          loadModalExpert(next);
         }
-      });
-    }
+      }      
+    });
+
+    function loadModalExpert(id){
+          $.ajax({
+            type:"POST",
+            url: '{{ route("experts.show") }}',
+            data:{id: id},
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+                var expert = data.expert;
+                // set data
+                $(".show_expert_name").html(expert.fullname)
+                $(".show_expert_email").html(expert.email_address);
+                $(".show_expert_age").html(expert.age);
+                $(".show_expert_phone").html(expert.phone);
+                $(".show_expert_availability").html(expert.availability);
+                $(".show_expert_salary").html((expert.type_money == 'sol' ? 'S/' : '$')+' '+(expert.salary!=null?expert.salary:0));
+                $(".show_expert_fce").html(expert.fce_overall);
+                $("a.show_expert_linkedin").attr("href",(expert.linkedin!=undefined?expert.linkedin:"#"));
+                $("a.show_expert_linkedin").html((expert.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                $("a.show_expert_github").attr("href",(expert.github!=undefined?expert.github:"#"));
+                $("a.show_expert_github").html((expert.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
+                $(".show_expert_eng_speak").html(expert.english_speaking);
+
+                $(".show_expert_eng_write").html(expert.english_writing);
+                $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+
+                $(".show_expert_eng_read").html(expert.english_reading);
+                $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                var html='';
+                if(data.audios){
+                    for (let index = 0; index < data.audios.length; index++) {
+                        html+='<div class="col-12"><div class="expert-audio" data-audio="'+index+'">';
+                        html+='<p style="color:white; text-align: left">Audio '+(index+1)+': '+data.audios[index].type+'</p>'
+                        html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                        html += '<audio id="info-audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
+                        html+='</div></div>';
+                    }
+                }
+                $("#list-expert-audios>.row").html(html);
+                var adv_tech = [];
+                var int_tech = [];
+                var bsc_tech = [];
+                for(i=0;data.advanced.length > i; i++){
+                    var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+                    adv_tech.push(span);
+                }
+                for(i=0;data.intermediate.length > i; i++){
+                    var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+                    int_tech.push(span);
+                }
+                for(i=0;data.basic.length > i; i++){
+                    var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+                    bsc_tech.push(span);
+                }
+                $(".show_expert_adv_tech").html(adv_tech);
+                $(".show_expert_int_tech").html(int_tech);
+                $(".show_expert_bsc_tech").html(bsc_tech);
+                $(".btn-prev-expert").attr("data-id",expert.id);
+                $(".btn-next-expert").attr("data-id",expert.id);
+            }
+          });
+        }
 
     $('#search').on('click' , function(){
         

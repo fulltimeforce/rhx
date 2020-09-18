@@ -35,7 +35,8 @@ class UserController extends Controller
         if(!Auth::check()) return redirect('login');
         $query = $request->query();
 
-        $users = User::whereNotNull('users.id')->latest("users.created_at");
+        $users = User::whereNotNull('users.id')->orderByRaw("FIELD(status, \"ENABLED\", \"DISABLED\")");
+        //latest("users.created_at");
         // $users = $this->filter(array() , array(), array());
         if(isset($query['name'])){
             $users->where('users.name' , 'like' , '%'.$query['name'].'%');
