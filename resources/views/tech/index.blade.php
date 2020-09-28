@@ -493,7 +493,7 @@ $(document).ready(function () {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(data){
-
+                
                 let _data = JSON.parse(data)
                 _total_records = _data.totalNotFiltered;
                 _before_rows = _data.total;
@@ -515,7 +515,7 @@ $(document).ready(function () {
         var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
 
         var columns = [
-            {
+                        {
                 field: 'id',
                 title: "Actions",
                 valign: 'middle',
@@ -527,7 +527,40 @@ $(document).ready(function () {
                     actions = actions.replace(/:id/gi , rowData.id);
                     return actions;
                 },
-                width: 100,
+                width: 70,
+                class: 'frozencell'
+            },
+            {
+                title: "Technologies",
+                valign: 'middle',
+                align: 'left',
+                formatter : function(value,rowData,index) {
+                    var technologies_list = ['csharp','java','python','ruby','php','cplusplus','goland',
+                                            'dotnet','unity','springframework','django','flask','ror','laravel','codeigniter','yii','nodejs',
+                                            'reactjs','vuejs','angular678','typescript',
+                                            'androidjava','flutter','reactnative','swift',
+                                            'shopifyapps','wpplugins'
+                                            ];
+
+                    var technologies_rename = ['C#','Java','Python','Ruby','PHP','C++','Golang',
+                                            '.NET','Unity','Spring Framework','Django','Flask','Ruby on Rails','Laravel','CodeIgniter','Yii','Node.js',
+                                            'React','Vue.js','Angular 6/7/8','Typescript',
+                                            'Android Java','Flutter','React Native','Swift',
+                                            'Shopify Apps','Wordpress Plugins'
+                                            ];
+
+                    var technologies = '';
+
+                    Object.keys(rowData).forEach(key => {
+                        if(technologies_list.includes(key) && rowData[key]=='advanced'){
+                            var index_tech = technologies_list.indexOf(key);
+                            technologies += '<span class="tech tech_adv">' + technologies_rename[index_tech] + '</span>';
+                        }
+                    });
+                            
+                    return technologies;
+                },
+                width: 130,
                 class: 'frozencell'
             },
             { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'},
