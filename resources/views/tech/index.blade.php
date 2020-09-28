@@ -542,6 +542,7 @@ $(document).ready(function () {
                                             'shopifyapps','wpplugins'
                                             ];
 
+
                     var technologies_rename = ['C#','Java','Python','Ruby','PHP','C++','Golang',
                                             '.NET','Unity','Spring Framework','Django','Flask','Ruby on Rails','Laravel','CodeIgniter','Yii','Node.js',
                                             'React','Vue.js','Angular 6/7/8','Typescript',
