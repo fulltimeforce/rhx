@@ -515,7 +515,7 @@ $(document).ready(function () {
         var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
 
         var columns = [
-                        {
+            {
                 field: 'id',
                 title: "Actions",
                 valign: 'middle',
@@ -527,7 +527,7 @@ $(document).ready(function () {
                     actions = actions.replace(/:id/gi , rowData.id);
                     return actions;
                 },
-                width: 70,
+                width: 40,
                 class: 'frozencell'
             },
             {
@@ -561,11 +561,25 @@ $(document).ready(function () {
                             
                     return technologies;
                 },
-                width: 130,
+                width: 150,
                 class: 'frozencell'
             },
-            { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'},
-            { field: 'fce_overall', title: "FCE", width: 50 , class: 'frozencell'}
+            {
+                field: 'salary',
+                title: "Salary",
+                valign: 'middle',
+                align: 'left',
+                clickToSelect: false,
+                formatter : function(value,rowData,index) {                        
+                    var actions = "-"
+                    if(rowData.salary){actions = 'S/. '+ rowData.salary}
+                    return actions;
+                },
+                width: 40,
+                class: 'frozencell'
+            },
+            { field: 'fullname', title: "Name", width: 130 , class: 'frozencell'},
+            { field: 'fce_overall', title: "FCE", width: 40 , class: 'frozencell'}
         ];
         
         $("#list-experts").bootstrapTable('destroy').bootstrapTable({
