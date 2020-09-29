@@ -571,8 +571,9 @@ $(document).ready(function () {
                 align: 'left',
                 clickToSelect: false,
                 formatter : function(value,rowData,index) {                        
-                    var actions = "-"
-                    if(rowData.salary){actions = 'S/. '+ rowData.salary}
+                    var actions = ""
+                    if(rowData.type_money == 'sol'){actions += 'S/ ';}else{actions += '$ ';}
+                    if(rowData.salary){actions += rowData.salary;}else{actions += '0';}
                     return actions;
                 },
                 width: 40,
