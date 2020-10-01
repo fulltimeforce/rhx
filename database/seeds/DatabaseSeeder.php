@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PositionTableSeeder::class);
         $this->call(ExpertsTableSeeder::class);
         $this->call(LogsTableSeeder::class);
+        $this->call(SaleSeeder::class);
         //TODO CHECK to see if we can create portfolio dummy data.
         /* $resumes = DB::table('portfolio_expert')->get();
 

@@ -74,6 +74,9 @@
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.tech.menu') }}">{{ __('TECH') }}</a>
                             </li>
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('sales.menu') }}">{{ __('Sales') }}</a>
+                            </li>
                             @endif
                             <!-- </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('expert.portfolio.resume') }}">{{ __('Resume') }}</a>

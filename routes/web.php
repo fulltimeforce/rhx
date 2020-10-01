@@ -55,6 +55,10 @@ Route::get('expert/tech','ExpertController@listTech')->name('experts.tech.menu')
 Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('experts.tech.list');
 // Route::get('expert/tech/show','ExpertController@showTech')->name('experts.tech.show');
 
+Route::get('sales','SaleController@index')->name('sales.menu');
+Route::get('sales/bootstrap','SaleController@salesBootstrap')->name('sales.list');
+Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
+
 /*
 ============================== ROUTES ACTION ============================================
 */ 
