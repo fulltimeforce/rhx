@@ -343,14 +343,11 @@ $(document).ready(function () {
           var status = $(this).data("status");
           var job_id = $(this).data("jobid");
           var confirmed = confirm("Are you sure you want to "+ (status=="enabled"?"disable":"enable") +": "+job_id+"?");
-          console.log(id)
-          console.log(status)
-          console.log(job_id)
           if(confirmed){
             $.ajax({
                 type:'POST',
                 url: '{{ route("sales.switch") }}',
-                data: {id : id, status: status},
+                data: {id : id},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -42,20 +42,9 @@ class SaleController extends Controller
     public function switchStatus(Request $request){
         $input = $request->all();
         $id = $input['id'];
-        $status = $input['status'];
-
-        switch ($status) {
-            case 'enabled':
-                $status = 'disabled';
-                break;
-            case 'disabled':
-                $status = 'enabled';
-                break;
-            default:break;
-        }
         
-        Sale::where('sales.id' , 1)->update(
-            array("sales.status"=>'disabled')
+        Sale::where('id' , $id)->update(
+            array("status"=>'disabled')
         );
 
     }
