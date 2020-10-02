@@ -28,7 +28,7 @@ class SaleController extends Controller
         if(!Auth::check()) return redirect('login');
         $query = $request->query();
 
-        $sales = Sale::where('status', 'enabled');
+        $sales = Sale::where('status', 'enabled')->orderBy('created_at', 'desc');
 
         $sale =  $sales->paginate( $query['rows'] );
         $rows = $sale->items();

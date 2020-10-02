@@ -323,9 +323,24 @@ $(document).ready(function () {
                 },
               class: 'frozencell',
             },
-            { field: 'title', title: "Title", width: 200 , class: 'frozencell'},
+            { field: 'title', title: "Title", width: 150 , class: 'frozencell'},
             { field: 'payment_range', title: "Payment", width: 75 , class: 'frozencell'},
             { field: 'freelancers_qty', title: "Freelancers", width: 75, class: 'frozencell'},
+            {
+              field: 'created_at', 
+              title: "Date",
+              width: 50,
+              formatter : function(value,rowData,index) {                        
+                var actions = '';
+                var job_time = new Date().getTime() - new Date(rowData.created_at).getTime();
+                if(job_time<60*60*1000){actions = Math.floor(job_time/60/1000) + (Math.floor(job_time/60/1000)<=1?" min":" mins") + " ago";}
+                else if(job_time>=60*60*1000&&job_time<24*60*60*1000){actions = Math.ceil(job_time/60/60/1000) + (Math.ceil(job_time/60/60/1000)<=1?" hour":" hours") + " ago";}
+                else if(job_time>=24*60*60*1000){actions = Math.ceil(job_time/24/60/60/1000) + (Math.ceil(job_time/24/60/60/1000)<=1?" day":" days") + " ago";}
+                    actions = actions.replace(/:id/gi , rowData.id);
+                    return actions;
+                },
+              class: 'frozencell',
+            }
         ];
         
         $("#list-sales").bootstrapTable('destroy').bootstrapTable({
