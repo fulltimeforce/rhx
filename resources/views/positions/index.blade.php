@@ -193,7 +193,7 @@ input:checked + .slider:before {
         @foreach($positions as $pid => $position)
         <div class="col-12 col-sm-6 col-lg-4 mb-4">
             <section class="card card-position ">
-                <a href="#" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn-apply-expert">
+                <a href="{{ route('position.slug', $position->slug) }}" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn-apply-expert">
                     <div class="position-icon d-inline-block">
                         <i class="svg-icon svg-icon-{{$position->icon}}"></i>
                     </div>
@@ -266,35 +266,6 @@ input:checked + .slider:before {
                 $('[data-toggle="tooltip"]').tooltip('hide')
             }, 2000);
         });
-
-        $(".btn-apply-expert").on('click',function(ev){
-            ev.preventDefault();
-            var position = $(this).data("position");
-            var positionId = $(this).data("positionid");
-            var email = "";
-            // var email = $("input[name='email_"+position+"']").val();
-            // if( !isEmail(email) ){
-            //     $("input[name='email_"+position+"']").focus();
-            //     $("input[name='email_"+position+"']").addClass('is-invalid');
-            // }else{
-                $("input[name='email_"+position+"']").removeClass('is-invalid');
-                $.ajax({
-                    type:'POST',
-                    url: "{{ route('experts.validate') }}",
-                    headers: {
-                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data:{email:email,positionId: positionId},
-                    success:function(data){
-                        
-                        window.location = data;
-
-                    }
-                });
-            // }
-            
-        })
 
         $("table").on('click' , '.btn-copy-slug',function(ev){
             ev.preventDefault();

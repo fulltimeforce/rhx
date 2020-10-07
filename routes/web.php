@@ -59,6 +59,32 @@ Route::get('sales','SaleController@index')->name('sales.menu');
 Route::get('sales/bootstrap','SaleController@salesBootstrap')->name('sales.list');
 Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
 
+//METODOS POSTULANTES
+Route::get('recruits','RecruitController@index')->name('recruit.menu');
+Route::post('recruits/save','RecruitController@saveRecruit')->name("recruit.save");
+Route::post('recruits/evaluate/outstanding','RecruitController@recruitsEvaluateOutstanding')->name('recruit.postulant.outstanding');
+
+//METODOS PERFILES DESTACADOS
+Route::get('recruits/outstanding','RecruitController@outstanding')->name('recruit.outstanding');
+Route::post('recruits/evaluate/call','RecruitController@recruitsEvaluateCall')->name('recruit.postulant.call');
+
+//METODOS PRE-SELECCIONADOS
+Route::get('recruits/preselected','RecruitController@preselected')->name('recruit.preselected');
+Route::post('recruits/upload/audio','RecruitController@uploadAudio')->name('recruit.postulant.upload.audio');
+Route::post('recruits/delete/audio','RecruitController@deleteAudio')->name('recruit.postulant.delete.audio');
+
+//METODOS GENERALES
+Route::get('recruits/bootstrap','RecruitController@recruitsBootstrap')->name('recruit.list');
+Route::get('recruits/{id}/edit','RecruitController@editRecruit')->name('recruit.postulant.edit');
+Route::post('recruits/{id}/update','RecruitController@updateRecruit')->name("recruit.update");
+Route::post('recruits/delete','RecruitController@deleteRecruit')->name("recruit.postulant.delete");
+
+
+
+
+
+
+
 /*
 ============================== ROUTES ACTION ============================================
 */ 

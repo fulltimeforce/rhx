@@ -83,6 +83,9 @@
                             </li> -->
                             @if( Auth::user()->role->id < 3 )
                             </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('recruit.menu') }}">{{ __('RECRUITMENT') }}</a>
+                            </li>
+                            </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
                             @endif
