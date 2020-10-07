@@ -110,7 +110,7 @@
         
     </script>
     <script>
-        $("#update_recruit").on('click', function(ev){        
+        /*$("#update_recruit").on('click', function(ev){        
             ev.preventDefault();
             var link = $("#profile_link").val();
             var file_path = $("#file_path").val();
@@ -120,7 +120,7 @@
             }else{
                 $("#update-recruit").submit();
             }
-        });
+        });*/
         
         $('#file_path_update').on('change',function(ev){
             //get the file name

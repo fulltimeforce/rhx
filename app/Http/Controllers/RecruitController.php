@@ -179,7 +179,7 @@ class RecruitController extends Controller
         RecruitPosition::where('recruit_id' , $recruit_id)->where('position_id' , $position_id)->delete();
     }
 
-    public function updateRecruit(Request $request){
+    public function updateRecruit(Request $request, $id){
         $validator = $request->validate( [
             'fullname'              => 'required',
             'identification_number' => 'required',
@@ -200,6 +200,36 @@ class RecruitController extends Controller
         }
 
         try {
+
+            $file = $request->file("file_path_update");
+            $destinationPath = 'uploads/cv';
+            $input = $request->all();
+            $newNameFile = '';
+
+            if( $file ){
+                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $newNameFile = $destinationPath."/" . $_fileName;
+                $path = $request->file("file_path_update")->store("cv" , "s3");
+                $path_s3 = Storage::disk("s3")->url($path);
+                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path_update") ) , 'public' );
+                Storage::delete( $path );
+                $input["file_path"] = $path_s3;
+            }
+
+            unset( $input["_token"] );
+            
+            $recruit = Recruit::where("identification_number" , $input['identification_number'] )->get();
+
+            if( Recruit::where("identification_number" , $input['identification_number'])->count() >=1 ){
+                if($recruit[0]->id == $id){
+                    Recruit::where('id' , $id)->update($input);
+                }else{
+                    return redirect()->route('recruit.menu')
+                            ->with('error', 'Identification number already exists.');
+                }
+            }else{
+                Recruit::where('id' , $id)->update($input);
+            }
             
             if(Auth::check()){
                 return redirect()->route('recruit.menu')
