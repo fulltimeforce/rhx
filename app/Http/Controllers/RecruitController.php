@@ -6,9 +6,19 @@ use App\Recruit;
 use App\RecruitPosition;
 use App\Position;
 use App\User;
+
+use Exception;
+use Google_Client;
+use Google_Service_Drive;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RecruitController extends Controller
 {
@@ -97,8 +107,9 @@ class RecruitController extends Controller
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
-                ->whereNull('outstanding_report')
-                ->whereNull('call_report')
+                ->whereNull('recruit_positions.outstanding_report')
+                ->whereNull('recruit_positions.call_report')
+                ->whereNotNull('recruit_positions.user_id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -110,8 +121,9 @@ class RecruitController extends Controller
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
-                ->where('outstanding_report', '=' , 'approve')
-                ->whereNull('call_report')
+                ->where('recruit_positions.outstanding_report', '=' , 'approve')
+                ->whereNull('recruit_positions.call_report')
+                ->whereNotNull('recruit_positions.user_id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -123,8 +135,9 @@ class RecruitController extends Controller
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
-                ->where('outstanding_report', '=' , 'approve')
-                ->where('call_report', '=' , 'approve')
+                ->where('recruit_positions.outstanding_report', '=' , 'approve')
+                ->where('recruit_positions.call_report', '=' , 'approve')
+                ->whereNotNull('recruit_positions.user_id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -212,7 +225,7 @@ class RecruitController extends Controller
             'platform'              => 'required',
             'phone_number'          => 'required|numeric',
             'email_address'         => 'required',
-            'file_cv'               => 'mimes:pdf,doc,docx|max:2048',
+            'file_path'             => 'mimes:pdf,doc,docx|max:2048',
         ]);
         
         if( !is_array($validator) ){
@@ -294,8 +307,8 @@ class RecruitController extends Controller
 
         $input = $request->all();
 
-        $log_id = $input['log_id'];
-        $type = $input['type'];
+        $rp_id = $input['rp_id'];
+        $position_id = $input['position_id'];
 
         $file = $request->file("file");
         
@@ -319,7 +332,7 @@ class RecruitController extends Controller
 
             Storage::delete( $path );
 
-            Recruiterlog::where('id' , $rp_id)->update(
+            RecruitPosition::where('id' , $rp_id)->update(
                 array( "audio_report" => $path_s3 )
             );
 
