@@ -78,6 +78,9 @@ Route::get('recruits/bootstrap','RecruitController@recruitsBootstrap')->name('re
 Route::get('recruits/{id}/edit','RecruitController@editRecruit')->name('recruit.postulant.edit');
 Route::post('recruits/{id}/update','RecruitController@updateRecruit')->name("recruit.update");
 Route::post('recruits/delete','RecruitController@deleteRecruit')->name("recruit.postulant.delete");
+Route::post('recruits/save/link', 'RecruitController@save')->name('recruit.save.link');
+
+Route::get('recruits/{slug}','RecruitController@isSlug')->name('recruit.slug');
 
 
 

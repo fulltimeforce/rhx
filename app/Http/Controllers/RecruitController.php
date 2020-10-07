@@ -109,7 +109,8 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->whereNull('recruit_positions.outstanding_report')
                 ->whereNull('recruit_positions.call_report')
-                ->whereNotNull('recruit_positions.user_id')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -123,7 +124,8 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->whereNull('recruit_positions.call_report')
-                ->whereNotNull('recruit_positions.user_id')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -137,7 +139,8 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->where('recruit_positions.call_report', '=' , 'approve')
-                ->whereNotNull('recruit_positions.user_id')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -244,6 +247,113 @@ class RecruitController extends Controller
             // return $exception->getMessage();
             return back()->withErrors($exception->getMessage())->withInput();
         }
+    }
+
+    public function isSlug($slug){
+
+        $positions = Position::all();
+        $is = false;
+        $p = array();
+        foreach ($positions as $key => $p) {
+            if($slug === $p->slug){
+                $position = $p;$is = true;break;
+            }
+        }
+
+        if($is){
+
+            $expert = $this->getModelFormat();
+            return view('recruit.form' )->with('position', $position )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+        }else{
+            abort(404);
+        }
+    }
+
+    public function save(Request $request){
+
+        $validator = $request->validate( [
+            'fullname'              => 'required',
+            'identification_number' => 'required',
+            'position_id'           => 'required',
+            'platform'              => 'required',
+            'phone_number'          => 'required|numeric',
+            'email_address'         => 'required',
+            'file_path'             => 'mimes:pdf,doc,docx|max:2048',
+        ]);
+        
+        if( !is_array($validator) ){
+            if ($validator->fails()) {
+                return back()
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+        }    
+        
+        try {
+            $file = $request->file("file_path");
+            $destinationPath = 'uploads/cv';
+            $input = $request->all();
+            $recruit;
+            $newNameFile = '';
+            $input["file_path"] = '';
+            $isCreated = true;
+
+            if( $file ){
+                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $newNameFile = $destinationPath."/" . $_fileName;
+                $path = $request->file("file_path")->store("cv" , "s3");
+                $path_s3 = Storage::disk("s3")->url($path);
+                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path") ) , 'public' );
+                Storage::delete( $path );
+                $input["file_path"] = $path_s3;
+            }
+
+            $input['id'] = Hashids::encode(time());
+            unset( $input["_token"] );
+            unset( $input["position_id"] );
+
+            if( Recruit::where("identification_number" , $input['identification_number'])->count() > 0 ){
+                $recruit = Recruit::where("identification_number" , $input['identification_number'] )->first();
+                $isCreated = true;
+            }else{
+                Recruit::create($input);
+                $isCreated = false;
+            }
+
+            if($isCreated){
+                if(RecruitPosition::where("recruit_id" , $recruit['id'])->where('position_id', $request->input('position_id'))->count() > 0){
+                    return redirect()->route('home')
+                            ->with('error', 'Already applied for that position.');
+                }else{
+                    RecruitPosition::create(
+                        array(
+                            "recruit_id"         =>  $recruit['id'],
+                            "position_id"        =>  $request->input('position_id'),
+                            "user_id"            =>  Auth::id(),
+                        )
+                    );
+                }
+            }else{
+                RecruitPosition::create(
+                    array(
+                        "recruit_id"         =>  $input['id'],
+                        "position_id"        =>  $request->input('position_id'),
+                        "user_id"            =>  Auth::id(),
+                    )
+                );
+            }
+            
+            if(Auth::check()){
+                return redirect()->route('recruit.menu')
+                            ->with('success', 'Postulant applied successfully.');
+            }else{
+                return redirect()->route('experts.confirmation');
+            }
+
+        } catch (Exception $exception) {
+            return back()->withErrors($exception->getMessage())->withInput();
+        }
+
     }
 
     public function saveRecruit(Request $request){

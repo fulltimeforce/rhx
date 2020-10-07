@@ -169,6 +169,12 @@ input:checked + .slider:before {
             <p>{{ $message }}</p>
         </div>
     @endif
+
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
     <br>
     <div class="row row-cols-1 ">
     @auth
