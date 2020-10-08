@@ -498,27 +498,12 @@ a.badge-primary:focus{
 </script>
 
 <script>
-  $(function() {
-
-    var bar = $('.progress-bar');
-
-    $('form').ajaxForm({
-        beforeSend: function() {
-            var percentVal = '0%';
-            bar.width(percentVal);
-        },
-        uploadProgress: function(event, position, total, percentComplete) {
-            var percentVal = percentComplete + '%';
-            bar.width(percentVal);
-        }
-    });
-  }); 
-
   $('body').on('change' , '.audio-upload' , function(ev){
       // ev.preventDefault();
       var file = this.files[0];
       var rp_id = $(this).data("id");
       var position_id = $(this).data("positionid");
+      var bar = $('.progress-bar');
 
       var _formData = new FormData();
       _formData.append('file', file);
@@ -526,6 +511,17 @@ a.badge-primary:focus{
       _formData.append('position_id', position_id);
 
       $.ajax({
+          xhr: function() {
+              var xhr = new window.XMLHttpRequest();
+              xhr.upload.addEventListener("progress", function(evt) {
+                  if (evt.lengthComputable) {
+                      var percentComplete = (evt.loaded / evt.total) * 100;
+                      //Do something with upload progress here
+                      bar.width(percentComplete+'%');
+                  }
+              }, false);
+            return xhr;
+          },
           type:'POST',
           url: "{{ route('recruit.postulant.upload.audio') }}",
           headers: {
