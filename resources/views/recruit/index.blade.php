@@ -333,6 +333,10 @@ a.badge-primary:focus{
           uploadProgress: function(event, position, total, percentComplete) {
             var percentVal = percentComplete + '%';
             bar.width(percentVal);
+          },
+          complete: function(xhr) {
+            bar.width('0%');
+            location.reload();
           }
       });
     }); 

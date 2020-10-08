@@ -220,6 +220,7 @@ class RecruitController extends Controller
             }
 
             unset( $input["_token"] );
+            unset( $input["file_path_update"] );
             
             $recruit = Recruit::where("identification_number" , $input['identification_number'] )->get();
 
