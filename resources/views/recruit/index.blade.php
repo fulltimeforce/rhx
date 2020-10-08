@@ -336,7 +336,7 @@ a.badge-primary:focus{
           },
           complete: function(xhr) {
             bar.width('0%');
-            location.reload();
+            console.log(xhr.responseText)
           }
       });
     }); 
