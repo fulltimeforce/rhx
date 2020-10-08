@@ -213,7 +213,7 @@ a.badge-primary:focus{
       <div class="modal-dialog" role="document">
           <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="delete-audioLabel">Delete audio</h5>
+              <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               </button>
@@ -631,7 +631,7 @@ a.badge-primary:focus{
             success:function(data){
                 $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
                 $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
-                $('.show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("data-cv" , data.file);
+                $('.show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("href" , data.file);
                 bar.width('0%');
             }
         });
@@ -669,8 +669,8 @@ a.badge-primary:focus{
             success:function(data){
                 var rp_id = $("#delete-audio-rp-id").val();
                 var position_id = $("#delete-audio-position-id").val();
-                $('.btn-upload-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
-                $('.btn-show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+                $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+                $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
                 $("#delete-audio").modal('hide');
             }
         });
