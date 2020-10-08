@@ -517,7 +517,11 @@ a.badge-primary:focus{
                   if (evt.lengthComputable) {
                       var percentComplete = (evt.loaded / evt.total) * 100;
                       //Do something with upload progress here
-                      bar.width(percentComplete+'%');
+                      if(percentComplete = 100){
+                        bar.width('0%');
+                      }else{
+                        bar.width(percentComplete+'%');
+                      }
                   }
               }, false);
             return xhr;
