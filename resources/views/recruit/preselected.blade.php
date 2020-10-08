@@ -517,13 +517,7 @@ a.badge-primary:focus{
                   if (evt.lengthComputable) {
                       var percentComplete = (evt.loaded / evt.total) * 100;
                       //Do something with upload progress here
-                      if(percentComplete = 100){
-                        //bar.width('0%');
-                        console.log('total',percentComplete)
-                      }else{
-                        //bar.width(percentComplete+'%');
-                        console.log('cargando',percentComplete)
-                      }
+                        bar.width(percentComplete+'%');
                   }
               }, false);
             return xhr;
@@ -541,7 +535,8 @@ a.badge-primary:focus{
           success:function(data){
               $('.btn-upload-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
               $('.btn-show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
-              $('.show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("data-audio" , data.file)
+              $('.show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("data-audio" , data.file);
+              bar.width('0%');
           }
       });
   })
