@@ -64,6 +64,9 @@ Route::get('recruits','RecruitController@index')->name('recruit.menu');
 Route::post('recruits/save','RecruitController@saveRecruit')->name("recruit.save");
 Route::post('recruits/evaluate/outstanding','RecruitController@recruitsEvaluateOutstanding')->name('recruit.postulant.outstanding');
 
+Route::post('recruits/upload/cv','RecruitController@uploadCV')->name('recruit.postulant.upload.cv');
+Route::post('recruits/delete/cv','RecruitController@deleteCV')->name('recruit.postulant.delete.cv');
+
 //METODOS PERFILES DESTACADOS
 Route::get('recruits/outstanding','RecruitController@outstanding')->name('recruit.outstanding');
 Route::post('recruits/evaluate/call','RecruitController@recruitsEvaluateCall')->name('recruit.postulant.call');

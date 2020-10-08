@@ -366,7 +366,6 @@ class RecruitController extends Controller
             'platform'              => 'required',
             'phone_number'          => 'required|numeric',
             'email_address'         => 'required',
-            'file_path'             => 'mimes:pdf,doc,docx|max:2048',
         ]);
         
         if( !is_array($validator) ){
@@ -378,23 +377,9 @@ class RecruitController extends Controller
         }    
         
         try {
-            $file = $request->file("file_path");
-            $destinationPath = 'uploads/cv';
             $input = $request->all();
             $recruit;
-            $newNameFile = '';
-            $input["file_path"] = '';
             $isCreated = true;
-
-            if( $file ){
-                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
-                $newNameFile = $destinationPath."/" . $_fileName;
-                $path = $request->file("file_path")->store("cv" , "s3");
-                $path_s3 = Storage::disk("s3")->url($path);
-                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path") ) , 'public' );
-                Storage::delete( $path );
-                $input["file_path"] = $path_s3;
-            }
 
             $input['id'] = Hashids::encode(time());
             unset( $input["_token"] );
@@ -436,7 +421,7 @@ class RecruitController extends Controller
                             ->with('success', 'Postulant applied successfully.');
             }else{
                 return redirect()->route('recruit.menu')
-                            ->with('error', 'Nedd to Log In.');
+                            ->with('error', 'Need to Log In.');
             }
 
         } catch (Exception $exception) {
@@ -493,6 +478,55 @@ class RecruitController extends Controller
         );
     }
 
+    public function uploadCV( Request $request ){
+
+        $input = $request->all();
+
+        $rp_id = $input['rp_id'];
+        $position_id = $input['position_id'];
+
+        $file = $request->file("file");
+        
+        $destinationPath = 'uploads/cv';
+        
+        $input = $request->all();
+        
+        $newNameFile = '';
+
+        if( $file ){
+            $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+            $newNameFile = $destinationPath."/" . $_fileName;
+            
+            
+            // $file->move( $destinationPath, $newNameFile );
+            $path = $request->file("file")->store("cv" , "s3");
+            
+            $path_s3 = Storage::disk("s3")->url($path);
+
+            Storage::disk("s3")->put($path , file_get_contents( $request->file("file") ) , 'public' );
+
+            Storage::delete( $path );
+
+            Recruit::where('id' , $position_id)->update(
+                array( "file_path" => $path_s3 )
+            );
+
+            return array(
+                "file" => $path_s3,
+            );
+        }
+        
+    }
+
+    public function deleteCV( Request $request ){
+        $input = $request->all();
+        $rp_id = $input['rp_id'];
+        $position_id = $input['position_id'];
+        Recruit::where('id' , $position_id)->update(
+            array( "file_path" => null )
+        );
+    }
+
     public function recruitsEvaluateOutstanding(Request $request){
         $input = $request->all();
 
@@ -500,9 +534,16 @@ class RecruitController extends Controller
         $positionid  = $input['positionid'];
         $outstanding = $input['outstanding'];
 
-        RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
-            array("outstanding_report"=>$outstanding)
-        );
+        $recruit = Recruit::where('id' , $id)->first();
+        
+        if($recruit['file_path'] == null && $recruit['profile_link'] == null){
+            redirect()->route('recruit.menu')
+                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+        }else{
+            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
+                array("outstanding_report"=>$outstanding)
+            );
+        }
     }
 
     public function recruitsEvaluateCall(Request $request){

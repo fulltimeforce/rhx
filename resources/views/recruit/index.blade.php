@@ -209,27 +209,53 @@ a.badge-primary:focus{
             <p>{{ $message }}</p>
         </div>
     @endif
-    
+    <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="delete-audioLabel">Delete audio</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col">
+                      Are you sure you want to delete this file?
+                      <input type="hidden" id="delete-audio-rp-id">
+                      <input type="hidden" id="delete-audio-position-id">
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
     <div class="row">
         <div class="col-12">
             <form name="new-recruit" id="new-recruit" action="{{ route('recruit.save') }}" method="POST" enctype="multipart/form-data">@csrf
+            <input type="hidden" name="file_path" id="file_path" value="" class="form-control">
             <table class="table" >
                 <tr>
                     <td>
                         <div class="form-group">
-                            <label for="fullname">Name</label>
+                            <label for="fullname">Name *</label>
                             <input type="text" name="fullname" id="fullname" class="form-control">
                         </div>
                     </td>
                     <td >
                         <div class="form-group">
-                            <label for="identification_number">DNI/CE/Pasaporte</label>
+                            <label for="identification_number">DNI/CE/Pasaporte *</label>
                             <input type="text" name="identification_number" id="identification_number" class="form-control">
                         </div>
                     </td>
                     <td>
                         <div class="form-group">
-                            <label for="position_id">Positions</label>
+                            <label for="position_id">Positions *</label>
                             <select id="position_id" class="form-control" name="position_id" >
                                 <option value="">None</option>
                                 @foreach($positions as $pid => $position)
@@ -240,7 +266,7 @@ a.badge-primary:focus{
                     </td>
                     <td>
                         <div class="form-group">
-                            <label for="platform">Platform</label>
+                            <label for="platform">Platform *</label>
                             <select name="platform" id="platform" class="form-control" >
                                 <option value="">None</option>
                                 @foreach($platforms as $pid => $platform)
@@ -251,13 +277,13 @@ a.badge-primary:focus{
                     </td>
                     <td>
                         <div class="form-group" style="position: relative;">
-                            <label for="phone_number">Phone</label>
+                            <label for="phone_number">Phone *</label>
                             <input type="text" name="phone_number" id="phone_number" class="form-control">
                         </div>
                     </td>
                     <td>
                         <div class="form-group" style="position: relative;">
-                            <label for="email_address">Email</label>
+                            <label for="email_address">Email *</label>
                             <input type="text" name="email_address" id="email_address" class="form-control">
                         </div>
                     </td>
@@ -265,15 +291,6 @@ a.badge-primary:focus{
                         <div class="form-group">
                             <label for="profile_link">Link</label>
                             <input type="text" name="profile_link" id="profile_link" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                          <label for="file_path">CV</label>
-                          <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="file_path" id="file_path" accept="application/msword, application/pdf, .doc, .docx">
-                            <label class="custom-file-label" for="file_path">UPLOAD CV (max 2M)</label>
-                          </div>
                         </div>
                     </td>
                     <td>
@@ -321,25 +338,6 @@ a.badge-primary:focus{
 <script type="text/javascript" src="{{ asset('/jquery-form/jquery.form.js') }}"></script>
 
 <script type="text/javascript">
-    $(function() {
-
-      var bar = $('.progress-bar');
-
-      $('form').ajaxForm({
-          beforeSend: function() {
-            var percentVal = '0%';
-            bar.width(percentVal);
-          },
-          uploadProgress: function(event, position, total, percentComplete) {
-            var percentVal = percentComplete + '%';
-            bar.width(percentVal);
-          },
-          complete: function(xhr) {
-            bar.width('0%');
-            console.log(xhr.responseText)
-          }
-      });
-    }); 
 
     $(document).ready(function (ev) {
         
@@ -445,13 +443,20 @@ a.badge-primary:focus{
               title: "CV",
               width: 50,
               formatter : function(value,rowData,index) {    
-                  if(rowData.file_path){
-                    var actions = '<a class="badge badge-info btn-cv-recruit" href="'+rowData.file_path+'" target="_blank">Download CV</a>\n';
-                  }else{
-                    var actions = '<a class="badge badge-secondary button-disabled" disabled>Download CV</a>\n';
-                  }
-                  actions = actions.replace(/:id/gi , rowData.id);
-                  return actions;
+                var actions = '';
+
+                actions += '<div class="btn-group mt-2 btn-upload-cv '+( rowData.file_path == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.id+'"> ';
+                actions += '<label class="badge badge-secondary" for="cv-upload-evaluate-'+rowData.rp_id+'">Upload CV File</label>';
+                actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.id+'" style="display:none;" >';
+                actions += '</div>';
+
+                actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.id+'">';
+                actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.id+'" target="_blank">Download CV File</a>';
+                actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.id+'"><i class="fas fa-trash"></i></a>';
+                actions += '</div>';
+
+                actions = actions.replace(/:id/gi , rowData.id);
+                return actions;
                 },
               class: 'frozencell',
             },
@@ -589,16 +594,87 @@ a.badge-primary:focus{
     });
 </script>
 <script>
-    $("#save_recruit").on('click', function(ev){        
-      ev.preventDefault();
-      var link = $("#profile_link").val();
-      var file_path = $("#file_path").val();
+    $('body').on('change' , '.cv-upload' , function(ev){
+        // ev.preventDefault();
+        var file = this.files[0];
+        var rp_id = $(this).data("id");
+        var position_id = $(this).data("positionid");
+        var bar = $('.progress-bar');
 
-      if(!link && !file_path){
-        alert('We need "Link" or "CV"')
-      }else{
-        $("#new-recruit").submit();
-      }
+        var _formData = new FormData();
+        _formData.append('file', file);
+        _formData.append('rp_id', rp_id);
+        _formData.append('position_id', position_id);
+
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = (evt.loaded / evt.total) * 100;
+                        //Do something with upload progress here
+                          bar.width(percentComplete+'%');
+                    }
+                }, false);
+              return xhr;
+            },
+            type:'POST',
+            url: "{{ route('recruit.postulant.upload.cv') }}",
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: false,
+            cache: false,
+            processData: false,
+            data: _formData,
+            success:function(data){
+                $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+                $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+                $('.show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("data-cv" , data.file);
+                bar.width('0%');
+            }
+        });
+    })
+
+    $("body").on('click' , '.confirmation-upload-delete' , function(ev){
+        ev.preventDefault();
+        var rp_id = $(this).data("id");
+        var position_id = $(this).data("positionid");
+
+        $("#delete-audio-rp-id").val(rp_id);
+        $("#delete-audio-position-id").val(position_id);
+
+        $("#delete-audio").modal();
+
+    })
+
+    $('#delete-audio').on('hidden.bs.modal', function (e) {
+      $("#delete-audio-rp-id").val("");
+      $("#delete-audio-position-id").val("");
+    })
+
+    $("#deleteAudio").on('click' , function(){
+        $.ajax({
+            type:'POST',
+            url: "{{ route('recruit.postulant.delete.cv') }}",
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                rp_id : $("#delete-audio-rp-id").val(),
+                position_id: $("#delete-audio-position-id").val()
+            },
+            success:function(data){
+                var rp_id = $("#delete-audio-rp-id").val();
+                var position_id = $("#delete-audio-position-id").val();
+                $('.btn-upload-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+                $('.btn-show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+                $("#delete-audio").modal('hide');
+            }
+        });
+
     });
 
     $('#file_path').on('change',function(ev){
