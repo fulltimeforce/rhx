@@ -263,6 +263,12 @@ a.badge-primary:focus{
     
     <div class="row">
 
+        <div class="col-12 mb-3">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        
         <div class="col-6">
           <p>Records: <span id="count-recruit"></span></p>
         </div>
@@ -288,6 +294,7 @@ a.badge-primary:focus{
 
 <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/jquery-form/jquery.form.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
@@ -491,6 +498,22 @@ a.badge-primary:focus{
 </script>
 
 <script>
+  $(function() {
+
+    var bar = $('.progress-bar');
+
+    $('form').ajaxForm({
+        beforeSend: function() {
+            var percentVal = '0%';
+            bar.width(percentVal);
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+            var percentVal = percentComplete + '%';
+            bar.width(percentVal);
+        }
+    });
+  }); 
+
   $('body').on('change' , '.audio-upload' , function(ev){
       // ev.preventDefault();
       var file = this.files[0];
