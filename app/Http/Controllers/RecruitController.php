@@ -553,9 +553,18 @@ class RecruitController extends Controller
         $positionid  = $input['positionid'];
         $phonecall   = $input['phonecall'];
 
-        RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
-            array("call_report"=>$phonecall)
-        );
+        $recruit = Recruit::where('id' , $id)->first();
+        
+        if($recruit['file_path'] == null && $recruit['profile_link'] == null){
+            redirect()->route('recruit.outstanding')
+                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+        }else{
+            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
+                array("call_report"=>$phonecall)
+            );
+        }
+
+        
     }
 
     private function platforms(){
