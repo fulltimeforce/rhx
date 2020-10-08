@@ -518,9 +518,11 @@ a.badge-primary:focus{
                       var percentComplete = (evt.loaded / evt.total) * 100;
                       //Do something with upload progress here
                       if(percentComplete = 100){
-                        bar.width('0%');
+                        //bar.width('0%');
+                        console.log('total',percentComplete)
                       }else{
-                        bar.width(percentComplete+'%');
+                        //bar.width(percentComplete+'%');
+                        console.log('cargando',percentComplete)
                       }
                   }
               }, false);
