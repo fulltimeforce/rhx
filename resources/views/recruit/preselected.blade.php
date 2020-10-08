@@ -294,7 +294,6 @@ a.badge-primary:focus{
 
 <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('/jquery-form/jquery.form.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function (ev) {
