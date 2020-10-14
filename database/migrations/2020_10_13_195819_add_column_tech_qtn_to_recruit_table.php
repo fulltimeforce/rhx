@@ -14,7 +14,7 @@ class AddColumnTechQtnToRecruitTable extends Migration
     public function up()
     {
         Schema::table('recruit', function (Blueprint $table) {
-            $table->text('tech_qtn')->after('file_path')->default('empty');
+            $table->string('tech_qtn')->after('file_path')->default('empty');
         });
     }
 

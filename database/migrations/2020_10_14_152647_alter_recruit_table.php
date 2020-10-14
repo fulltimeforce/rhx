@@ -13,8 +13,6 @@ class AlterRecruitTable extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE recruit MODIFY tech_qtn VARCHAR(255) NULL');
-
         Schema::table('recruit', function (Blueprint $table) {
             $table->string('audio_path')->after('file_path')->nullable();
         });
