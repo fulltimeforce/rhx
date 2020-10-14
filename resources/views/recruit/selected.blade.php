@@ -401,23 +401,43 @@ a.badge-primary:focus{
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
             {
-              field: 'audio_report', 
-              title: "Upload Audio",
+              field: 'crit_1', 
+              title: "Crit 1",
               width: 50,
               formatter : function(value,rowData,index) { 
-                  var actions = '';
+                  var actions = '-'
+                  if(rowData.crit_1 == 'excellent'){actions = 'Excellent'}
+                  if(rowData.crit_1 == 'efficient'){actions = 'Efficient'}
+                  if(rowData.crit_1 == 'inefficient'){actions = 'Inefficient'}
+                  if(rowData.crit_1 == 'lower'){actions = 'Lower than expected'}
 
-                  actions += '<div class="btn-group mt-2 btn-upload-audio '+( rowData.audio_report == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'"> ';
-                  actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.rp_id+'">Upload Audio</label>';
-                  actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'" style="display:none;" >';
-                  actions += '</div>';
-              
-                  actions += '<div class="btn-group btn-show-audio '+( rowData.audio_report != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'">';
-                  actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_report+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'">Show Audio</a>';
-                  actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'"><i class="fas fa-trash"></i></a>';
-                  actions += '</div>';
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'crit_2', 
+              title: "Crit 2",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = '-'
+                  if(rowData.crit_2 == 'excellent'){actions = 'Excellent'}
+                  if(rowData.crit_2 == 'efficient'){actions = 'Efficient'}
+                  if(rowData.crit_2 == 'inefficient'){actions = 'Inefficient'}
+                  if(rowData.crit_2 == 'lower'){actions = 'Lower than expected'}
 
-                  actions = actions.replace(/:id/gi , rowData.id);
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'crit_english', 
+              title: "English",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = '-';
+                  if(rowData.crit_english){actions = rowData.crit_english}
+
                   return actions;
                 },
               class: 'frozencell',

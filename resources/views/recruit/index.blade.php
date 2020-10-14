@@ -237,6 +237,7 @@ a.badge-primary:focus{
             <p>{{ $message }}</p>
         </div>
     @endif
+
     <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -292,7 +293,7 @@ a.badge-primary:focus{
                     <td>
                         <div class="form-group">
                             <label for="platform">Platform *</label>
-                            <select name="platform" id="platform" class="form-control" >
+                            <select name="platform" id="platform" class="form-control">
                                 <option value="">None</option>
                                 @foreach($platforms as $pid => $platform)
                                     <option value="{{$platform->value}}">{{$platform->label}}</option>
@@ -839,6 +840,34 @@ a.badge-primary:focus{
               formatter : function(value,rowData,index) { 
                   if(rowData.call_report){
                     var actions = rowData.call_report.charAt(0).toUpperCase() + rowData.call_report.slice(1);
+                  }else{
+                    var actions = '-';
+                  }
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'audio_report', 
+              title: "Audio Ev.",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  if(rowData.audio_report){
+                    var actions = rowData.audio_report.charAt(0).toUpperCase() + rowData.audio_report.slice(1);
+                  }else{
+                    var actions = '-';
+                  }
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'soft_report', 
+              title: "Soft Ev.",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  if(rowData.soft_report){
+                    var actions = rowData.soft_report.charAt(0).toUpperCase() + rowData.soft_report.slice(1);
                   }else{
                     var actions = '-';
                   }

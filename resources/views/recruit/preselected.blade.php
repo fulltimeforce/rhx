@@ -277,8 +277,8 @@ a.badge-primary:focus{
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <select name="bulk-action" id="bulk-action" class="form-control" >
                     <option value="">-- Bulk Actions --</option>
-                    <!--<option value="approve">Approve</option>
-                    <option value="disapprove">Disapprove</option>-->
+                    <option value="approve">Approve</option>
+                    <option value="disapprove">Disapprove</option>
                     <option value="trash">Move to Trash</option>
               </select>
             </div>
@@ -422,6 +422,21 @@ a.badge-primary:focus{
                 },
               class: 'frozencell',
             },
+            {
+              field: 'pos_id',
+              title: "Evaluation",
+              valign: 'middle',
+              clickToSelect: false,
+              width: 20,
+              formatter : function(value,rowData,index) {    
+                  var actions = '<a class="badge badge-primary recruit-audio" data-audio="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">YES</a>'+
+                                ' <a class="badge badge-danger recruit-audio" data-audio="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">NO</a>'
+
+                  actions = actions.replace(/:id/gi , rowData.id);
+                  return actions;
+                },
+              class: 'frozencell',
+            },
         ];
         
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
@@ -431,7 +446,28 @@ a.badge-primary:focus{
             theadClasses: 'table-dark',
             uniqueId: 'id'
         });
-        // =================== DELETE
+
+        $("table tbody").on('click', 'a.recruit-audio' , function(ev){
+          ev.preventDefault();
+          var id = $(this).data("id");
+          var positionid = $(this).data("positionid");
+          var audio = $(this).data("audio");
+          var confirmed = confirm("Are you sure you want to "+ (audio=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          if(confirmed){
+            $.ajax({
+                type:'POST',
+                url: '{{ route("recruit.postulant.audio") }}',
+                data: {id : id,positionid: positionid,audio: audio},
+                headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                  location.reload();
+                }
+            });
+          }
+        });
 
         $("table tbody").on('click', 'a.recruit-delete' , function(ev){
           ev.preventDefault();
@@ -450,7 +486,6 @@ a.badge-primary:focus{
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
                   location.reload();
                 }
             });
@@ -521,7 +556,6 @@ a.badge-primary:focus{
               xhr.upload.addEventListener("progress", function(evt) {
                   if (evt.lengthComputable) {
                       var percentComplete = (evt.loaded / evt.total) * 100;
-                      //Do something with upload progress here
                         bar.width(percentComplete+'%');
                   }
               }, false);

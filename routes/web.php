@@ -74,13 +74,16 @@ Route::post('recruits/evaluate/call','RecruitController@recruitsEvaluateCall')->
 
 //METODOS PRE-SELECCIONADOS
 Route::get('recruits/preselected','RecruitController@preselected')->name('recruit.preselected');
+Route::post('recruits/evaluate/audio','RecruitController@recruitsEvaluateAudio')->name('recruit.postulant.audio');
 Route::post('recruits/upload/audio','RecruitController@uploadAudio')->name('recruit.postulant.upload.audio');
 Route::post('recruits/delete/audio','RecruitController@deleteAudio')->name('recruit.postulant.delete.audio');
 
-//METODOS PRE-SELECCIONADOS
+//METODOS EVALUADOS SOFT SKILLS
 Route::get('recruits/softskills','RecruitController@softskills')->name('recruit.softskills');
+Route::post('recruits/evaluate/criteria','RecruitController@evaluateCriteria')->name('recruit.postulant.crit.evaluation');
+Route::post('recruits/evaluate/soft','RecruitController@recruitsEvaluateSoft')->name('recruit.postulant.soft');
 
-//METODOS PRE-SELECCIONADOS
+//METODOS SELECCIONADOS
 Route::get('recruits/selected','RecruitController@selected')->name('recruit.selected');
 
 //METODOS GENERALES

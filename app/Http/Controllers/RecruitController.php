@@ -152,6 +152,8 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->whereNull('recruit_positions.outstanding_report')
                 ->whereNull('recruit_positions.call_report')
+                ->whereNull('recruit_positions.audio_report')
+                ->whereNull('recruit_positions.soft_report')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -168,6 +170,8 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->whereNull('recruit_positions.call_report')
+                ->whereNull('recruit_positions.audio_report')
+                ->whereNull('recruit_positions.soft_report')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -184,6 +188,62 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->where('recruit_positions.call_report', '=' , 'approve')
+                ->whereNull('recruit_positions.audio_report')
+                ->whereNull('recruit_positions.soft_report')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_positions.position_id')
+                ->select('recruit.*',
+                    'positions.name AS position_name',
+                    'users.name AS user_name',
+                    'positions.id AS pos_id',
+                    'recruit_positions.audio_report AS audio_report',
+                    'recruit_positions.recruit_id AS recruit_id',
+                    'recruit_positions.id AS rp_id');
+        }elseif($query['tab'] == "preselected"){
+            $recruits->distinct()
+                ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
+                ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
+                ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
+                ->where('recruit_positions.outstanding_report', '=' , 'approve')
+                ->where('recruit_positions.call_report', '=' , 'approve')
+                ->whereNull('recruit_positions.audio_report')
+                ->whereNull('recruit_positions.soft_report')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_positions.position_id')
+                ->select('recruit.*',
+                    'positions.name AS position_name',
+                    'users.name AS user_name',
+                    'positions.id AS pos_id',
+                    'recruit_positions.audio_report AS audio_report',
+                    'recruit_positions.recruit_id AS recruit_id',
+                    'recruit_positions.id AS rp_id');
+        }elseif($query['tab'] == "softskills"){
+            $recruits->distinct()
+                ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
+                ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
+                ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
+                ->where('recruit_positions.outstanding_report', '=' , 'approve')
+                ->where('recruit_positions.call_report', '=' , 'approve')
+                ->where('recruit_positions.audio_report', '=' , 'approve')
+                ->whereNull('recruit_positions.soft_report')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_positions.position_id')
+                ->select('recruit.*',
+                    'positions.name AS position_name',
+                    'users.name AS user_name',
+                    'positions.id AS pos_id',
+                    'recruit_positions.audio_report AS audio_report',
+                    'recruit_positions.recruit_id AS recruit_id',
+                    'recruit_positions.id AS rp_id');
+        }elseif($query['tab'] == "selected"){
+            $recruits->distinct()
+                ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
+                ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
+                ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
+                ->where('recruit_positions.outstanding_report', '=' , 'approve')
+                ->where('recruit_positions.call_report', '=' , 'approve')
+                ->where('recruit_positions.audio_report', '=' , 'approve')
+                ->where('recruit_positions.soft_report', '=' , 'approve')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -194,6 +254,7 @@ class RecruitController extends Controller
                     'recruit_positions.recruit_id AS recruit_id',
                     'recruit_positions.id AS rp_id');
         }
+
 
         //set rows value
         $recruit =  $recruits->paginate( $query['rows'] );
@@ -231,7 +292,9 @@ class RecruitController extends Controller
                 ->whereNotNull('recruit_positions.position_id')
                 ->where(function ($query) {
                     $query->where('recruit_positions.outstanding_report', '=', 'disapprove')
-                          ->orWhere('recruit_positions.call_report', '=', 'disapprove');
+                          ->orWhere('recruit_positions.call_report', '=', 'disapprove')
+                          ->orWhere('recruit_positions.audio_report', '=', 'disapprove')
+                          ->orWhere('recruit_positions.soft_report', '=', 'disapprove');
                 })
                 ->select('recruit.*',
                     'positions.name AS position_name',
@@ -241,6 +304,7 @@ class RecruitController extends Controller
                     'recruit_positions.outstanding_report AS outstanding_report',
                     'recruit_positions.call_report AS call_report',
                     'recruit_positions.audio_report AS audio_report',
+                    'recruit_positions.soft_report AS soft_report',
                     'recruit_positions.id AS rp_id');
 
         $rows = $recruits->get();
@@ -715,6 +779,20 @@ class RecruitController extends Controller
         );
     }
 
+    public function evaluateCriteria( Request $request ){
+        $input = $request->all();
+
+        $recruit_id = $input['recruit_id'];
+        $positionid = $input['positionid'];
+        $crit = $input['crit'];
+        $option = $input['option'];
+        if($option == ''){$option = null;}
+
+        Recruit::where('id' , $recruit_id)->update(
+            array( "crit_".$crit => $option )
+        );
+    }
+
     public function recruitsEvaluateOutstanding(Request $request){
         //call route parameters
         $input = $request->all();
@@ -761,6 +839,56 @@ class RecruitController extends Controller
             //if exists 1 at least, approve call evaluation
             RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
                 array("call_report"=>$phonecall)
+            );
+        }
+    }
+
+    public function recruitsEvaluateAudio(Request $request){
+        //call route parameters
+        $input = $request->all();
+
+        //set all parameters in variables
+        $id          = $input['id'];
+        $positionid  = $input['positionid'];
+        $audio       = $input['audio'];
+
+        //call recruit by id
+        $recruit = Recruit::where('id' , $id)->first();
+        
+        //verify it recuir have CV FILE or PROFILE LINK (1 at least)
+        if($recruit['file_path'] == null && $recruit['profile_link'] == null){
+            //if not, return with error message
+            redirect()->route('recruit.outstanding')
+                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+        }else{
+            //if exists 1 at least, approve call evaluation
+            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
+                array("audio_report"=>$audio)
+            );
+        }
+    }
+
+    public function recruitsEvaluateSoft(Request $request){
+        //call route parameters
+        $input = $request->all();
+
+        //set all parameters in variables
+        $id          = $input['id'];
+        $positionid  = $input['positionid'];
+        $soft       = $input['soft'];
+
+        //call recruit by id
+        $recruit = Recruit::where('id' , $id)->first();
+        
+        //verify it recuir have CV FILE or PROFILE LINK (1 at least)
+        if($recruit['file_path'] == null && $recruit['profile_link'] == null){
+            //if not, return with error message
+            redirect()->route('recruit.outstanding')
+                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+        }else{
+            //if exists 1 at least, approve call evaluation
+            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
+                array("soft_report"=>$soft)
             );
         }
     }
@@ -831,7 +959,10 @@ class RecruitController extends Controller
                     RecruitPosition::where('id' , $rp_id)->update(array("call_report"=>"approve"));
                     break;
                 case 'preselected':
-                    # code...
+                    RecruitPosition::where('id' , $rp_id)->update(array("audio_report"=>"approve"));
+                    break;
+                case 'softskills':
+                    RecruitPosition::where('id' , $rp_id)->update(array("soft_report"=>"approve"));
                     break;
             }   
         }
@@ -847,7 +978,10 @@ class RecruitController extends Controller
                     RecruitPosition::where('id' , $rp_id)->update(array("call_report"=>"disapprove"));
                     break;
                 case 'preselected':
-                    # code...
+                    RecruitPosition::where('id' , $rp_id)->update(array("audio_report"=>"disapprove"));
+                    break;
+                case 'softskills':
+                    RecruitPosition::where('id' , $rp_id)->update(array("soft_report"=>"disapprove"));
                     break;
             }   
         }
