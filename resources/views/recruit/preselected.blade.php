@@ -548,10 +548,10 @@ a.badge-primary:focus{
 
   $("body").on('click' , '.confirmation-upload-delete' , function(ev){
       ev.preventDefault();
-      var rp_id = $(this).data("id");
+      var recruit_id = $(this).data("recruitid");
       var position_id = $(this).data("positionid");
 
-      $("#delete-audio-rp-id").val(rp_id);
+      $("#delete-audio-rp-id").val(recruit_id);
       $("#delete-audio-position-id").val(position_id);
 
       $("#delete-audio").modal();
@@ -572,7 +572,7 @@ a.badge-primary:focus{
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
           data: {
-              rp_id : $("#delete-audio-rp-id").val(),
+              recruit_id : $("#delete-audio-rp-id").val(),
               position_id: $("#delete-audio-position-id").val()
           },
           success:function(data){
