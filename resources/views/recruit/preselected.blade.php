@@ -234,8 +234,8 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link disabled nav-item-custom" href="#">Evaluados Soft Skills</a>
-        <a class="nav-item nav-link disabled nav-item-custom" href="#">Seleccionados</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluados Soft Skills</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
     @if ($errors->any())
@@ -269,18 +269,23 @@ a.badge-primary:focus{
           </div>
         </div>
         
-        <div class="col-6">
+        <div class="col-12">
           <p>Records: <span id="count-recruit"></span></p>
         </div>
         
-        <div class="col-6 text-right">
+        <div class="col-6 text-left">
             <div class="form-group d-inline-block" style="max-width: 300px;">
-                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
+                <select name="bulk-action" id="bulk-action" class="form-control" >
+                    <option value="">-- Bulk Actions --</option>
+                    <!--<option value="approve">Approve</option>
+                    <option value="disapprove">Disapprove</option>-->
+                    <option value="trash">Move to Trash</option>
+              </select>
             </div>
-            <button class="btn btn-primary" id="search-recruit" type="button" style="vertical-align: top;">Buscar</button>
+            <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
         </div>
         <div class="col-12 text-center mb-5">
-            <table class="table row-border order-column" id="list-recruits"> 
+            <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
             </table>
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
@@ -338,26 +343,44 @@ a.badge-primary:focus{
                   _count_records = _count_records + _data.rows.length;
                   $("#count-recruit").html( _count_records );
                   _dataRows = _data.rows;
+                  console.log('data',data)
+                  console.log('data',data.rows)
                   tablebootstrap_filter( _data.rows );
                   if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                   $(".lds-ring").hide();
+                  $('input[name="btSelectAll"]').click();
               }
           });
       }
 
       function tablebootstrap_filter( data ){
         var columns = [
-            {
+            { 
               field: 'id', 
+              valign: 'middle',
+              checkbox: true,
+              clickToSelect: false,
+              width: 20,
+              formatter : function(value,rowData,index) {    
+                  var actions = '';
+
+                  actions = actions.replace(/:id/gi , rowData.id);
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'recruit_id', 
               title: "Accion",
               valign: 'middle',
               clickToSelect: false,
               width: 20,
               formatter : function(value,rowData,index) {    
                   var actions = '<a class="badge badge-primary recruit-edit"   href=" '+ "{{ route('recruit.postulant.edit', ':id' ) }}"+ '">Edit</a>'+
-                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.position_id+'" data-id="'+rowData.id+'" href="#">Delete</a>';
+                                ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
+                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
 
-                  actions = actions.replace(/:id/gi , rowData.id);
+                  actions = actions.replace(/:id/gi , rowData.recruit_id);
                   return actions;
                 },
               class: 'frozencell',
@@ -378,20 +401,20 @@ a.badge-primary:focus{
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
             {
-              field: 'audio_report', 
+              field: 'audio_path', 
               title: "Upload Audio",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '';
 
-                  actions += '<div class="btn-group mt-2 btn-upload-audio '+( rowData.audio_report == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.position_id+'"> ';
-                  actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.rp_id+'">Upload Audio</label>';
-                  actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.position_id+'" style="display:none;" >';
+                  actions += '<div class="btn-group mt-2 btn-upload-audio '+( rowData.audio_path == null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'"> ';
+                  actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.recruit_id+'">Upload Audio</label>';
+                  actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.recruit_id+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'" style="display:none;" >';
                   actions += '</div>';
               
-                  actions += '<div class="btn-group btn-show-audio '+( rowData.audio_report != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.position_id+'">';
-                  actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_report+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.position_id+'">Show Audio</a>';
-                  actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.position_id+'"><i class="fas fa-trash"></i></a>';
+                  actions += '<div class="btn-group btn-show-audio '+( rowData.audio_path != null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">';
+                  actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_path+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">Show Audio</a>';
+                  actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'"><i class="fas fa-trash"></i></a>';
                   actions += '</div>';
 
                   actions = actions.replace(/:id/gi , rowData.id);
@@ -435,23 +458,6 @@ a.badge-primary:focus{
         });
 
       }
-
-      $('#search-recruit').on('click' , function(){
-        
-        search_name = $('#search-column-name').val();
-        
-        window.history.replaceState({
-            edwin: "Fulltimeforce"
-            }, "Page" , "{{ route('recruit.preselected') }}" + '?'+ $.param(
-                {   search : true , 
-                    name: search_name
-                }
-                )
-            );
-        _page = 1;
-        _count_records = 0;
-        location.reload();
-      });
 
       ajax_recruits(search_name, 1);
 
@@ -500,13 +506,13 @@ a.badge-primary:focus{
   $('body').on('change' , '.audio-upload' , function(ev){
       // ev.preventDefault();
       var file = this.files[0];
-      var rp_id = $(this).data("id");
+      var recruit_id = $(this).data("recruitid");
       var position_id = $(this).data("positionid");
       var bar = $('.progress-bar');
 
       var _formData = new FormData();
       _formData.append('file', file);
-      _formData.append('rp_id', rp_id);
+      _formData.append('recruit_id', recruit_id);
       _formData.append('position_id', position_id);
 
       $.ajax({
@@ -591,5 +597,53 @@ a.badge-primary:focus{
   $('#show-audio').on('hidden.bs.modal', function (e) {
       $("#audio-play").attr("src" , "");
   })
+
+  $("#bulk-recruit").on('click' , function(){
+      var action = $('#bulk-action').val();
+      var rp_id_array = [];
+      var recruit_id_array = [];
+
+      if(action){
+        var checked = $('input[name="btSelectItem"]:checked');
+
+        if(checked.length>0){
+            checked.each(function (){
+                var checkbox_index = $(this).data("index");
+                var rp_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("rpid");
+                var recruit_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("recruit-id");
+
+                rp_id_array.push(rp_id_by_index)
+                recruit_id_array.push(recruit_id_by_index)
+            });
+            console.log('rp', rp_id_array)
+            console.log('recruit', recruit_id_array)
+            console.log('action', action)
+            console.log('tab', "{{ $tab }}")
+            console.log('-----------')
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruit.bulk') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    action : action,
+                    rp_id_array: rp_id_array,
+                    recruit_id_array: recruit_id_array,
+                    tab: "{{ $tab }}",
+                },
+                success:function(data){
+                  location.reload();
+                }
+            });
+        }else{
+          alert('Please, select at least 1 POSTULANT to continue.');
+        }
+
+      }else{
+        alert('Select a BULK ACTION to continue.');
+      }
+  });
 </script>
 @endsection

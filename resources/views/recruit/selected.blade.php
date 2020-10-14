@@ -179,6 +179,57 @@ a.badge-primary:focus{
 @endsection
  
 @section('content')
+      <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="delete-audioLabel">Delete audio</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col">
+                      Are you sure you want to delete this file?
+                      <input type="hidden" id="delete-audio-rp-id">
+                      <input type="hidden" id="delete-audio-position-id">
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
+
+      <div class="modal fade" id="show-audio" tabindex="-1" role="dialog" aria-labelledby="show-audioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col">
+                      
+                      <audio src="" controls autoplay id="audio-play"></audio>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
       <nav class="nav nav-pills nav-fill mb-4">
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
@@ -209,32 +260,6 @@ a.badge-primary:focus{
             <p>{{ $message }}</p>
         </div>
     @endif
-
-    <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col">
-                    Are you sure you want to delete this file?
-                    <input type="hidden" id="delete-audio-rp-id">
-                    <input type="hidden" id="delete-audio-position-id">
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
-        </div>
-        </div>
-    </div>
-    </div>
     
     <div class="row">
 
@@ -243,7 +268,7 @@ a.badge-primary:focus{
             <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
-
+        
         <div class="col-12">
           <p>Records: <span id="count-recruit"></span></p>
         </div>
@@ -252,15 +277,15 @@ a.badge-primary:focus{
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <select name="bulk-action" id="bulk-action" class="form-control" >
                     <option value="">-- Bulk Actions --</option>
-                    <option value="approve">Approve</option>
-                    <option value="disapprove">Disapprove</option>
+                    <!--<option value="approve">Approve</option>
+                    <option value="disapprove">Disapprove</option>-->
                     <option value="trash">Move to Trash</option>
               </select>
             </div>
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
         </div>
         <div class="col-12 text-center mb-5">
-            <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits">
+            <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
             </table>
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
@@ -318,6 +343,8 @@ a.badge-primary:focus{
                   _count_records = _count_records + _data.rows.length;
                   $("#count-recruit").html( _count_records );
                   _dataRows = _data.rows;
+                  console.log('data',data)
+                  console.log('data',data.rows)
                   tablebootstrap_filter( _data.rows );
                   if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                   $(".lds-ring").hide();
@@ -374,54 +401,21 @@ a.badge-primary:focus{
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
             {
-              field: 'profile_link', 
-              title: "Link",
+              field: 'audio_report', 
+              title: "Upload Audio",
               width: 50,
-              formatter : function(value,rowData,index) {    
-                  if(rowData.profile_link){
-                    var actions = '<a class="badge badge-success btn-link-recruit" href="'+rowData.profile_link+'" target="_blank">Go to Link</a>\n';
-                  }else{
-                    var actions = '<a class="badge badge-secondary button-disabled" disabled>No Link</a>\n';
-                  }
-                  actions = actions.replace(/:id/gi , rowData.id);
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            { field: 'position_name', title: "Position", width: 75 , class: 'frozencell'},
-            { field: 'phone_number', title: "Phone", width: 75 , class: 'frozencell'},
-            { field: 'email_address', title: "E-mail", width: 75 , class: 'frozencell'},
-            {
-              field: 'file_path', 
-              title: "CV",
-              width: 50,
-              formatter : function(value,rowData,index) {    
-                var actions = '';
+              formatter : function(value,rowData,index) { 
+                  var actions = '';
 
-                actions += '<div class="btn-group mt-2 btn-upload-cv '+( rowData.file_path == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"> ';
-                actions += '<label class="badge badge-secondary" for="cv-upload-evaluate-'+rowData.rp_id+'">Upload CV File</label>';
-                actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" style="display:none;" >';
-                actions += '</div>';
-
-                actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
-                actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
-                actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
-                actions += '</div>';
-
-                actions = actions.replace(/:id/gi , rowData.id);
-                return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'pos_id',
-              title: "Phone Call",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-call" data-phonecall="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">YES</a>'+
-                                ' <a class="badge badge-danger recruit-call" data-phonecall="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">NO</a>'
+                  actions += '<div class="btn-group mt-2 btn-upload-audio '+( rowData.audio_report == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'"> ';
+                  actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.rp_id+'">Upload Audio</label>';
+                  actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'" style="display:none;" >';
+                  actions += '</div>';
+              
+                  actions += '<div class="btn-group btn-show-audio '+( rowData.audio_report != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'">';
+                  actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_report+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'">Show Audio</a>';
+                  actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'"><i class="fas fa-trash"></i></a>';
+                  actions += '</div>';
 
                   actions = actions.replace(/:id/gi , rowData.id);
                   return actions;
@@ -438,29 +432,6 @@ a.badge-primary:focus{
             uniqueId: 'id'
         });
         // =================== DELETE
-
-        $("table tbody").on('click', 'a.recruit-call' , function(ev){
-          ev.preventDefault();
-          var id = $(this).data("id");
-          var positionid = $(this).data("positionid");
-          var phonecall = $(this).data("phonecall");
-          var confirmed = confirm("Are you sure you want to "+ (phonecall=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
-          if(confirmed){
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.call") }}',
-                data: {id : id,positionid: positionid,phonecall: phonecall},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
-                  location.reload();
-                }
-            });
-          }
-        });
 
         $("table tbody").on('click', 'a.recruit-delete' , function(ev){
           ev.preventDefault();
@@ -530,135 +501,149 @@ a.badge-primary:focus{
 
     });
 </script>
+
 <script>
-    $('body').on('change' , '.cv-upload' , function(ev){
-        // ev.preventDefault();
-        var file = this.files[0];
-        var rp_id = $(this).data("id");
-        var position_id = $(this).data("positionid");
-        var bar = $('.progress-bar');
+  $('body').on('change' , '.audio-upload' , function(ev){
+      // ev.preventDefault();
+      var file = this.files[0];
+      var rp_id = $(this).data("id");
+      var position_id = $(this).data("positionid");
+      var bar = $('.progress-bar');
 
-        var _formData = new FormData();
-        _formData.append('file', file);
-        _formData.append('rp_id', rp_id);
-        _formData.append('position_id', position_id);
+      var _formData = new FormData();
+      _formData.append('file', file);
+      _formData.append('rp_id', rp_id);
+      _formData.append('position_id', position_id);
 
-        $.ajax({
-            xhr: function() {
-                var xhr = new window.XMLHttpRequest();
-                xhr.upload.addEventListener("progress", function(evt) {
-                    if (evt.lengthComputable) {
-                        var percentComplete = (evt.loaded / evt.total) * 100;
-                        //Do something with upload progress here
-                          bar.width(percentComplete+'%');
-                    }
-                }, false);
-              return xhr;
-            },
-            type:'POST',
-            url: "{{ route('recruit.postulant.upload.cv') }}",
-            headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            contentType: false,
-            cache: false,
-            processData: false,
-            data: _formData,
-            success:function(data){
-                $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
-                $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
-                $('.show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("href" , data.file);
-                bar.width('0%');
-            }
-        });
-    })
-
-    $("body").on('click' , '.confirmation-upload-delete' , function(ev){
-        ev.preventDefault();
-        var rp_id = $(this).data("id");
-        var position_id = $(this).data("positionid");
-
-        $("#delete-audio-rp-id").val(rp_id);
-        $("#delete-audio-position-id").val(position_id);
-
-        $("#delete-audio").modal();
-
-    })
-
-    $('#delete-audio').on('hidden.bs.modal', function (e) {
-      $("#delete-audio-rp-id").val("");
-      $("#delete-audio-position-id").val("");
-    })
-
-    $("#deleteAudio").on('click' , function(){
-        $.ajax({
-            type:'POST',
-            url: "{{ route('recruit.postulant.delete.cv') }}",
-            headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                rp_id : $("#delete-audio-rp-id").val(),
-                position_id: $("#delete-audio-position-id").val()
-            },
-            success:function(data){
-                var rp_id = $("#delete-audio-rp-id").val();
-                var position_id = $("#delete-audio-position-id").val();
-                $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
-                $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
-                $("#delete-audio").modal('hide');
-            }
-        });
-    });
-
-    $("#bulk-recruit").on('click' , function(){
-        var action = $('#bulk-action').val();
-        var rp_id_array = [];
-        var recruit_id_array = [];
-
-        if(action){
-          var checked = $('input[name="btSelectItem"]:checked');
-
-          if(checked.length>0){
-              checked.each(function (){
-                  var checkbox_index = $(this).data("index");
-                  var rp_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("rpid");
-                  var recruit_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("recruit-id");
-
-                  rp_id_array.push(rp_id_by_index)
-                  recruit_id_array.push(recruit_id_by_index)
-              });
-              console.log('rp', rp_id_array)
-              console.log('recruit', recruit_id_array)
-              console.log('action', action)
-              console.log('tab', "{{ $tab }}")
-              console.log('-----------')
-              $.ajax({
-                  type:'POST',
-                  url: "{{ route('recruit.bulk') }}",
-                  headers: {
-                      'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  },
-                  data: {
-                      action : action,
-                      rp_id_array: rp_id_array,
-                      recruit_id_array: recruit_id_array,
-                      tab: "{{ $tab }}",
-                  },
-                  success:function(data){
-                    location.reload();
+      $.ajax({
+          xhr: function() {
+              var xhr = new window.XMLHttpRequest();
+              xhr.upload.addEventListener("progress", function(evt) {
+                  if (evt.lengthComputable) {
+                      var percentComplete = (evt.loaded / evt.total) * 100;
+                      //Do something with upload progress here
+                        bar.width(percentComplete+'%');
                   }
-              });
-          }else{
-            alert('Please, select at least 1 POSTULANT to continue.');
+              }, false);
+            return xhr;
+          },
+          type:'POST',
+          url: "{{ route('recruit.postulant.upload.audio') }}",
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          contentType: false,
+          cache: false,
+          processData: false,
+          data: _formData,
+          success:function(data){
+              $('.btn-upload-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+              $('.btn-show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+              $('.show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').attr("data-audio" , data.file);
+              bar.width('0%');
           }
+      });
+  })
 
+  $("body").on('click' , '.confirmation-upload-delete' , function(ev){
+      ev.preventDefault();
+      var rp_id = $(this).data("id");
+      var position_id = $(this).data("positionid");
+
+      $("#delete-audio-rp-id").val(rp_id);
+      $("#delete-audio-position-id").val(position_id);
+
+      $("#delete-audio").modal();
+
+  })
+
+  $('#delete-audio').on('hidden.bs.modal', function (e) {
+    $("#delete-audio-rp-id").val("");
+    $("#delete-audio-position-id").val("");
+  })
+
+  $("#deleteAudio").on('click' , function(){
+      $.ajax({
+          type:'POST',
+          url: "{{ route('recruit.postulant.delete.audio') }}",
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          data: {
+              rp_id : $("#delete-audio-rp-id").val(),
+              position_id: $("#delete-audio-position-id").val()
+          },
+          success:function(data){
+              var rp_id = $("#delete-audio-rp-id").val();
+              var position_id = $("#delete-audio-position-id").val();
+              $('.btn-upload-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+              $('.btn-show-audio[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+              $("#delete-audio").modal('hide');
+          }
+      });
+
+  });
+
+  $('body').on('click' , '.show-audio' ,function(ev){
+      ev.preventDefault();
+      var audio = $(this).data("audio");
+      var h = "{{ route('home') }}";
+      $("#audio-play").attr("src" , audio);
+      $("#show-audio").modal();
+  })
+
+  $('#show-audio').on('hidden.bs.modal', function (e) {
+      $("#audio-play").attr("src" , "");
+  })
+
+  $("#bulk-recruit").on('click' , function(){
+      var action = $('#bulk-action').val();
+      var rp_id_array = [];
+      var recruit_id_array = [];
+
+      if(action){
+        var checked = $('input[name="btSelectItem"]:checked');
+
+        if(checked.length>0){
+            checked.each(function (){
+                var checkbox_index = $(this).data("index");
+                var rp_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("rpid");
+                var recruit_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("recruit-id");
+
+                rp_id_array.push(rp_id_by_index)
+                recruit_id_array.push(recruit_id_by_index)
+            });
+            console.log('rp', rp_id_array)
+            console.log('recruit', recruit_id_array)
+            console.log('action', action)
+            console.log('tab', "{{ $tab }}")
+            console.log('-----------')
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruit.bulk') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    action : action,
+                    rp_id_array: rp_id_array,
+                    recruit_id_array: recruit_id_array,
+                    tab: "{{ $tab }}",
+                },
+                success:function(data){
+                  location.reload();
+                }
+            });
         }else{
-          alert('Select a BULK ACTION to continue.');
+          alert('Please, select at least 1 POSTULANT to continue.');
         }
-    });
+
+      }else{
+        alert('Select a BULK ACTION to continue.');
+      }
+  });
 </script>
 @endsection

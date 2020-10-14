@@ -61,11 +61,12 @@ Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
 
 //METODOS POSTULANTES
 Route::get('recruits','RecruitController@index')->name('recruit.menu');
+Route::get('recruits/search/bootstrap','RecruitController@recruitsSearchBootstrap')->name('recruit.searchlist');
 Route::post('recruits/save','RecruitController@saveRecruit')->name("recruit.save");
 Route::post('recruits/evaluate/outstanding','RecruitController@recruitsEvaluateOutstanding')->name('recruit.postulant.outstanding');
 
-Route::post('recruits/upload/cv','RecruitController@uploadCV')->name('recruit.postulant.upload.cv');
-Route::post('recruits/delete/cv','RecruitController@deleteCV')->name('recruit.postulant.delete.cv');
+Route::get('/recruits/tech/{recruitId}','RecruitController@recruitTech')->name('recruit.tech')->middleware('signed');
+Route::get('/recruits/tech/signed/{recruitId}','RecruitController@recruitTechSigned')->name('recruit.tech.signed');
 
 //METODOS PERFILES DESTACADOS
 Route::get('recruits/outstanding','RecruitController@outstanding')->name('recruit.outstanding');
@@ -76,14 +77,29 @@ Route::get('recruits/preselected','RecruitController@preselected')->name('recrui
 Route::post('recruits/upload/audio','RecruitController@uploadAudio')->name('recruit.postulant.upload.audio');
 Route::post('recruits/delete/audio','RecruitController@deleteAudio')->name('recruit.postulant.delete.audio');
 
+//METODOS PRE-SELECCIONADOS
+Route::get('recruits/softskills','RecruitController@softskills')->name('recruit.softskills');
+
+//METODOS PRE-SELECCIONADOS
+Route::get('recruits/selected','RecruitController@selected')->name('recruit.selected');
+
 //METODOS GENERALES
 Route::get('recruits/bootstrap','RecruitController@recruitsBootstrap')->name('recruit.list');
 Route::get('recruits/{id}/edit','RecruitController@editRecruit')->name('recruit.postulant.edit');
 Route::post('recruits/{id}/update','RecruitController@updateRecruit')->name("recruit.update");
+Route::post('recruits/edit/get','RecruitController@getRecruit')->name('recruit.edit.get');
+Route::post('recruits/edit/change','RecruitController@changeRecruit')->name('recruit.edit.update');
 Route::post('recruits/delete','RecruitController@deleteRecruit')->name("recruit.postulant.delete");
 Route::post('recruits/save/link', 'RecruitController@save')->name('recruit.save.link');
 
+Route::post('recruits/bulk', 'RecruitController@bulkActions')->name('recruit.bulk');
+
+Route::post('recruits/upload/cv','RecruitController@uploadCV')->name('recruit.postulant.upload.cv');
+Route::post('recruits/delete/cv','RecruitController@deleteCV')->name('recruit.postulant.delete.cv');
+
 Route::get('recruits/{slug}','RecruitController@isSlug')->name('recruit.slug');
+
+Route::post('recruits/save/tech/qtn','RecruitController@saveRecruitTechQtn')->name('recruit.save.tech');
 
 
 

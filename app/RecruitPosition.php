@@ -17,5 +17,7 @@ class RecruitPosition extends Model
         'user_id',
         'outstanding_report',
         'call_report',
+        'audio_report',
+        'soft_report',
     ];
 }
