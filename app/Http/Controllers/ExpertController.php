@@ -150,8 +150,10 @@ class ExpertController extends Controller
                 ->distinct()
                 ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
                 ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
-                ->whereNotNull( 'recruiter_logs.filter_audio' )
-                ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+                ->where(function ($query) {
+                    $query->whereNotNull('recruiter_logs.filter_audio')
+                          ->orWhereNotNull('recruiter_logs.evaluate_audio');
+                })
                 ->select('experts.*');
         }
         

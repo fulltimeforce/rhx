@@ -858,6 +858,7 @@
 
                         if(_data.recruit.audio_path){
                             html += '<tr data-audio="'+index+'">';
+                            html += '<td style="text-align: center;"> <p>Unique English Evaluation</p>';
                             html += '<a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="2">x2.0</a>'
                             html += '<audio id="audio-player-'+index+'" src="'+_data.recruit.audio_path+'" controls></audio></td>';
                             html += '</tr>';

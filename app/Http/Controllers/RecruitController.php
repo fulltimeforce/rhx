@@ -740,6 +740,7 @@ class RecruitController extends Controller
         
         //verify tab route parameter to set recruits filters
         $recruits->distinct()
+            ->where('recruit.fce_overall', 'like', '-')
             ->whereNotNull('recruit.audio_path')
             ->select('recruit.*');
 
