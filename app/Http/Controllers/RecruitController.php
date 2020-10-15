@@ -27,6 +27,9 @@ class RecruitController extends Controller
        
     }
 
+    //==============================================================================
+    //========================RECRUITMENT MNENU METHODS=============================
+    //==============================================================================
     public function index(Request $request){
         //verify logged user and user level
         if(!Auth::check()) return redirect('login');
@@ -128,6 +131,9 @@ class RecruitController extends Controller
             ]);
     }
 
+    //==============================================================================
+    //==========================TABLE BOOTSTRAP METHODS=============================
+    //==============================================================================
     public function recruitsBootstrap(Request $request){
         //verify logged user and user level
         if(!Auth::check()) return redirect('login');
@@ -316,6 +322,9 @@ class RecruitController extends Controller
         ));
     }
 
+    //==============================================================================
+    //=====TABLE FUNCTIONALITY METHDOS: EDIT, DELETE, SAVE, EVALUATE CRITERIA=======
+    //==============================================================================
     public function getRecruit(Request $request){
         //verify logged user and user level
         if(!Auth::check()) return redirect('login');
@@ -390,6 +399,68 @@ class RecruitController extends Controller
                
     }
 
+    public function deleteRecruit(Request $request){
+        //call route parameters
+        $input = $request->all();
+
+        //set values in variables
+        $recruit_id = $input["recruit_id"];
+        $position_id = $input["position_id"];
+
+        //delete recruit_positions row by: recruit_id and position_id
+        RecruitPosition::where('recruit_id' , $recruit_id)->where('position_id' , $position_id)->delete();
+    }
+
+    public function saveRecruit(Request $request){
+
+        $validator = $request->validate( [
+            'fullname'              => 'required',
+            'position_id'           => 'required',
+            'platform'              => 'required',
+            'phone_number'          => 'required|numeric',
+            'email_address'         => 'required',
+        ]);
+        
+        if( !is_array($validator) ){
+            if ($validator->fails()) {
+                return back()
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+        }    
+        
+        try {
+            $input = $request->all();
+            $recruit;
+            $isCreated = true;
+
+            $input['id'] = Hashids::encode(time());
+            unset( $input["_token"] );
+            unset( $input["position_id"] );
+
+            Recruit::create($input);
+
+            RecruitPosition::create(
+                array(
+                    "recruit_id"         =>  $input['id'],
+                    "position_id"        =>  $request->input('position_id'),
+                    "user_id"            =>  Auth::id(),
+                )
+            );
+            
+            if(Auth::check()){
+                return redirect()->route('recruit.menu')
+                            ->with('success', 'Postulant applied successfully.');
+            }else{
+                return redirect()->route('recruit.menu')
+                            ->with('error', 'Need to Log In.');
+            }
+
+        } catch (Exception $exception) {
+            return back()->withErrors($exception->getMessage())->withInput();
+        }
+    }
+
     public function editRecruit($id){
         //verify logged user and user level
         if(!Auth::check()) return redirect('login');
@@ -407,18 +478,6 @@ class RecruitController extends Controller
                 'recruit' => $recruit,
                 'platforms' => $platforms,
             ]);
-    }
-
-    public function deleteRecruit(Request $request){
-        //call route parameters
-        $input = $request->all();
-
-        //set values in variables
-        $recruit_id = $input["recruit_id"];
-        $position_id = $input["position_id"];
-
-        //delete recruit_positions row by: recruit_id and position_id
-        RecruitPosition::where('recruit_id' , $recruit_id)->where('position_id' , $position_id)->delete();
     }
 
     public function updateRecruit(Request $request, $id){
@@ -501,6 +560,23 @@ class RecruitController extends Controller
         }
     }
 
+    public function evaluateCriteria( Request $request ){
+        $input = $request->all();
+
+        $recruit_id = $input['recruit_id'];
+        $positionid = $input['positionid'];
+        $crit = $input['crit'];
+        $option = $input['option'];
+        if($option == ''){$option = null;}
+
+        Recruit::where('id' , $recruit_id)->update(
+            array( "crit_".$crit => $option )
+        );
+    }
+
+    //==============================================================================
+    //==================RECLUTE A POSTULANT VIA WORKAT LINK METHODS=================
+    //==============================================================================
     public function isSlug($slug){
         //call positions
         $positions = Position::all();
@@ -631,56 +707,102 @@ class RecruitController extends Controller
 
     }
 
-    public function saveRecruit(Request $request){
-
-        $validator = $request->validate( [
-            'fullname'              => 'required',
-            'position_id'           => 'required',
-            'platform'              => 'required',
-            'phone_number'          => 'required|numeric',
-            'email_address'         => 'required',
-        ]);
+    //==============================================================================
+    //=========================FCE2 FUNCTIONALITY METHODS===========================
+    //==============================================================================
+    public function fce( Request $request ){
+        if(!Auth::check()) return redirect('login');
         
-        if( !is_array($validator) ){
-            if ($validator->fails()) {
-                return back()
-                            ->withErrors($validator)
-                            ->withInput();
-            }
-        }    
+        $query = $request->query();
+
+        $name = isset( $query['name'] )? $query['name'] : '';
         
-        try {
-            $input = $request->all();
-            $recruit;
-            $isCreated = true;
+        return view('fce_evaluation.index')
+            ->with('name', $name );
+    }
 
-            $input['id'] = Hashids::encode(time());
-            unset( $input["_token"] );
-            unset( $input["position_id"] );
+    public function listfcebootstratp( Request $request ){
+        
+        //verify logged user and user level
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id >= 3) return redirect('login');
 
-            Recruit::create($input);
+        //call route parameters
+        $query = $request->query();
 
-            RecruitPosition::create(
-                array(
-                    "recruit_id"         =>  $input['id'],
-                    "position_id"        =>  $request->input('position_id'),
-                    "user_id"            =>  Auth::id(),
-                )
-            );
-            
-            if(Auth::check()){
-                return redirect()->route('recruit.menu')
-                            ->with('success', 'Postulant applied successfully.');
-            }else{
-                return redirect()->route('recruit.menu')
-                            ->with('error', 'Need to Log In.');
-            }
+        //create query to call recruits
+        $recruits = Recruit::whereNotNull('recruit.id');
+        
+        //check if $name route parameter is setted
+        if(isset($query['name'])){
+            $recruits->where('recruit.fullname' , 'like' , '%'.$query['name'].'%');
+        }
+        
+        //verify tab route parameter to set recruits filters
+        $recruits->distinct()
+            ->whereNotNull('recruit.audio_path')
+            ->select('recruit.*');
 
-        } catch (Exception $exception) {
-            return back()->withErrors($exception->getMessage())->withInput();
+        //set rows value
+        $recruit =  $recruits->paginate( $query['rows'] );
+        $rows = $recruit->items();
+
+        //return view with values (name search, recruits menu option)
+        return json_encode(array(
+            "total" => count($rows),
+            "totalNotFiltered" => $recruit->total(),
+            "rows" => $rows
+        ));
+    }
+
+    public function getRecruitForFce( Request $request ){
+        //verify logged user and user level
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id >= 3) return redirect('login');
+
+        //call route parameters
+        $input = $request->all();
+
+        //set values in variables
+        $recruit_id = $input["recruit_id"];
+        
+        $recruit = Recruit::where("id" , $recruit_id )->first();
+
+        return json_encode(array(
+            "recruit" => $recruit
+        ));
+    }
+
+    public function saveRecruitFce( Request $request ){
+        $input = $request->all();
+
+        $input['grammar_vocabulary'] = ( Recruit::getFceValue($input['grammatical_forms']) + Recruit::getFceValue($input['vocabulary']) ) / 2;
+        $input['discourse_management'] = ( Recruit::getFceValue($input['stretch_language']) + Recruit::getFceValue($input['cohesive_devices']) + Recruit::getFceValue($input['hesitation']) + Recruit::getFceValue($input['organizations_ideas']) ) / 4;
+        $input['pronunciation'] = ( Recruit::getFceValue($input['intonation']) + Recruit::getFceValue($input['phonological_features']) + Recruit::getFceValue($input['intelligible']) ) / 3;
+        $input['interactive_communication'] = Recruit::getFceValue($input['interaction']);
+        
+        $input['fce_total'] = ($input['grammar_vocabulary'] + $input['discourse_management'] + $input['pronunciation'] + $input['interactive_communication']) / 4;
+        $input['fce_overall'] = Recruit::calculateOveral($input['fce_total']);
+        
+        $recruit_id = $input['recruit_id'];
+        unset( $input['recruit_id'] );
+
+        Recruit::where('id' , $recruit_id)->update($input);
+    
+        if(Auth::check()){
+            //return with success message
+            redirect()->route('recruit.fce.menu')
+                        ->with('success', 'FCE evaluated successfully.');
+        }else{
+            //return with error message
+            redirect()->route('recruit.menu')
+                        ->with('error', 'Nedd to Log In.');
         }
     }
 
+    //==============================================================================
+    //=====================UPLOAD AND DELETE: AUDIO, CV FILE========================
+    //==============================================================================
     public function uploadAudio( Request $request ){
 
         $input = $request->all();
@@ -779,20 +901,9 @@ class RecruitController extends Controller
         );
     }
 
-    public function evaluateCriteria( Request $request ){
-        $input = $request->all();
-
-        $recruit_id = $input['recruit_id'];
-        $positionid = $input['positionid'];
-        $crit = $input['crit'];
-        $option = $input['option'];
-        if($option == ''){$option = null;}
-
-        Recruit::where('id' , $recruit_id)->update(
-            array( "crit_".$crit => $option )
-        );
-    }
-
+    //==============================================================================
+    //=====================POSTULANTS PROCESS EVALUATION METHODS====================
+    //==============================================================================
     public function recruitsEvaluateOutstanding(Request $request){
         //call route parameters
         $input = $request->all();
@@ -893,6 +1004,9 @@ class RecruitController extends Controller
         }
     }
 
+    //==============================================================================
+    //=============================BULK ACTIONS METHODS=============================
+    //==============================================================================
     public function bulkActions(Request $request){
         //call route parameters
         $input = $request->all();
@@ -993,6 +1107,9 @@ class RecruitController extends Controller
         }
     }
 
+    //==============================================================================
+    //=====================POSTULANTS TECHNICAL QUESTIONARIE========================
+    //==============================================================================
     public function recruitTechSigned($recruitId) {
         $query = array(
             'recruitId' => $recruitId 
@@ -1066,10 +1183,11 @@ class RecruitController extends Controller
             //return with error
             return back()->withErrors($exception->getMessage())->withInput();
         }
-
-        
     }
 
+    //==============================================================================
+    //===============================AUXILIARY METHDOS==============================
+    //==============================================================================
     private function platforms(){
         return array(
             (object) array(

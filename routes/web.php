@@ -101,14 +101,13 @@ Route::post('recruits/upload/cv','RecruitController@uploadCV')->name('recruit.po
 Route::post('recruits/delete/cv','RecruitController@deleteCV')->name('recruit.postulant.delete.cv');
 
 Route::get('recruits/{slug}','RecruitController@isSlug')->name('recruit.slug');
-
 Route::post('recruits/save/tech/qtn','RecruitController@saveRecruitTechQtn')->name('recruit.save.tech');
 
-
-
-
-
-
+//METODOS FCE2
+Route::get('recruits/show/fce','RecruitController@fce')->name('recruit.fce.menu');
+Route::get('recruits/fce/bootstrap','RecruitController@listfcebootstratp')->name('recruit.fce.list');
+Route::post('recruits/fce/call','RecruitController@getRecruitForFce')->name('recruit.fce.call');
+Route::post('recruits/fce/save','RecruitController@saveRecruitFce')->name('recruit.fce.save');
 
 /*
 ============================== ROUTES ACTION ============================================

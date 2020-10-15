@@ -431,12 +431,12 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
-              field: 'crit_english', 
+              field: 'fce_overall', 
               title: "English",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '-';
-                  if(rowData.crit_english){actions = rowData.crit_english}
+                  if(rowData.fce_overall){actions = rowData.fce_overall}
 
                   return actions;
                 },

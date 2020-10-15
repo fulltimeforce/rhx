@@ -984,18 +984,18 @@ class ExpertController extends Controller
         $experts = null;
         
         $experts = $this->filter(array() , array(), array());
-
         $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
-
         $experts->where('experts.fce_overall' , 'like' , '-');
 
         if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
             $experts
                 ->distinct()
-                ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
-                ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
-                ->whereNotNull( 'recruiter_logs.filter_audio' )
-                ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+                ->leftJoin('expert_log', 'experts.id', '=', 'expert_log.expert_id')
+                ->leftJoin('recruiter_logs', 'recruiter_logs.id', '=', 'expert_log.log_id')
+                ->where(function ($query) {
+                    $query->whereNotNull('recruiter_logs.filter_audio')
+                          ->orWhereNotNull('recruiter_logs.evaluate_audio');
+                })
                 ->select('experts.*');
         }
          
