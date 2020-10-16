@@ -157,31 +157,23 @@ textarea.form-control{
         </div>
     @endif
 
-    <form action="{{ route('recruit.save.link') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('recruit.save.link') }}" id="postulant-form" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col mb-5">
                 <h3 class="">Información General</h3>
-                @if ($expert->id != '')
-                <span>Actualiza tu información</span> 
-                @endif
             </div>
             
         </div>
         <div class="form-row">
-            <div class="form-group col-12 col-sm-4">
+            <div class="form-group col-12 col-sm-6">
                 <label for="fullname">Nombre completo *</label>
                 <input type="text" name="fullname" id="fullname" class="form-control" value="" required> 
             </div>
-            <div class="form-group col-12 col-sm-4">
+            <div class="form-group col-12 col-sm-6">
                 <label for="email_address">Correo electrónico *</label>
                 <input type="text" name="email_address" class="form-control" id="email_address" value="" required >
             </div>
-            <div class="form-group col-12 col-sm-4">
-                <label for="identification_number">DNI/CE/Pasaporte *</label>
-                <input type="text" name="identification_number" class="form-control" id="identification_number" value="">
-            </div>
-            
         </div>
         <div class="form-row">
             <div class="form-group col-12 col-sm-4">
@@ -190,7 +182,7 @@ textarea.form-control{
             </div>
             <div class="form-group col-12 col-sm-8">
                 <label for="profile_link">Perfil Profesional (Link)</label>
-                <input type="text" name="profile_link" class="form-control" id="profile_link" value="" required>
+                <input type="text" name="profile_link" class="form-control" id="profile_link" value="">
             </div>
         </div>
         
@@ -206,11 +198,11 @@ textarea.form-control{
                 <i class="svg-icon svg-icon-small svg-icon-upload"></i>
             </div>
         </div>
-        <input type="hidden" name="platform" id="platform" value="internal database">
+        <input type="hidden" name="platform" id="platform" value="workat">
         @if( isset($position) )
         <input type="hidden" name="position_id" id="position_id" value="{{$position->id}}">
         @endif
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" id="btn-save" class="btn btn-primary">Guardar</button>
         </div>
     
     </form>
@@ -222,7 +214,17 @@ textarea.form-control{
 @section('javascript')
     <script type="text/javascript">
         $(document).ready(function () {
-
+            $('#btn-save').on('click',function(ev){
+                ev.preventDefault();
+                var cv = $('#file_path').val();
+                var link = $('#profile_link').val();
+                if(!cv && !link){
+                    alert('You need to complete your LINK or CV. One at least.')
+                }else{
+                    $('#postulant-form').submit();
+                }
+            });
+            
         });
     </script>
 

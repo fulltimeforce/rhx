@@ -28,7 +28,7 @@ class RecruitController extends Controller
     }
 
     //==============================================================================
-    //========================RECRUITMENT MNENU METHODS=============================
+    //========================RECRUITMENT MENU METHODS=============================
     //==============================================================================
     public function index(Request $request){
         //verify logged user and user level
@@ -176,24 +176,6 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->whereNull('recruit_positions.call_report')
-                ->whereNull('recruit_positions.audio_report')
-                ->whereNull('recruit_positions.soft_report')
-                ->whereNotNull('recruit_positions.recruit_id')
-                ->whereNotNull('recruit_positions.position_id')
-                ->select('recruit.*',
-                    'positions.name AS position_name',
-                    'users.name AS user_name',
-                    'positions.id AS pos_id',
-                    'recruit_positions.audio_report AS audio_report',
-                    'recruit_positions.recruit_id AS recruit_id',
-                    'recruit_positions.id AS rp_id');
-        }elseif($query['tab'] == "preselected"){
-            $recruits->distinct()
-                ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
-                ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
-                ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
-                ->where('recruit_positions.outstanding_report', '=' , 'approve')
-                ->where('recruit_positions.call_report', '=' , 'approve')
                 ->whereNull('recruit_positions.audio_report')
                 ->whereNull('recruit_positions.soft_report')
                 ->whereNotNull('recruit_positions.recruit_id')
@@ -595,8 +577,7 @@ class RecruitController extends Controller
         //check if position exists
         if($is){
             //if exists, return with values (position, expert, technology)
-            $expert = $this->getModelFormat();
-            return view('recruit.form' )->with('position', $position )->with('expert', $expert )->with('technologies',Expert::getTechnologies());
+            return view('recruit.form' )->with('position', $position )->with('technologies',Recruit::getTechnologies());
         }else{
             //return with error message
             abort(404);
@@ -607,7 +588,6 @@ class RecruitController extends Controller
         //set form validators
         $validator = $request->validate( [
             'fullname'              => 'required',
-            'identification_number' => 'required',
             'position_id'           => 'required',
             'platform'              => 'required',
             'phone_number'          => 'required|numeric',
@@ -645,6 +625,8 @@ class RecruitController extends Controller
                 $input["file_path"] = $path_s3;
             }
 
+            $input['file_path'] = empty( $input['file_path'] )? null : $input['file_path'] ;
+
             //create hashid for new user
             $input['id'] = Hashids::encode(time());
 
@@ -652,44 +634,15 @@ class RecruitController extends Controller
             unset( $input["_token"] );
             unset( $input["position_id"] );
 
-            //check if the recruit already exists
-            if( Recruit::where("identification_number" , $input['identification_number'])->count() > 0 ){
-                //if exists, we call the recruit and set isCreated true
-                $recruit = Recruit::where("identification_number" , $input['identification_number'] )->first();
-                $isCreated = true;
-            }else{
-                //if not, we create the recruit and set isCreated false
-                Recruit::create($input);
-                $isCreated = false;
-            }
+            Recruit::create($input);
 
-            //check isCreated value
-            if($isCreated){
-                //check if recruit already applied for that position
-                if(RecruitPosition::where("recruit_id" , $recruit['id'])->where('position_id', $request->input('position_id'))->count() > 0){
-                    //if already applied, return with error
-                    return redirect()->route('home')
-                            ->with('error', 'Already applied for that position.');
-                }else{
-                    //if not, create recruit_positions row
-                    RecruitPosition::create(
-                        array(
-                            "recruit_id"         =>  $recruit['id'],
-                            "position_id"        =>  $request->input('position_id'),
-                            "user_id"            =>  Auth::id(),
-                        )
-                    );
-                }
-            }else{
-                //if not, we create the applyment directly
-                RecruitPosition::create(
-                    array(
-                        "recruit_id"         =>  $input['id'],
-                        "position_id"        =>  $request->input('position_id'),
-                        "user_id"            =>  Auth::id(),
-                    )
-                );
-            }
+            RecruitPosition::create(
+                array(
+                    "recruit_id"         =>  $input['id'],
+                    "position_id"        =>  $request->input('position_id'),
+                    "user_id"            =>  Auth::id(),
+                )
+            );
             
             if(Auth::check()){
                 //return with success message

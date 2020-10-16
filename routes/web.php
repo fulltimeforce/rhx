@@ -55,10 +55,17 @@ Route::get('expert/tech','ExpertController@listTech')->name('experts.tech.menu')
 Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('experts.tech.list');
 // Route::get('expert/tech/show','ExpertController@showTech')->name('experts.tech.show');
 
+//===================================================================================================================================
+//====================================================SALES METHODS==================================================================
+//===================================================================================================================================
+//METODOS SALES
 Route::get('sales','SaleController@index')->name('sales.menu');
 Route::get('sales/bootstrap','SaleController@salesBootstrap')->name('sales.list');
 Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
 
+//===================================================================================================================================
+//=================================================POSTULANTS METHODS================================================================
+//===================================================================================================================================
 //METODOS POSTULANTES
 Route::get('recruits','RecruitController@index')->name('recruit.menu');
 Route::get('recruits/search/bootstrap','RecruitController@recruitsSearchBootstrap')->name('recruit.searchlist');
@@ -103,11 +110,31 @@ Route::post('recruits/delete/cv','RecruitController@deleteCV')->name('recruit.po
 Route::get('recruits/{slug}','RecruitController@isSlug')->name('recruit.slug');
 Route::post('recruits/save/tech/qtn','RecruitController@saveRecruitTechQtn')->name('recruit.save.tech');
 
+//===================================================================================================================================
+//====================================================FCE2 METHODS===================================================================
+//===================================================================================================================================
 //METODOS FCE2
 Route::get('recruits/show/fce','RecruitController@fce')->name('recruit.fce.menu');
 Route::get('recruits/fce/bootstrap','RecruitController@listfcebootstratp')->name('recruit.fce.list');
 Route::post('recruits/fce/call','RecruitController@getRecruitForFce')->name('recruit.fce.call');
 Route::post('recruits/fce/save','RecruitController@saveRecruitFce')->name('recruit.fce.save');
+
+//===================================================================================================================================
+//===========================================ESPECIFIC RECRUITMENT METHODS===========================================================
+//===================================================================================================================================
+//METODOS ESPECIFIC RECRUITMENT
+Route::get('specific','EspecificpositionsController@index')->name('specific.menu');
+Route::get('specific/bootstrap','EspecificpositionsController@specificBootstrap')->name('specific.list');
+Route::get('specific/show/bootstrap','EspecificpositionsController@specificShowBootstrap')->name('specific.show.list');
+Route::get('specific/technologies','EspecificpositionsController@getTechnologies')->name('specific.technologies');
+Route::get('specific/create','EspecificpositionsController@createEspecificPosition')->name('specific.create');
+
+Route::get('specific/{id}/show','EspecificpositionsController@showApplicants')->name('specific.show.applicants');
+
+Route::get('specific/{id}/edit','EspecificpositionsController@editEspecificPosition')->name('specific.edit');
+Route::post('specific/add','EspecificpositionsController@addEspecificPosition')->name('specific.add');
+Route::post('specific/delete','EspecificpositionsController@deleteEspecificPosition')->name("specific.delete");
+Route::post('specific/{id}/update','EspecificpositionsController@updateEspecificPosition')->name("specific.update");
 
 /*
 ============================== ROUTES ACTION ============================================

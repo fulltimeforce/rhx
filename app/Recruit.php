@@ -298,6 +298,16 @@ class Recruit extends Model
         return self::$technologies;
     }
 
+    public static function getTechnologyName($db_tech_name){
+        foreach (self::$technologies as $key => $value) {
+            foreach ($value[1] as $key2 => $value2) {
+                if($key2 == $db_tech_name){
+                    return $value2;
+                }
+            }
+        }
+    }
+
     public static function getFceValue($key){
         return self::$fce_values[$key];
     }
