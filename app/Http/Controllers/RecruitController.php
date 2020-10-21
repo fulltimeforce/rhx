@@ -44,7 +44,7 @@ class RecruitController extends Controller
         $name = isset($query['name']) ? $query['name'] : '';
 
         //call positions and platforms
-        $positions = Position::where('status' , 'enabled')->latest()->get();
+        $positions = Position::whereNull('position_type')->where('status' , 'enabled')->latest()->get();
         $platforms = $this->platforms();
 
         //return view with values ( name search, positions, platforms, recruits menu option)
@@ -365,7 +365,7 @@ class RecruitController extends Controller
         $rows = $recruits->get();
 
         //call positions and platforms
-        $positions = Position::where('status' , 'enabled')->whereNull('position_type')->latest()->get();
+        $positions = Position::whereNull('position_type')->where('status' , 'enabled')->latest()->get();
 
         //return view with values (name search, recruits menu option)
         return json_encode(array(

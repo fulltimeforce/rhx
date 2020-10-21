@@ -23,6 +23,7 @@ class PositionController extends Controller
     {
         $query = $request->query();
         $positions = Position::where( function($q) use ($query){
+            $q->whereNull('position_type');
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');
             }
@@ -40,6 +41,7 @@ class PositionController extends Controller
 
     public function listpositions( Request $request ){
         $positions = Position::where( function($q){
+            $q->whereNull('position_type');
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');
             }
@@ -299,7 +301,7 @@ class PositionController extends Controller
 
         $expertId = $request->input('expertId');
 
-        $positions = Position::where('status' , 'enabled')->get();
+        $positions = Position::whereNull('position_type')->where('status' , 'enabled')->get();
         $a_positions = array();
         foreach ($positions as $key => $position) {
             $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id ])->count();

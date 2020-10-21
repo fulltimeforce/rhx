@@ -215,7 +215,6 @@ class EspecificpositionsController extends Controller
         
         //replace spaces in specific position´s name with '-' and '_'
         $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
-        $input['icon'] = preg_replace('/[^A-Za-z0-9-]+/', '_', strtolower($input['name']));
 
         //set private and position_type value to input
         $input['private'] = isset($input['private'])? 1 : 0;
@@ -252,7 +251,6 @@ class EspecificpositionsController extends Controller
         
         //replace spaces in specific position´s name with '-' and '_'
         $input['slug'] = preg_replace('/[^A-Za-z0-9-]+/', '-', strtolower($input['name']));
-        $input['icon'] = preg_replace('/[^A-Za-z0-9-]+/', '_', strtolower($input['name']));
 
         //set private and position_type value to input
         $input['private'] = isset($input['private'])? 1 : 0;
