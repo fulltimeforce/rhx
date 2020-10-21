@@ -179,14 +179,20 @@ a.badge-primary:focus{
 @endsection
  
 @section('content')
-      <nav class="nav nav-pills nav-fill mb-4">
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
-      </nav>
+    <!--
+    VIEW MENU
+    -->
+    <nav class="nav nav-pills nav-fill mb-4">
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
+    </nav>
 
+    <!--
+    ERROR - SUCCESS MESSAGE SECTION
+    -->
     @if ($errors->any())
       <div class="alert alert-danger">
           <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -212,16 +218,16 @@ a.badge-primary:focus{
     
     <div class="row">
 
-        <div class="col-12 mb-3">
-          <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
-        </div>
-        
+        <!--
+        TOTAL RECORDS SECTION
+        -->
         <div class="col-12">
           <p>Records: <span id="count-recruit"></span></p>
         </div>
         
+        <!--
+        BULK ACTIONS SECTION
+        -->
         <div class="col-6 text-left">
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <select name="bulk-action" id="bulk-action" class="form-control" >
@@ -233,6 +239,10 @@ a.badge-primary:focus{
             </div>
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
         </div>
+
+        <!--
+        POSTULANTS TABLE SECTION
+        -->
         <div class="col-12 text-center mb-5">
             <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
             </table>
@@ -267,6 +277,11 @@ a.badge-primary:focus{
 
       $("#search-column-name").val( search_name );
 
+      //===================================================================================
+      //=====================POSTULANTS TABLE BUILDING FUNCTION============================
+      //===================================================================================
+
+      //LOAD POSTULANTS TABLE DATA FUNCTION
       function ajax_recruits(_search_name, page){
           $(".lds-ring").show();
 
@@ -300,6 +315,13 @@ a.badge-primary:focus{
           });
       }
 
+      ajax_recruits(search_name, 1);
+
+      //===================================================================================
+      //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
+      //===================================================================================
+
+      //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function tablebootstrap_filter( data ){
         var columns = [
             { 
@@ -346,6 +368,7 @@ a.badge-primary:focus{
             }
         ];
         
+        //SET TABLE PROPERTIES
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
             height: undefined,
             columns: columns,
@@ -354,57 +377,13 @@ a.badge-primary:focus{
             uniqueId: 'id'
         });
 
-        $("table tbody").on('change', 'select.recruit-crit' , function(ev){
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          var positionid = $(this).data("positionid");
-          var crit = $(this).data("crit");
-          var option = $(this).find(":selected").val();
-
-          $.ajax({
-              type:'POST',
-              url: '{{ route("recruit.postulant.crit.evaluation") }}',
-              data: {recruit_id : recruit_id,positionid: positionid,crit: crit,option: option},
-              headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              },
-              success:function(data){
-                
-                alert('CRITERIA '+crit+' evaluated successfully.');
-              }
-          });
-        });
-        
-
-        $("table tbody").on('click', 'a.recruit-delete' , function(ev){
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          var position_id = $(this).data("positionid");
-
-          var confirmed = confirm("Are you sure you want to DELETE this profile?");
-
-          if(confirmed){
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.delete") }}',
-                data: {recruit_id : recruit_id,position_id: position_id},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
-                  location.reload();
-                }
-            });
-          }
-        });
-
       }
 
-      ajax_recruits(search_name, 1);
+      //===================================================================================
+      //================================SCROLL FUNCTIONS===================================
+      //===================================================================================
 
+      //SCROLL LOADING ROWS FUNCTION      
       $(window).on('scroll', function (e){
         console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
         if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -447,6 +426,11 @@ a.badge-primary:focus{
 </script>
 
 <script>
+  //===================================================================================
+  //=====================REGISTERED POSTULANTS BUTTON FUNCTION=========================
+  //===================================================================================
+
+  //BULK ACTIONS BUTTON
   $("#bulk-recruit").on('click' , function(){
       var action = $('#bulk-action').val();
       var rp_id_array = [];

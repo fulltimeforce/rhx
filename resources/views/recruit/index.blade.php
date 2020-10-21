@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
 
 <style>
-    /* The switch - the box around the slider */
+/* The switch - the box around the slider */
 .SliderSwitch {
   max-width: 600px;
   margin-left:auto;
@@ -286,171 +286,194 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
-    @if ($errors->any())
-      <div class="alert alert-danger">
-          <strong>Whoops!</strong> There were some problems with your input.<br><br>
-          <ul>
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-    @endif
-
-    @if ($message = Session::get('error'))
+      <!--
+      ERROR - SUCCESS MESSAGE SECTION
+      -->
+      @if ($errors->any())
         <div class="alert alert-danger">
-            <p>{!! $message !!}</p>
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-    @endif
+      @endif
 
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
+      @if ($message = Session::get('error'))
+          <div class="alert alert-danger">
+              <p>{!! $message !!}</p>
+          </div>
+      @endif
 
-    <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col">
-                    Are you sure you want to delete this file?
-                    <input type="hidden" id="delete-audio-rp-id">
-                    <input type="hidden" id="delete-audio-position-id">
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
-        </div>
-        </div>
-    </div>
-    </div>
+      @if ($message = Session::get('success'))
+          <div class="alert alert-success">
+              <p>{{ $message }}</p>
+          </div>
+      @endif
 
-    <div class="row">
-        <div class="col-12">
+      <!--
+      DELETE CV MODAL
+      -->
+      <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col">
+                      Are you sure you want to delete this file?
+                      <input type="hidden" id="delete-audio-rp-id">
+                      <input type="hidden" id="delete-audio-position-id">
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
+      <div class="row">
+
+          <!--
+          SAVE POSTULANT FORM
+          -->
+          <div class="col-12">
             <form name="new-recruit" id="new-recruit" action="{{ route('recruit.save') }}" method="POST" enctype="multipart/form-data">@csrf
-            <input type="hidden" name="file_path" id="file_path" value="" class="form-control">
-            <input type="hidden" name="recruit_id" id="recruit_id" class="form-control">
-            <input type="hidden" name="rp_id" id="rp_id" class="form-control">
-            <input type="hidden" name="index" id="index" class="form-control">
-            <table class="table" >
-                <tr>
-                    <td>
-                        <div class="form-group">
-                            <label for="fullname">Name *</label>
-                            <input type="text" name="fullname" id="fullname" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="position_id">Positions *</label>
-                            <select id="position_id" class="form-control" name="position_id" >
-                                <option value="">None</option>
-                                @foreach($positions as $pid => $position)
-                                    <option value="{{ $position->id }}">{{ $position->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="platform">Platform *</label>
-                            <select name="platform" id="platform" class="form-control">
-                                <option value="">None</option>
-                                @foreach($platforms as $pid => $platform)
-                                    <option value="{{$platform->value}}">{{$platform->label}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group" style="position: relative;">
-                            <label for="phone_number">Phone *</label>
-                            <input type="text" name="phone_number" id="phone_number" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group" style="position: relative;">
-                            <label for="email_address">Email *</label>
-                            <input type="text" name="email_address" id="email_address" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="profile_link">Link</label>
-                            <input type="text" name="profile_link" id="profile_link" class="form-control">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group" id="btn-form-save">
-                          <label>&nbsp;</label>
-                          <button type="submit" id="save_recruit" class="btn btn-success form-control">Save</button>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group d-none" id="btn-form-update">
-                          <label>&nbsp;</label>
-                          <button type="submit" id="update_recruit" class="btn btn-success form-control">Update</button>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group d-none" id="btn-form-cancel">
-                          <label>&nbsp;</label>
-                          <button type="submit" id="cancel_recruit" class="btn btn-danger form-control">Cancel</button>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+              <input type="hidden" name="file_path" id="file_path" value="" class="form-control">
+              <input type="hidden" name="recruit_id" id="recruit_id" class="form-control">
+              <input type="hidden" name="rp_id" id="rp_id" class="form-control">
+              <input type="hidden" name="index" id="index" class="form-control">
+              <table class="table" >
+                  <tr>
+                      <td>
+                          <div class="form-group">
+                              <label for="fullname">Name *</label>
+                              <input type="text" name="fullname" id="fullname" class="form-control">
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group">
+                              <label for="position_id">Positions *</label>
+                              <select id="position_id" class="form-control" name="position_id" >
+                                  <option value="">None</option>
+                                  @foreach($positions as $pid => $position)
+                                      <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group">
+                              <label for="platform">Platform *</label>
+                              <select name="platform" id="platform" class="form-control">
+                                  <option value="">None</option>
+                                  @foreach($platforms as $pid => $platform)
+                                      <option value="{{$platform->value}}">{{$platform->label}}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group" style="position: relative;">
+                              <label for="phone_number">Phone *</label>
+                              <input type="text" name="phone_number" id="phone_number" class="form-control">
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group" style="position: relative;">
+                              <label for="email_address">Email *</label>
+                              <input type="text" name="email_address" id="email_address" class="form-control">
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group">
+                              <label for="profile_link">Link</label>
+                              <input type="text" name="profile_link" id="profile_link" class="form-control">
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group" id="btn-form-save">
+                            <label>&nbsp;</label>
+                            <button type="submit" id="save_recruit" class="btn btn-success form-control">Save</button>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group d-none" id="btn-form-update">
+                            <label>&nbsp;</label>
+                            <button type="submit" id="update_recruit" class="btn btn-success form-control">Update</button>
+                          </div>
+                      </td>
+                      <td>
+                          <div class="form-group d-none" id="btn-form-cancel">
+                            <label>&nbsp;</label>
+                            <button type="submit" id="cancel_recruit" class="btn btn-danger form-control">Cancel</button>
+                          </div>
+                      </td>
+                  </tr>
+              </table>
             </form>
-        </div>
-
-        <div class="col-12 mb-3">
-          <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-        </div>
 
-        <div class="col-12 mb-3">
-          <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
-              <b>Copy successful!!!!</b>
-              <p id="showURL"></p>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <p>Records: <span id="count-recruit"></span></p>
-        </div>
-        
-        <div class="col-6 text-left">
-            <div class="form-group d-inline-block" style="max-width: 300px;">
-                <select name="bulk-action" id="bulk-action" class="form-control" >
-                    <option value="">-- Bulk Actions --</option>
-                    <option value="approve">Approve</option>
-                    <option value="disapprove">Disapprove</option>
-                    <option value="trash">Move to Trash</option>
-              </select>
+          <!--
+          PROGRESS BAR SECTION
+          -->
+          <div class="col-12 mb-3">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
-        </div>
+          </div>
 
-        <div class="col-12 text-center mb-5">
-            <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
-            </table>
-            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-        </div>
+          <!--
+          POSTULANT TECHNICAL QUESTIONARY URL COPY SECTION
+          -->
+          <div class="col-12 mb-3">
+            <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
+                <b>Copy successful!!!!</b>
+                <p id="showURL"></p>
+            </div>
+          </div>
 
-    </div>
-    
+          <!--
+          TOTAL RECORDS SECTION
+          -->
+          <div class="col-12">
+            <p>Records: <span id="count-recruit"></span></p>
+          </div>
+          
+          <!--
+          BULK ACTIONS SECTION
+          -->
+          <div class="col-6 text-left">
+              <div class="form-group d-inline-block" style="max-width: 300px;">
+                  <select name="bulk-action" id="bulk-action" class="form-control" >
+                      <option value="">-- Bulk Actions --</option>
+                      <option value="approve">Approve</option>
+                      <option value="disapprove">Disapprove</option>
+                      <option value="trash">Move to Trash</option>
+                </select>
+              </div>
+              <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
+          </div>
 
+          <!--
+          POSTULANTS TABLE SECTION
+          -->
+          <div class="col-12 text-center mb-5">
+              <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
+              </table>
+              <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+          </div>
+
+      </div>
 @endsection
 
 @section('javascript')
@@ -477,6 +500,11 @@ a.badge-primary:focus{
 
       $("#search-column-name").val( search_name );
 
+      //===================================================================================
+      //=====================POSTULANTS TABLE BUILDING FUNCTION============================
+      //===================================================================================
+
+      //LOAD POSTULANTS TABLE DATA FUNCTION
       function ajax_recruits(_search_name, page){
           $(".lds-ring").show();
 
@@ -510,6 +538,13 @@ a.badge-primary:focus{
           });
       }
 
+      ajax_recruits(search_name, 1);
+
+      //===================================================================================
+      //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
+      //===================================================================================
+
+      //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function tablebootstrap_filter( data ){
         var columns = [
             { 
@@ -533,7 +568,7 @@ a.badge-primary:focus{
               formatter : function(value,rowData,index) {    
                   var actions = '<a class="badge badge-primary recruit-edit" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-index="'+index+'" href="#">Edit</a>'+
                                 ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
-                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
+                                ' <a class="badge badge-danger recruit-delete" data-rpid="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
                   return actions;
                 },
               class: 'frozencell',
@@ -625,6 +660,7 @@ a.badge-primary:focus{
             },
         ];
         
+        //SET TABLE PROPERTIES
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
             height: undefined,
             columns: columns,
@@ -632,8 +668,8 @@ a.badge-primary:focus{
             theadClasses: 'table-dark',
             uniqueId: 'id'
         });
-        // =================== DELETE
 
+        //EVALUATE OUTSTANDING - (APPROVE - DISAPPROVE)
         $("table tbody").on('click', 'a.recruit-outstanding' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
@@ -662,10 +698,12 @@ a.badge-primary:focus{
           }
         });
 
+        //DELETE POSTULANT - POSITION INFORMATION
         $("table tbody").on('click', 'a.recruit-delete' , function(ev){
           ev.preventDefault();
           var recruit_id = $(this).data("id");
           var position_id = $(this).data("positionid");
+          var rp_id = $(this).data("rpid");
 
           var confirmed = confirm("Are you sure you want to DELETE this profile?");
 
@@ -673,7 +711,7 @@ a.badge-primary:focus{
             $.ajax({
                 type:'POST',
                 url: '{{ route("recruit.postulant.delete") }}',
-                data: {recruit_id : recruit_id,position_id: position_id},
+                data: {recruit_id : recruit_id,position_id: position_id,rp_id: rp_id},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -685,6 +723,7 @@ a.badge-primary:focus{
           }
         });
         
+        //EDIT POSTULANT - POSITION INFORMATION
         $("table tbody").on('click', 'a.recruit-edit' , function(ev){
           ev.preventDefault();
           var recruit_id = $(this).data("id");
@@ -719,11 +758,13 @@ a.badge-primary:focus{
           });
         });
 
+        //CANCEL EDIT POSTULANT - POSITION INFORMATION FUNCTION
         $('#cancel_recruit').on('click' , function(ev){
           ev.preventDefault();
           closeEditProcess();
         });
 
+        //UPDATE POSTULANT - POSITION INFORMATION
         $('#update_recruit').on('click' , function(ev){
           ev.preventDefault();
           var fullname      = $('#fullname').val();
@@ -779,6 +820,7 @@ a.badge-primary:focus{
           });
         });
 
+        //CANCEL EDIT JQUERY FLOW
         function closeEditProcess(){
           $('#btn-form-update').addClass("d-none");
           $('#btn-form-cancel').addClass("d-none");
@@ -794,6 +836,7 @@ a.badge-primary:focus{
           $('#rp_id').val("");
         }
 
+        //GENERATE TECHNICAL QUESTIONARY LINK
         $('.btn-tech-recruit').on('click', function (ev) {
             ev.preventDefault();
             var url = '{{ route("recruit.tech.signed" , ":id") }}';
@@ -822,12 +865,12 @@ a.badge-primary:focus{
 
                     var success = document.execCommand('copy')
                     if(success){
-                        $(".alert").slideDown(200, function() {
+                        $(".alert-dismissible").slideDown(200, function() {
                                 
                         });
                     }
                     setTimeout(() => {
-                        $(".alert").slideUp(500, function() {
+                        $(".alert-dismissible").slideUp(500, function() {
                             document.body.removeChild(el);
                         });
                     }, 4000);
@@ -840,6 +883,8 @@ a.badge-primary:focus{
       //===================================================================================
       //=====================REGISTERED POSTULANTS BUTTON FUNCTION=========================
       //===================================================================================
+      
+      //REGISTERED POSTULANTS BUTTON FUNCTION
       $('#registered-recruit').on('click' , function(ev){
         ev.preventDefault();
 
@@ -864,6 +909,7 @@ a.badge-primary:focus{
         });
       });
 
+      //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function registeredtable_button( data, positions ){
         var columns = [
             {
@@ -907,6 +953,7 @@ a.badge-primary:focus{
             },
         ];
 
+        //SET TABLE PROPERTIES
         $("#list-registered").bootstrapTable('destroy').bootstrapTable({
             height: undefined,
             columns: columns,
@@ -915,6 +962,7 @@ a.badge-primary:focus{
             uniqueId: 'id'
         });
 
+        //APPLY EXISTING POSTULANT TO POSITION
         $("table tbody").on('click', 'a.registered-position-apply' , function(ev){
           ev.preventDefault();
 
@@ -946,6 +994,8 @@ a.badge-primary:focus{
       //===================================================================================
       //=====================SEARCH HISTORY BUTTON FUNCTION================================
       //===================================================================================
+
+      //SEARCH POSTULANTS HISTORY BUTTON FUNCTION
       $('#search-recruit').on('click' , function(ev){
         ev.preventDefault();
         search_name = $('#search-column-name').val();
@@ -978,6 +1028,7 @@ a.badge-primary:focus{
         }
       });
 
+      //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function searchtable_button( data ){
         var columns = [
             {
@@ -999,6 +1050,7 @@ a.badge-primary:focus{
             { field: 'reached', title: "Stage Reached", width: 75 , class: 'frozencell'},
         ];
         
+        //SET TABLE PROPERTIES
         $("#list-search").bootstrapTable('destroy').bootstrapTable({
             height: undefined,
             columns: columns,
@@ -1008,8 +1060,11 @@ a.badge-primary:focus{
         });
       }
 
-      ajax_recruits(search_name, 1);
+      //===================================================================================
+      //================================SCROLL FUNCTIONS===================================
+      //===================================================================================
 
+      //SCROLL LOADING ROWS FUNCTION
       $(window).on('scroll', function (e){
         console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
         if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -1051,8 +1106,12 @@ a.badge-primary:focus{
     });
 </script>
 <script>
+    //===================================================================================
+    //=====================REGISTERED POSTULANTS BUTTON FUNCTION=========================
+    //===================================================================================
+
+    //UPLOAD FILE FUNCTION - INCLUDING PROGRESS BAR
     $('body').on('change' , '.cv-upload' , function(ev){
-        // ev.preventDefault();
         var file = this.files[0];
         var rp_id = $(this).data("id");
         var position_id = $(this).data("positionid");
@@ -1069,7 +1128,6 @@ a.badge-primary:focus{
                 xhr.upload.addEventListener("progress", function(evt) {
                     if (evt.lengthComputable) {
                         var percentComplete = (evt.loaded / evt.total) * 100;
-                        //Do something with upload progress here
                           bar.width(percentComplete+'%');
                     }
                 }, false);
@@ -1094,6 +1152,7 @@ a.badge-primary:focus{
         });
     })
 
+    //SET VALUES FOR CV FILE DELETE MODAL
     $("body").on('click' , '.confirmation-upload-delete' , function(ev){
         ev.preventDefault();
         var rp_id = $(this).data("id");
@@ -1106,11 +1165,13 @@ a.badge-primary:focus{
 
     })
 
+    //SET VALUES FOR CV FILE DELETE MODAL (NULL)
     $('#delete-audio').on('hidden.bs.modal', function (e) {
       $("#delete-audio-rp-id").val("");
       $("#delete-audio-position-id").val("");
     })
 
+    //DELETE CV FILE FUNCTION
     $("#deleteAudio").on('click' , function(){
         $.ajax({
             type:'POST',
@@ -1133,6 +1194,7 @@ a.badge-primary:focus{
         });
     });
 
+    //BULK ACTIONS BUTTON
     $("#bulk-recruit").on('click' , function(){
         var action = $('#bulk-action').val();
         var rp_id_array = [];
@@ -1176,10 +1238,9 @@ a.badge-primary:focus{
         }
     });
 
+    //FILE INPUT CHANGE NAME FUNCTION
     $('#file_path').on('change',function(ev){
-      //get the file name
       var fileName = $(this).val();
-      //replace the "Choose a file" label
       $(this).next('.custom-file-label').html(ev.target.files[0].name);
     });
 

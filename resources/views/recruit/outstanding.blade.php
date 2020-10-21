@@ -179,6 +179,9 @@ a.badge-primary:focus{
 @endsection
  
 @section('content')
+      <!--
+      VIEW MENU
+      -->
       <nav class="nav nav-pills nav-fill mb-4">
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
@@ -187,67 +190,82 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
-    @if ($errors->any())
-      <div class="alert alert-danger">
-          <strong>Whoops!</strong> There were some problems with your input.<br><br>
-          <ul>
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-    @endif
-
-    @if ($message = Session::get('error'))
+      <!--
+      ERROR - SUCCESS MESSAGE SECTION
+      -->
+      @if ($errors->any())
         <div class="alert alert-danger">
-            <p>{!! $message !!}</p>
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-    @endif
+      @endif
 
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
+      @if ($message = Session::get('error'))
+          <div class="alert alert-danger">
+              <p>{!! $message !!}</p>
+          </div>
+      @endif
 
-    <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col">
-                    Are you sure you want to delete this file?
-                    <input type="hidden" id="delete-audio-rp-id">
-                    <input type="hidden" id="delete-audio-position-id">
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
-        </div>
-        </div>
-    </div>
-    </div>
+      @if ($message = Session::get('success'))
+          <div class="alert alert-success">
+              <p>{{ $message }}</p>
+          </div>
+      @endif
+
+      <!--
+      DELETE CV MODAL
+      -->
+      <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col">
+                      Are you sure you want to delete this file?
+                      <input type="hidden" id="delete-audio-rp-id">
+                      <input type="hidden" id="delete-audio-position-id">
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+          </div>
+          </div>
+      </div>
+      </div>
     
-    <div class="row">
+      <div class="row">
 
+        <!--
+        PROGRESS BAR SECTION
+        -->
         <div class="col-12 mb-3">
           <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
 
+        <!--
+        TOTAL RECORDS SECTION
+        -->
         <div class="col-12">
           <p>Records: <span id="count-recruit"></span></p>
         </div>
         
+        <!--
+        BULK ACTIONS SECTION
+        -->
         <div class="col-6 text-left">
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <select name="bulk-action" id="bulk-action" class="form-control" >
@@ -259,15 +277,17 @@ a.badge-primary:focus{
             </div>
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
         </div>
+
+        <!--
+        POSTULANTS TABLE SECTION
+        -->
         <div class="col-12 text-center mb-5">
             <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits">
             </table>
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
 
-    </div>
-    
-
+      </div>
 @endsection
 
 @section('javascript')
@@ -293,6 +313,11 @@ a.badge-primary:focus{
 
       $("#search-column-name").val( search_name );
 
+      //===================================================================================
+      //=====================POSTULANTS TABLE BUILDING FUNCTION============================
+      //===================================================================================
+
+      //LOAD POSTULANTS TABLE DATA FUNCTION
       function ajax_recruits(_search_name, page){
           $(".lds-ring").show();
 
@@ -326,6 +351,13 @@ a.badge-primary:focus{
           });
       }
 
+      ajax_recruits(search_name, 1);
+
+      //===================================================================================
+      //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
+      //===================================================================================
+
+      //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function tablebootstrap_filter( data ){
         var columns = [
             { 
@@ -416,6 +448,7 @@ a.badge-primary:focus{
             },
         ];
         
+        //SET TABLE PROPERTIES
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
             height: undefined,
             columns: columns,
@@ -423,8 +456,8 @@ a.badge-primary:focus{
             theadClasses: 'table-dark',
             uniqueId: 'id'
         });
-        // =================== DELETE
 
+        //EVALUATE CALL - (APPROVE - DISAPPROVE)
         $("table tbody").on('click', 'a.recruit-call' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
@@ -447,41 +480,18 @@ a.badge-primary:focus{
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
                   location.reload();
                 }
             });
           }
         });
-
-        $("table tbody").on('click', 'a.recruit-delete' , function(ev){
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          var position_id = $(this).data("positionid");
-
-          var confirmed = confirm("Are you sure you want to DELETE this profile?");
-
-          if(confirmed){
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.delete") }}',
-                data: {recruit_id : recruit_id,position_id: position_id},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
-                  location.reload();
-                }
-            });
-          }
-        });
-
       }
 
-      ajax_recruits(search_name, 1);
+      //===================================================================================
+      //================================SCROLL FUNCTIONS===================================
+      //===================================================================================
 
+      //SCROLL LOADING ROWS FUNCTION
       $(window).on('scroll', function (e){
         console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
         if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -523,8 +533,12 @@ a.badge-primary:focus{
     });
 </script>
 <script>
+    //===================================================================================
+    //=====================REGISTERED POSTULANTS BUTTON FUNCTION=========================
+    //===================================================================================
+
+    //UPLOAD FILE FUNCTION - INCLUDING PROGRESS BAR
     $('body').on('change' , '.cv-upload' , function(ev){
-        // ev.preventDefault();
         var file = this.files[0];
         var rp_id = $(this).data("id");
         var position_id = $(this).data("positionid");
@@ -541,7 +555,6 @@ a.badge-primary:focus{
                 xhr.upload.addEventListener("progress", function(evt) {
                     if (evt.lengthComputable) {
                         var percentComplete = (evt.loaded / evt.total) * 100;
-                        //Do something with upload progress here
                           bar.width(percentComplete+'%');
                     }
                 }, false);
@@ -566,6 +579,7 @@ a.badge-primary:focus{
         });
     })
 
+    //SET VALUES FOR CV FILE DELETE MODAL
     $("body").on('click' , '.confirmation-upload-delete' , function(ev){
         ev.preventDefault();
         var rp_id = $(this).data("id");
@@ -578,11 +592,13 @@ a.badge-primary:focus{
 
     })
 
+    //SET VALUES FOR CV FILE DELETE MODAL (NULL)
     $('#delete-audio').on('hidden.bs.modal', function (e) {
       $("#delete-audio-rp-id").val("");
       $("#delete-audio-position-id").val("");
     })
 
+    //DELETE CV FILE FUNCTION
     $("#deleteAudio").on('click' , function(){
         $.ajax({
             type:'POST',
@@ -605,6 +621,7 @@ a.badge-primary:focus{
         });
     });
 
+    //BULK ACTIONS BUTTON
     $("#bulk-recruit").on('click' , function(){
         var action = $('#bulk-action').val();
         var rp_id_array = [];
@@ -622,11 +639,6 @@ a.badge-primary:focus{
                   rp_id_array.push(rp_id_by_index)
                   recruit_id_array.push(recruit_id_by_index)
               });
-              console.log('rp', rp_id_array)
-              console.log('recruit', recruit_id_array)
-              console.log('action', action)
-              console.log('tab', "{{ $tab }}")
-              console.log('-----------')
               $.ajax({
                   type:'POST',
                   url: "{{ route('recruit.bulk') }}",

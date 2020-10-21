@@ -463,9 +463,10 @@ class RecruitController extends Controller
         //set values in variables
         $recruit_id = $input["recruit_id"];
         $position_id = $input["position_id"];
+        $rp_id = $input["rp_id"];
 
         //delete recruit_positions row by: recruit_id and position_id
-        RecruitPosition::where('recruit_id' , $recruit_id)->where('position_id' , $position_id)->delete();
+        RecruitPosition::where('recruit_id' , $recruit_id)->where('position_id' , $position_id)->where('id' , $rp_id)->delete();
     }
 
     public function saveRecruit(Request $request){

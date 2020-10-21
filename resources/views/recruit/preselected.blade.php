@@ -325,6 +325,11 @@ a.badge-primary:focus{
 
       $("#search-column-name").val( search_name );
 
+      //===================================================================================
+      //=====================POSTULANTS TABLE BUILDING FUNCTION============================
+      //===================================================================================
+
+      //LOAD POSTULANTS TABLE DATA FUNCTION
       function ajax_recruits(_search_name, page){
           $(".lds-ring").show();
 
@@ -358,6 +363,13 @@ a.badge-primary:focus{
           });
       }
 
+      ajax_recruits(search_name, 1);
+
+      //===================================================================================
+      //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
+      //===================================================================================
+
+      //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function tablebootstrap_filter( data ){
         var columns = [
             { 
@@ -468,6 +480,7 @@ a.badge-primary:focus{
             },
         ];
         
+        //SET TABLE PROPERTIES
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
             height: undefined,
             columns: columns,
@@ -476,6 +489,7 @@ a.badge-primary:focus{
             uniqueId: 'id'
         });
 
+        //EVALUATE AUDIO - (APPROVE - DISAPPROVE)
         $("table tbody").on('click', 'a.recruit-audio' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
@@ -504,29 +518,7 @@ a.badge-primary:focus{
           }
         });
 
-        $("table tbody").on('click', 'a.recruit-delete' , function(ev){
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          var position_id = $(this).data("positionid");
-
-          var confirmed = confirm("Are you sure you want to DELETE this profile?");
-
-          if(confirmed){
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.delete") }}',
-                data: {recruit_id : recruit_id,position_id: position_id},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  location.reload();
-                }
-            });
-          }
-        });
-
+        //EVALUATE POSTULANT CRIT_1 - CRIT_2
         $("table tbody").on('change', 'select.recruit-crit' , function(ev){
           ev.preventDefault();
           var recruit_id = $(this).data("id");
@@ -560,12 +552,12 @@ a.badge-primary:focus{
 
                 var success = document.execCommand('copy')
                 if(success){
-                    $(".alert").slideDown(200, function() {
+                    $(".alert-dismissible").slideDown(200, function() {
                             
                     });
                 }
                 setTimeout(() => {
-                    $(".alert").slideUp(500, function() {
+                    $(".alert-dismissible").slideUp(500, function() {
                         document.body.removeChild(el);
                     });
                 }, 4000);
@@ -575,8 +567,11 @@ a.badge-primary:focus{
 
       }
 
-      ajax_recruits(search_name, 1);
+      //===================================================================================
+      //================================SCROLL FUNCTIONS===================================
+      //===================================================================================
 
+      //SCROLL LOADING ROWS FUNCTION
       $(window).on('scroll', function (e){
         console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
         if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -619,8 +614,12 @@ a.badge-primary:focus{
 </script>
 
 <script>
+  //===================================================================================
+  //=====================REGISTERED POSTULANTS BUTTON FUNCTION=========================
+  //===================================================================================
+
+  //UPLOAD AUDIO FUNCTION - INCLUDING PROGRESS BAR
   $('body').on('change' , '.audio-upload' , function(ev){
-      // ev.preventDefault();
       var file = this.files[0];
       var recruit_id = $(this).data("recruitid");
       var position_id = $(this).data("positionid");
@@ -661,6 +660,7 @@ a.badge-primary:focus{
       });
   })
 
+  //SET VALUES FOR AUDIO FILE DELETE MODAL
   $("body").on('click' , '.confirmation-upload-delete' , function(ev){
       ev.preventDefault();
       var recruit_id = $(this).data("recruitid");
@@ -673,11 +673,13 @@ a.badge-primary:focus{
 
   })
 
+  //SET VALUES FOR AUDIO FILE DELETE MODAL (NULL)
   $('#delete-audio').on('hidden.bs.modal', function (e) {
     $("#delete-audio-rp-id").val("");
     $("#delete-audio-position-id").val("");
   })
 
+  //DELETE AUDIO FILE FUNCTION
   $("#deleteAudio").on('click' , function(){
       $.ajax({
           type:'POST',
@@ -701,6 +703,7 @@ a.badge-primary:focus{
 
   });
 
+  //SET VALUES FOR AUDIO FILE PLAY MODAL
   $('body').on('click' , '.show-audio' ,function(ev){
       ev.preventDefault();
       var audio = $(this).data("audio");
@@ -709,10 +712,12 @@ a.badge-primary:focus{
       $("#show-audio").modal();
   })
 
+  //SET VALUES FOR AUDIO FILE PLAY MODAL (NULL)
   $('#show-audio').on('hidden.bs.modal', function (e) {
       $("#audio-play").attr("src" , "");
   })
 
+  //BULK ACTIONS BUTTON
   $("#bulk-recruit").on('click' , function(){
       var action = $('#bulk-action').val();
       var rp_id_array = [];
@@ -730,11 +735,6 @@ a.badge-primary:focus{
                 rp_id_array.push(rp_id_by_index)
                 recruit_id_array.push(recruit_id_by_index)
             });
-            console.log('rp', rp_id_array)
-            console.log('recruit', recruit_id_array)
-            console.log('action', action)
-            console.log('tab', "{{ $tab }}")
-            console.log('-----------')
             $.ajax({
                 type:'POST',
                 url: "{{ route('recruit.bulk') }}",
