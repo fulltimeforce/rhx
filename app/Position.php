@@ -13,6 +13,7 @@ class Position extends Model
         'id',
         'name',
         'description',
+        'position_type',
         'slug',
         'status',
         'technology_basic',

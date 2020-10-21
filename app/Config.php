@@ -49,4 +49,19 @@ class Config extends Model
         }
         return $fceList;
     }
+
+    public static function getListFceInferior($minFce){
+        // THIS METHOD WORKS KNOWING THE $fce_values_total is constructed in order, incrementing the value.
+        $fceList = [];
+        $foundMin = true;
+        foreach(self::$fce_values_total as $k => $v){
+            if($k == $minFce){
+                $foundMin = false;
+            }
+            if($foundMin){
+                $fceList[] = $k;
+            }
+        }
+        return $fceList;
+    }
 }

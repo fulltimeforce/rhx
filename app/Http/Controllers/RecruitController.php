@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Recruit;
 use App\RecruitPosition;
 use App\Position;
+use App\Portfolio;
 use App\User;
+use App\Config;
 
 use Exception;
 use Google_Client;
@@ -142,6 +144,15 @@ class RecruitController extends Controller
         //call route parameters
         $query = $request->query();
 
+        //get FCE lower grade array
+        $fce_lower = Config::first()->fce_lower_overall;
+        
+        if($fce_lower){
+            $fces = Config::getListFceSuperior($fce_lower);
+        }else{
+            $fces = [''];
+        }
+
         //create query to call recruits
         $recruits = Recruit::whereNotNull('recruit.id');
         
@@ -159,7 +170,6 @@ class RecruitController extends Controller
                 ->whereNull('recruit_positions.outstanding_report')
                 ->whereNull('recruit_positions.call_report')
                 ->whereNull('recruit_positions.audio_report')
-                ->whereNull('recruit_positions.soft_report')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -177,7 +187,6 @@ class RecruitController extends Controller
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->whereNull('recruit_positions.call_report')
                 ->whereNull('recruit_positions.audio_report')
-                ->whereNull('recruit_positions.soft_report')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -195,7 +204,6 @@ class RecruitController extends Controller
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->where('recruit_positions.call_report', '=' , 'approve')
                 ->whereNull('recruit_positions.audio_report')
-                ->whereNull('recruit_positions.soft_report')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -213,7 +221,9 @@ class RecruitController extends Controller
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->where('recruit_positions.call_report', '=' , 'approve')
                 ->where('recruit_positions.audio_report', '=' , 'approve')
-                ->whereNull('recruit_positions.soft_report')
+                //====================================================================================
+                ->where('recruit.fce_overall', 'like', '-')
+                //====================================================================================
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -231,7 +241,10 @@ class RecruitController extends Controller
                 ->where('recruit_positions.outstanding_report', '=' , 'approve')
                 ->where('recruit_positions.call_report', '=' , 'approve')
                 ->where('recruit_positions.audio_report', '=' , 'approve')
-                ->where('recruit_positions.soft_report', '=' , 'approve')
+                //====================================================================================
+                ->whereIn('recruit.fce_overall' , $fces)
+                ->orderBy("recruit.fce_total","DESC")
+                //====================================================================================
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
@@ -248,7 +261,7 @@ class RecruitController extends Controller
         $recruit =  $recruits->paginate( $query['rows'] );
         $rows = $recruit->items();
 
-        //return view with values (name search, recruits menu option)
+        //return view with values (total returned, total, rows values)
         return json_encode(array(
             "total" => count($rows),
             "totalNotFiltered" => $recruit->total(),
@@ -264,6 +277,15 @@ class RecruitController extends Controller
         //call route parameters
         $query = $request->query();
 
+        //get FCE lower grade array
+        $fce_lower = Config::first()->fce_lower_overall;
+        
+        if($fce_lower){
+            $fces = Config::getListFceInferior($fce_lower);
+        }else{
+            $fces = [''];
+        }
+
         //create query to call recruits
         $recruits = Recruit::whereNotNull('recruit.id');
         
@@ -272,17 +294,21 @@ class RecruitController extends Controller
             $recruits->where('recruit.fullname' , 'like' , '%'.$query['name'].'%');
         }
 
+        //set query conditions
         $recruits->distinct()
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
-                ->where(function ($query) {
+                ->where(function ($query) use ($fces) {
                     $query->where('recruit_positions.outstanding_report', '=', 'disapprove')
                           ->orWhere('recruit_positions.call_report', '=', 'disapprove')
                           ->orWhere('recruit_positions.audio_report', '=', 'disapprove')
-                          ->orWhere('recruit_positions.soft_report', '=', 'disapprove');
+                          ->orWhere(function ($query) use ($fces) {
+                            $query->whereIn('recruit.fce_overall', $fces)
+                                  ->where('recruit_positions.audio_report', '=', 'approve');
+                          });
                 })
                 ->select('recruit.*',
                     'positions.name AS position_name',
@@ -297,6 +323,29 @@ class RecruitController extends Controller
 
         $rows = $recruits->get();
 
+        foreach ($rows as $key => $value) {
+            $reached_value = '';
+            if($value['outstanding_report'] == 'disapprove'){
+                $reached_value = 'Postulantes';
+                $rows[$key]['reached'] = $reached_value;
+            }
+
+            if($value['call_report'] == 'disapprove'){
+                $reached_value = 'Perfiles Destacados';
+                $rows[$key]['reached'] = $reached_value;
+            }
+
+            if($value['audio_report'] == 'disapprove'){
+                $reached_value = 'Pre-Seleccionados';
+                $rows[$key]['reached'] = $reached_value;
+            }
+
+            if($value['fce_overall'] != '-' && $value['audio_report'] == 'approve'){
+                $reached_value = 'Evaluación';
+                $rows[$key]['reached'] = $reached_value;
+            }
+        }
+
         //return view with values (name search, recruits menu option)
         return json_encode(array(
             "total" => count($rows),
@@ -304,8 +353,30 @@ class RecruitController extends Controller
         ));
     }
 
+    public function recruitsRegisteredBootstrap(Request $request){
+        //verify logged user and user level
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id >= 3) return redirect('login');
+
+        //create query to call recruits
+        $recruits = Recruit::whereNotNull('recruit.id')
+                           ->whereNotNull('recruit.identification_number');
+
+        $rows = $recruits->get();
+
+        //call positions and platforms
+        $positions = Position::where('status' , 'enabled')->whereNull('position_type')->latest()->get();
+
+        //return view with values (name search, recruits menu option)
+        return json_encode(array(
+            "total" => count($rows),
+            "rows" => $rows,
+            "positions" => $positions,
+        ));
+    }
+
     //==============================================================================
-    //=====TABLE FUNCTIONALITY METHDOS: EDIT, DELETE, SAVE, EVALUATE CRITERIA=======
+    //==TABLE FUNCTIONALITY METHDOS: EDIT, DELETE, SAVE, EVALUATE CRITERIA, APPLY===
     //==============================================================================
     public function getRecruit(Request $request){
         //verify logged user and user level
@@ -336,7 +407,7 @@ class RecruitController extends Controller
                     'recruit_positions.id AS rp_id',
                     'recruit_positions.position_id AS position_id')
                 ->get();
-
+        
         return json_encode(array(
             "recruit" => $recruit
         ));
@@ -347,7 +418,7 @@ class RecruitController extends Controller
         if(!Auth::check()) return redirect('login');
         if(Auth::user()->role_id >= 3) return redirect('login');
 
-    
+        //call route parameters
         $input = $request->all();
 
         //set values in variables
@@ -360,20 +431,24 @@ class RecruitController extends Controller
         $recruit_id = $input["recruit_id"];
         $rp_id = $input["rp_id"];
 
+        //check if there is a null value in required values
         if($fullname==null || $position_id==null || $platform==null || $phone_number==null || $email_address==null){ 
             return json_encode(array(
                 "state" => false
             ));
         }else{
+            //unset useless values
             unset( $input["position_id"] );
             unset( $input["recruit_id"] );
             unset( $input["rp_id"] );
 
+            //update recruit and and postulant position
             Recruit::where('id' , $recruit_id)->update($input);
             RecruitPosition::where('id' , $rp_id)->update(
                 array( "position_id" => $position_id )
             );
 
+            //if everything is ok return true state
             return json_encode(array(
                 "state" => true
             ));
@@ -395,6 +470,7 @@ class RecruitController extends Controller
 
     public function saveRecruit(Request $request){
 
+        //set form validators
         $validator = $request->validate( [
             'fullname'              => 'required',
             'position_id'           => 'required',
@@ -403,6 +479,7 @@ class RecruitController extends Controller
             'email_address'         => 'required',
         ]);
         
+        //verify if validators failed
         if( !is_array($validator) ){
             if ($validator->fails()) {
                 return back()
@@ -412,16 +489,22 @@ class RecruitController extends Controller
         }    
         
         try {
-            $input = $request->all();
+            //set all file variables we need
             $recruit;
             $isCreated = true;
+            
+            //call route parameters
+            $input = $request->all();
 
+            //unset useless values && set hashid
             $input['id'] = Hashids::encode(time());
             unset( $input["_token"] );
             unset( $input["position_id"] );
 
+            //create recruit with input values
             Recruit::create($input);
 
+            //create recruit position with: recruit id, position id, user id
             RecruitPosition::create(
                 array(
                     "recruit_id"         =>  $input['id'],
@@ -431,9 +514,11 @@ class RecruitController extends Controller
             );
             
             if(Auth::check()){
+                //return view with message (success)
                 return redirect()->route('recruit.menu')
                             ->with('success', 'Postulant applied successfully.');
             }else{
+                //if not logged, return view with message (error)
                 return redirect()->route('recruit.menu')
                             ->with('error', 'Need to Log In.');
             }
@@ -488,7 +573,7 @@ class RecruitController extends Controller
             $destinationPath = 'uploads/cv';
             $newNameFile = '';
 
-            ////call form parameters
+            //call form parameters
             $input = $request->all();
 
             //check if file exists in order to storage on the server
@@ -554,6 +639,32 @@ class RecruitController extends Controller
         Recruit::where('id' , $recruit_id)->update(
             array( "crit_".$crit => $option )
         );
+    }
+
+    public function applyRecruit(Request $request){
+        //verify logged user and user level
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id >= 3) return redirect('login');
+
+        //call route parameters
+        $input = $request->all();
+
+        //set values in variables
+        $recruit_id  = $input["id"];
+        $position_id = $input["positionId"];
+        $user_id     = Auth::id();
+
+        RecruitPosition::create(
+            array(
+                "recruit_id"         =>  $recruit_id,
+                "position_id"        =>  $position_id,
+                "user_id"            =>  $user_id
+            )
+        );
+
+        //return view with message (success)
+        redirect()->back()
+                ->with('success', 'Postulant APPLIED successfully');
     }
 
     //==============================================================================
@@ -864,6 +975,7 @@ class RecruitController extends Controller
 
         //set all parameters in variables
         $id          = $input['id'];
+        $rpid        = $input['rpid'];
         $positionid  = $input['positionid'];
         $outstanding = $input['outstanding'];
 
@@ -877,9 +989,13 @@ class RecruitController extends Controller
                             ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
         }else{
             //if exists 1 at least, approve call evaluation
-            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
+            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
                 array("outstanding_report"=>$outstanding)
             );
+
+            //return view with success message
+            redirect()->route('recruit.menu')
+                            ->with('success', 'Great!!! 1 postulant was modified successfully.');
         }
     }
 
@@ -889,6 +1005,7 @@ class RecruitController extends Controller
 
         //set all parameters in variables
         $id          = $input['id'];
+        $rpid        = $input['rpid'];
         $positionid  = $input['positionid'];
         $phonecall   = $input['phonecall'];
 
@@ -902,9 +1019,13 @@ class RecruitController extends Controller
                             ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
         }else{
             //if exists 1 at least, approve call evaluation
-            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
+            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
                 array("call_report"=>$phonecall)
             );
+
+            //return view with success message
+            redirect()->route('recruit.menu')
+                            ->with('success', 'Great!!! 1 postulant was modified successfully.');
         }
     }
 
@@ -914,6 +1035,7 @@ class RecruitController extends Controller
 
         //set all parameters in variables
         $id          = $input['id'];
+        $rpid        = $input['rpid'];
         $positionid  = $input['positionid'];
         $audio       = $input['audio'];
 
@@ -926,35 +1048,24 @@ class RecruitController extends Controller
             redirect()->route('recruit.outstanding')
                             ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
         }else{
-            //if exists 1 at least, approve call evaluation
-            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
-                array("audio_report"=>$audio)
-            );
-        }
-    }
+            if($recruit['audio_path'] == null){
+                redirect()->route('recruit.outstanding')
+                            ->with('error', 'Need to upload "AUDIO FILE".');
+            }else{
+                if($recruit['crit_1'] == null || $recruit['crit_2'] == null){
+                    redirect()->route('recruit.outstanding')
+                                ->with('error', 'Need to complete "PERSON-ENVIRONMENT" and "SELF CONFIDENCE" evaluations.');
+                }else{
+                    //if exists 1 at least, approve call evaluation
+                    RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+                        array("audio_report"=>$audio)
+                    );
 
-    public function recruitsEvaluateSoft(Request $request){
-        //call route parameters
-        $input = $request->all();
-
-        //set all parameters in variables
-        $id          = $input['id'];
-        $positionid  = $input['positionid'];
-        $soft       = $input['soft'];
-
-        //call recruit by id
-        $recruit = Recruit::where('id' , $id)->first();
-        
-        //verify it recuir have CV FILE or PROFILE LINK (1 at least)
-        if($recruit['file_path'] == null && $recruit['profile_link'] == null){
-            //if not, return with error message
-            redirect()->route('recruit.outstanding')
-                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
-        }else{
-            //if exists 1 at least, approve call evaluation
-            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->update(
-                array("soft_report"=>$soft)
-            );
+                    //return view with success message
+                    redirect()->route('recruit.menu')
+                                    ->with('success', 'Great!!! 1 postulant was modified successfully.');
+                }
+            }
         }
     }
 
@@ -986,8 +1097,26 @@ class RecruitController extends Controller
                     $name_array .= "<br> &nbsp; &#8226; " . $recruit['fullname'];
                     $count_reject++;
                 }else{
-                    array_push($accepted_array, $rp_id_array[$key]);
-                    $count_accept++;
+                    if($tab == 'preselected'){
+                        if(Recruit::where('id' , $recruit_id)
+                            ->where(function ($query) {
+                                $query->whereNull('recruit.audio_path')
+                                    ->orWhereNull('recruit.crit_1')
+                                    ->orWhereNull('recruit.crit_2');
+                            })
+                            ->count() > 0){
+                                $recruit = Recruit::where('id' , $recruit_id)->first();
+                                $name_array .= "<br> &nbsp; &#8226; " . $recruit['fullname'];
+                                $count_reject++;
+                        }else{
+                            array_push($accepted_array, $rp_id_array[$key]);
+                            $count_accept++;
+                        }
+                    }else{
+                        array_push($accepted_array, $rp_id_array[$key]);
+                        $count_accept++;
+                    }
+                    
                 }
             }
         }
@@ -1009,8 +1138,13 @@ class RecruitController extends Controller
         }
 
         if($count_reject>0){
-            redirect()->back()
+            if($tab == 'preselected'){
+                redirect()->back()
+                    ->with('error', 'There ' . (($count_reject > 1)?'are '.$count_reject.' postulants':'is 1 postulant') . ' without "AUDIO FILE" or "CALIFICATIONS":' . "\r\n" . $name_array);
+            }else{
+                redirect()->back()
                     ->with('error', 'There ' . (($count_reject > 1)?'are '.$count_reject.' postulants':'is 1 postulant') . ' without "PROFILE LINK" and "CV FILE":' . "\r\n" . $name_array);
+            }
         }else{
             redirect()->back()
                     ->with('success', 'Great!!! ' . (($count_accept > 1)?$count_accept.' postulants were':'1 postulant was') . ' modified successfully.');
@@ -1029,9 +1163,6 @@ class RecruitController extends Controller
                 case 'preselected':
                     RecruitPosition::where('id' , $rp_id)->update(array("audio_report"=>"approve"));
                     break;
-                case 'softskills':
-                    RecruitPosition::where('id' , $rp_id)->update(array("soft_report"=>"approve"));
-                    break;
             }   
         }
     }
@@ -1047,9 +1178,6 @@ class RecruitController extends Controller
                     break;
                 case 'preselected':
                     RecruitPosition::where('id' , $rp_id)->update(array("audio_report"=>"disapprove"));
-                    break;
-                case 'softskills':
-                    RecruitPosition::where('id' , $rp_id)->update(array("soft_report"=>"disapprove"));
                     break;
             }   
         }
@@ -1081,6 +1209,7 @@ class RecruitController extends Controller
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
 
         $recruit = Recruit::find($recruitId);
+        $portfolios = Portfolio::where('expert_id' , $recruitId )->get();
         $position = 0;
         if( !is_null( $request->query('position') ) ){
             $position = 1;
@@ -1088,13 +1217,18 @@ class RecruitController extends Controller
 
         return view('recruit.tech_qtn')
             ->with('recruit', $recruit)
-            ->with('position', $position)
+            ->with('portfolios', $portfolios)
             ->with('technologies',Recruit::getTechnologies());
     }
 
     public function saveRecruitTechQtn(Request $request){
         $validator = $request->validate( [
+            'fullname'              => 'required',
+            'email_address'         => 'required',
             'identification_number' => 'required',
+            'birthday'              => 'date_format:'.config('app.date_format_php'),
+            'phone_number'          => 'required|numeric',
+            //'file_path'             => 'mimes:pdf,doc,docx|max:2048',
         ]);
         
         if( !is_array($validator) ){
@@ -1108,21 +1242,52 @@ class RecruitController extends Controller
         try{
             //call route parameters
             $input = $request->all();
+
+            //set variables for uploading CV
+            $file = $request->file("file_path");
+            $destinationPath = 'uploads/cv';        
+            $newNameFile = '';
+
+            //upload CV to S3 server and string to DB
+            if( $file ){
+                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $newNameFile = $destinationPath."/" . $_fileName;
+                $path = $request->file("file_path")->store("cv" , "s3");
+                $path_s3 = Storage::disk("s3")->url($path);
+                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path") ) , 'public' );
+                Storage::delete( $path );
+                $input["file_path"] = $path_s3;
+            }
             
+            //catch all variables we need
             $recruit_id = $input["recruit_id"];
 
+            //set tech_qtn status and unset recruit_id and _token
             unset( $input["_token"] );
             unset( $input["recruit_id"] );
             $input['tech_qtn'] = 'filled';
 
-            $recruit = Recruit::where('id' , $recruit_id)->first();
+            //get portfolio rows and unset them
+            $portfolio_link = isset( $input['link'] )? $input['link'] : array();
+            $portfolio_description = isset( $input['description'] )? $input['description'] : array();
+            unset( $input['link'] );
+            unset( $input['description'] );
 
-            if($recruit['tech_qtn'] == 'filled'){
-                return redirect()->back()
-                            ->with('error', 'Postulant already filled the Tech Questionary.');
-            }
+            //config birthday
+            if( isset($input['birthday']) ) $input['birthday'] = date("Y-m-d H:i:s" , strtotime($input['birthday']));
 
+            //update recruit information
             Recruit::where('id' , $recruit_id)->update($input);
+
+            //update recruit portfolio rows
+            Portfolio::where('expert_id', $recruit_id)->delete();
+            foreach ( $portfolio_link as $key => $p ) {
+                Portfolio::create(array(
+                    "expert_id" => $recruit_id,
+                    "link" => $p,
+                    "description" => $portfolio_description[$key]
+                )); 
+            }
 
             if(Auth::check()){
                 //return with success message

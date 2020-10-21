@@ -82,19 +82,19 @@
                                 <a class="nav-link" href="{{ route('expert.portfolio.resume') }}">{{ __('Resume') }}</a>
                             </li> -->
                             @if( Auth::user()->role->id < 3 )
-                            <!--</li><li class="nav-item">
-                                <a class="nav-link" href="{{ route('recruit.menu') }}">{{ __('CONT. RECRUITMENT') }}</a>
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('recruit.menu') }}">{{ __('RECRUITMENT') }}</a>
                             </li>
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('specific.menu') }}">{{ __('SPCF. RECRUITMENT') }}</a>
-                            </li> -->
+                            </li>
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
                             @endif
-                            <!--</li><li class="nav-item">
+                            </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruit.fce.menu') }}">{{ __('FCE2') }}</a>
-                            </li>-->
+                            </li>
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.fce.menu') }}">{{ __('FCE') }}</a>
                             </li>

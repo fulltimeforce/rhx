@@ -156,7 +156,7 @@ a.badge-light:focus{
 
     <div class="row mt-5 mb-5">
         <div class="col">
-            <h2 class="d-inline">{{ $specific_position->name }} Applicants</h2>
+            <h2 class="d-inline">{{ $specific_position->name }} - Matches</h2>
         </div>
         <div class="col text-right">
             <a class="btn btn-primary align-top" href="{{ route('specific.menu') }}"> Back</a>
@@ -244,17 +244,29 @@ $(document).ready(function (ev) {
                     _count_records = _count_records + _data.rows.length;
                     $("#count-postulants").html( _count_records );
                     _dataRows = _data.rows;
-                    tablebootstrap_filter( _data.rows );
+                    tablebootstrap_filter( _data.rows, _data.positionId );
                     if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                     $(".lds-ring").hide();
                 }
             });
         }
 
-        function tablebootstrap_filter( data ){
+        function tablebootstrap_filter( data, positionId ){
             var columns = [
                 {
-                    field: 'id', 
+                    field: 'id',
+                    title: "Actions",
+                    align: 'center',
+                    clickToSelect: false,
+                    width: 20,
+                    formatter : function(value,rowData,index) {    
+                        var actions = '<a class="badge badge-primary specific-position-apply" data-id="'+rowData.id+'" data-positionId="'+ positionId +'" data-index="'+index+'" href="#">Apply</a>';
+                        return actions;
+                        },
+                    class: 'frozencell',
+                },
+                {
+                    field: 'fullname', 
                     title: "Name",
                     align: 'center',
                     clickToSelect: false,
@@ -267,7 +279,7 @@ $(document).ready(function (ev) {
                 }
             ];
 
-            columns.push( { field: 'crit_1', title: "Crit 1", align: 'center', width: 20, formatter : function(value,rowData,index) { 
+            columns.push( { field: 'crit_1', title: "Person - Environment", align: 'center', width: 20, formatter : function(value,rowData,index) { 
                         var actions = '-'
                         if(rowData.crit_1 == 'excellent'){actions = 'Excellent'}
                         if(rowData.crit_1 == 'efficient'){actions = 'Efficient'}
@@ -275,7 +287,7 @@ $(document).ready(function (ev) {
                         if(rowData.crit_1 == 'lower'){actions = 'Lower than expected'}
                         return actions;
             } } );
-            columns.push( { field: 'crit_2', title: "Crit 2", align: 'center', width: 20, formatter : function(value,rowData,index) { 
+            columns.push( { field: 'crit_2', title: "Self - confidence", align: 'center', width: 20, formatter : function(value,rowData,index) { 
                         var actions = '-'
                         if(rowData.crit_2 == 'excellent'){actions = 'Excellent'}
                         if(rowData.crit_2 == 'efficient'){actions = 'Efficient'}
@@ -320,8 +332,27 @@ $(document).ready(function (ev) {
                 data: data,
                 theadClasses: 'table-dark',
                 fixedColumns: true,
-                fixedNumber: 1,
+                fixedNumber: 2,
                 uniqueId: 'id'
+            });
+
+            $("table tbody").on('click', 'a.specific-position-apply' , function(ev){
+                ev.preventDefault();
+                var recruit_id = $(this).data("id");
+                var position_id = $(this).data("positionid");
+
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("specific.apply") }}',
+                    data: {recruit_id : recruit_id,position_id: position_id},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        location.reload();
+                    }
+                });
             });
         }
 

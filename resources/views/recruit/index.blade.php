@@ -175,10 +175,31 @@ a.badge-primary:focus{
   cursor: not-allowed;
 }
 
+.basic-background{
+    color: #fff;
+    background-color: #96c4f3;
+    border-color: #96c4f3;
+}
+
+.inter-background{
+    color: #fff;
+    background-color: #deb038;
+    border-color: #deb038;
+}
+
+.advan-background{
+    color: #fff;
+    background-color: #f98677;
+    border-color: #f98677;
+}
+
 </style>
 @endsection
  
 @section('content')
+      <!--
+      HISTORY MODAL
+      -->
       <div class="modal fade" id="search-table" tabindex="-1" role="dialog" aria-labelledby="search-tableLabel" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
           <div class="modal-content">
@@ -207,11 +228,61 @@ a.badge-primary:focus{
       </div>
       </div>
 
+      <!--
+      REGISTERED MODAL
+      -->
+      <div class="modal fade" id="registered-table" tabindex="-1" role="dialog" aria-labelledby="registered-tableLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="registered-tableLabel">Search Result: </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                <div class="col-12">
+                  <p>Records: <span id="count-registered"></span></p>
+                </div>
+                <div class="col-12 text-center mb-5">
+                    <table class="table row-border order-column" id="list-registered" data-toggle="list-registered"> 
+                    </table>
+                    <div id="registered-ring" class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
+      <!--
+      TOP OPTIONS
+      -->
+      <div class="row">
+        <div class="col-6 text-left">
+            <button class="btn inter-background" id="registered-recruit" type="button" style="vertical-align: top;">Registered Postulants</button>
+        </div>
+
+        <div class="col-6 text-right">
+          <div class="form-group d-inline-block" style="max-width: 300px;">
+              <input type="text" placeholder="Search By Name (*)" class="form-control" id="search-column-name">
+          </div>
+          <button class="btn advan-background" id="search-recruit" type="button" style="vertical-align: top;">History</button>
+        </div>
+      </div>
+
+      <!--
+      VIEW MENU
+      -->
       <nav class="nav nav-pills nav-fill mb-4">
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluados Soft Skills</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -348,9 +419,11 @@ a.badge-primary:focus{
           </div>
         </div>
 
-        <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
-            <b>Copy successful!!!!</b>
-            <p id="showURL"></p>
+        <div class="col-12 mb-3">
+          <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
+              <b>Copy successful!!!!</b>
+              <p id="showURL"></p>
+          </div>
         </div>
 
         <div class="col-12">
@@ -369,12 +442,6 @@ a.badge-primary:focus{
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
         </div>
 
-        <div class="col-6 text-right">
-            <div class="form-group d-inline-block" style="max-width: 300px;">
-                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
-            </div>
-            <button class="btn btn-primary" id="search-recruit" type="button" style="vertical-align: top;">Search</button>
-        </div>
         <div class="col-12 text-center mb-5">
             <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
             </table>
@@ -549,8 +616,8 @@ a.badge-primary:focus{
               formatter : function(value,rowData,index) {    
                   var actions = '';
                   
-                  actions += '<a class="badge badge-primary recruit-outstanding" data-outstanding="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">YES</a>';
-                  actions += ' <a class="badge badge-danger recruit-outstanding" data-outstanding="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">NO</a>'
+                  actions += '<a class="badge badge-primary recruit-outstanding" data-outstanding="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">YES</a>';
+                  actions += ' <a class="badge badge-danger recruit-outstanding" data-outstanding="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">NO</a>'
 
                   return actions;
                 },
@@ -570,20 +637,25 @@ a.badge-primary:focus{
         $("table tbody").on('click', 'a.recruit-outstanding' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
+          var rpid = $(this).data("rpid");
           var positionid = $(this).data("positionid");
           var outstanding = $(this).data("outstanding");
-          var confirmed = confirm("Are you sure you want to "+ (outstanding=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          var confirmed = true;
+
+          if(outstanding=="disapprove"){
+            confirmed = confirm("Are you sure you want to "+ (outstanding=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          }
+          
           if(confirmed){
             $.ajax({
                 type:'POST',
                 url: '{{ route("recruit.postulant.outstanding") }}',
-                data: {id : id,positionid: positionid,outstanding: outstanding},
+                data: {id: id,rpid: rpid,positionid: positionid,outstanding: outstanding},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
                   location.reload();
                 }
             });
@@ -607,7 +679,6 @@ a.badge-primary:focus{
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-                  //$("#list-users").bootstrapTable('removeByUniqueId',id);
                   location.reload();
                 }
             });
@@ -619,9 +690,6 @@ a.badge-primary:focus{
           var recruit_id = $(this).data("id");
           var rp_id = $(this).data("rpid");
           var index = $(this).data("index");
-          console.log(recruit_id)
-          console.log(rp_id)
-          console.log(index)
 
           $('#btn-form-update').removeClass("d-none");
           $('#btn-form-cancel').removeClass("d-none");
@@ -638,7 +706,6 @@ a.badge-primary:focus{
               success:function(data){
                 let _data = JSON.parse(data)
                 var recruit = _data.recruit[0];
-                console.log(recruit)
                 $('#fullname').val(recruit.fullname);
                 $('#position_id').val(recruit.position_id);
                 $('#platform').val(recruit.platform);
@@ -689,7 +756,6 @@ a.badge-primary:focus{
               success:function(data){
                 let _data = JSON.parse(data)
                 closeEditProcess();
-                console.log(_data.state)
                 if(_data.state){
                     $('tr[data-index="'+index+'"]').find('td.recruit-fullname').text(fullname)
                     $('tr[data-index="'+index+'"]').find('td.recruit-position-name').text(position_id_text)
@@ -765,41 +831,151 @@ a.badge-primary:focus{
                             document.body.removeChild(el);
                         });
                     }, 4000);
-
-                    // $("#urlGeneration").modal();
                 }
             });
         });
 
       }
 
-      $('#search-recruit').on('click' , function(ev){
+      //===================================================================================
+      //=====================REGISTERED POSTULANTS BUTTON FUNCTION=========================
+      //===================================================================================
+      $('#registered-recruit').on('click' , function(ev){
         ev.preventDefault();
-        $("#search-table").modal();
-        $("#search-ring").show();
-        search_name = $('#search-column-name').val();
-        $("#search-tableLabel").text("Search Result: " + search_name);
 
-        var params = {
-            'name' : search_name,
-        };
+        $("#registered-table").modal();
+        $("#registered-ring").show();
+
+        $("#registered-tableLabel").text("Search Result:");
 
         $.ajax({
             type:'GET',
-            url: '{{ route("recruit.searchlist") }}',
-            data: $.param(params),
+            url: '{{ route("recruit.registeredlist") }}',
             headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(data){
-                console.log(data)
                 let _data = JSON.parse(data)
-                $("#count-search").html( _data.total );
-                searchtable_button( _data.rows );
-                $("#search-ring").hide();
+                $("#count-registered").html( _data.total );
+                registeredtable_button( _data.rows, _data.positions );
+                $("#registered-ring").hide();
             }
         });
+      });
+
+      function registeredtable_button( data, positions ){
+        var columns = [
+            {
+              field: 'id', 
+              title: "Postulant",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                var actions = '<div class="text-left">'+rowData.fullname+'</div>';
+                return actions;
+              },
+              class: 'frozencell',
+            },
+            {
+              field: 'fullname', 
+              title: "Position",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                var actions = '';
+
+                actions += '<select class="form-control" id="registered-select-'+index+'" data-index="'+index+'" data-id="'+rowData.id+'">';
+                actions += '<option value="">None</option>';
+
+                positions.forEach(element => {                  
+                  actions += '<option value="'+element.id+'">'+element.name+'</option>';
+                });
+
+                actions += '</select>';
+
+                return actions;
+              },
+              class: 'frozencell',
+            },
+            { field: 'identification_number',
+              title: "Accion",
+              width: 20 ,
+              formatter : function(value,rowData,index) { 
+                var actions = '<a class="badge badge-primary registered-position-apply" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Apply</a>';
+                return actions;
+              },
+              class: 'frozencell',
+            },
+        ];
+
+        $("#list-registered").bootstrapTable('destroy').bootstrapTable({
+            height: undefined,
+            columns: columns,
+            data: data,
+            theadClasses: 'table-dark',
+            uniqueId: 'id'
+        });
+
+        $("table tbody").on('click', 'a.registered-position-apply' , function(ev){
+          ev.preventDefault();
+
+          var id    = $(this).data("id");
+          var index = $(this).data("index");
+          var select = $('#registered-select-'+index);
+          var positionId = select.find(":selected").val();
+
+          if(positionId){
+            $.ajax({
+                type:'POST',
+                url: '{{ route("recruit.apply") }}',
+                data: {id : id,positionId: positionId},
+                headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                  location.reload();
+                }
+            });
+          }else{
+            alert('You MUST select a position.')
+          }            
+        });
+
+      }
+
+      //===================================================================================
+      //=====================SEARCH HISTORY BUTTON FUNCTION================================
+      //===================================================================================
+      $('#search-recruit').on('click' , function(ev){
+        ev.preventDefault();
+        search_name = $('#search-column-name').val();
+
+        if(search_name){
+          $("#search-table").modal();
+          $("#search-ring").show();
+
+          $("#search-tableLabel").text("Search Result: " + search_name);
+
+          var params = {
+              'name' : search_name,
+          };
+
+          $.ajax({
+              type:'GET',
+              url: '{{ route("recruit.searchlist") }}',
+              data: $.param(params),
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success:function(data){
+                  let _data = JSON.parse(data)
+                  $("#count-search").html( _data.total );
+                  searchtable_button( _data.rows );
+                  $("#search-ring").hide();
+              }
+          });
+        }
       });
 
       function searchtable_button( data ){
@@ -819,62 +995,8 @@ a.badge-primary:focus{
             },
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
-            {
-              field: 'outstanding_report', 
-              title: "Outstanding Ev.",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  if(rowData.outstanding_report){
-                    var actions = rowData.outstanding_report.charAt(0).toUpperCase() + rowData.outstanding_report.slice(1);
-                  }else{
-                    var actions = '-';
-                  }
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'call_report', 
-              title: "Call Ev.",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  if(rowData.call_report){
-                    var actions = rowData.call_report.charAt(0).toUpperCase() + rowData.call_report.slice(1);
-                  }else{
-                    var actions = '-';
-                  }
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'audio_report', 
-              title: "Audio Ev.",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  if(rowData.audio_report){
-                    var actions = rowData.audio_report.charAt(0).toUpperCase() + rowData.audio_report.slice(1);
-                  }else{
-                    var actions = '-';
-                  }
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'soft_report', 
-              title: "Soft Ev.",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  if(rowData.soft_report){
-                    var actions = rowData.soft_report.charAt(0).toUpperCase() + rowData.soft_report.slice(1);
-                  }else{
-                    var actions = '-';
-                  }
-                  return actions;
-                },
-              class: 'frozencell',
-            },
+            { field: 'position_name', title: "Position", width: 75 , class: 'frozencell'},
+            { field: 'reached', title: "Stage Reached", width: 75 , class: 'frozencell'},
         ];
         
         $("#list-search").bootstrapTable('destroy').bootstrapTable({
@@ -915,10 +1037,10 @@ a.badge-primary:focus{
 
                         let _data = JSON.parse(data);
                         _before_rows = _data.total;
-                        $("#list-sales").bootstrapTable('append', _data.rows );
+                        $("#list-recruits").bootstrapTable('append', _data.rows );
                         
                         _count_records = _count_records + _data.rows.length;
-                        $("#count-sale").html( _count_records );
+                        $("#count-recruit").html( _count_records );
                         $(".lds-ring").hide();
                     }
                 });
@@ -1028,11 +1150,6 @@ a.badge-primary:focus{
                   rp_id_array.push(rp_id_by_index)
                   recruit_id_array.push(recruit_id_by_index)
               });
-              console.log('rp', rp_id_array)
-              console.log('recruit', recruit_id_array)
-              console.log('action', action)
-              console.log('tab', "{{ $tab }}")
-              console.log('-----------')
               $.ajax({
                   type:'POST',
                   url: "{{ route('recruit.bulk') }}",

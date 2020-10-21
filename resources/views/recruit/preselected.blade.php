@@ -234,7 +234,7 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluados Soft Skills</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -251,7 +251,7 @@ a.badge-primary:focus{
 
     @if ($message = Session::get('error'))
         <div class="alert alert-danger">
-            <p>{{ $message }}</p>
+            <p>{!! $message !!}</p>
         </div>
     @endif
 
@@ -266,6 +266,13 @@ a.badge-primary:focus{
         <div class="col-12 mb-3">
           <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+
+        <div class="col-12 mb-3">
+          <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
+              <b>Evaluated successful!!!!</b>
+              <p id="showURL"></p>
           </div>
         </div>
         
@@ -343,8 +350,6 @@ a.badge-primary:focus{
                   _count_records = _count_records + _data.rows.length;
                   $("#count-recruit").html( _count_records );
                   _dataRows = _data.rows;
-                  console.log('data',data)
-                  console.log('data',data.rows)
                   tablebootstrap_filter( _data.rows );
                   if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                   $(".lds-ring").hide();
@@ -370,22 +375,6 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
-              field: 'recruit_id', 
-              title: "Accion",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-edit"   href=" '+ "{{ route('recruit.postulant.edit', ':id' ) }}"+ '">Edit</a>'+
-                                ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
-                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
-
-                  actions = actions.replace(/:id/gi , rowData.recruit_id);
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'created_at', 
               title: "Date",
               width: 50,
@@ -398,8 +387,8 @@ a.badge-primary:focus{
                 },
               class: 'frozencell',
             },
-            { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
-            { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
+            { field: 'user_name', title: "Recruiter", width: 200 , class: 'frozencell'},
+            { field: 'fullname', title: "Postulant", width: 200 , class: 'frozencell'},
             {
               field: 'audio_path', 
               title: "Upload Audio",
@@ -411,6 +400,8 @@ a.badge-primary:focus{
                   actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.recruit_id+'">Upload Audio</label>';
                   actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.recruit_id+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'" style="display:none;" >';
                   actions += '</div>';
+
+                  actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
               
                   actions += '<div class="btn-group btn-show-audio '+( rowData.audio_path != null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">';
                   actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_path+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">Show Audio</a>';
@@ -423,14 +414,52 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
+              field: 'crit_1', 
+              title: "Person Environment",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = '';
+
+                  actions += '<select class="form-control recruit-crit" data-crit="1" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'">';
+                  actions += '<option value="" '+(rowData.crit_1 == null ? 'selected':'')+'>None</option>';
+                  actions += '<option value="excellent" '+(rowData.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                  actions += '<option value="efficient" '+(rowData.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                  actions += '<option value="inefficient" '+(rowData.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                  actions += '<option value="lower" '+(rowData.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                  actions += '</select>'
+
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'crit_2', 
+              title: "Self - confidence",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = '';
+
+                  actions += '<select class="form-control recruit-crit" data-crit="2" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'">';
+                  actions += '<option value="" '+(rowData.crit_2 == null ? 'selected':'')+'>None</option>';
+                  actions += '<option value="excellent" '+(rowData.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                  actions += '<option value="efficient" '+(rowData.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                  actions += '<option value="inefficient" '+(rowData.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                  actions += '<option value="lower" '+(rowData.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                  actions += '</select>'
+                  
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
               field: 'pos_id',
               title: "Evaluation",
               valign: 'middle',
               clickToSelect: false,
               width: 20,
               formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-audio" data-audio="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">YES</a>'+
-                                ' <a class="badge badge-danger recruit-audio" data-audio="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">NO</a>'
+                  var actions = '<a class="badge badge-primary recruit-audio" data-audio="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">YES</a>'+
+                                ' <a class="badge badge-danger recruit-audio" data-audio="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">NO</a>'
 
                   actions = actions.replace(/:id/gi , rowData.id);
                   return actions;
@@ -450,14 +479,20 @@ a.badge-primary:focus{
         $("table tbody").on('click', 'a.recruit-audio' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
+          var rpid = $(this).data("rpid");
           var positionid = $(this).data("positionid");
           var audio = $(this).data("audio");
-          var confirmed = confirm("Are you sure you want to "+ (audio=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          var confirmed = true;
+
+          if(audio=="disapprove"){
+            var confirmed = confirm("Are you sure you want to "+ (audio=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          }
+
           if(confirmed){
             $.ajax({
                 type:'POST',
                 url: '{{ route("recruit.postulant.audio") }}',
-                data: {id : id,positionid: positionid,audio: audio},
+                data: {id: id,rpid: rpid,positionid: positionid,audio: audio},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -490,6 +525,52 @@ a.badge-primary:focus{
                 }
             });
           }
+        });
+
+        $("table tbody").on('change', 'select.recruit-crit' , function(ev){
+          ev.preventDefault();
+          var recruit_id = $(this).data("id");
+          var positionid = $(this).data("positionid");
+          var crit = $(this).data("crit");
+          var option = $(this).find(":selected").val();
+
+          $.ajax({
+              type:'POST',
+              url: '{{ route("recruit.postulant.crit.evaluation") }}',
+              data: {recruit_id : recruit_id,positionid: positionid,crit: crit,option: option},
+              headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success:function(data){
+                var string = 'Postulant was modified.'
+                $('#showURL').html(string);
+                    
+                var el = document.createElement("textarea");
+                el.value = string;
+                el.style.position = 'absolute';                 
+                el.style.left = '-9999px';
+                el.style.top = '0';
+                el.setSelectionRange(0, 99999);
+                el.setAttribute('readonly', ''); 
+                document.body.appendChild(el);
+                
+                el.focus();
+                el.select();
+
+                var success = document.execCommand('copy')
+                if(success){
+                    $(".alert").slideDown(200, function() {
+                            
+                    });
+                }
+                setTimeout(() => {
+                    $(".alert").slideUp(500, function() {
+                        document.body.removeChild(el);
+                    });
+                }, 4000);
+              }
+          });
         });
 
       }

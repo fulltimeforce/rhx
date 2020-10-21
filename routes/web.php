@@ -69,7 +69,9 @@ Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
 //METODOS POSTULANTES
 Route::get('recruits','RecruitController@index')->name('recruit.menu');
 Route::get('recruits/search/bootstrap','RecruitController@recruitsSearchBootstrap')->name('recruit.searchlist');
+Route::get('recruits/registered/bootstrap','RecruitController@recruitsRegisteredBootstrap')->name('recruit.registeredlist');
 Route::post('recruits/save','RecruitController@saveRecruit')->name("recruit.save");
+Route::post('recruits/apply','RecruitController@applyRecruit')->name("recruit.apply");
 Route::post('recruits/evaluate/outstanding','RecruitController@recruitsEvaluateOutstanding')->name('recruit.postulant.outstanding');
 
 Route::get('/recruits/tech/{recruitId}','RecruitController@recruitTech')->name('recruit.tech')->middleware('signed');
@@ -88,7 +90,6 @@ Route::post('recruits/delete/audio','RecruitController@deleteAudio')->name('recr
 //METODOS EVALUADOS SOFT SKILLS
 Route::get('recruits/softskills','RecruitController@softskills')->name('recruit.softskills');
 Route::post('recruits/evaluate/criteria','RecruitController@evaluateCriteria')->name('recruit.postulant.crit.evaluation');
-Route::post('recruits/evaluate/soft','RecruitController@recruitsEvaluateSoft')->name('recruit.postulant.soft');
 
 //METODOS SELECCIONADOS
 Route::get('recruits/selected','RecruitController@selected')->name('recruit.selected');
@@ -135,6 +136,7 @@ Route::get('specific/{id}/edit','EspecificpositionsController@editEspecificPosit
 Route::post('specific/add','EspecificpositionsController@addEspecificPosition')->name('specific.add');
 Route::post('specific/delete','EspecificpositionsController@deleteEspecificPosition')->name("specific.delete");
 Route::post('specific/{id}/update','EspecificpositionsController@updateEspecificPosition')->name("specific.update");
+Route::post('specific/apply','EspecificpositionsController@applyEspecificPosition')->name('specific.apply');
 
 /*
 ============================== ROUTES ACTION ============================================

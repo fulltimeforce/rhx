@@ -183,7 +183,7 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluados Soft Skills</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -200,7 +200,7 @@ a.badge-primary:focus{
 
     @if ($message = Session::get('error'))
         <div class="alert alert-danger">
-            <p>{{ $message }}</p>
+            <p>{!! $message !!}</p>
         </div>
     @endif
 
@@ -225,9 +225,9 @@ a.badge-primary:focus{
         <div class="col-6 text-left">
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <select name="bulk-action" id="bulk-action" class="form-control" >
-                    <option value="">-- Bulk Actions --</option>
-                    <option value="approve">Approve</option>
-                    <option value="disapprove">Disapprove</option>
+                    <option value="">-- Bulk Actions --</option> 
+                    <!--<option value="approve">Approve</option>
+                    <option value="disapprove">Disapprove</option>-->
                     <option value="trash">Move to Trash</option>
               </select>
             </div>
@@ -317,22 +317,6 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
-              field: 'recruit_id', 
-              title: "Accion",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-edit"   href=" '+ "{{ route('recruit.postulant.edit', ':id' ) }}"+ '">Edit</a>'+
-                                ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
-                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
-
-                  actions = actions.replace(/:id/gi , rowData.recruit_id);
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'created_at', 
               title: "Date",
               width: 50,
@@ -348,70 +332,18 @@ a.badge-primary:focus{
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
             {
-              field: 'crit_1', 
-              title: "Crit 1",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  var actions = '';
-
-                  actions += '<select class="form-control recruit-crit" data-crit="1" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'">';
-                  actions += '<option value="" '+(rowData.crit_1 == null ? 'selected':'')+'>None</option>';
-                  actions += '<option value="excellent" '+(rowData.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
-                  actions += '<option value="efficient" '+(rowData.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
-                  actions += '<option value="inefficient" '+(rowData.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
-                  actions += '<option value="lower" '+(rowData.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
-                  actions += '</select>'
-
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'crit_2', 
-              title: "Crit 2",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  var actions = '';
-
-                  actions += '<select class="form-control recruit-crit" data-crit="2" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'">';
-                  actions += '<option value="" '+(rowData.crit_2 == null ? 'selected':'')+'>None</option>';
-                  actions += '<option value="excellent" '+(rowData.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
-                  actions += '<option value="efficient" '+(rowData.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
-                  actions += '<option value="inefficient" '+(rowData.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
-                  actions += '<option value="lower" '+(rowData.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
-                  actions += '</select>'
-                  
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'fce_overall', 
               title: "English",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '-';
-                  if(rowData.fce_overall){actions = rowData.fce_overall}
+
+                  actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
 
                   return actions;
                 },
               class: 'frozencell',
-            },
-            {
-              field: 'pos_id',
-              title: "Evaluation",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-soft" data-soft="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">YES</a>'+
-                                ' <a class="badge badge-danger recruit-soft" data-soft="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">NO</a>'
-
-                  actions = actions.replace(/:id/gi , rowData.id);
-                  return actions;
-                },
-              class: 'frozencell',
-            },
+            }
         ];
         
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
@@ -420,28 +352,6 @@ a.badge-primary:focus{
             data: data,
             theadClasses: 'table-dark',
             uniqueId: 'id'
-        });
-
-        $("table tbody").on('click', 'a.recruit-soft' , function(ev){
-          ev.preventDefault();
-          var id = $(this).data("id");
-          var positionid = $(this).data("positionid");
-          var soft = $(this).data("soft");
-          var confirmed = confirm("Are you sure you want to "+ (soft=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
-          if(confirmed){
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.soft") }}',
-                data: {id : id,positionid: positionid,soft: soft},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  location.reload();
-                }
-            });
-          }
         });
 
         $("table tbody").on('change', 'select.recruit-crit' , function(ev){

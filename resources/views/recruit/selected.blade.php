@@ -234,7 +234,7 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluados Soft Skills</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -251,7 +251,7 @@ a.badge-primary:focus{
 
     @if ($message = Session::get('error'))
         <div class="alert alert-danger">
-            <p>{{ $message }}</p>
+            <p>{!! $message !!}</p>
         </div>
     @endif
 
@@ -370,28 +370,14 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
-              field: 'recruit_id', 
-              title: "Accion",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-edit"   href=" '+ "{{ route('recruit.postulant.edit', ':id' ) }}"+ '">Edit</a>'+
-                                ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
-                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
-
-                  actions = actions.replace(/:id/gi , rowData.recruit_id);
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'created_at', 
               title: "Date",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var aux_date = new Date(rowData.created_at)
                   var actions = (aux_date.getDate())+'/'+(aux_date.getMonth()+1)+'/'+(aux_date.getFullYear())  
+
+                  actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
 
                   actions = actions.replace(/:id/gi , rowData.id);
                   return actions;
@@ -402,7 +388,7 @@ a.badge-primary:focus{
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
             {
               field: 'crit_1', 
-              title: "Crit 1",
+              title: "Person - Environment",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '-'
@@ -417,7 +403,7 @@ a.badge-primary:focus{
             },
             {
               field: 'crit_2', 
-              title: "Crit 2",
+              title: "Self - confidence",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '-'
@@ -430,18 +416,7 @@ a.badge-primary:focus{
                 },
               class: 'frozencell',
             },
-            {
-              field: 'fce_overall', 
-              title: "English",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  var actions = '-';
-                  if(rowData.fce_overall){actions = rowData.fce_overall}
-
-                  return actions;
-                },
-              class: 'frozencell',
-            },
+            { field: 'fce_overall', title: "English", width: 75 , class: 'frozencell'},
         ];
         
         $("#list-recruits").bootstrapTable('destroy').bootstrapTable({

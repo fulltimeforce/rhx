@@ -183,7 +183,7 @@ a.badge-primary:focus{
         <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluados Soft Skills</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -200,7 +200,7 @@ a.badge-primary:focus{
 
     @if ($message = Session::get('error'))
         <div class="alert alert-danger">
-            <p>{{ $message }}</p>
+            <p>{!! $message !!}</p>
         </div>
     @endif
 
@@ -343,22 +343,6 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
-              field: 'recruit_id', 
-              title: "Accion",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-edit"   href=" '+ "{{ route('recruit.postulant.edit', ':id' ) }}"+ '">Edit</a>'+
-                                ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
-                                ' <a class="badge badge-danger recruit-delete" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
-
-                  actions = actions.replace(/:id/gi , rowData.recruit_id);
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'created_at', 
               title: "Date",
               width: 50,
@@ -403,6 +387,8 @@ a.badge-primary:focus{
                 actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" style="display:none;" >';
                 actions += '</div>';
 
+                actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
+
                 actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
                 actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
                 actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
@@ -420,8 +406,8 @@ a.badge-primary:focus{
               clickToSelect: false,
               width: 20,
               formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-call" data-phonecall="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">YES</a>'+
-                                ' <a class="badge badge-danger recruit-call" data-phonecall="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">NO</a>'
+                  var actions = '<a class="badge badge-primary recruit-call" data-phonecall="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">YES</a>'+
+                                ' <a class="badge badge-danger recruit-call" data-phonecall="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">NO</a>'
 
                   actions = actions.replace(/:id/gi , rowData.id);
                   return actions;
@@ -442,14 +428,20 @@ a.badge-primary:focus{
         $("table tbody").on('click', 'a.recruit-call' , function(ev){
           ev.preventDefault();
           var id = $(this).data("id");
+          var rpid = $(this).data("rpid");
           var positionid = $(this).data("positionid");
           var phonecall = $(this).data("phonecall");
-          var confirmed = confirm("Are you sure you want to "+ (phonecall=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          var confirmed = true;
+
+          if(phonecall=="disapprove"){
+            confirmed = confirm("Are you sure you want to "+ (phonecall=="approve"?"APPROVE":"DISAPPROVE") +" this profile?");
+          }
+
           if(confirmed){
             $.ajax({
                 type:'POST',
                 url: '{{ route("recruit.postulant.call") }}',
-                data: {id : id,positionid: positionid,phonecall: phonecall},
+                data: {id: id,rpid: rpid,positionid: positionid,phonecall: phonecall},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
