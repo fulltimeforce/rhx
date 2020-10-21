@@ -153,7 +153,9 @@ a.badge-light:focus{
 @endsection
  
 @section('content')
-
+    <!--
+    TITLE AND BACK BUTTON SECTION
+    -->
     <div class="row mt-5 mb-5">
         <div class="col">
             <h2 class="d-inline">{{ $specific_position->name }} - Matches</h2>
@@ -162,7 +164,10 @@ a.badge-light:focus{
             <a class="btn btn-primary align-top" href="{{ route('specific.menu') }}"> Back</a>
         </div>
     </div>
-   
+    
+    <!--
+    ERROR - SUCCESS MESSAGE SECTION
+    -->
     @if ($errors->any())
         <div class="alert alert-danger">
             <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -186,15 +191,24 @@ a.badge-light:focus{
         </div>
     @endif
 
-    <div class="col-12">
-        <p>Records: <span id="count-postulants"></span></p>
-    </div>
+    <div class="row">
 
-    <div class="row mt-3">
-        <div class="col">
-            <table id="list-postulants"></table>
-
+        <!--
+        TOTAL RECORDS SECTION
+        -->
+        <div class="col-12">
+            <p>Records: <span id="count-postulants"></span></p>
         </div>
+
+        <!--
+        POSTULANTS TABLE SECTION
+        -->
+        <div class="col-12 text-center mb-5">
+            <table class="table row-border order-column" id="list-postulants" data-toggle="list-postulants"> 
+            </table>
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </div>
+
     </div>
 @endsection
 
@@ -207,7 +221,7 @@ a.badge-light:focus{
 
 <script type="text/javascript">
 
-$(document).ready(function (ev) {
+    $(document).ready(function (ev) {
         
         $(".lds-ring").hide();
 
@@ -220,6 +234,11 @@ $(document).ready(function (ev) {
         var _dataRows = [];
         var _page = 1;
 
+        //===================================================================================
+        //=====================POSTULANTS TABLE BUILDING FUNCTION============================
+        //===================================================================================
+        
+        //LOAD POSTULANTS TABLE DATA FUNCTION
         function ajax_recruits(page){
             $(".lds-ring").show();
 
@@ -251,6 +270,13 @@ $(document).ready(function (ev) {
             });
         }
 
+        ajax_recruits(1);
+
+        //===================================================================================
+        //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
+        //===================================================================================
+
+        //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
         function tablebootstrap_filter( data, positionId ){
             var columns = [
                 {
@@ -325,6 +351,7 @@ $(document).ready(function (ev) {
                 } } );
             @endforeach
             
+            //SET TABLE PROPERTIES
             $("#list-postulants").bootstrapTable('destroy').bootstrapTable({
                 height: undefined,
                 columns: columns,
@@ -336,6 +363,7 @@ $(document).ready(function (ev) {
                 uniqueId: 'id'
             });
 
+            //APPLY POSTULANT TO SPECIFIC POSITION FUNCTION
             $("table tbody").on('click', 'a.specific-position-apply' , function(ev){
                 ev.preventDefault();
                 var recruit_id = $(this).data("id");
@@ -356,8 +384,11 @@ $(document).ready(function (ev) {
             });
         }
 
-        ajax_recruits(1);
+        //===================================================================================
+        //=========================SCROLL AND SEARCH FUNCTIONS===============================
+        //===================================================================================
 
+        //SCROLL LOADING ROWS FUNCTION
         $(window).on('scroll', function (e){
             console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
             if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -396,5 +427,4 @@ $(document).ready(function (ev) {
 
     });
 </script>
-</script>   
 @endsection

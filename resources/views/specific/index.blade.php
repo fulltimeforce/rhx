@@ -202,6 +202,9 @@ a.badge-primary:focus{
 @endsection
  
 @section('content')
+    <!--
+    ERROR - SUCCESS MESSAGE SECTION
+    -->
     @if ($errors->any())
       <div class="alert alert-danger">
           <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -227,25 +230,33 @@ a.badge-primary:focus{
 
     <div class="row">
 
-        <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
-            <b>Copy successful!!!!</b>
-            <p id="showURL"></p>
-        </div>
-
+        <!--
+        TOTAL RECORDS SECTION
+        -->
         <div class="col-12">
           <p>Records: <span id="count-recruit"></span></p>
         </div>
         
+        <!--
+        NEW SPECIFIC POSITION BUTTON SECTION
+        -->
         <div class="col-6 text-left">
             <a href="{{ route('specific.create') }}" class="btn btn-info" id="create-specific-position" type="button" style="vertical-align: top;">New Specific Position</a>
         </div>
 
+        <!--
+        SEARCH BY NAME SECTION
+        -->
         <div class="col-6 text-right">
             <div class="form-group d-inline-block" style="max-width: 300px;">
                 <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
             </div>
             <button class="btn btn-primary" id="search-recruit" type="button" style="vertical-align: top;">Search</button>
         </div>
+
+        <!--
+        SPECIFIC POSITIONS TABLE SECTION
+        -->
         <div class="col-12 text-center mb-5">
             <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
             </table>
@@ -253,8 +264,6 @@ a.badge-primary:focus{
         </div>
 
     </div>
-    
-
 @endsection
 
 @section('javascript')
@@ -281,6 +290,11 @@ a.badge-primary:focus{
 
         $("#search-column-name").val( search_name );
 
+        //===================================================================================
+        //=====================SPECIFICS TABLE BUILDING FUNCTION=============================
+        //===================================================================================
+
+        //LOAD SPECIFICS TABLE DATA FUNCTION
         function ajax_recruits(_search_name, page){
             $(".lds-ring").show();
 
@@ -305,15 +319,20 @@ a.badge-primary:focus{
                     _count_records = _count_records + _data.rows.length;
                     $("#count-recruit").html( _count_records );
                     _dataRows = _data.rows;
-                    console.log(_data.rows)
                     tablebootstrap_filter( _data.rows );
                     if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                     $(".lds-ring").hide();
-                    $('input[name="btSelectAll"]').click();
                 }
             });
         }
 
+        ajax_recruits(search_name, 1);
+
+        //===================================================================================
+        //=====================SPECIFICS TABLE AND ROWS FUNCTIONS============================
+        //===================================================================================
+
+        //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
         function tablebootstrap_filter( data ){
             var columns = [
                 {
@@ -386,6 +405,7 @@ a.badge-primary:focus{
                 },
             ];
             
+            //SET TABLE PROPERTIES
             $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
                 height: undefined,
                 columns: columns,
@@ -393,8 +413,8 @@ a.badge-primary:focus{
                 theadClasses: 'table-dark',
                 uniqueId: 'id'
             });
-            // =================== DELETE
 
+            //DELETE SPECIFIC POSITION FUNCTION
             $("table tbody").on('click', 'a.specific-position-delete' , function(ev){
                 ev.preventDefault();
                 var specific_position_id = $(this).data("id");
@@ -411,7 +431,6 @@ a.badge-primary:focus{
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                             success:function(data){
-                            //$("#list-users").bootstrapTable('removeByUniqueId',id);
                             location.reload();
                         }
                     });
@@ -419,8 +438,12 @@ a.badge-primary:focus{
             });
         }
 
+        //===================================================================================
+        //=========================SCROLL AND SEARCH FUNCTIONS===============================
+        //===================================================================================
+
+        //SEARCH BY NAME BUTTON FUNCTION
         $('#search-recruit').on('click' , function(){
-        
             search_name = $('#search-column-name').val();
             
             window.history.replaceState({
@@ -436,8 +459,7 @@ a.badge-primary:focus{
             location.reload();
         });
 
-        ajax_recruits(search_name, 1);
-
+        //SCROLL LOADING ROWS FUNCTION
         $(window).on('scroll', function (e){
             console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
             if($(window).scrollTop() + $(window).height() >= $(document).height()) {

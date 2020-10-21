@@ -1,43 +1,52 @@
 @extends('layouts.app' , ['controller' => 'positions-edit'])
 
 @section('styles')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
 @endsection
+
 @section('content')
-<div class="row">
-    <div class="col-lg-12 mt-5 mb-5">
-        <div class="float-left">
-            <h2>Edit Position</h2>
+    <!--
+    TITLE AND BACK BUTTON SECTION
+    -->
+    <div class="row">
+        <div class="col-lg-12 mt-5 mb-5">
+            <div class="float-left">
+                <h2>Edit Position</h2>
+            </div>
+            <div class="float-right">
+                <a class="btn btn-primary" href="{{ route('specific.menu') }}"> Back</a>
+            </div>
         </div>
-        <div class="float-right">
-            <a class="btn btn-primary" href="{{ route('specific.menu') }}"> Back</a>
+    </div>
+
+    <!--
+    ERROR - SUCCESS MESSAGE SECTION
+    -->
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-    </div>
-</div>
+    @endif
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
 
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <strong>Whoops!</strong> There were some problems with your input.<br><br>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-@if ($message = Session::get('error'))
-    <div class="alert alert-danger">
-        <p>{!! $message !!}</p>
-    </div>
-@endif
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
 
-@if ($message = Session::get('success'))
-    <div class="alert alert-success">
-        <p>{{ $message }}</p>
-    </div>
-@endif
-
+    <!--
+    EDIT SPECIFIC POSITION FORM
+    -->
     <form action="{{ route('specific.update', $position->id) }}" method="POST">
         @csrf
         <div class="form-row">
@@ -95,20 +104,23 @@
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Update</button>
-        
-    </div>
-   
+        <button type="submit" class="btn btn-primary">Update</button>   
     </form>
 @endsection
 
 @section('javascript')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<script>
+
+<script type="text/javascript">
+  
     $(document).ready(function(){
 
+        //===================================================================================
+        //=====================EDIT SPECIFIC POSITION BUTTON FUNCTION========================
+        //===================================================================================
+        
+        //LOAD SELECT OPTIONS FUNCTION
         $(".search-level").select2({
-
             ajax: {
                 url: "{{ route('specific.technologies') }}",
                 dataType: 'json',
@@ -116,20 +128,16 @@
                     var query = {
                         search: params.term,
                     }
-                    // Query parameters will be ?search=[term]&type=public
                     return query;
                 },
                 processResults: function (data) {
-                    // Transforms the top-level key of the response object from 'items' to 'results'
                     return {
                         results: data
                     };
                 }
-
             }
         });
     });
-
     
 </script>
 
