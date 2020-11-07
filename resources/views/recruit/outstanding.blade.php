@@ -175,6 +175,17 @@ a.badge-primary:focus{
   cursor: not-allowed;
 }
 
+.toggle.btn {
+    min-width: 8rem;
+    min-height: 2.15rem;
+}
+
+.count-notif{
+  vertical-align: middle;
+  margin-left: -8px;
+  margin-top: -17px;
+  font-size: 13px;
+}
 </style>
 @endsection
  
@@ -183,10 +194,14 @@ a.badge-primary:focus{
       VIEW MENU
       -->
       <nav class="nav nav-pills nav-fill mb-4">
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes
+          @if ($badge_qty>0)
+            <span class="badge badge-pill badge-warning count-notif">{{ $badge_qty }}</span>
+          @endif
+        </a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Para Evaluar</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -212,7 +227,13 @@ a.badge-primary:focus{
 
       @if ($message = Session::get('success'))
           <div class="alert alert-success">
-              <p>{{ $message }}</p>
+              <p>{!! $message !!}</p>
+          </div>
+      @endif
+
+      @if ($message = Session::get('warning'))
+          <div class="alert alert-warning">
+              <p>{!! $message !!}</p>
           </div>
       @endif
 
@@ -240,6 +261,37 @@ a.badge-primary:focus{
           <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
+      <!--
+      SHOW TEXT BLOCK MODAL
+      -->
+      <div class="modal fade" id="show_block" tabindex="-1" role="dialog" aria-labelledby="show-blockLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="show-blockLabel">NOTES - <span id="show_block_name"></span></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+                <div class="form-group">
+                  <p id="show_block_snippet"></p>
+                  <label for="show_block_textarea" class="col-form-label">Take notes:</label>
+                  <textarea class="form-control" id="show_block_textarea" style="height: 300px;"></textarea>
+                  <input type="hidden" id="show_block_id">
+                  <input type="hidden" id="show_block_rpid">
+                  <input type="hidden" id="show_block_fullname">
+                  <input type="hidden" id="show_block_positionId">
+                </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="show_block_save">Save</button>
           </div>
           </div>
       </div>
@@ -272,7 +324,7 @@ a.badge-primary:focus{
                     <option value="">-- Bulk Actions --</option>
                     <option value="approve">Approve</option>
                     <option value="disapprove">Disapprove</option>
-                    <option value="trash">Move to Trash</option>
+                    <!--<option value="trash">Move to Trash</option>-->
               </select>
             </div>
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
@@ -312,6 +364,10 @@ a.badge-primary:focus{
       var search_name = "{{ $s }}";
 
       $("#search-column-name").val( search_name );
+
+      $('#show_block').on('shown.bs.modal', function() {
+        $('#show_block_textarea').focus();
+      })   
 
       //===================================================================================
       //=====================POSTULANTS TABLE BUILDING FUNCTION============================
@@ -438,8 +494,9 @@ a.badge-primary:focus{
               clickToSelect: false,
               width: 20,
               formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-call" data-phonecall="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">YES</a>'+
-                                ' <a class="badge badge-danger recruit-call" data-phonecall="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">NO</a>'
+                  var actions = '<a class="badge badge-primary recruit-call" data-phonecall="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#">YES</a>'+
+                                ' <a class="badge badge-danger recruit-call" data-phonecall="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#">NO</a>'+
+                                ' <a class="badge badge-warning call-notes" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#"><i class="fas fa-book"></i></a>'
 
                   actions = actions.replace(/:id/gi , rowData.id);
                   return actions;
@@ -462,6 +519,7 @@ a.badge-primary:focus{
           ev.preventDefault();
           var id = $(this).data("id");
           var rpid = $(this).data("rpid");
+          var fullname = $(this).data("fullname");
           var positionid = $(this).data("positionid");
           var phonecall = $(this).data("phonecall");
           var confirmed = true;
@@ -474,7 +532,7 @@ a.badge-primary:focus{
             $.ajax({
                 type:'POST',
                 url: '{{ route("recruit.postulant.call") }}',
-                data: {id: id,rpid: rpid,positionid: positionid,phonecall: phonecall},
+                data: {id: id,rpid: rpid,positionid: positionid,phonecall: phonecall,fullname: fullname},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -485,6 +543,67 @@ a.badge-primary:focus{
             });
           }
         });
+
+        //EVALUATION NOTES FUNCTION
+        $("table tbody").on('click', 'a.call-notes' , function(ev){
+          ev.preventDefault();
+          var id = $(this).data("id");
+          var rpid = $(this).data("rpid");
+          var fullname = $(this).data("fullname");
+          var positionid = $(this).data("positionid");
+          var tab = "{{ $tab }}";
+
+          $.ajax({
+              type: 'POST',
+              url: '{{ route("recruit.get.position.notes") }}',
+              data: {id : id,rpid: rpid,fullname: fullname,positionid: positionid,tab: tab},
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success:function(data){
+                let _data = JSON.parse(data)
+                
+                $("#show_block_snippet").html('');
+                $("#show_block_id").val(id);
+                $("#show_block_rpid").val(rpid);
+                $("#show_block_fullname").val(fullname);
+                $("#show_block_positionid").val(positionid);
+                if(_data.snippet){$("#show_block_snippet").html(nl2br(_data.snippet));}
+                $("#show_block_textarea").val(_data.notes);
+                $("#show_block_name").html(fullname);
+                $('#show_block').modal();             
+              }
+          });
+        });
+
+        function nl2br (str, is_xhtml) {   
+            var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';    
+            return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
+        }
+
+        $("#show_block_save").on('click', function(ev){
+          ev.preventDefault();
+          var id = $("#show_block_id").val();
+          var rpid = $("#show_block_rpid").val();
+          var fullname = $("#show_block_fullname").val();
+          var positionid = $("#show_block_positionid").val();
+          var textarea = $("#show_block_textarea").val();
+          var tab = "{{ $tab }}";
+
+          $.ajax({
+              type: 'POST',
+              url: '{{ route("recruit.update.position.notes") }}',
+              data: {id : id,rpid: rpid,fullname: fullname,positionid: positionid,tab: tab,textarea: textarea},
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success:function(data){
+                $('#show_block').modal('hide');      
+              }
+          });
+        });        
       }
 
       //===================================================================================

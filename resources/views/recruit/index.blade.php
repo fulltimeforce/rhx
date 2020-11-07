@@ -4,6 +4,7 @@
 
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/bootstrap-table.min.css') }}"/>
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
 
 <style>
 /* The switch - the box around the slider */
@@ -193,6 +194,17 @@ a.badge-primary:focus{
     border-color: #f98677;
 }
 
+.toggle.btn {
+    min-width: 8rem;
+    min-height: 2.15rem;
+}
+
+.count-notif{
+  vertical-align: middle;
+  margin-left: -8px;
+  margin-top: -17px;
+  font-size: 13px;
+}
 </style>
 @endsection
  
@@ -265,6 +277,7 @@ a.badge-primary:focus{
       <div class="row">
         <div class="col-6 text-left">
             <button class="btn inter-background" id="registered-recruit" type="button" style="vertical-align: top;">Registered Postulants</button>
+            <button class="btn btn-danger" id="pasar-filas" type="button" style="vertical-align: top;">Pasar Filas</button>
         </div>
 
         <div class="col-6 text-right">
@@ -279,10 +292,14 @@ a.badge-primary:focus{
       VIEW MENU
       -->
       <nav class="nav nav-pills nav-fill mb-4">
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes
+          @if ($badge_qty>0)
+            <span class="badge badge-pill badge-warning count-notif">{{ $badge_qty }}</span>
+          @endif
+        </a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
+        <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Para Evaluar</a>
         <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
       </nav>
 
@@ -308,7 +325,13 @@ a.badge-primary:focus{
 
       @if ($message = Session::get('success'))
           <div class="alert alert-success">
-              <p>{{ $message }}</p>
+              <p>{!! $message !!}</p>
+          </div>
+      @endif
+
+      @if ($message = Session::get('warning'))
+          <div class="alert alert-warning">
+              <p>{!! $message !!}</p>
           </div>
       @endif
 
@@ -452,7 +475,7 @@ a.badge-primary:focus{
           <!--
           BULK ACTIONS SECTION
           -->
-          <div class="col-6 text-left">
+          <div class="col-12 text-left">
               <div class="form-group d-inline-block" style="max-width: 300px;">
                   <select name="bulk-action" id="bulk-action" class="form-control" >
                       <option value="">-- Bulk Actions --</option>
@@ -462,7 +485,20 @@ a.badge-primary:focus{
                 </select>
               </div>
               <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
+              |
+              <div class="form-group d-inline-block" style="max-width: 300px;">
+                  <select name="recruiter-action" id="recruiter-action" class="form-control filter-element col-xs-8" >
+                      <option value="">-- Recruiter --</option>
+                      @foreach($users as $uid => $user)
+                          <option value="{{$user->id}}" {{($_user==$user->id)?'selected':''}}>{{$user->name}}</option>
+                      @endforeach
+                </select>
+              </div>
+              |
+              <input type="checkbox" {{$_auto=='false'?'':'checked'}} {{$_user==''?'':'disabled'}} data-toggle="toggle" data-on="Auto" data-off="Auto" data-onstyle="primary" data-offstyle="secondary" class="filter-element col-xs-8" id="auto-toggle" name="auto-toggle">
+              <input type="checkbox" {{$_hand=='false'?'':'checked'}} {{$_user==''?'':'disabled'}} data-toggle="toggle" data-on="Manual" data-off="Manual" data-onstyle="primary" data-offstyle="secondary" class="filter-element col-xs-8" id="handmade-toggle" name="handmade-toggle">
           </div>
+
 
           <!--
           POSTULANTS TABLE SECTION
@@ -480,6 +516,7 @@ a.badge-primary:focus{
 
 <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
 <script type="text/javascript">
 
@@ -498,21 +535,35 @@ a.badge-primary:focus{
       
       var search_name = "{{ $s }}";
 
+      var _user =  "{{ $_user }}";
+      var _hand =  "{{ $_hand }}";
+      var _auto =  "{{ $_auto }}";
+
       $("#search-column-name").val( search_name );
+
+      if(_user){
+        $("#auto-toggle").bootstrapToggle('disable');
+
+        $("#handmade-toggle").bootstrapToggle('disable');
+
+      }
 
       //===================================================================================
       //=====================POSTULANTS TABLE BUILDING FUNCTION============================
       //===================================================================================
 
       //LOAD POSTULANTS TABLE DATA FUNCTION
-      function ajax_recruits(_search_name, page){
+      window.ajax_recruits = function ajax_recruits(_search_name, page, user, hand, auto){
           $(".lds-ring").show();
 
           var params = {
               'rows' : _records,
-              'page' : page ,
+              'page' : page,
               'name' : _search_name,
-              'tab'  : "{{ $tab }}"
+              'tab'  : "{{ $tab }}",
+              'user' : user,
+              'hand' : hand,
+              'auto' : auto,
           };
 
           $.ajax({
@@ -524,7 +575,7 @@ a.badge-primary:focus{
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
               },
               success:function(data){
-                  let _data = JSON.parse(data)
+                  let _data = JSON.parse(data);
                   _total_records = _data.totalNotFiltered;
                   _before_rows = _data.total;
                   _count_records = _count_records + _data.rows.length;
@@ -538,14 +589,14 @@ a.badge-primary:focus{
           });
       }
 
-      ajax_recruits(search_name, 1);
+      ajax_recruits(search_name, 1, _user, _hand, _auto);
 
       //===================================================================================
       //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
       //===================================================================================
 
       //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
-      function tablebootstrap_filter( data ){
+      window.tablebootstrap_filter = function tablebootstrap_filter( data ){
         var columns = [
             { 
               field: 'id', 
@@ -651,8 +702,8 @@ a.badge-primary:focus{
               formatter : function(value,rowData,index) {    
                   var actions = '';
                   
-                  actions += '<a class="badge badge-primary recruit-outstanding" data-outstanding="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">YES</a>';
-                  actions += ' <a class="badge badge-danger recruit-outstanding" data-outstanding="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" href="#">NO</a>'
+                  actions += '<a class="badge badge-primary recruit-outstanding" data-outstanding="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#">YES</a>';
+                  actions += ' <a class="badge badge-danger recruit-outstanding" data-outstanding="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#">NO</a>'
 
                   return actions;
                 },
@@ -674,6 +725,7 @@ a.badge-primary:focus{
           ev.preventDefault();
           var id = $(this).data("id");
           var rpid = $(this).data("rpid");
+          var fullname = $(this).data("fullname");
           var positionid = $(this).data("positionid");
           var outstanding = $(this).data("outstanding");
           var confirmed = true;
@@ -686,12 +738,24 @@ a.badge-primary:focus{
             $.ajax({
                 type:'POST',
                 url: '{{ route("recruit.postulant.outstanding") }}',
-                data: {id: id,rpid: rpid,positionid: positionid,outstanding: outstanding},
+                data: {id: id,rpid: rpid,positionid: positionid,outstanding: outstanding,fullname: fullname},
                 headers: {
                   'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
+                  window.history.replaceState(
+                        {edwin: "Fulltimeforce"}, 
+                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
+                          'rows' : 50,
+                          'page' : 1,
+                          'name' : $('#search-column-name').val(),
+                          'tab'  : "{{ $tab }}",
+                          'user' : $("#recruiter-action").children("option:selected").val(),
+                          'hand' : $("#handmade-toggle").prop('checked'),
+                          'auto' : $("#auto-toggle").prop('checked'),
+                        })
+                  );
                   location.reload();
                 }
             });
@@ -717,6 +781,18 @@ a.badge-primary:focus{
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
+                  window.history.replaceState(
+                        {edwin: "Fulltimeforce"}, 
+                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
+                          'rows' : 50,
+                          'page' : 1,
+                          'name' : $('#search-column-name').val(),
+                          'tab'  : "{{ $tab }}",
+                          'user' : $("#recruiter-action").children("option:selected").val(),
+                          'hand' : $("#handmade-toggle").prop('checked'),
+                          'auto' : $("#auto-toggle").prop('checked'),
+                        })
+                  );
                   location.reload();
                 }
             });
@@ -909,6 +985,25 @@ a.badge-primary:focus{
         });
       });
 
+      //REGISTERED POSTULANTS BUTTON FUNCTION
+      $('#pasar-filas').on('click' , function(ev){
+        ev.preventDefault();
+
+        $.ajax({
+            type:'POST',
+            url: '{{ route("recruit.pasarFilas") }}',
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+                let _data = JSON.parse(data)
+                console.log(_data)
+            }
+        });
+      });
+      
+
       //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
       function registeredtable_button( data, positions ){
         var columns = [
@@ -981,6 +1076,18 @@ a.badge-primary:focus{
                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
+                  window.history.replaceState(
+                        {edwin: "Fulltimeforce"}, 
+                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
+                          'rows' : 50,
+                          'page' : 1,
+                          'name' : $('#search-column-name').val(),
+                          'tab'  : "{{ $tab }}",
+                          'user' : $("#recruiter-action").children("option:selected").val(),
+                          'hand' : $("#handmade-toggle").prop('checked'),
+                          'auto' : $("#auto-toggle").prop('checked'),
+                        })
+                  );
                   location.reload();
                 }
             });
@@ -1063,7 +1170,6 @@ a.badge-primary:focus{
       //===================================================================================
       //================================SCROLL FUNCTIONS===================================
       //===================================================================================
-
       //SCROLL LOADING ROWS FUNCTION
       $(window).on('scroll', function (e){
         console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
@@ -1078,6 +1184,9 @@ a.badge-primary:focus{
                         'page' : _page , 
                         'tab'  : "{{ $tab }}",
                         'name' : _text,
+                        'user' : $("#recruiter-action").children("option:selected").val(),
+                        'hand' : $("#handmade-toggle").prop('checked'),
+                        'auto' : $("#auto-toggle").prop('checked'),
                 };
                 $(".lds-ring").show();
                 $.ajax({
@@ -1226,6 +1335,18 @@ a.badge-primary:focus{
                       tab: "{{ $tab }}",
                   },
                   success:function(data){
+                    window.history.replaceState(
+                        {edwin: "Fulltimeforce"}, 
+                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
+                          'rows' : 50,
+                          'page' : 1,
+                          'name' : $('#search-column-name').val(),
+                          'tab'  : "{{ $tab }}",
+                          'user' : $("#recruiter-action").children("option:selected").val(),
+                          'hand' : $("#handmade-toggle").prop('checked'),
+                          'auto' : $("#auto-toggle").prop('checked'),
+                        })
+                    );
                     location.reload();
                   }
               });
@@ -1244,6 +1365,84 @@ a.badge-primary:focus{
       $(this).next('.custom-file-label').html(ev.target.files[0].name);
     });
 
+
+    $('.filter-element').change(function(ev) {
+      ev.preventDefault();
+
+      var select_option   = $("#recruiter-action");
+      var auto_option     = $("#auto-toggle");
+      var handmade_option = $("#handmade-toggle");
+
+      var select_value = select_option.children("option:selected").val();
+
+      if(select_value){
+
+        //ENABLE AND DISABLE FLOW
+        auto_option.bootstrapToggle('enable');
+        auto_option.bootstrapToggle('off', true);
+        auto_option.bootstrapToggle('disable');
+
+        handmade_option.bootstrapToggle('enable');
+        handmade_option.bootstrapToggle('on', true);
+        handmade_option.bootstrapToggle('disable');
+    
+      }else{
+
+        auto_option.bootstrapToggle('enable');
+        handmade_option.bootstrapToggle('enable');
+
+        if(!auto_option.prop('checked') && !handmade_option.prop('checked')){
+          if($(this).attr('id') == 'handmade-toggle'){
+            auto_option.bootstrapToggle('on', true);
+          }
+
+          if($(this).attr('id') == 'auto-toggle'){
+            handmade_option.bootstrapToggle('on', true);
+          }
+        }
+      }
+
+      var _total_records = 0;
+      var _count_records = 0;
+      var _before_rows = 0;
+      var _dataRows = [];
+
+      $("#list-recruits").empty();
+      $(".lds-ring").show();
+
+      var params = {
+          'rows' : 50,
+          'page' : 1,
+          'name' : '',
+          'tab'  : "{{ $tab }}",
+          'user' : select_value,
+          'auto' : auto_option.prop('checked'),
+          'hand' : handmade_option.prop('checked'),
+      };
+
+      $.ajax({
+          type:'GET',
+          url: '{{ route("recruit.list") }}',
+          data: $.param(params),
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success:function(data){
+              let _data = JSON.parse(data);
+              
+              _total_records = _data.totalNotFiltered;
+              _before_rows = _data.total;
+              _count_records = _count_records + _data.rows.length;
+              $("#count-recruit").html( _count_records );
+              _dataRows = _data.rows;
+              tablebootstrap_filter( _data.rows );
+              $("html, body").animate({ scrollTop: 0 }, "slow");
+              $(".lds-ring").hide();
+              $('input[name="btSelectAll"]').click();
+          }
+      });
+    })
 </script>
 
 @endsection

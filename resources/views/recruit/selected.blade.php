@@ -175,6 +175,17 @@ a.badge-primary:focus{
   cursor: not-allowed;
 }
 
+.toggle.btn {
+    min-width: 8rem;
+    min-height: 2.15rem;
+}
+
+.count-notif{
+  vertical-align: middle;
+  margin-left: -8px;
+  margin-top: -17px;
+  font-size: 13px;
+}
 </style>
 @endsection
  
@@ -183,10 +194,14 @@ a.badge-primary:focus{
     VIEW MENU
     -->
     <nav class="nav nav-pills nav-fill mb-4">
-      <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes</a>
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'postulant' ? 'active' : ''}}" href="{{ route('recruit.menu') }}">Postulantes
+        @if ($badge_qty>0)
+          <span class="badge badge-pill badge-warning count-notif">{{ $badge_qty }}</span>
+        @endif
+      </a>
       <a class="nav-item nav-link nav-item-custom {{$tab == 'outstanding' ? 'active' : ''}}" href="{{ route('recruit.outstanding') }}">Perfiles Destacados</a>
       <a class="nav-item nav-link nav-item-custom {{$tab == 'preselected' ? 'active' : ''}}" href="{{ route('recruit.preselected') }}">Pre-Seleccionados</a>
-      <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Evaluación</a>
+      <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Para Evaluar</a>
       <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
     </nav>
 
@@ -242,8 +257,8 @@ a.badge-primary:focus{
                 <select name="bulk-action" id="bulk-action" class="form-control" >
                     <option value="">-- Bulk Actions --</option>
                     <!--<option value="approve">Approve</option>
-                    <option value="disapprove">Disapprove</option>-->
-                    <option value="trash">Move to Trash</option>
+                    <option value="disapprove">Disapprove</option>
+                    <option value="trash">Move to Trash</option>-->
               </select>
             </div>
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
@@ -366,7 +381,7 @@ a.badge-primary:focus{
             { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
             {
               field: 'crit_1', 
-              title: "Person - Environment",
+              title: "Persona Ambiente",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '-'
@@ -381,7 +396,7 @@ a.badge-primary:focus{
             },
             {
               field: 'crit_2', 
-              title: "Self - confidence",
+              title: "Autoconfianza",
               width: 50,
               formatter : function(value,rowData,index) { 
                   var actions = '-'

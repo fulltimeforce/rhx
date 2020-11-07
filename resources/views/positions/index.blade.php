@@ -199,7 +199,7 @@ input:checked + .slider:before {
         @foreach($positions as $pid => $position)
         <div class="col-12 col-sm-6 col-lg-4 mb-4">
             <section class="card card-position ">
-                <a href="{{ route('position.slug', $position->slug) }}" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn-apply-expert">
+                <a href="{{ route('recruit.slug', $position->slug) }}" data-position="{{$pid}}" data-positionid="{{$position->id}}" class="btn-apply-expert">
                     <div class="position-icon d-inline-block">
                         <i class="svg-icon svg-icon-{{$position->icon}}"></i>
                     </div>
@@ -276,7 +276,7 @@ input:checked + .slider:before {
         $("table").on('click' , '.btn-copy-slug',function(ev){
             ev.preventDefault();
             var el = document.createElement("textarea");
-            el.value = "{{ route('home') }}" + '/position/'+$(this).data("url");
+            el.value = "{{ route('home') }}" + '/recruits/'+$(this).data("url");
             
             el.style.position = 'absolute';                 
             el.style.left = '-9999px';

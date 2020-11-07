@@ -166,11 +166,11 @@ textarea.form-control{
                 </div>
                 <div class="form-group col-12 col-sm-4">
                     <label for="email_address">Correo electrónico *</label>
-                    <input type="text" name="email_address" class="form-control" id="email_address" value="{{ $recruit['email_address'] }}" required >
+                    <input type="text" name="email_address" class="form-control" id="email_address" value="{{ $recruit['email_address'] }}" required>
                 </div>
                 <div class="form-group col-sm-6 col-md-2">
                     <label for="identification_number">DNI/CE/Pasaporte *</label>
-                    <input type="text" name="identification_number" class="form-control" id="identification_number" value="{{ $recruit['identification_number'] }}">
+                    <input type="text" name="identification_number" class="form-control" id="identification_number" value="{{ $recruit['identification_number'] }}" required>
                 </div>
                 <div class="form-group col-sm-6 col-md-2">
                     <label for="birthday">Fecha de nacimiento *</label>

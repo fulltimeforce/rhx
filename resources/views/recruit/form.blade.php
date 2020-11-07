@@ -145,7 +145,16 @@ textarea.form-control{
         </div>
     </div>
     @endif
-    
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
     @if ($errors->any())
         <div class="alert alert-danger">
             <strong>Whoops!</strong> There were some problems with your input.<br><br>
@@ -166,13 +175,17 @@ textarea.form-control{
             
         </div>
         <div class="form-row">
-            <div class="form-group col-12 col-sm-6">
+            <div class="form-group col-12 col-sm-4">
                 <label for="fullname">Nombre completo *</label>
                 <input type="text" name="fullname" id="fullname" class="form-control" value="" required> 
             </div>
-            <div class="form-group col-12 col-sm-6">
+            <div class="form-group col-12 col-sm-4">
                 <label for="email_address">Correo electrónico *</label>
                 <input type="text" name="email_address" class="form-control" id="email_address" value="" required >
+            </div>
+            <div class="form-group col-12 col-sm-4">
+                <label for="email_address">DNI/CE/Pasaporte *</label>
+                <input type="text" name="identification_number" class="form-control" id="email_address" value="" required >
             </div>
         </div>
         <div class="form-row">

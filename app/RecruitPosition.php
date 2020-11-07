@@ -19,5 +19,11 @@ class RecruitPosition extends Model
         'call_report',
         'audio_report',
         'soft_report',
+        'outstanding_ev_date',
+        'call_ev_date',
+        'audio_ev_date',
+        'soft_ev_date',
+        'audio_notes',
+        'evaluation_notes',
     ];
 }

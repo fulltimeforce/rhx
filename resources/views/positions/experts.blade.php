@@ -141,33 +141,41 @@ a.badge-light:focus{
 @endsection
  
 @section('content')
-
-    <div class="row mt-5">
-        <div class="col">
-            <h2 class="d-inline">{{ $position->name }} Applicants</h2>
-            <button class="btn btn-secondary rd-filter" data-value="disqualified">Top</button>
-        </div>
-        <div class="col text-right">
-            <div class="form-group d-inline-block" style="width: 170px;">
-                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
-            </div>
-            <a class="btn btn-primary align-top" href="{{ url('/') }}"> Back</a>
-        </div>
+  
+    <!--
+    ERROR - SUCCESS MESSAGE SECTION
+    -->
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
-   
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
+    @endif
+
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
+            <p>{!! $message !!}</p>
         </div>
     @endif
-    <br>
 
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
 
-    <!--  
-        /*========================================== MODALS ==========================================*/
-    -->
-    <!--  
-        /*========================================== POSITONS BY EXPERT ==========================================*/
+    @if ($message = Session::get('warning'))
+        <div class="alert alert-warning">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
+
+    <!--
+    POSTULANT POSITION MODAL SECTION
     -->
     <div class="modal fade" id="positionsExpert" tabindex="-1" role="dialog" aria-labelledby="positionsExpertLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -196,36 +204,41 @@ a.badge-light:focus{
     </div>
     </div>
 
-    <!--  
-        /*========================================== INTERVIEWS BY EXPERT ==========================================*/
-    -->
-    <div class="modal" id="interviews-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="interviews-expertLabel">INTERVIEWS - <span id="interview_expert_name">{expert Name}</span></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
+    <div class="row">
+        <!--
+        TOP BUTTON AND TITLE SECTION 
+        -->
+        <div class="col-12 text-left align-top">
+            <h2 class="d-inline">{{ $position->name }} Applicants</h2>
         </div>
-        <div class="modal-body">
-            <div class="row mb-4">
-                <div class="col" id="list-interviews">
-                
-                </div>
+
+        <!--
+        TOTAL RECORDS SECTION
+        -->
+
+        <div class="col-12 text-right">
+            <!--
+            SEARCH BY NAME SECTION 
+            -->
+            <div class="form-group d-inline-block" style="max-width: 300px;">
+                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
             </div>
+            <!--
+            BACK BUTTON SECTION 
+            -->
+            <a class="btn btn-primary align-top" href="{{ url('/') }}"> Back</a>
         </div>
-        
+
+        <!--
+        POSTULANTS TABLE SECTION
+        -->
+        <div class="col-12 text-center mb-5">
+            <table class="table row-border order-column" id="list-experts" data-toggle="list-experts"> 
+            </table>
         </div>
-    </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col">
-            <table id="list-experts"></table>
-
-        </div>
-    </div>
+    
 @endsection
 
 @section('javascript')
@@ -238,12 +251,7 @@ a.badge-light:focus{
 <script type="text/javascript">
 
     $(document).ready(function (ev) {
-
-        $('#interview_date').datetimepicker({
-            format: "{{ config('app.date_format_javascript') }}",
-            locale: "en"
-        });
-
+        
         var a_columns = [
             {
                 field: 'id',
@@ -252,11 +260,9 @@ a.badge-light:focus{
                 clickToSelect: false,
                 formatter : function(value,rowData,index) {
                     var actions = '';
-                    actions += '<a class="badge expert_status badge-'+( rowData.status == 'qualified'? 'success' : 'secondary' )+'  " data-id="'+rowData.id+'" data-value="'+rowData.status+'" href="#">Top</a>\n';
-                    actions += '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
-                    actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'  ">Download</a>\n';
+                    actions += '<a class="badge badge-primary" href=" '+ "{{ route('experts.btn.edit', ':id' ) }}"+ ' ">Edit</a>\n';
+                    actions += ( rowData.file_path ) ? '<a class="badge badge-dark text-light" target="_blank" download href="'+rowData.file_path+'  ">Download</a>\n' : '';
                     actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
-                    actions += '<a class="badge badge-warning btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                     
                     actions = actions.replace(/:id/gi , rowData.id);
 
@@ -274,14 +280,29 @@ a.badge-light:focus{
             @endforeach
         @endforeach
 
+        
+
         a_columns.push({ field: 'email_address', title: "Email" });
-        a_columns.push({ field: 'age', title: "Age" });
-        a_columns.push({ field: 'phone', title: "Phone" });
+        a_columns.push({ field: 'age', title: "Age" ,width: 110 , formatter: function(value,rowData,index){
+            var date = new Date(rowData.birthday).getTime();
+            var now = Date.now();
+
+            var age_time = new Date(now-date);
+            var age = Math.abs(age_time.getUTCFullYear() - 1970);
+
+            var actions = (!rowData.birthday) ? '-' : age;
+
+            return actions;
+        }});
+        a_columns.push({ field: 'phone_number', title: "Phone" });
         a_columns.push({ field: 'availability', title: "Availability" });
         a_columns.push({ field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : "S/. "+value;} });
-        a_columns.push({ field: 'linkedin', title: "Linkedin" });
-        a_columns.push({ field: 'github', title: "Github" });
-        a_columns.push({ field: 'experience', title: "Experience" });
+        a_columns.push({ field: 'linkedin', title: "Linkedin" ,width: 110 , formatter: function(value,rowData,index){
+            return rowData.linkedin!=undefined?'<a class="badge badge-success" target="_blank" href="'+rowData.linkedin+'">Go to Linkedin Link</a>':'-';
+        }});
+        a_columns.push({ field: 'github', title: "Github" ,width: 110 , formatter: function(value,rowData,index){
+            return rowData.github!=undefined?'<a class="badge badge-success" target="_blank" href="'+rowData.github+'">Go to Github Link</a>':'-';
+        }});
 
         @foreach($after_tech as $categoryid => $category)
             @foreach($category as $techid => $techlabel)
@@ -321,8 +342,8 @@ a.badge-light:focus{
         }
         
         list_experts('' , '');
-        // ================================== POSITIONS =====================
-
+        
+        //==========================CALL POSITIONS MODAL FUNCTION
         $("table tbody").on('click', 'a.btn-position' , function(ev){
             ev.preventDefault();
             var id = $(this).data("id");
@@ -351,10 +372,8 @@ a.badge-light:focus{
             
         });
 
-        // ================================== SAVE POSITIONS =====================
-
+        //==========================SAVE POSITIONS FUNCTION
         $("#save-positions").on('click' , function(ev){
-            
             var positionsIDs = [];
             $('#form-positions input[type="checkbox"]:checked').each( function(){
                 positionsIDs.push($(this).val());
@@ -374,88 +393,7 @@ a.badge-light:focus{
                     $("#positionsExpert").modal('hide');
                 }
             });
-
         });
-
-        // ================================== INTERVIEWS =====================
-
-        var template_card_interview = $('#list-interviews').html();
-        $('#list-interviews').html('');
-        
-        $("table tbody").on("click" , "a.btn-interviews" , function(ev){
-            ev.preventDefault();
-            var expertId = $(this).data("id");
-            var expertName = $(this).data("name");
-            
-            $("#interview_expert_name").html( expertName );
-            $("#interview_expert_id").val(expertId);
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("interviews.recruiterlog") }}',
-                data: {expertId : expertId },
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(interviews){
-
-                    var html = '';
-                    for (let index = 0; index < interviews.length; index++) {
-                        html += card_interviews( interviews[index] )
-                    }
-                    $("#list-interviews").html(html);
-                    $("#interviews-expert").modal();
-                }
-            });
-            
-        });
-
-        function card_interviews( _interview ){
-            var html = '';
-            html += '<div class="card mb-4">';
-            html += '    <div class="card-header">';
-            html += '        <div class="row">';
-            html += '            <div class="col">';
-            html += '                <h4 class="text-uppercase txt-type"><span>'+( (_interview.position == null)? "GENERAL" : _interview.position.name )+'</span> - <span>'+_interview.date+'</span></h4>';
-            html += '            </div>';
-            html += '        </div>';
-            html += '    </div>';
-            html += '    <div class="card-body">';
-            for (let index = 0; index < _interview.notes.length; index++) {
-                
-                html += '<div class="card mb-3">';
-                html += '    <div class="card-header">';
-                html += '        <div class="row">';
-                var _class = '';
-                switch( _interview.notes[index].type ){
-                    case 'commercial': 
-                    case 'technique': 
-                    case 'psychology': 
-                        _class =  _interview.notes[index].type_value == null ? 'secondary' : (_interview.notes[index].type_value == 'approved' ? 'success' : ( _interview.notes[index].type_value == 'not approved' ? 'danger' : 'warning' ) ) 
-                    break;
-                    case 'cv': 
-                    case 'experience': 
-                    case 'communication': 
-                    case 'english': 
-                        _class =  _interview.notes[index].type_value == null ? 'secondary' : (_interview.notes[index].type_value == 'approved' ? 'success' : 'danger') 
-                    break;
-                }
-                html += '            <div class="col">';
-                html += '                <span class="text-uppercase badge badge-'+_class+'">'+ _interview.notes[index].type +'</span>';
-                html += '            </div>';
-                html += '        </div>';
-                html += '    </div>';
-                
-                html += '    <div class="card-body">';
-                html += '        <p class="card-text txt-description ">'+ _interview.notes[index].note +'</p>';
-                html += '    </div>';
-                html += '</div>';
-            }
-                    
-            html += '    </div>';
-            html += '</div>';
-            return html;
-        }
 
         function delay(callback, ms) {
             var timer = 0;
@@ -468,89 +406,13 @@ a.badge-light:focus{
             };
         }
 
+        //==========================SEARCH BY NAME FUNCTION
         $('#search-column-name').on( 'keyup', delay(function (ev) {
 
             var text = $(this).val();
             list_experts(text , '');
 
         } , 500 ));
-
-        $('table').on('click' , '.expert_status' , function(ev){
-
-            ev.preventDefault();
-            var expertId = $(this).data("id");
-            var status = $(this).data('value');
-            var positionId = "{{ $positionId }}";
-
-            $(this)
-                .removeClass('badge-secondary')
-                .removeClass('badge-success')
-
-            if( status == 'disqualified' ){
-
-                $(this).addClass('badge-success');
-                $(this).data('value' , 'qualified')
-                status = 'qualified';
-            }else if( status == 'qualified' ){
-
-                $(this).addClass('badge-secondary');
-                $(this).data('value' , 'disqualified')
-                status = 'disqualified';
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("positions.expert.status") }}',
-                data: {expertId : expertId , positionId : positionId ,status : status},
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(interviews){
-
-                }
-            });
-        })
-
-        $('.rd-filter').on("click" , function(ev){
-
-            var status = $(this).data('value');
-
-            $(this)
-                .removeClass('btn-success')
-                .removeClass('btn-secondary')
-
-            if( status == 'disqualified' ){
-
-                $(this).addClass('btn-success');
-                $(this).data('value' , 'qualified')
-                status = 'qualified';
-            }else if( status == 'qualified' ){
-
-                $(this).addClass('btn-secondary');
-                $(this).data('value' , 'disqualified')
-                status = '';
-            }
-
-            list_experts('' ,  status );
-            return;
-        });
-
-        $("#clear-interview").on('click' , function(){
-
-            $("#interview_type").val('');
-            $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
-            $("#about").val('');
-            $("#interview_description").val('');
-            $("#interview_result").prop('checked', false);
-            
-            $("#interview_id").val( '' );
-
-            $('#form-btn-edit').hide();
-            $('#form-btn-save').show();
-
-        });
-
     });
 </script>   
 @endsection
