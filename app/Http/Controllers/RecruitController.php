@@ -1624,13 +1624,19 @@ class RecruitController extends Controller
         $logs = Recruiterlog::leftJoin('expert_log', 'expert_log.log_id', '=', 'recruiter_logs.id')
                 ->whereNull('expert_log.log_id')
                 ->whereNotNull('recruiter_logs.position_id')
+                ->whereNotNull('recruiter_logs.expert')
                 ->select(
+                    'recruiter_logs.expert AS expert',
                     'recruiter_logs.position_id AS position_id',
                     'recruiter_logs.user_id AS user_id',
+                    'recruiter_logs.platform AS platform',
+                    'recruiter_logs.link AS link',
+                    'recruiter_logs.cv AS cv',
+                    'recruiter_logs.filter_audio AS filter_audio',
+                    'recruiter_logs.communication AS communication',
                     'recruiter_logs.created_at AS created_at',
-                    'recruiter_logs.updated_at AS updated_at',
-                    'recruiter_logs.expert AS expert',
-                    'recruiter_logs.platform AS platform')
+                    'recruiter_logs.updated_at AS updated_at'
+                    )
                 ->get();
 
         foreach ($logs as $key => $value) {
@@ -1648,6 +1654,8 @@ class RecruitController extends Controller
                     "id"            =>  $id,
                     "fullname"      =>  $value['expert'],
                     "platform"      =>  $value['platform'],
+                    "profile_link"  =>  $value['link'],
+                    "audio_path"    =>  $value['filter_audio'],
                     "phone_number"  =>  '-',
                     "email_address" =>  '-',
                     "created_at"    =>  $value['created_at'],
@@ -1657,12 +1665,13 @@ class RecruitController extends Controller
 
             RecruitPosition::create(
                 array(
-                    "recruit_id"         =>  $id,
-                    "position_id"        =>  $value['position_id'],
-                    "user_id"            =>  $value['user_id'],
-                    "outstanding_report" =>  "disapprove",
-                    "created_at"         =>  $value['created_at'],
-                    "update_at"          =>  $value['updated_at']
+                    "recruit_id"          =>  $id,
+                    "position_id"         =>  $value['position_id'],
+                    "user_id"             =>  $value['user_id'],
+                    "outstanding_report"  =>  "disapprove",
+                    "outstanding_ev_date" =>  $value['updated_at'],
+                    "created_at"          =>  $value['created_at'],
+                    "update_at"           =>  $value['updated_at']
                 )
             );
         }
