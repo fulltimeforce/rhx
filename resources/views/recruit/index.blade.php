@@ -275,10 +275,10 @@ a.badge-primary:focus{
       TOP OPTIONS
       -->
       <div class="row">
-        <div class="col-6 text-left">
+        <!--<div class="col-6 text-left">
             <button class="btn inter-background" id="registered-recruit" type="button" style="vertical-align: top;">Registered Postulants</button>
             <button class="btn btn-danger" id="pasar-filas" type="button" style="vertical-align: top;">Pasar Filas</button>
-        </div>
+        </div>-->
 
         <div class="col-6 text-right">
           <div class="form-group d-inline-block" style="max-width: 300px;">
