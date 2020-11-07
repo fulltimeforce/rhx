@@ -280,7 +280,7 @@ a.badge-primary:focus{
             <button class="btn btn-danger" id="pasar-filas" type="button" style="vertical-align: top;">Pasar Filas</button>
         </div>-->
 
-        <div class="col-6 text-right">
+        <div class="col-12 text-right">
           <div class="form-group d-inline-block" style="max-width: 300px;">
               <input type="text" placeholder="Search By Name (*)" class="form-control" id="search-column-name">
           </div>
