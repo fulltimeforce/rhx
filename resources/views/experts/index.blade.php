@@ -574,6 +574,7 @@
         var _records = 50;
         var _total_records = 0;
         var _count_records = 0;
+        var _page = 1;
 
         var _before_rows = 0;
 
