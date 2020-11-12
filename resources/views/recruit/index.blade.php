@@ -407,13 +407,13 @@ a.badge-primary:focus{
                       </td>
                       <td>
                           <div class="form-group" style="position: relative;">
-                              <label for="phone_number">Phone *</label>
+                              <label for="phone_number">Phone</label>
                               <input type="text" name="phone_number" id="phone_number" class="form-control">
                           </div>
                       </td>
                       <td>
                           <div class="form-group" style="position: relative;">
-                              <label for="email_address">Email *</label>
+                              <label for="email_address">Email</label>
                               <input type="text" name="email_address" id="email_address" class="form-control">
                           </div>
                       </td>

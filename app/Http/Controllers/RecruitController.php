@@ -480,14 +480,14 @@ class RecruitController extends Controller
         $fullname = $input["fullname"];
         $position_id = $input["position_id"];
         $platform = $input["platform"];
-        $phone_number = $input["phone_number"];
-        $email_address = $input["email_address"];
-        $profile_link = $input["profile_link"];
+        $phone_number = ($input["phone_number"])?$input["phone_number"]:null;
+        $email_address = ($input["email_address"])?$input["email_address"]:null;
+        $profile_link = ($input["profile_link"])?$input["profile_link"]:null;
         $recruit_id = $input["recruit_id"];
         $rp_id = $input["rp_id"];
 
         //check if there is a null value in required values
-        if($fullname==null || $position_id==null || $platform==null || $phone_number==null || $email_address==null){ 
+        if($fullname==null || $position_id==null || $platform==null){ 
             return json_encode(array(
                 "state" => false
             ));
@@ -531,8 +531,6 @@ class RecruitController extends Controller
             'fullname'              => 'required',
             'position_id'           => 'required',
             'platform'              => 'required',
-            'phone_number'          => 'required|numeric',
-            'email_address'         => 'required',
         ]);
         
         //verify if validators failed
@@ -554,6 +552,7 @@ class RecruitController extends Controller
 
             //unset useless values && set hashid
             $input['id'] = Hashids::encode(time());
+            $input['phone_number'] = ($input['phone_number'])?preg_replace('/[^0-9.]+/', '', $input['phone_number']):null;
             unset( $input["_token"] );
             unset( $input["position_id"] );
 
@@ -609,8 +608,6 @@ class RecruitController extends Controller
             'fullname'              => 'required',
             'identification_number' => 'required',
             'platform'              => 'required',
-            'phone_number'          => 'required|numeric',
-            'email_address'         => 'required',
             'file_path_update'      => 'mimes:pdf,doc,docx|max:2048',
         ]);
 
@@ -866,11 +863,6 @@ class RecruitController extends Controller
     }
 
     public function listFCEBootstrap( Request $request ){
-        
-        //verify logged user and user level
-        if(!Auth::check()) return redirect('login');
-        if(Auth::user()->role_id >= 3) return redirect('login');
-
         //call route parameters
         $query = $request->query();
 
@@ -1565,11 +1557,17 @@ class RecruitController extends Controller
     }
 
     public function loadToastNotifiers(){
-        $notifications = Notification::where('user_level', '=', Auth::user()->role_id)->where('state', '=', 'enabled')->get();
+        if(Auth::user()->role_id){
+            $notifications = Notification::where('user_level', '=', Auth::user()->role_id)->where('state', '=', 'enabled')->get();
 
-        return json_encode(array(
-            "notifications" => $notifications
-        ));
+            return json_encode(array(
+                "notifications" => $notifications
+            ));
+        }else{
+            return json_encode(array(
+                "notifications" => []
+            ));
+        }
     }
 
     public function deleteToastNotifiers(Request $request){
