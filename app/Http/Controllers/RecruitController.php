@@ -893,10 +893,6 @@ class RecruitController extends Controller
     }
 
     public function getRecruitForFce( Request $request ){
-        //verify logged user and user level
-        if(!Auth::check()) return redirect('login');
-        if(Auth::user()->role_id >= 3) return redirect('login');
-
         //call route parameters
         $input = $request->all();
 
@@ -926,15 +922,9 @@ class RecruitController extends Controller
 
         Recruit::where('id' , $recruit_id)->update($input);
     
-        if(Auth::check()){
-            //return with success message
-            redirect()->route('recruit.fce.menu')
-                        ->with('success', 'FCE evaluated successfully.');
-        }else{
-            //return with error message
-            redirect()->route('recruit.menu')
-                        ->with('error', 'Nedd to Log In.');
-        }
+        //return with success message
+        redirect()->route('recruit.fce.menu')
+                    ->with('success', 'FCE evaluated successfully.');
     }
 
     //==============================================================================
