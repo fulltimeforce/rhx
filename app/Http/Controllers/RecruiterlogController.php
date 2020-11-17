@@ -29,7 +29,7 @@ class RecruiterlogController extends Controller
         
         if(!Auth::check()) return redirect('login');
         if(Auth::user()->role->id >= 3) return redirect('/expert/fce');
-        $positions = Position::where('status' , 'enabled')->latest()->get();
+        $positions = Position::whereNull('position_type')->where('status' , 'enabled')->latest()->get();
         $logs = Recruiterlog::all();
         $platforms = $this->platforms();
         $query = $request->query();

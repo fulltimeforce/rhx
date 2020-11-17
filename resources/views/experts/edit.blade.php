@@ -1,4 +1,4 @@
-@extends('layouts.app' , ['controller' => 'experts-edit'])
+@extends('layouts.app' , ['controller' => 'recruit'])
 
 @section('styles')
 <style>
@@ -37,22 +37,31 @@
             </ul>
         </div>
     @endif
+
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
+
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
   
-    <form action="{{ route('experts.update',$expert->id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('experts.view.edit.update') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="recruit_id" value="{{ $recruit->id }}" id="recruit_id">
+
         <button type="submit" class="btn btn-success">Save</button>
-        @isset( $position )
-        <input type="hidden" name="position" value="{{ $position }}" > 
-        @endisset
         
-        <a href="#" data-expert="{{ $expert->id }}" id="url-generate"  class="btn btn-info ">Link</a>
+        <a href="#" data-expert="{{ $recruit->id }}" id="url-generate"  class="btn btn-info ">Link</a>
         <div class="alert alert-warning alert-dismissible mt-3" role="alert" style="display: none;">
             <b>Copy successful!!!!</b>
             <p id="showURL"></p>
         </div>
 
-        @csrf
-        @method('PUT')
-   
         <div class="row mt-4">
             <div class="col">
                 <h3 class="mb-5">Información General</h3>
@@ -61,12 +70,12 @@
             <div class="col-12 col-sm-6 col-md-5">
                 <div class="input-group">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" name="file_cv_update" id="file_cv" accept="application/msword, application/pdf, .doc, .docx">
-                        <label class="custom-file-label" for="file_cv">UPLOAD CV (max 2M)</label>
+                        <input type="file" class="custom-file-input" name="file_path" id="file_path" accept="application/msword, application/pdf, .doc, .docx">
+                        <label class="custom-file-label" for="file_path">UPLOAD CV (max 2M)</label>
                     </div>
-                    @if( $expert->file_path != '' )
+                    @if( $recruit->file_path != '' )
                     <div class="input-group-append">
-                        <a href="{{ $expert->file_path }}" download class="btn btn-outline-secondary">DOWNLOAD</a>
+                        <a href="{{ $recruit->file_path }}" download class="btn btn-outline-secondary">DOWNLOAD</a>
                     </div>
                     @endif
                 </div>
@@ -76,73 +85,73 @@
         <div class="form-row">
             <div class="form-group col-12 col-sm-4">
                 <label for="fullname">Nombre</label>
-                <input type="text" name="fullname" id="fullname" class="form-control" value="{{$expert->fullname}}">
+                <input type="text" name="fullname" id="fullname" class="form-control" value="{{$recruit->fullname}}" required>
             </div>
             <div class="form-group col-12 col-sm-4">
                 <label for="email_address">Email</label>
-                <input type="text" name="email_address" class="form-control" id="email_address" value="{{$expert->email_address}}" required>
+                <input type="text" name="email_address" class="form-control" id="email_address" value="{{$recruit->email_address}}" required>
             </div>
             <div class="form-group col-6 col-sm-2">
                 <label for="identification_number">DNI/CE/Pasaporte</label>
-                <input type="text" name="identification_number" class="form-control" id="identification_number" value="{{$expert->identification_number}}">
+                <input type="text" name="identification_number" class="form-control" id="identification_number" value="{{$recruit->identification_number}}" required>
             </div>
             <div class="form-group col-6 col-sm-2">
                 <label for="birthday">Fecha de nacimiento</label>
                 
-                <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{$expert->birthday}}">
+                <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{ ($recruit->birthday!=null)? date('m-d-Y', strtotime($recruit->birthday)):'' }}">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-12 col-sm-4">
                 <label for="education">Universidad/Instituto</label>
-                <input type="text" name="education" class="form-control" id="education" value="{{$expert->education}}">
+                <input type="text" name="education" class="form-control" id="education" value="{{$recruit->education}}">
             </div>
             <div class="form-group col-12 col-sm-4">
                 <label for="english_education">¿Donde aprendió inglés?</label>
                 <select name="english_education" class="form-control" id="english_education">
                     <option value=""></option> 
-                    <option value="self" {{ ($expert->english_education=="self")? "selected" : "" }}>Independiente</option> 
-                    <option value="academy" {{ ($expert->english_education=="academy")? "selected" : "" }}>ICPNA, Británico, Idiomas Católica</option>
-                    <option value="university" {{ ($expert->english_education=="university")? "selected" : "" }}>Universidad o instituto</option>
+                    <option value="self" {{ ($recruit->english_education=="self")? "selected" : "" }}>Independiente</option> 
+                    <option value="academy" {{ ($recruit->english_education=="academy")? "selected" : "" }}>ICPNA, Británico, Idiomas Católica</option>
+                    <option value="university" {{ ($recruit->english_education=="university")? "selected" : "" }}>Universidad o instituto</option>
                 </select>
             </div>
             <div class="form-group col-2">
-                <label for="phone">Teléfono/Celular</label>
-                <input type="text" name="phone" class="form-control" id="phone" value="{{$expert->phone}}" phone>
+                <label for="phone_number">Teléfono/Celular</label>
+                <input type="text" name="phone_number" class="form-control" id="phone_number" value="{{$recruit->phone_number}}" required>
             </div>
             <div class="form-group col-2">
                 <label for="last_info_update">Última actualización</label>
-                <input type="text" name="last_info_update" class="form-control date" id="last_info_update" data-toggle="datetimepicker" data-target="#last_info_update" value="{{$expert->last_info_update}}">
+                <input type="text" class="form-control date" data-toggle="datetimepicker" data-target="#last_info_update" value="{{ ($recruit->updated_at!=null)? date('m-d-Y', strtotime($recruit->updated_at)):'' }}" disabled>
             </div>
         </div>
         <div class="form-row"> 
             <div class="form-group col-12 col-sm-4 col-lg-6">
                 <label for="address">País - Ciudad</label>
-                <input type="text" name="address" class="form-control" id="address" value="{{$expert->address}}">
+                <input type="text" name="address" class="form-control" id="address" value="{{$recruit->address}}">
             </div>
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="salary">Expectativa salarial</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $expert->type_money == 'sol' ? 'S/' : '$' }}</button>
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $recruit->type_money == 'sol' ? 'S/' : '$' }}</button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
                             <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
                         </div>
                     </div>
-                    <input type="hidden" name="type_money" value="{{ $expert->type_money }}" id="type_money">
-                    <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $expert->salary }}">
+                    <input type="hidden" name="type_money" value="{{ $recruit->type_money }}" id="type_money">
+                    <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $recruit->salary }}">
                 </div>
             
             </div>
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="availability">Disponibilidad</label>
                 <select name="availability" id="availability" class="form-control">
-                    <option value="Inmediata"   {{ $expert->availability == 'Inmediata' ? 'checked' : '' }}>Inmediata</option>
-                    <option value="1 semana"    {{ $expert->availability == '1 semana' ? 'checked' : '' }}>1 semana</option>
-                    <option value="2 semanas"   {{ $expert->availability == '2 semanas' ? 'checked' : '' }}>2 semanas</option>
-                    <option value="3 semanas"   {{ $expert->availability == '3 semanas' ? 'checked' : '' }}>3 semanas</option>
-                    <option value="1 mes o más" {{ $expert->availability == '1 mes o más' ? 'checked' : '' }}>1 mes o más</option>
+                    <option value="Inmediata"   {{ $recruit->availability == 'Inmediata' ? 'checked' : '' }}>Inmediata</option>
+                    <option value="1 semana"    {{ $recruit->availability == '1 semana' ? 'checked' : '' }}>1 semana</option>
+                    <option value="2 semanas"   {{ $recruit->availability == '2 semanas' ? 'checked' : '' }}>2 semanas</option>
+                    <option value="3 semanas"   {{ $recruit->availability == '3 semanas' ? 'checked' : '' }}>3 semanas</option>
+                    <option value="1 mes o más" {{ $recruit->availability == '1 mes o más' ? 'checked' : '' }}>1 mes o más</option>
                 </select>
                 
             </div>
@@ -150,44 +159,36 @@
         <div class="form-row">
             <div class="form-group col-6 col-sm">
                 <label for="linkedin">Linkedin</label>
-                <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{$expert->linkedin}}">
+                <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{$recruit->linkedin}}">
             </div>
             <div class="form-group col-6 col-sm">
                 <label for="github">Github</label>
-                <input type="text" name="github" class="form-control" id="github" value="{{$expert->github}}">
-            </div>
-            <div class="form-group col-6 col-sm">
-                <label for="instagram">Instagram</label>
-                <input type="text" name="instagram" class="form-control" id="instagram" value="{{$expert->instagram}}">
-            </div>
-            <div class="form-group col-6 col-sm">
-                <label for="facebook">Facebook</label>
-                <input type="text" name="facebook" class="form-control" id="facebook" value="{{$expert->facebook}}">
+                <input type="text" name="github" class="form-control" id="github" value="{{$recruit->github}}">
             </div>
             <div class="form-group col-6 col-sm">
                 <label for="twitter">Twitter</label>
-                <input type="text" name="twitter" class="form-control" id="twitter" value="{{$expert->twitter}}">
+                <input type="text" name="twitter" class="form-control" id="twitter" value="{{$recruit->twitter}}">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-12 col-sm-4">
                 <label for="other_knowledge">¿Qué otros conocimientos tiene?</label>
-                <input type="text" name="other_knowledge" class="form-control" id="other_knowledge" value="{{$expert->other_knowledge}}">
+                <input type="text" name="other_knowledge" class="form-control" id="other_knowledge" value="{{$recruit->other_knowledge}}">
             </div>
             <div class="form-group col-12 col-sm-4">
                 <label for="wish_knowledge">¿Qué le gustaría aprender?</label>
-                <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{$expert->wish_knowledge}}">
+                <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{$recruit->wish_knowledge}}">
             </div>
             <div class="form-group col">
                 <label for="focus">Has tenido mayor experience en:</label>
                 <select name="focus" class="form-control" id="focus">
                     <option value=""></option> 
-                    <option value="fullstack" {{ ($expert->focus=="fullstack")? "selected" : "" }}>Fullstack</option>
-                    <option value="backend" {{ ($expert->focus=="backend")? "selected" : "" }}>Backend</option>
-                    <option value="frontend" {{ ($expert->focus=="frontend")? "selected" : "" }}>Frontend</option>
-                    <option value="mobile" {{ ($expert->focus=="mobile")? "selected" : "" }}>Mobile</option>
-                    <option value="devops" {{ ($expert->focus=="devops")? "selected" : "" }}>DevOps</option>
-                    <option value="game" {{ ($expert->focus=="game")? "selected" : "" }}>Games</option>
+                    <option value="fullstack" {{ ($recruit->focus=="fullstack")? "selected" : "" }}>Fullstack</option>
+                    <option value="backend" {{ ($recruit->focus=="backend")? "selected" : "" }}>Backend</option>
+                    <option value="frontend" {{ ($recruit->focus=="frontend")? "selected" : "" }}>Frontend</option>
+                    <option value="mobile" {{ ($recruit->focus=="mobile")? "selected" : "" }}>Mobile</option>
+                    <option value="devops" {{ ($recruit->focus=="devops")? "selected" : "" }}>DevOps</option>
+                    <option value="game" {{ ($recruit->focus=="game")? "selected" : "" }}>Games</option>
                 </select>
             </div>
         </div>
@@ -201,19 +202,19 @@
                 <legend class="col-form-label col-5 col-md-3 pt-0">{{$value}}</legend>
                 <div class="col-7 col-md-9">
                     <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}u" value="unknown" {{ ($expert->$key=="unknown")? "checked" : "" }}>
+                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}u" value="unknown" {{ ($recruit->$key=="unknown")? "checked" : "" }}>
                         <label class="form-check-label" for="{{$key}}u">No lo manejo</label>
                     </div>
                     <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}b" value="basic" {{ ($expert->$key=="basic")? "checked" : "" }}>
+                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}b" value="basic" {{ ($recruit->$key=="basic")? "checked" : "" }}>
                         <label class="form-check-label" for="{{$key}}b">Básico</label>
                     </div>
                     <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}i" value="intermediate" {{ ($expert->$key=="intermediate")? "checked" : "" }}>
+                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}i" value="intermediate" {{ ($recruit->$key=="intermediate")? "checked" : "" }}>
                         <label class="form-check-label" for="{{$key}}i">Intermedio</label>
                     </div>
                     <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}a" value="advanced" {{ ($expert->$key=="advanced")? "checked" : "" }}>
+                        <input class="form-check-input" type="radio" name="{{$key}}" id="{{$key}}a" value="advanced" {{ ($recruit->$key=="advanced")? "checked" : "" }}>
                         <label class="form-check-label" for="{{$key}}a">Avanzado</label>
                     </div>
                 </div>
@@ -319,17 +320,16 @@
         });
     </script>
     <script>
-        $('#file_cv').on('change',function(ev){
+        $('#file_path').on('change',function(ev){
             //get the file name
             var fileName = $(this).val();
             //replace the "Choose a file" label
             $(this).next('.custom-file-label').html(ev.target.files[0].name);
         });
-        // $('[data-toggle="tooltip"]').tooltip({ trigger : 'click' });
 
         $('#url-generate').on('click', function (ev) {
             ev.preventDefault();
-            var url = '{{ route("developer.edit.signed" , ":id") }}';
+            var url = '{{ route("experts.edit.form.signed" , ":id") }}';
             url = url.replace( ":id" , $(this).data("expert") );
 
             $.ajax({
@@ -365,8 +365,6 @@
                             document.body.removeChild(el);
                         });
                     }, 4000);
-
-                    // $("#urlGeneration").modal();
                 }
             });
         });

@@ -43,6 +43,12 @@
         </div>
     </div>
     <div class="form-row">
+        <div class="form-group col">
+            <label for="snippet">Snippet</label>
+            <textarea name="snippet" class="form-control" rows="10" id="snippet"></textarea>
+        </div>
+    </div>
+    <div class="form-row">
         <div class="form-check form-group">
             <input type="checkbox" name="status" id="status" class="form-check-input" value="enabled" checked>
             <label for="status" class="form-check-label">Enabled</label>

@@ -26,7 +26,7 @@ class LogController extends Controller
         //
         if(!Auth::check()) return redirect('login');
         
-        $positions = Position::where('status' , 'enabled')->latest()->get();
+        $positions = Position::whereNull('position_type')->where('status' , 'enabled')->latest()->get();
         $logs = null;
         $user = User::find(Auth::id());
         if( $user->role_id == 2 ){

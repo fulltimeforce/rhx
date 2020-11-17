@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Position;
-use Illuminate\Http\Request;
 use App\Expert;
+use App\Recruit;
+use App\RecruitPosition;
 use App\Requirement;
 use App\Log;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +26,7 @@ class PositionController extends Controller
     {
         $query = $request->query();
         $positions = Position::where( function($q) use ($query){
+            $q->whereNull('position_type');
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');
             }
@@ -40,6 +44,7 @@ class PositionController extends Controller
 
     public function listpositions( Request $request ){
         $positions = Position::where( function($q){
+            $q->whereNull('position_type');
             if( !Auth::check() ){
                 $q->where('status' , 'enabled');
             }
@@ -175,7 +180,7 @@ class PositionController extends Controller
 
         $current_tech = array();
         $after_tech = array();
-        foreach(Expert::getTechnologies() as $catid => $cat){
+        foreach(Recruit::getTechnologies() as $catid => $cat){
             foreach($cat[1] as $techid => $techlabel){
                 if( in_array( $techid , $a_technologies) ){
                     $current_tech[] = array($techid => $techlabel ); 
@@ -193,7 +198,7 @@ class PositionController extends Controller
             ->with('requirements' , $requirements)
             ->with('position', $position)
             ->with('positionId' , $positionId)
-            ->with('technologies',Expert::getTechnologies());
+            ->with('technologies',Recruit::getTechnologies());
     }
 
     public function relationsExperts( Request $request ){
@@ -201,30 +206,24 @@ class PositionController extends Controller
         $positionId = $request->query('positionId');
         $filter = $request->query('filter');
 
-        $experts =  Expert::select('experts.*' , 'expert_position.status')
-            ->join('expert_position', 'expert_position.expert_id', '=', 'experts.id')
-            ->whereColumn('expert_position.expert_id', '=', 'experts.id' )
-            ->whereIn('experts.id', function($query) use ($positionId){
-                $query->select('ep.expert_id')
-                ->from('expert_position' , 'ep')
-                ->where('ep.position_id' , $positionId);
-            });
-            
-        if( !empty($filter) ) $experts->where('expert_position.status' , $filter);
+        $recruits =  Recruit::select('recruit.*')
+                            ->leftJoin('recruit_positions', 'recruit_positions.recruit_id', '=', 'recruit.id')
+                            ->where(function($query) use ($positionId){
+                                $query->where('recruit_positions.position_id', $positionId);
+                                      //->where('recruit.tech_qtn', 'filled');
+                                
+                            });
 
-        if( !empty( $request->query('name') ) ){
-            $experts->where('experts.fullname' , 'like' , '%'.$request->query('name').'%');
-        }
+        if( !empty( $request->query('name') ) ) $recruits->where('recruit.fullname' , 'like' , '%'.$request->query('name').'%');
         
-        $experts->distinct();
+        $recruits->distinct();
         
-
-        $_experts = $experts->paginate( $request->query('rows') );
+        $_recruits = $recruits->paginate( $request->query('rows') );
 
         return array(
-            "total" => $_experts->total(),
-            "totalNotFiltered" => $_experts->total(),
-            "rows" => $experts->get()
+            "total" => $_recruits->total(),
+            "totalNotFiltered" => $_recruits->total(),
+            "rows" => $recruits->get()
         );
 
     }
@@ -299,10 +298,10 @@ class PositionController extends Controller
 
         $expertId = $request->input('expertId');
 
-        $positions = Position::where('status' , 'enabled')->get();
+        $positions = Position::whereNull('position_type')->where('status' , 'enabled')->get();
         $a_positions = array();
         foreach ($positions as $key => $position) {
-            $em = DB::table('expert_position')->where(['expert_id' => $expertId , "position_id" => $position->id ])->count();
+            $em = DB::table('recruit_positions')->where(['recruit_id' => $expertId , "position_id" => $position->id ])->count();
             $a_positions[] = (object) array(
                 "id" => $position->id,
                 "name" => $position->name,
@@ -319,17 +318,14 @@ class PositionController extends Controller
 
         $positions = $request->input('positions');
 
-        $expert = Expert::where('id',$expertId)->first();
-
-        Log::where('expert_id' , $expertId)->delete();
+        $expert = Recruit::where('id',$expertId)->first();
 
         foreach ($positions as $key => $position) {
-            Log::create(
+            RecruitPosition::create(
                 array(
-                    "expert_id" => $expertId,
-                    "position_id" => $position,
-                    "user_id"   => Auth::id(),
-                    "form" => 1
+                    "recruit_id"         =>  $expertId,
+                    "position_id"        =>  $position,
+                    "user_id"            =>  Auth::id(),
                 )
             );
         }

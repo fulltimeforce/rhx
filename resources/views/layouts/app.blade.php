@@ -74,18 +74,30 @@
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.tech.menu') }}">{{ __('TECH') }}</a>
                             </li>
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('sales.menu') }}">{{ __('Sales') }}</a>
+                            </li>
                             @endif
                             <!-- </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('expert.portfolio.resume') }}">{{ __('Resume') }}</a>
                             </li> -->
                             @if( Auth::user()->role->id < 3 )
                             </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('recruit.menu') }}">{{ __('RECRUITMENT') }}</a>
+                            </li>
+                            <!--</li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('specific.menu') }}">{{ __('SPCF. RECRUITMENT') }}</a>
+                            </li> -->
+                            </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
                             @endif
                             </li><li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.fce.menu') }}">{{ __('FCE') }}</a>
+                                <a class="nav-link" href="{{ route('recruit.fce.menu') }}">{{ __('FCE') }}</a>
                             </li>
+                            <!--</li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('experts.fce.menu') }}">{{ __('FCE') }}</a>
+                            </li> -->
                             @if( Auth::user()->role->id < 3 )
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
@@ -137,11 +149,80 @@
             </div>
         </nav>
 
+        <div style="position: absolute; top: 15px; right: 15px; z-index: 7000;" id="toast-container" name="toast-container"></div>    
+
         <main class="py-4">
             <div class="container-fluid">
                 @yield('content')
             </div>
-            
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    //CALL NOTIFIERS (ENABLED PER USER LEVEL) FUNCTIONS
+                    function load_toast_notifiers(){
+                        $.ajax({
+                            type:'POST',
+                            url: '{{ route("recruit.load.toast.notifiers") }}',
+                            headers: {
+                                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success:function(data){
+                                let _data = JSON.parse(data)
+                                console.log(_data)
+                                var _notifications = _data.notifications;
+                                _notifications.forEach(element => {
+                                    var now = new Date().getTime();
+                                    var toast_time = new Date(element.created_at).getTime();
+                                    var difference = Math.floor((toast_time-now)/86400000);
+
+                                    if(difference==0){var result_time = 'Today';}
+                                    if(difference==1){var result_time = difference + ' day ago'}
+                                    if(difference>1){var result_time = difference + ' days ago'}
+
+                                    var actions = '';
+
+                                    actions +=  '<div class="toast" aria-live="assertive" aria-atomic="true" role="alert" data-autohide="false" style="width: 300px;">';
+                                    actions +=      '<div class="toast-header">';
+                                    actions +=          '<strong class="mr-auto">'+element.search_name+'</strong>';
+                                    actions +=          '<small class="text-muted">'+result_time+'</small>';
+                                    actions +=          '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close" data-id="'+element.id+'">';
+                                    actions +=              '<span aria-hidden="true">&times;</span>';
+                                    actions +=          '</button>';
+                                    actions +=      '</div>';
+                                    actions +=      '<div class="toast-body" style="background-color: lightgray;">';
+                                    actions +=          element.expert_name;
+                                    actions +=      '</div>';
+                                    actions +=  '</div>';
+
+                                    $('#toast-container').prepend(actions);
+                                });
+                                $('.toast').toast('show');
+                            }
+                        });
+                    }
+
+                    //TRIGGER FUNCTION
+                    load_toast_notifiers();
+
+                    //CHANGE NOTIFIER STATE (DISABLED) ON CLOSE BUTTON CLICK
+                    $(document).on('click', '.close', function(ev){
+                        var notification_id = $(this).data("id");
+                        if(notification_id){
+                            $.ajax({
+                                type:'POST',
+                                url: '{{ route("recruit.delete.toast.notifiers") }}',
+                                data: {notification_id: notification_id},
+                                headers: {
+                                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success:function(data){}
+                            });
+                        }
+                    });
+                })
+            </script>
         </main>
 
         @yield('javascript')

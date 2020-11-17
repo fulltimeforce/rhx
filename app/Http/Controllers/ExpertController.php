@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Expert;
+use App\Recruit;
 use App\Position;
 use App\Portfolio;
 use App\Log;
@@ -10,6 +11,9 @@ use App\Interview;
 use App\Portfolioexpert;
 use App\Recruiterlog;
 use App\Expertlog;
+use App\SearchHistory;
+use App\Notification;
+use App\RecruitPosition;
 use App\Config;
 use Exception;
 use Google_Client;
@@ -34,10 +38,12 @@ class ExpertController extends Controller
 
     public function index( Request $request )
     {
-        
         if(!Auth::check()) return redirect('login');
         if(Auth::user()->role->id >= 3) return redirect('/expert/fce');
-        $_experts = $this->visibleExpert( Expert::with(['logs'])->latest()->get() );
+        $_experts = Recruit::where(function ($query) {
+            $query->where('recruit.phone_number', 'not like', '-')
+                  ->orWhere('recruit.email_address', 'not like', '-');
+        })->get();
         $experts = count($_experts);
         $query = $request->query();
 
@@ -48,6 +54,7 @@ class ExpertController extends Controller
         $name = isset( $query['name'] )? $query['name'] : '';
         $audio = isset( $query['audio'] )? filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) : true;
         $selection = isset( $query['selection'] )? $query['selection'] : 1;
+        $profile = isset( $query['profile'] )? $query['profile'] : '';
         
         $basic = array();
         $intermediate = array();
@@ -60,6 +67,9 @@ class ExpertController extends Controller
                 if( in_array( $techid , $a_advan ) ) $advanced = array_merge( $advanced ,array( $techid => $techlabel ));
             }
         }
+
+        $search_profiles = SearchHistory::where('search_user_level', '=', Auth::user()->role->id)->get();
+        $positions = Position::whereNull('position_type')->get();
         
         return view('experts.index',compact('experts'))
             ->with('search', $search )
@@ -69,6 +79,9 @@ class ExpertController extends Controller
             ->with('basic', $basic )
             ->with('intermediate', $intermediate )
             ->with('advanced', $advanced )
+            ->with('search_profiles', $search_profiles )
+            ->with('profile', $profile )
+            ->with('positions', $positions )
             ->with('technologies', Expert::getTechnologies() );
     }
 
@@ -150,8 +163,10 @@ class ExpertController extends Controller
                 ->distinct()
                 ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
                 ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
-                ->whereNotNull( 'recruiter_logs.filter_audio' )
-                ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+                ->where(function ($query) {
+                    $query->whereNotNull('recruiter_logs.filter_audio')
+                          ->orWhereNotNull('recruiter_logs.evaluate_audio');
+                })
                 ->select('experts.*');
         }
         
@@ -331,6 +346,47 @@ class ExpertController extends Controller
                 $input['id'] = Hashids::encode(time());
                 $expert = Expert::create($input);
                 $isCreated = true;
+
+                $search_rows = SearchHistory::whereNotNull('search_notify_options')->get();
+
+                foreach ($search_rows as $s_key => $s_value) {
+
+                    $isProfile = true;
+
+                    $a_basic = !is_null($s_value->basic)? explode("," , $s_value->basic) : array();
+                    $a_inter = !is_null($s_value->intermediate)? explode("," , $s_value->intermediate) : array();
+                    $a_advan = !is_null($s_value->advanced)? explode("," , $s_value->advanced) : array();
+
+                    foreach ($a_basic as $b_value) {
+                        if( !in_array($input[$b_value], array("basic", "intermediate", "advanced")) ){
+                            $isProfile = false;
+                        }
+                    }
+
+                    foreach ($a_inter as $i_value) {
+                        if( !in_array($input[$i_value], array("intermediate", "advanced")) ){
+                            $isProfile = false;
+                        }
+                    }
+
+                    foreach ($a_advan as $a_value) {
+                        if( !in_array($input[$a_value], array("advanced")) ){
+                            $isProfile = false;
+                        }
+                    }
+
+                    if($isProfile){
+                        Notification::create(
+                            array(
+                                'id'          =>  Hashids::encode(time()),
+                                "search_name" =>  $s_value->search_name,
+                                "expert_name" =>  $input['fullname'],
+                                "user_level"  =>  $s_value->search_user_level,
+                                "state"       =>  'enabled',
+                            )
+                        );
+                    }
+                }
             }
             
             $positionId = $request->input('position','');
@@ -667,7 +723,8 @@ class ExpertController extends Controller
         $query = array(
             'expertId' => $expertId 
         );
-        if( Log::where('expert_id' , $expertId)->count() > 0 ){
+
+        if( Recruit::where('id' , $expertId)->count() > 0 ){
             $query['position'] = time();
         }
 
@@ -680,7 +737,7 @@ class ExpertController extends Controller
 
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('login');
 
-        $expert = Expert::find($expertId);
+        $expert = Recruit::find($expertId);
         $position = 0;
         if( !is_null( $request->query('position') ) ){
             $position = 1;
@@ -984,18 +1041,18 @@ class ExpertController extends Controller
         $experts = null;
         
         $experts = $this->filter(array() , array(), array());
-
         $experts->where('experts.fullname' , 'like' , '%'.$query['name'].'%');
-
         $experts->where('experts.fce_overall' , 'like' , '-');
 
         if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN)  ){
             $experts
                 ->distinct()
-                ->leftJoin('expert_log' , 'experts.id' , '=' , 'expert_log.expert_id')
-                ->join('recruiter_logs' , 'recruiter_logs.id' , '=' , 'expert_log.log_id')
-                ->whereNotNull( 'recruiter_logs.filter_audio' )
-                ->orWhereNotNull( 'recruiter_logs.evaluate_audio' )
+                ->leftJoin('expert_log', 'experts.id', '=', 'expert_log.expert_id')
+                ->leftJoin('recruiter_logs', 'recruiter_logs.id', '=', 'expert_log.log_id')
+                ->where(function ($query) {
+                    $query->whereNotNull('recruiter_logs.filter_audio')
+                          ->orWhereNotNull('recruiter_logs.evaluate_audio');
+                })
                 ->select('experts.*');
         }
          
@@ -1180,7 +1237,5 @@ class ExpertController extends Controller
 
         return $skills;
     }
-
-    
 
 }

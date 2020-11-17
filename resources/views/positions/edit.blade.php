@@ -44,6 +44,12 @@
             </div>
         </div>
         <div class="form-row">
+            <div class="form-group col">
+                <label for="snippet">Snippet</label>
+                <textarea name="snippet" class="form-control" rows="10" id="snippet">{{$position->snippet}}</textarea>
+            </div>
+        </div>
+        <div class="form-row">
             <div class="form-check form-group">
                 <input type="checkbox" name="status" id="status" class="form-check-input" value="enabled" {{ ($position->status=='enabled')?'checked':'' }} >
                 <label for="status" class="form-check-label">Enabled</label>
@@ -121,6 +127,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
+
+        console.log("{{$position}}")
 
         $(".search-level").select2({
             tags: true,

@@ -1,4 +1,4 @@
-@extends('layouts.app' , ['controller' => 'experts'])
+@extends('layouts.app' , ['controller' => 'position'])
 
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
@@ -272,40 +272,34 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <h1>Experts ({{ $experts }})</h1>
+            <h1>Experts ({{ $recruits }})</h1>
         </div>
         <div class="col text-right">
             
-            <a class="btn btn-info" id="url-generate" href="#">Generate URL</a>
+            <!--<a class="btn btn-info" id="url-generate" href="#">Generate URL</a>-->
         </div>
     </div>
+
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
+
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{!! $message !!}</p>
+        </div>
+    @endif
+
     <div class="alert alert-warning alert-dismissible mt-3" role="alert" style="display: none;">
         <b>Copy successful!!!!</b>
         <p id="showURL"></p>
     </div>
-    <!--  
-        /*========================================== MODALS ==========================================*/
-    -->
 
-    <div id="audio-bublle" class="buble-audio" style="display: none;">
-        <div class="section-audio">
-            <button type="button" class="close-audio" >
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <!-- <table id="list-audios" class="table table-dark">
-                <thead>
-                    <tr>
-                        <th><span id="audio_expert_name"></span></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table> -->
-        </div>
-    </div>
-
-    <!--  
-        /*========================================== FCE ==========================================*/
-    -->
+    <!--======================================================================================================================  
+    ======================================================EXPERT AUDIO MODAL==================================================
+    =======================================================================================================================-->
     <div class="modal fade" id="fceExpert" tabindex="-1" role="dialog" aria-labelledby="fceExpertLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -330,69 +324,15 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <p class="mb-5 text-danger" id="error-fce-form" style="display: none;">*You must select all options</p>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
-            
         </div>
     </div>
     </div>
-    <!--  
-        /*========================================== POSITONS BY EXPERT ==========================================*/
-    -->
-    <div class="modal fade" id="positionsExpert" tabindex="-1" role="dialog" aria-labelledby="positionsExpertLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="positionsExpertLabel">ASSIGNED POSITIONS</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            
-            <div class="modal-body">
-                <form action="" id="form-positions">
-                <input type="hidden" name="expertId-p" id="expertId-p" value="">
-                <ul class="list-group" id="list-positions">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">Cras justo odio <div ><input type="checkbox"></div></li>
-                </ul>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="save-positions" class="btn btn-primary">Save</button>
-            </div>
-            
-        </div>
-    </div>
-    </div>
-    <!--  
-        /*========================================== INTERVIEWS BY EXPERT ==========================================*/
-    -->
-    <div class="modal" id="interviews-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="interviews-expertLabel"><span id="interview_expert_name">{expert Name}</span> - INTERVIEWS</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row mb-4">
-                <div class="col" id="list-interviews">
-                    
-                </div>
-            </div>
-            
-        </div>
-        
-        </div>
-    </div>
-    </div>
-    <!--  
-        /*========================================== EXPERT INFORMATION ==========================================*/
-    -->
+
+    <!--======================================================================================================================  
+    ==================================================EXPERT INFORMATION MODAL================================================    
+    =======================================================================================================================-->
     <div class="modal" id="info-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -441,19 +381,9 @@
                 <hr/>
                 <!-- Links -->
                 <div class="row">
-                    <!--<div class="col-sm-6">
-                        <label class="font-weight-bold">LinkedIn</label><br>
-                        <a class="show_expert_linkedin" href="#"></a>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="font-weight-bold">Github</label><br>
-                        <a class="show_expert_github" href="#"></a>
-                    </div>-->
                     <div class="col-12 col-sm-4">
                         <label class="font-weight-bold">Links</label>
                         <p>
-                            <!-- <a class="show_expert_github" href="#"><i class="fa fa-github"></i></a>
-                            <a class="show_expert_linkedin" href="#"><i class="fa fa-linkedin-square"></i></a> -->
                             <a class="show_expert_github" href="#"><button class="btn btn-primary">Github</button></a>
                             <a class="show_expert_linkedin" href="#"><button class="btn btn-primary">LinkedIn</button></a>
                         </p>
@@ -470,7 +400,6 @@
                     </div>
                     <div class="col-md-4">
                         <label class="font-weight-bold">Speaking</label>
-                        <!-- <p>advanced</p> -->
                         <div class="progress">
                             <div class="progress-bar show_expert_eng_speak" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ></div>
                         </div>
@@ -512,26 +441,22 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-6">
-                      <button class="btn btn-outline-secondary btn-prev-expert" data-id=""><</button>
+                      <button class="btn btn-outline-secondary btn-prev-expert" data-id="" data-index=""><</button>
                     </div>
                     <div class="col-6">
-                      <button class="btn btn-outline-secondary btn-next-expert" data-id="">></button>
+                      <button class="btn btn-outline-secondary btn-next-expert" data-id="" data-index="">></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     </div>
-    <!--  
-        /*========================================== FORM ==========================================*/
-    -->
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
-    <br>
     
+    <br>
+
+    <!--======================================================================================================================  
+    ==================================================SEARCH EXPERTS FORM=====================================================    
+    =======================================================================================================================-->
     <form action="{{ route('experts.filter') }}" class="row" method="POST">
         @csrf
         <div class="form-group col">
@@ -559,11 +484,19 @@
             </select>
         </div>
     </form>
-    <div class="row mb-4">
+    <div class="row">
         <div class="col">
             <p>Result: <span id="count-expert"></span></p>
         </div>
         <div class="col text-right">
+            <div class="form-group d-inline-block pr-3" style="max-width: 300px;">
+                <select class="form-control" id="load-search-profile" name="load-search-profile" value="">
+                    <option value="">--Select Search Profile--</option> 
+                    @foreach( $search_profiles as $sp_id => $sp_value)
+                        <option value="{{ $sp_value['id'] }}" {{($profile == $sp_value['id'])? 'selected' : ''}}>{{ $sp_value['search_name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
             <input type="hidden" name="selection" id="selection" value="{{ $selection }}">
             <btn class="btn {{ $selection == 1 ? 'btn-secondary' : ( $selection == 2 ? 'btn-danger' : ( $selection == 3 ? 'btn-warning' : 'btn-success' ) ) }}" id="change-selected">Selected</btn>
             <input type="checkbox" name="audio" id="audio">
@@ -572,6 +505,43 @@
                 <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
             </div>
             <button type="button" class="btn btn-success" id="search" style="vertical-align: top;">Search</button>
+        </div>
+    </div>
+
+    <!--======================================================================================================================  
+    ==================================POSITION BULK ACTIONS / SAVE SEARCH PROFILE INPUT=======================================
+    =======================================================================================================================-->
+    <div class="row mb-4">
+        <div class="col-3 text-left">
+            <div class="form-group d-inline-block mt-3" style="max-width: 300px;">
+                <select name="position-bulk-action" id="position-bulk-action" class="form-control" >
+                    @foreach( $positions as $ps_key => $ps_value)
+                    <option value="{{ $ps_value['id'] }}"> {{ $ps_value['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button class="btn btn-info mt-3" id="position-bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
+        </div>
+        <div class="col-9 text-right">
+            <div class="form-group d-none pr-3 mt-3" style="width: 220px;">
+                <select multiple id="save_search_notify" name="save_search_notify[]" class="save-search-notify" size="1" placeholder="Search Notify Options" style="width: 23px;">
+                    <option value="popup">Pop-up</option>
+                </select>
+            </div>
+            <div class="form-group d-none pr-3 mt-3">
+                <select class="form-control" id="save-search-level" name="save-search-level" value="">
+                    <option value="">--Select User Level (*)--</option> 
+                    <option value="1">SUPERADMIN</option> 
+                    <option value="2">RECRUITER</option>
+                </select>
+            </div>
+            <div class="form-group d-none pr-3 mt-3">
+                <input type="text" placeholder="Search Profile Name (*)" class="form-control" id="save-search-name" name="save-search-name">
+            </div>
+            <div class="form-group d-inline-block mt-3">
+                <input type="checkbox" name="save-search" id="save-search">
+                <label for="save-search">Save Search</label>
+            </div>
         </div>
     </div>
     <div class="row mb-5">
@@ -604,6 +574,7 @@
         var _records = 50;
         var _total_records = 0;
         var _count_records = 0;
+        var _page = 1;
 
         var _before_rows = 0;
 
@@ -633,20 +604,20 @@
             };
             $.ajax({
                 type:'GET',
-                url: '{{ route("expert.listtbootstrap") }}',
+                url: '{{ route("experts.list.bootstrap") }}',
                 data: $.param(params),
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
-
                     let _data = JSON.parse(data)
                     _total_records = _data.totalNotFiltered;
                     _before_rows = _data.total;
                     _count_records = _count_records + _data.rows.length;
                     $("#count-expert").html( _count_records );
                     _dataRows = _data.rows;
+                    console.log(_dataRows)
                     for (var i = 0; _dataRows.length > i ; i++) {
                       _idMap.push(_dataRows[i].id);
                     }
@@ -660,8 +631,18 @@
         function tablebootstrap_filter( data ,a_keys_basic , a_keys_inter , a_keys_advan ){
             
             var a_keys_filter = a_keys_basic.concat( a_keys_inter, a_keys_advan );
-
             var columns = [
+                { 
+                    valign: 'middle',
+                    checkbox: true,
+                    clickToSelect: false,
+                    width: 20,
+                    formatter : function(value,rowData,index) {    
+                        var actions = '';
+                        return actions;
+                        },
+                    class: 'frozencell',
+                },
                 {
                     field: 'id',
                     title: "Actions",
@@ -669,39 +650,14 @@
                     align: 'left',
                     clickToSelect: false,
                     formatter : function(value,rowData,index) {
-                        var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.edit', ':id' ) }}"+ ' ">Edit</a>\n';
-                        actions += rowData.file_path == '' ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'" target="_blank">Download</a>\n';
-                        // actions += '<a class="badge badge-info btn-position" data-id="'+rowData.id+'" href="#">Positions</a>\n';
-                        actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
+                        var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.btn.edit', ':id' ) }}"+ ' ">Edit</a>\n';
+                        actions += (!rowData.file_path) ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'" target="_blank">Download</a>\n';
+                        //actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
                         actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
-                        //actions += '<a class="badge badge-primary btn-audio-expert" data-id="'+rowData.id+'" href="#">Audio</a>'
-                        // if( rowData.resume == null){
-                        //     actions += '<span class="badge badge-secondary" >Resume</span>\n';
-                        // }else{
-                        //     actions += '<span class="badge badge-success" >Resume</span>\n';
-                        // }
-                        
-                        //actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">FCE</a>\n';
-                        
-                        var hasAudios = !! rowData.logs.filter(log => log.filter_audio || log.evaluate).length 
-                        if ( hasAudios) {
-                            actions += '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Audio</a>\n';
-                        }
-                        /* if(rowData.logs.length > 0 ){
-                            for (let i = 0; i < rowData.logs.length; i++) {
-                                if( rowData.logs[i].filter_audio != null ){
-                                    audios__count++;
-                                }
-                                if( rowData.logs[i].evaluate_audio != null ){
-                                    audios__count++; 
-                                }
-                            }
-                        }
-                        if( audios__count > 0){
-                            actions += '<a class="badge badge-primary btn-list-audio" data-name="'+rowData.fullname+'" data-id="'+rowData.id+'" href="#">Audio</a>';
-                        } */
-                        actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" >Show</a>';
+                        actions += (!rowData.audio_path) ? '' : '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Audio</a>\n';
+                        actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" data-index="'+index+'">Show</a>';
                         actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
+                        actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-id="'+rowData.id+'" data-fullname="'+rowData.fullname+'">';
 
                         actions = actions.replace(/:id/gi , rowData.id);
 
@@ -715,14 +671,59 @@
             var columns_temp = [];
             var columns_info = [
                 { field: 'email_address', title: "Email" },
-                { field: 'age', title: "Age" },
-                { field: 'phone', title: "Phone" },
+                { 
+                    field: 'birthday', 
+                    title: "Age",
+                    valign: 'middle',
+                    align: 'left',
+                    clickToSelect: false,
+                    formatter : function(value,rowData,index) {
+                        var date = new Date(rowData.birthday).getTime();
+                        var now = Date.now();
+
+                        var age_time = new Date(now-date);
+                        var age = Math.abs(age_time.getUTCFullYear() - 1970);
+
+                        var actions = (!rowData.birthday) ? '-' : age;
+
+                        return actions;
+                    },
+                    width: 100
+                },
+                { field: 'phone_number', title: "Phone" },
                 { field: 'availability', title: "Availability" },
                 { field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : (rowData.type_money == 'sol' ? 'S/' : '$') + ' ' +value;} },
-                { field: 'fce_overall', title: "Overall text", formatter : function(value,rowData,index) { return rowData.fce_overall == '' ? '-' : '<span title="'+rowData.fce_total+'" >'+rowData.fce_overall+'</span>' } },
-                { field: 'linkedin', title: "Linkedin" },
-                { field: 'github', title: "Github" },
-                { field: 'experience', title: "Experience" },
+                { field: 'fce_overall', title: "FCE Overall", formatter : function(value,rowData,index) { return rowData.fce_overall == '' ? '-' : '<span title="'+rowData.fce_total+'" >'+rowData.fce_overall+'</span>' } },
+                { 
+                    field: 'linkedin', 
+                    title: "Linkedin",
+                    valign: 'middle',
+                    align: 'left',
+                    clickToSelect: false,
+                    formatter : function(value,rowData,index) {
+                        var actions = (!rowData.linkedin) ? '-' : '<a id="show-recruit-linkedin-link" class="badge badge-success data-index="'+index+'" href="'+rowData.linkedin+'" target="_blank">Go to LinkedIn Link</a>';
+
+                        actions = actions.replace(/:id/gi , rowData.id);
+
+                        return actions;
+                    },
+                    width: 100
+                },
+                { 
+                    field: 'github', 
+                    title: "Github",
+                    valign: 'middle',
+                    align: 'left',
+                    clickToSelect: false,
+                    formatter : function(value,rowData,index) {
+                        var actions = (!rowData.github) ? '-' : '<a id="show-recruit-github-link" class="badge badge-success data-index="'+index+'" href="'+rowData.github+'" target="_blank">Go to GitHub Link</a>';
+
+                        actions = actions.replace(/:id/gi , rowData.id);
+
+                        return actions;
+                    },
+                    width: 100
+                },
             ];
 
             @foreach($technologies as $categoryid => $category)
@@ -734,63 +735,73 @@
                     }
                 @endforeach
             @endforeach
-
+            
+            //==========SET TABLE CONFIGURATION VALUES
             $("#list-experts").bootstrapTable('destroy').bootstrapTable({
                 height: undefined,
                 columns: columns.concat(columns_info, columns_temp),
                 data: data,
                 fixedColumns: true,
-                fixedNumber: 2,
+                fixedNumber: 3,
                 theadClasses: 'table-dark',
                 uniqueId: 'id'
             });
 
-            // =================== SHOW
+            //==========SHOW EXPERT INFORMATION ON MODAL
             $("table tbody").on("click", "a.btn-show",function(ev){
                 ev.preventDefault();
-                var expertId = $(this).attr("data-id");
-                var expertName = $(this).attr("data-name");
+                var recruitId = $(this).attr("data-id");
+                var index = $(this).attr("data-index");
                 $.ajax({
                     type:"POST",
-                    url: '{{ route("experts.show") }}',
-                    data:{id: expertId},
+                    url: '{{ route("experts.btn.show") }}',
+                    data:{id: recruitId},
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
-                        var expert = data.expert;
-                        // set data
-                        $(".show_expert_name").html(expert.fullname)
-                        $(".show_expert_email").html(expert.email_address);
-                        $(".show_expert_age").html(expert.age);
-                        $(".show_expert_phone").html(expert.phone);
-                        $(".show_expert_availability").html(expert.availability);
-                        $(".show_expert_salary").html((expert.type_money == 'sol' ? 'S/' : '$') + ' ' +(expert.salary!=null?expert.salary:0));
-                        $(".show_expert_fce").html(expert.fce_overall);
-                        $("a.show_expert_linkedin").attr("href",(expert.linkedin!=undefined?expert.linkedin:"#"));
-                        $("a.show_expert_linkedin").html((expert.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
-                        $("a.show_expert_github").attr("href",(expert.github!=undefined?expert.github:"#"));
-                        $("a.show_expert_github").html((expert.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
-                        $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
-                        $(".show_expert_eng_speak").html(expert.english_speaking);
+                        var recruit = data.recruit;
+                        var age = "-";
 
-                        $(".show_expert_eng_write").html(expert.english_writing);
-                        $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+                        if(recruit.birthday){
+                            var date = new Date(recruit.birthday).getTime();
+                            var now = Date.now();
 
-                        $(".show_expert_eng_read").html(expert.english_reading);
-                        $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                            var age_time = new Date(now-date);
+                            age = Math.abs(age_time.getUTCFullYear() - 1970);
+                        }
+                        
+                        $(".show_expert_name").html(recruit.fullname)
+                        $(".show_expert_email").html(recruit.email_address);
+                        $(".show_expert_age").html(age);
+                        $(".show_expert_phone").html(recruit.phone_number);
+                        $(".show_expert_availability").html(recruit.availability);
+                        $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$') + ' ' +(recruit.salary!=null?recruit.salary:0));
+                        $(".show_expert_fce").html(recruit.fce_overall);
+                        $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+                        $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                        $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+                        $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                        $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+                        $(".show_expert_eng_speak").html(recruit.english_speaking);
+
+                        $(".show_expert_eng_write").html(recruit.english_writing);
+                        $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
+
+                        $(".show_expert_eng_read").html(recruit.english_reading);
+                        $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
+                        
                         var html='';
-                        if(data.audios){
-                            for (let index = 0; index < data.audios.length; index++) {
-                                html+='<div class="col-12"><div class="expert-audio" data-audio="'+index+'">';
-                                html+='<p style="color:white; text-align: left">Audio '+(index+1)+': '+data.audios[index].type+'</p>'
+                        if(recruit.audio_path){
+                                html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                                html+='<p style="color:white; text-align: left">Audio 1</p>'
                                 html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                                html += '<audio id="info-audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
+                                html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
                                 html+='</div></div>';
-                            }
                         }
                         $("#list-expert-audios>.row").html(html);
+
                         var adv_tech = [];
                         var int_tech = [];
                         var bsc_tech = [];
@@ -809,23 +820,22 @@
                         $(".show_expert_adv_tech").html(adv_tech);
                         $(".show_expert_int_tech").html(int_tech);
                         $(".show_expert_bsc_tech").html(bsc_tech);
-                        $(".btn-prev-expert").attr("data-id",expert.id);
-                        $(".btn-next-expert").attr("data-id",expert.id);
+                        $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+                        $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
 
                         $("#info-expert").modal();
                     }
                 });
             });
 
-            // =================== DELETE
-
+            //==========DELETE EXPERT DB AND TABLE ROW
             $("table tbody").on('click', 'a.btn-delete-expert' , function(ev){
                 ev.preventDefault();
                 var id = $(this).data("id");
                 $.ajax({
                     type:'POST',
-                    url: '{{ route("experts.deleteExpert") }}',
-                    data: {expertId : id},
+                    url: '{{ route("experts.btn.delete") }}',
+                    data: {recruitId : id},
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -836,70 +846,11 @@
                     }
                 });
             });
-            // =============== POSITIONS
 
-            $("table tbody").on('click', 'a.btn-position' , function(ev){
-                ev.preventDefault();
-                var id = $(this).data("id");
-                $('#expertId-p').val('');
-                $.ajax({
-                    type:'POST',
-                    url: '{{ route("positions.enabled") }}',
-                    data: {expertId : id},
-                    headers: {
-                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success:function(data){
-
-                        $('#expertId-p').val(id);
-                        $("#list-positions").html('');
-                        var html = '';
-                        for (let index = 0; index < data.length; index++) {
-                            html += '<li class="list-group-item d-flex justify-content-between align-items-center">:name <div ><input type="checkbox" name="positions[]" value="'+data[index].id+'" '+ (data[index].active == 1? 'checked' : '') +' ></div></li>';
-                            html = html.replace(':name' , data[index].name);
-                        }
-                        $("#list-positions").html(html);
-                        $("#positionsExpert").modal();
-                    }
-                });
-                
-            });
-
-            // =============== LIST INTERVIEWS
-
-            $("table tbody").on("click" , "a.btn-interviews" , function(ev){
-                ev.preventDefault();
-                var expertId = $(this).data("id");
-                var expertName = $(this).data("name");
-                
-                $("#interview_expert_name").html( expertName );
-                $("#interview_expert_id").val(expertId);
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route("interviews.recruiterlog") }}',
-                    data: {expertId : expertId },
-                    headers: {
-                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success:function(interviews){
-                        console.log(interviews);
-                        var html = '';
-                        for (let index = 0; index < interviews.length; index++) {
-                            html += card_interviews( interviews[index] )
-                        }
-                        $("#list-interviews").html(html);
-                        $("#interviews-expert").modal();
-                    }
-                });
-                
-            });
-
-            // ========================================
+            //==========UPDATE EXPERT SELECTION VALUE
             $("table tbody").on('click' , 'a.btn-selection' , function(ev){
                 ev.preventDefault();
-                var expertId = $(this).attr("data-id");
+                var recruitId = $(this).attr("data-id");
                 var expertSelection = $(this).attr("data-selection");
                 var $this = $(this)
                 var select = 1;
@@ -912,8 +863,8 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route("experts.selection") }}',
-                    data: {expertId : expertId , selection: select },
+                    url: '{{ route("experts.btn.selection") }}',
+                    data: {recruitId : recruitId , selection: select },
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -934,160 +885,43 @@
                 });
             });
             
+            //==========OPEN AUDIO MODAL WITH SOURCE
             $("table tbody").on('click' , 'a.btn-fce' , function(ev){
                 ev.preventDefault();
-                var expertId = $(this).attr("data-id");
+                var recruitId = $(this).attr("data-id");
                 var index = $(this).attr("data-index");
                 $("input:radio").prop('checked', false);
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route("experts.fce") }}',
-                    data: {expertId : expertId },
+                    url: '{{ route("experts.btn.audio") }}',
+                    data: {recruitId : recruitId },
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
-                        console.log(data, "###########");
-
                         $("#list-audios tbody").html('');
                         var html='';
-                        $("#audio_expert_name").html( data.fces.fullname );
-                        if(data.audios){
-                            for (let index = 0; index < data.audios.length; index++) {
-                                html += '<tr data-audio="'+index+'">';
-                                // html += '<td>'+data.audios[index].position_name+'</td>';
-                                // html += '<td>'+data.audios[index].type+'</td>';
-                                html += '<td> <p>'+data.audios[index].position_name+' - '+data.audios[index].type+'</p>';
-                                html += '<a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="2">x2.0</a>'
-                                html += '<audio id="audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
-                                html += '</tr>';
-                            }
+
+                        if(data.recruit){
+                            html += '<tr data-audio="'+index+'">';
+                            html += '<td style="text-align: center;">';
+                            html += '<a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="2">x2.0</a>'
+                            html += '<audio id="audio-player-'+index+'" src="'+data.recruit[0].audio_path+'" controls></audio></td>';
+                            html += '</tr>';
                         }
 
                         $("#list-audios tbody").html(html);
 
-                        $("input:radio[name=grammatical_forms]").filter('[value='+data.fces.grammatical_forms+']').prop('checked', true);
-                        $("input:radio[name=vocabulary]").filter('[value='+data.fces.vocabulary+']').prop('checked', true);
-                        $("input:radio[name=stretch_language]").filter('[value='+data.fces.stretch_language+']').prop('checked', true);
-                        $("input:radio[name=cohesive_devices]").filter('[value='+data.fces.cohesive_devices+']').prop('checked', true);
-                        $("input:radio[name=hesitation]").filter('[value='+data.fces.hesitation+']').prop('checked', true);
-                        $("input:radio[name=organizations_ideas]").filter('[value='+data.fces.organizations_ideas+']').prop('checked', true);
-                        $("input:radio[name=intonation]").filter('[value='+data.fces.intonation+']').prop('checked', true);
-                        $("input:radio[name=phonological_features]").filter('[value='+data.fces.phonological_features+']').prop('checked', true);
-                        $("input:radio[name=intelligible]").filter('[value='+data.fces.intelligible+']').prop('checked', true);
-                        $("input:radio[name=interaction]").filter('[value='+data.fces.interaction+']').prop('checked', true);
-
-                        // $('#fce_grammar_vocabulary').val(data.fces.fce_grammar_vocabulary)
-                        // $('#fce_discourse_management').val(data.fces.fce_discourse_management)
-                        // $('#fce_pronunciation').val(data.fces.fce_pronunciation)
-                        // $('#fce_interactive_communication').val(data.fces.fce_interactive_communication)
-                        // $('#fce_total').val(data.fces.fce_total)
-                        // $('#fce_overall').val(data.fces.fce_overall)
-                        // $('#fce_comments').val(data.fces.fce_comments)
-
-                        $("#error-fce-form").hide();
-
-                        $('#expert_index').val(index)
-                        $('#expert_id').val(expertId)
-
-                        $("#fce_expert_name").html(data.fces.fullname);
+                        $("#fce_expert_name").html(data.recruit[0].fullname);
                         
-                        $(".tab-fce").removeClass("fce-active");
-                        $(".tab-fce[data-tab='1']").addClass("fce-active");
-                        $("#prev-fce").attr("data-fce", 1).hide();
-                        $("#next-fce").attr("data-fce", 1).show();
-                        $("#save-fce").hide();
                         $('#fceExpert').modal();
                     }
                 });
             });
-
-            $('.total-fce').bind('keyup mouseup'  , function(){
-                console.log("ddd");
-                total = 0
-                $.each( $('.total-fce') , function(i, value){
-                    total += parseFloat($(value).val())
-                });
-                total = total.toFixed(2)
-                $("#fce_total").val(total)
-
-            });
         }
 
-        $("#prev-fce").on('click' , function(ev){
-            var tab = $(this).attr("data-fce");
-            $("#next-fce").attr("data-fce", tab);
-            $(".tab-fce").removeClass("fce-active");
-            var max = $(".tab-fce").length;
-            
-            $(".tab-fce[data-tab='"+tab+"']").addClass("fce-active");
-            if(tab == 1){
-                $(this).hide();
-            }else{
-                
-                $("#next-fce").show();
-            }
-            tab = parseInt(tab) - 1;
-            $(this).attr("data-fce", tab);
-            $("#save-fce").hide();
-        });
-
-        $("#next-fce").on('click', function(ev){
-            var tab = $(this).attr("data-fce");
-            $("#prev-fce").attr("data-fce", tab);
-            tab = parseInt(tab) + 1;
-            $(".tab-fce").removeClass("fce-active");
-            
-            $(".tab-fce[data-tab='"+tab+"']").addClass("fce-active");
-            var max = $(".tab-fce").length;
-            if(tab == max){
-                $(this).hide();
-                $("#save-fce").show();
-            }else{
-                $("#save-fce").hide();
-                $("#prev-fce").show();
-            }
-            $(this).attr("data-fce", tab);
-
-            
-        })
-
-        $("#save-fce").on('click', function(){
-            var expertId = $("#expert_id").val();
-            var index = $("#expert_index").val();
-            // var fce_overall = $("#fce_overall").val();
-            // var fce_total = $("#fce_total").val();
-            $("#error-fce-form").hide();
-            var max = $('#form_fce').serializeArray();
-            var count = $(".tab-fce").length;
-            console.log(count , max);
-            if( max.length < (count + 1) ){
-                $("#error-fce-form").show();
-                return true;
-            }
-            
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("experts.fce.save") }}',
-                data: $('#form_fce').serialize(),
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-
-                    $("#list-experts").bootstrapTable('updateRow', {
-                        index: index,
-                        row: {
-                            fce_overall : data.fce_overall == '' ? '-' : '<span title="'+data.fce_total+'" >'+data.fce_overall+'</span>'
-                        }
-                    });
-                    $("#fceExpert").modal('hide');
-                }
-            });
-        })
-
+        //==========SELECTED BUTTON FUNCTION
         $("#change-selected").on('click' , function(ev){
             switch( parseInt( $("#selection").val() ) ){
                 case 1: $("#selection").val(2);break;
@@ -1109,7 +943,7 @@
             search_name = $('#search-column-name').val();
             a_basic_level = $(".search-level.basic").val();
             a_intermediate_level = $(".search-level.intermediate").val();
-            a_advanced_level = $(".search-level.advanced").val(); 
+            a_advanced_level = $(".search-level.advanced").val();
             window.history.replaceState({
                 edwin: "Fulltimeforce"
                 }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
@@ -1128,52 +962,7 @@
             location.reload();
         })
 
-        $('table').on('click', '.btn-list-audio', function(ev){
-            ev.preventDefault();
-            var expert_id = $(this).data("id");
-            var expert_name = $(this).data("name");
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("expert.audioslog") }}',
-                data: {id : expert_id },
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(list_audios){
-
-                    $("#list-audios tbody").html('');
-                    var html='';
-                    $("#audio_expert_name").html(expert_name);
-                    for (let index = 0; index < list_audios.length; index++) {
-                        html += '<tr data-audio="'+index+'">';
-                        // html += '<td>'+list_audios[index].position_name+'</td>';
-                        // html += '<td>'+list_audios[index].type+'</td>';
-                        html += '<td> <p>'+list_audios[index].position_name+' - '+list_audios[index].type+'</p>';
-                        html += '<a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light speed-audio" data-speed="2">x2.0</a>'
-                        html += '<audio id="audio-player-'+index+'" src="'+list_audios[index].audio+'" controls></audio></td>';
-                        html += '</tr>';
-                    }
-
-                    $("#list-audios tbody").html(html);
-                    // $("#audiosModal").modal({
-                    //     backdrop: 'static'
-                    // });
-                    $("#audio-bublle").show("slow")
-                }
-            });
-            
-        })
-        // $('#audiosModal').on('hidden.bs.modal', function (e) {
-        //     $("#list-audios tbody").html('');
-        // })
-
-        $(".section-audio .close-audio").on('click' , function(){
-            $("#audio-bublle").hide("slow" , function(){
-                $("#list-audios tbody").html('');
-            })
-        })
-
+        //==========AUDIO SPEED BUTTON FUNCTION
         $("body").on('click' , 'a.speed-audio' , function(ev){
             ev.preventDefault();
             var speed = $(this).data("speed");
@@ -1182,159 +971,117 @@
             document.getElementById("audio-player-"+index).playbackRate = parseFloat(speed);
         })
 
-        function card_interviews( _interview ){
-            var html = '';
-            html += '<div class="card mb-4">';
-            html += '    <div class="card-header">';
-            html += '        <div class="row">';
-            html += '            <div class="col">';
-            html += '                <h4 class="text-uppercase txt-type"><span>'+( (_interview.position == null)? "GENERAL" : _interview.position.name )+'</span> - <span>'+_interview.date+'</span></h4>';
-            html += '            </div>';
-            html += '        </div>';
-            html += '    </div>';
-            html += '    <div class="card-body">';
-            for (let index = 0; index < _interview.notes.length; index++) {
-                
-                html += '<div class="card mb-3">';
-                html += '    <div class="card-header">';
-                html += '        <div class="row">';
-                var _class = '';
-                switch( _interview.notes[index].type ){
-                    case 'commercial': 
-                    case 'technique': 
-                    case 'psychology': 
-                        _class =  _interview.notes[index].type_value == null ? 'secondary' : (_interview.notes[index].type_value == 'approved' ? 'success' : ( _interview.notes[index].type_value == 'not approved' ? 'danger' : 'warning' ) ) 
-                    break;
-                    case 'cv': 
-                    case 'experience': 
-                    case 'communication': 
-                    case 'english': 
-                        _class =  _interview.notes[index].type_value == null ? 'secondary' : (_interview.notes[index].type_value == 'approved' ? 'success' : 'danger') 
-                    break;
-                }
-                html += '            <div class="col">';
-                html += '                <span class="text-uppercase badge badge-'+_class+'">'+ _interview.notes[index].type +'</span>';
-                html += '            </div>';
-                html += '        </div>';
-                html += '    </div>';
-                
-                html += '    <div class="card-body">';
-                html += '        <p class="card-text txt-description ">'+ _interview.notes[index].note +'</p>';
-                html += '    </div>';
-                html += '</div>';
-            }
-                    
-            html += '    </div>';
-            html += '</div>';
-            return html;
-        }
-
-        var loading = false;
-        var scroll_previus = 0;
-        var _page = 1;
-        
-        // =============================== LAZY LOADING SCROLL ================================= 
-
-        $("#list-experts").on('scroll-body.bs.table' , function(e, arg1){
-            console.log(e);
-            
-            var _height = $(e.target).height();
-            var _positionScroll = $("#list-experts").bootstrapTable('getScrollPosition');
-            var _diff = 491;
-
-        });
-
-        // =========================== INFORMATION MODAL NAVIGATION ==========================
-
+        //==========SHOW EXPERT - PREV BUTTON FUNCTION
         $("#info-expert").on("click",".btn-prev-expert",function(ev){
           ev.preventDefault();
           var id = $(this).attr("data-id");
+          var index = $(this).attr("data-index");
+          index = parseInt(index) - 1;
           var prev = getPrevId(id);
           if(prev != "-"){
-            loadModalExpert(prev);
+            loadModalExpert(prev, index);
           }
         });
 
+        //==========SHOW EXPERT - NEXT BUTTON FUNCTION
         $("#info-expert").on("click",".btn-next-expert",function(ev){
           ev.preventDefault();
           var id = $(this).attr("data-id");
+          var index = $(this).attr("data-index");
+          index = parseInt(index) + 1;
           var next = getNextId(id);
           if(next!="-"){
-            loadModalExpert(next);
+            loadModalExpert(next, index);
           }
         });
 
+        //==========SHOW EXPERT - PREV BUTTON FUNCTION (ARROW)
         $("#info-expert").on("keydown",function(ev){
-          // ev.preventDefault();
           if(ev.keyCode == 37){
             var id = $(".btn-prev-expert").attr("data-id");
+            var index = $(".btn-prev-expert").attr("data-index");
+            index = parseInt(index) - 1;
             var prev = getPrevId(id);
             if(prev != "-"){
-              loadModalExpert(prev);
+              loadModalExpert(prev, index);
             }
           }
         });
+
+        //==========SHOW EXPERT - NEXT BUTTON FUNCTION (ARROW)
         $("#info-expert").on("keydown",function(ev){
-          // ev.preventDefault();
           if(ev.keyCode == 39){
             var id = $(".btn-next-expert").attr("data-id");
+            var index = $(".btn-next-expert").attr("data-index");
+            index = parseInt(index) + 1;
             var next = getNextId(id);
             if(next!="-"){
-              loadModalExpert(next);
+              loadModalExpert(next, index);
             }
           }      
         });
 
+        //==========NEXT/PREV MODAL - AUDIO SPEED BUTTON FUNCTION
         $("#info-expert").on('click' , 'a.info-speed-audio' , function(ev){
             ev.preventDefault();
             var speed = $(this).data("speed");
-            var index = $(this).parent().data("audio");
+            var index = $(this).parent().data("index");
             console.log( parseFloat( speed ) , speed )
             document.getElementById("info-audio-player-"+index).playbackRate = parseFloat(speed);
         })
 
-        function loadModalExpert(id){
+        //==========NEXT/PREV MODAL - LOAD EXPERT INFORMATION FUNCTION
+        function loadModalExpert(id, index){
           $.ajax({
             type:"POST",
-            url: '{{ route("experts.show") }}',
+            url: '{{ route("experts.btn.show") }}',
             data:{id: id},
             headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(data){
-                var expert = data.expert;
-                // set data
-                $(".show_expert_name").html(expert.fullname)
-                $(".show_expert_email").html(expert.email_address);
-                $(".show_expert_age").html(expert.age);
-                $(".show_expert_phone").html(expert.phone);
-                $(".show_expert_availability").html(expert.availability);
-                $(".show_expert_salary").html((expert.type_money == 'sol' ? 'S/' : '$')+' '+(expert.salary!=null?expert.salary:0));
-                $(".show_expert_fce").html(expert.fce_overall);
-                $("a.show_expert_linkedin").attr("href",(expert.linkedin!=undefined?expert.linkedin:"#"));
-                $("a.show_expert_linkedin").html((expert.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
-                $("a.show_expert_github").attr("href",(expert.github!=undefined?expert.github:"#"));
-                $("a.show_expert_github").html((expert.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
-                $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
-                $(".show_expert_eng_speak").html(expert.english_speaking);
+                var recruit = data.recruit;
+                var age = "-";
 
-                $(".show_expert_eng_write").html(expert.english_writing);
-                $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+                if(recruit.birthday){
+                    var date = new Date(recruit.birthday).getTime();
+                    var now = Date.now();
 
-                $(".show_expert_eng_read").html(expert.english_reading);
-                $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                    var age_time = new Date(now-date);
+                    age = Math.abs(age_time.getUTCFullYear() - 1970);
+                }
+
+                $(".show_expert_name").html(recruit.fullname)
+                $(".show_expert_email").html(recruit.email_address);
+                $(".show_expert_age").html(age);
+                $(".show_expert_phone").html(recruit.phone_number);
+                $(".show_expert_availability").html(recruit.availability);
+                $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$')+' '+(recruit.salary!=null?recruit.salary:0));
+                $(".show_expert_fce").html(recruit.fce_overall);
+                $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+                $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+                $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+                $(".show_expert_eng_speak").html(recruit.english_speaking);
+
+                $(".show_expert_eng_write").html(recruit.english_writing);
+                $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
+
+                $(".show_expert_eng_read").html(recruit.english_reading);
+                $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
+                
                 var html='';
-                if(data.audios){
-                    for (let index = 0; index < data.audios.length; index++) {
-                        html+='<div class="col-12"><div class="expert-audio" data-audio="'+index+'">';
-                        html+='<p style="color:white; text-align: left">Audio '+(index+1)+': '+data.audios[index].type+'</p>'
+                if(recruit.audio_path){
+                        html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                        html+='<p style="color:white; text-align: left">Audio 1</p>'
                         html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                        html += '<audio id="info-audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
+                        html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
                         html+='</div></div>';
-                    }
                 }
                 $("#list-expert-audios>.row").html(html);
+
                 var adv_tech = [];
                 var int_tech = [];
                 var bsc_tech = [];
@@ -1353,11 +1100,13 @@
                 $(".show_expert_adv_tech").html(adv_tech);
                 $(".show_expert_int_tech").html(int_tech);
                 $(".show_expert_bsc_tech").html(bsc_tech);
-                $(".btn-prev-expert").attr("data-id",expert.id);
-                $(".btn-next-expert").attr("data-id",expert.id);
+                $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+                $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
             }
           });
         }
+
+        //==========GET NEXT ID AUXILIARY FUNCTION
         function getNextId(id){
           var currIdFound = false;
           for (var i = 0; i < _idMap.length; i++) {
@@ -1370,9 +1119,9 @@
           }
           return "-";
         }
+
+        //==========GET PREV ID AUXILIARY FUNCTION
         function getPrevId(id){
-          console.log(id);
-          console.log(_idMap.length);
           for (var i = 0; i < _idMap.length; i++) {
             if (_idMap[i]==id && _idMap[0] != id) {
               i--;
@@ -1385,6 +1134,7 @@
           }
         }
 
+        //==========WINDOW SCROLL FUNCTION
         $(window).on('scroll', function (e){
             console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
             if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -1409,7 +1159,7 @@
                     $(".lds-ring").show();
                     $.ajax({
                         type:'GET',
-                        url: '{{ route("expert.listtbootstrap") }}',
+                        url: '{{ route("experts.list.bootstrap") }}',
                         data: $.param(data),
                         headers: {
                             'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
@@ -1433,10 +1183,10 @@
             }
         });
 
-        // ================================================================================
         $("#audio").prop( 'checked' , false )
+
+        //==========SET SEARCH PAGE PROPERTIES
         @if( $audio )
-            
             $("#audio").prop( 'checked' , true )
         @endif
 
@@ -1460,30 +1210,27 @@
             ajax_experts( [] , [] , [] , '' , 1);
         @endif
 
+        //==========GET SELECT TECHNOLOGIES DATA
         $(".search-level").select2({
             ajax: {
-                url: "{{ route('expert.technologies') }}",
+                url: "{{ route('experts.select.technologies') }}",
                 dataType: 'json',
                 data: function (params) {
                     var query = {
                         search: params.term,
                     }
-                    // Query parameters will be ?search=[term]&type=public
                     return query;
                 },
                 processResults: function (data) {
-                    // Transforms the top-level key of the response object from 'items' to 'results'
                     return {
                         results: data
                     };
                 }
-
             }
         });
         
-        
+        //==========GENERATE URL FUNCTION
         $('#url-generate').on('click', function (ev) {
-
             ev.preventDefault();
             $.ajax({
                 type:'GET',
@@ -1509,12 +1256,12 @@
 
                     var success = document.execCommand('copy')
                     if(success){
-                        $(".alert").slideDown(200, function() {
+                        $(".alert-dismissible").slideDown(200, function() {
                             
                         });
                     }
                     setTimeout(() => {
-                        $(".alert").slideUp(500, function() {
+                        $(".alert-dismissible").slideUp(500, function() {
                             document.body.removeChild(el);
                         });
                     }, 4000);  
@@ -1522,62 +1269,121 @@
             });
         });
 
-        var a_basic_level = [];
-        var a_intermediate_level = [];
-        var a_advanced_level = [];
-
-        var is_jqgrid = false;
-
-
+        //==========SEARCH AND SAVE SEARCH PROFILE FUNCTION
         $('#search').on('click' , function(){
+            search       = true;
+            basic        = $(".search-level.basic").val().join(",");
+            intermediate = $(".search-level.intermediate").val().join(",");
+            advanced     = $(".search-level.advanced").val().join(",");
+            audio        = $("#audio").is(":checked");
+            selection    = $("#selection").val();
+            name         = $('#search-column-name').val();
+
+            save_search = $("#save-search").is(":checked");
+
+            search_name           = $("#save-search-name").val();
+            search_user_level     = $("#save-search-level").val();
+            search_notify_options = $("#save_search_notify").val().join(",");
             
-            search_name = $('#search-column-name').val();
-            a_basic_level = $(".search-level.basic").val();
-            a_intermediate_level = $(".search-level.intermediate").val();
-            a_advanced_level = $(".search-level.advanced").val(); 
-            window.history.replaceState({
-                edwin: "Fulltimeforce"
-                }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
-                    {   search : true , 
-                        basic: a_basic_level.join(","),
-                        intermediate: a_intermediate_level.join(","),
-                        advanced: a_advanced_level.join(","),
-                        audio: $("#audio").is(":checked"),
-                        selection : $("#selection").val(),
-                        name: search_name
-                    }
-                    )
-                );
-            _page = 1;
-            _count_records = 0;
-            location.reload();
-            // ajax_experts( a_basic_level, a_intermediate_level , a_advanced_level , search_name , 1);
+            $.ajax({
+                type:'POST',
+                url: '{{ route("recruit.store.search.profile") }}',
+                data: {search: search,
+                       basic: basic,
+                       intermediate: intermediate,
+                       advanced: advanced,
+                       audio: audio,
+                       selection: selection,
+                       name: name,
+                       save_search: save_search,
+                       search_notify_options: search_notify_options,
+                       search_user_level: search_user_level,
+                       search_name: search_name
+                },
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+
+                    window.history.replaceState(
+                        {edwin: "Fulltimeforce"}, 
+                        "Page" , "{{ route('experts.home') }}" + '?'+ $.param({   
+                            search : search , 
+                            basic: basic,
+                            intermediate: intermediate,
+                            advanced: advanced,
+                            audio: audio,
+                            selection: selection,
+                            name: name
+                        })
+                    );
+                    _page = 1;
+                    _count_records = 0;
+                    location.reload();
+
+                }
+            });
             
         });
 
+        //==========SEARCH AND SAVE SEARCH PROFILE FUNCTION USING ENTER KEY
         $("#search-column-name").keypress(function(event){
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if(keycode == '13'){
-                search_name = $('#search-column-name').val();
-                a_basic_level = $(".search-level.basic").val();
-                a_intermediate_level = $(".search-level.intermediate").val();
-                a_advanced_level = $(".search-level.advanced").val(); 
-                window.history.replaceState({
-                    edwin: "Fulltimeforce"
-                    }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
-                        {   search : true , 
-                            basic: a_basic_level.join(","),
-                            intermediate: a_intermediate_level.join(","),
-                            advanced: a_advanced_level.join(","),
-                            audio: $("#audio").is(":checked"),
-                            selection : $("#selection").val(),
-                            name: search_name
-                        }
-                        )
-                    );
-                _page = 1;
-                _count_records = 0;
-                location.reload();
+                search       = true;
+                basic        = $(".search-level.basic").val().join(",");
+                intermediate = $(".search-level.intermediate").val().join(",");
+                advanced     = $(".search-level.advanced").val().join(",");
+                audio        = $("#audio").is(":checked");
+                selection    = $("#selection").val();
+                name         = $('#search-column-name').val();
+
+                save_search = $("#save-search").is(":checked");
+
+                search_name           = $("#save-search-name").val();
+                search_user_level     = $("#save-search-level").val();
+                search_notify_options = $("#save_search_notify").val().join(",");
+
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("recruit.store.search.profile") }}',
+                    data: {search: search,
+                        basic: basic,
+                        intermediate: intermediate,
+                        advanced: advanced,
+                        audio: audio,
+                        selection: selection,
+                        name: name,
+                        save_search: save_search,
+                        search_notify_options: search_notify_options,
+                        search_user_level: search_user_level,
+                        search_name: search_name
+                    },
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+
+                        window.history.replaceState(
+                            {edwin: "Fulltimeforce"}, 
+                            "Page" , "{{ route('experts.home') }}" + '?'+ $.param({   
+                                search : search , 
+                                basic: basic,
+                                intermediate: intermediate,
+                                advanced: advanced,
+                                audio: audio,
+                                selection: selection,
+                                name: name
+                            })
+                        );
+                        _page = 1;
+                        _count_records = 0;
+                        location.reload();
+
+                    }
+                });
             }
         })
 
@@ -1591,76 +1397,122 @@
                 }, ms || 0);
             };
         }
+    });
+ 
+</script>  
 
-        // ===================== SHOW POSITIONS =====================
+<script type="text/javascript">
 
-        $("#save-positions").on('click' , function(ev){
-            
-            var positionsIDs = [];
-            $('#form-positions input[type="checkbox"]:checked').each( function(){
-                positionsIDs.push($(this).val());
-            } );
-            var id = $('#expertId-p').val();
+    //==========SAVE SEARCH PROFILE CHECKBOX FUNCTION
+    $("#save-search").on('click' , function(ev){
+        var checked_value = $(this).is(":checked");
+
+        if(checked_value){
+            $("#save-search-name").parent().addClass("d-inline-block");
+            $("#save-search-level").parent().addClass("d-inline-block");
+            $("#save_search_notify").parent().addClass("d-inline-block");
+
+            $("#save-search-name").parent().removeClass("d-none");
+            $("#save-search-level").parent().removeClass("d-none");
+            $("#save_search_notify").parent().removeClass("d-none");
+
+            $('.save-search-notify').select2({
+                placeholder: " Search Notify Options",
+            });
+        }else{
+            $("#save-search-name").parent().removeClass("d-inline-block");
+            $("#save-search-level").parent().removeClass("d-inline-block");
+            $("#save_search_notify").parent().removeClass("d-inline-block");
+
+            $("#save-search-name").parent().addClass("d-none");
+            $("#save-search-level").parent().addClass("d-none");
+            $("#save_search_notify").parent().addClass("d-none");
+        }
+    });
+
+    //==========LOAD SEARCH PROFILE
+    $("#load-search-profile").on('change' , function(ev){
+        var selectId = $(this).val();
+
+        if(selectId){
 
             $.ajax({
                 type:'POST',
-                url: '{{ route("positions.experts.attach") }}',
-                data: {expertId : id, positions : positionsIDs},
+                url: '{{ route("recruit.load.search.profile") }}',
+                data: {selectId : selectId},
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
+                    let _data = JSON.parse(data);
+                    window.history.replaceState(
+                        {edwin: "Fulltimeforce"}, 
+                        "Page" , "{{ route('experts.home') }}" + '?'+ $.param({   
+                            search : _data.search_profile.search , 
+                            basic: _data.search_profile.basic,
+                            intermediate: _data.search_profile.intermediate,
+                            advanced: _data.search_profile.advanced,
+                            audio: _data.search_profile.audio,
+                            selection: _data.search_profile.selection,
+                            name: _data.search_profile.name,
+                            profile: selectId
+                        })
+                    );
+                    _page = 1;
+                    _count_records = 0;
+                    location.reload();                    
+                }
+            });
+        }
+    });
 
-                    $("#positionsExpert").modal('hide');
-                    
+    //==========BULK ACTIONS BUTTON
+    $("#position-bulk-recruit").on('click' , function(){
+        var action = $('#position-bulk-action').val();
+        var position_name = $('#position-bulk-action option:selected').text();
+        var expert_id_array = [];
+        var expert_name_array = [];
+
+        var checked = $('input[name="btSelectItem"]:checked');
+
+        if(checked.length>0){
+            checked.each(function (){
+                var checkbox_index = $(this).data("index");
+                var expert_id       = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("id");
+                var expert_fullname = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("fullname");
+
+                if(!expert_id_array.includes(expert_id)){
+                    expert_id_array.push(expert_id)    
+                }
+
+                if(!expert_name_array.includes(expert_fullname)){
+                    expert_name_array.push(expert_fullname)
                 }
             });
 
-        });
-
-        var template_card_interview = $('#list-interviews').html();
-        $('#list-interviews').html('');
-
-        $('table').on('click' , '.copy-link' , function(ev){
-            var data = $(this).data("info");
-            ev.preventDefault();
-            var el = document.createElement("textarea");
-            el.value = data;
-            el.style.top = '0';
-            el.setSelectionRange(0, 99999);
-            el.setAttribute('readonly', ''); 
-            this.appendChild(el);
-            el.focus();
-            el.select();
-            var success = document.execCommand('copy');
-            console.log(success, "dsdsdsdsdsdsdsdsdsds");
-            this.removeChild(el);
-
-        })
-
-        $('#interview_date').datetimepicker({
-            format: "{{ config('app.date_format_javascript') }}",
-            locale: "en",
-            defaultDate : new Date()
-        });
-
-        $("#clear-interview").on('click' , function(){
-
-            $("#interview_type").val('');
-            $("#interview_date").val( moment().format("{{ config('app.date_format_javascript') }}") );
-            $("#about").val('');
-            $("#interview_description").val('');
-            $("#interview_result").prop('checked', false);
-            
-            $("#interview_id").val( '' );
-
-            $('#form-btn-edit').hide();
-            $('#form-btn-save').show();
-
-        });
+            $.ajax({
+                type:'POST',
+                url: "{{ route('recruit.position.bulk') }}",
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    action : action,
+                    expert_id_array: expert_id_array,
+                    expert_name_array: expert_name_array,
+                    position_name: position_name,
+                },
+                success:function(data){
+                    location.reload();
+                }
+            });
+        }else{
+            alert('Please, select at least 1 EXPERT to continue.');
+        }
     });
- 
-</script>   
+    
+</script>  
 
 @endsection

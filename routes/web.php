@@ -19,7 +19,6 @@
 ============================== ROUTES PAGE ============================================
 */ 
 Route::resource('experts','ExpertController');
-Route::get('/experts', 'ExpertController@index')->name('experts.home');
 
 Route::get('/expert/confirmation', 'ExpertController@confirmation')->name('experts.confirmation');
 
@@ -54,6 +53,133 @@ Route::post('/upload/drive','ExpertController@uploadDrive')->name('experts.uploa
 Route::get('expert/tech','ExpertController@listTech')->name('experts.tech.menu');
 Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('experts.tech.list');
 // Route::get('expert/tech/show','ExpertController@showTech')->name('experts.tech.show');
+
+//===================================================================================================================================
+//====================================================SALES METHODS==================================================================
+//===================================================================================================================================
+//METODOS SALES
+Route::get('sales','SaleController@index')->name('sales.menu');
+Route::get('sales/bootstrap','SaleController@salesBootstrap')->name('sales.list');
+Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
+
+//===================================================================================================================================
+//=================================================POSTULANTS METHODS================================================================
+//===================================================================================================================================
+
+Route::post('recruits/pasar/filas','RecruitController@pasarFilas')->name('recruit.pasarFilas');
+
+//METODOS POSTULANTES
+Route::get('recruits','RecruitController@index')->name('recruit.menu');
+Route::get('recruits/search/bootstrap','RecruitController@recruitsSearchBootstrap')->name('recruit.searchlist');
+Route::get('recruits/registered/bootstrap','RecruitController@recruitsRegisteredBootstrap')->name('recruit.registeredlist');
+Route::post('recruits/save','RecruitController@saveRecruit')->name("recruit.save");
+Route::post('recruits/apply','RecruitController@applyRecruit')->name("recruit.apply");
+Route::post('recruits/evaluate/outstanding','RecruitController@recruitsEvaluateOutstanding')->name('recruit.postulant.outstanding');
+
+Route::get('/recruits/tech/{recruitId}','RecruitController@recruitTech')->name('recruit.tech')->middleware('signed');
+Route::get('/recruits/tech/signed/{recruitId}','RecruitController@recruitTechSigned')->name('recruit.tech.signed');
+
+//METODOS PERFILES DESTACADOS
+Route::get('recruits/outstanding','RecruitController@outstanding')->name('recruit.outstanding');
+Route::post('recruits/evaluate/call','RecruitController@recruitsEvaluateCall')->name('recruit.postulant.call');
+
+//METODOS PRE-SELECCIONADOS
+Route::get('recruits/preselected','RecruitController@preselected')->name('recruit.preselected');
+Route::post('recruits/evaluate/audio','RecruitController@recruitsEvaluateAudio')->name('recruit.postulant.audio');
+Route::post('recruits/upload/audio','RecruitController@uploadAudio')->name('recruit.postulant.upload.audio');
+Route::post('recruits/delete/audio','RecruitController@deleteAudio')->name('recruit.postulant.delete.audio');
+Route::post('recruits/evaluate/criteria','RecruitController@evaluateCriteria')->name('recruit.postulant.crit.evaluation');
+
+//METODOS EVALUADOS SOFT SKILLS
+Route::get('recruits/softskills','RecruitController@softskills')->name('recruit.softskills');
+Route::post('recruits/evaluate/evaluation','RecruitController@recruitsEvaluateEvaluation')->name('recruit.postulant.evaluation');
+
+//METODOS SELECCIONADOS
+Route::get('recruits/selected','RecruitController@selected')->name('recruit.selected');
+
+//METODOS GENERALES
+Route::get('recruits/bootstrap','RecruitController@recruitsBootstrap')->name('recruit.list');
+Route::get('recruits/{id}/edit','RecruitController@editRecruit')->name('recruit.postulant.edit');
+Route::post('recruits/{id}/update','RecruitController@updateRecruit')->name("recruit.update");
+Route::post('recruits/edit/get','RecruitController@getRecruit')->name('recruit.edit.get');
+Route::post('recruits/edit/change','RecruitController@changeRecruit')->name('recruit.edit.update');
+Route::post('recruits/delete','RecruitController@deleteRecruit')->name("recruit.postulant.delete");
+Route::post('recruits/save/link', 'RecruitController@save')->name('recruit.save.link');
+
+Route::post('recruits/bulk', 'RecruitController@bulkActions')->name('recruit.bulk');
+
+Route::post('recruits/upload/cv','RecruitController@uploadCV')->name('recruit.postulant.upload.cv');
+Route::post('recruits/delete/cv','RecruitController@deleteCV')->name('recruit.postulant.delete.cv');
+
+Route::get('recruits/{slug}','RecruitController@isSlug')->name('recruit.slug');
+Route::post('recruits/save/tech/qtn','RecruitController@saveRecruitTechQtn')->name('recruit.save.tech');
+
+Route::post('recruits/get/position/notes','RecruitController@getRecruitPositionNotes')->name('recruit.get.position.notes');
+Route::post('recruits/update/position/notes','RecruitController@updateRecruitPositionNotes')->name('recruit.update.position.notes');
+
+//===================================================================================================================================
+//====================================================FCE2 METHODS===================================================================
+//===================================================================================================================================
+//METODOS FCE2
+Route::get('recruits/show/fce','RecruitController@fce')->name('recruit.fce.menu');
+Route::get('recruits/fce/bootstrap','RecruitController@listFCEBootstrap')->name('recruit.fce.list');
+Route::post('recruits/fce/call','RecruitController@getRecruitForFce')->name('recruit.fce.call');
+Route::post('recruits/fce/save','RecruitController@saveRecruitFce')->name('recruit.fce.save');
+
+//===================================================================================================================================
+//===========================================ESPECIFIC RECRUITMENT METHODS===========================================================
+//===================================================================================================================================
+//METODOS ESPECIFIC RECRUITMENT
+Route::get('specific','EspecificpositionsController@index')->name('specific.menu');
+Route::get('specific/bootstrap','EspecificpositionsController@specificBootstrap')->name('specific.list');
+Route::get('specific/show/bootstrap','EspecificpositionsController@specificShowBootstrap')->name('specific.show.list');
+Route::get('specific/technologies','EspecificpositionsController@getTechnologies')->name('specific.technologies');
+Route::get('specific/create','EspecificpositionsController@createEspecificPosition')->name('specific.create');
+
+Route::get('specific/{id}/show','EspecificpositionsController@showApplicants')->name('specific.show.applicants');
+
+Route::get('specific/{id}/edit','EspecificpositionsController@editEspecificPosition')->name('specific.edit');
+Route::post('specific/add','EspecificpositionsController@addEspecificPosition')->name('specific.add');
+Route::post('specific/delete','EspecificpositionsController@deleteEspecificPosition')->name("specific.delete");
+Route::post('specific/{id}/update','EspecificpositionsController@updateEspecificPosition')->name("specific.update");
+Route::post('specific/apply','EspecificpositionsController@applyEspecificPosition')->name('specific.apply');
+
+//===================================================================================================================================
+//===========================================EXPERTS VIEW METHODS====================================================================
+//===================================================================================================================================
+//METHODS EXPERTS TABLE
+Route::get('experts', 'RecruitController@expertIndex')->name('experts.home');
+Route::get('experts/bootstrap/list','RecruitController@listExpertBootstrap')->name('experts.list.bootstrap');
+
+Route::post('experts/btn/audio','RecruitController@getExpertAudio')->name('experts.btn.audio');
+Route::post('experts/btn/selection','RecruitController@updateExpertSelection')->name('experts.btn.selection');
+Route::post('experts/btn/delete', 'RecruitController@deleteExpert')->name('experts.btn.delete');
+Route::post('experts/btn/how','RecruitController@showExpert')->name('experts.btn.show');
+Route::get('experts/select/technologies','RecruitController@getTechnologies')->name('experts.select.technologies');
+Route::get('experts/edit/{recruitId}','RecruitController@editExpert')->name('experts.btn.edit');
+Route::get('experts/edit/link/generate/{recruitId}','RecruitController@developerEdit')->name('experts.edit.form')->middleware('signed');
+Route::get('experts/edit/link/signed/{recruitId}','RecruitController@developerEditSigned')->name('experts.edit.form.signed');
+
+//===================================================================================================================================
+//===========================================EXPERTS EDIT VIEW METHODS====================================================================
+//===================================================================================================================================
+Route::post('experts/view/edit/update','RecruitController@updateExpert')->name('experts.view.edit.update');
+
+
+//===================================================================================================================================
+//=========================================POSTULANTS POSITION BULK ACTIONS==========================================================
+//===================================================================================================================================
+//METHODS SEARCH PROFILE AND NOTIFIERS
+Route::post('recruits/position/bulk','RecruitController@positionBulkAction')->name('recruit.position.bulk');
+
+//===================================================================================================================================
+//===========================================EXPERTS SEARCH PROFILE METHODS==========================================================
+//===================================================================================================================================
+//METHODS SEARCH PROFILE AND NOTIFIERS
+Route::post('recruits/store/search/profile','RecruitController@saveSearchProfile')->name('recruit.store.search.profile');
+Route::post('recruits/load/search/profile','RecruitController@loadSearchProfile')->name('recruit.load.search.profile');
+Route::post('recruits/load/toast/notifiers','RecruitController@loadToastNotifiers')->name('recruit.load.toast.notifiers');
+Route::post('recruits/delete/toast/notifiers','RecruitController@deleteToastNotifiers')->name('recruit.delete.toast.notifiers');
 
 /*
 ============================== ROUTES ACTION ============================================

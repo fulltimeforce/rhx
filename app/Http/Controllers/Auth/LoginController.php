@@ -53,7 +53,7 @@ class LoginController extends Controller
                 $page = route('experts.home');
                 break;
             case 'fce':
-                $page = route('experts.fce.menu');
+                $page = route('recruit.fce.menu');
                 break;
             case 'careers':
                 $page = RouteServiceProvider::HOME;
@@ -114,7 +114,7 @@ class LoginController extends Controller
                     $page = '/';
                     break;
                 case 'fce':
-                    $page = '/expert/fce';
+                    $page = '/recruits/show/fce';
                     break;
                 default:
                     $page = '/';
