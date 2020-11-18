@@ -61,7 +61,7 @@ class RecruitController extends Controller
                             
         //return view with values ( name search, positions, platforms, recruits menu option)
         return view('recruit.index')
-            ->with('s', $name )
+            ->with('search_name', $name )
             ->with([
                 'positions' => $positions, 
                 'platforms' => $platforms,
@@ -90,7 +90,7 @@ class RecruitController extends Controller
 
         //return view with values ( name search, recruits menu option)
         return view('recruit.outstanding')
-            ->with('s', $name )
+            ->with('search_name', $name )
             ->with([
                 'tab' => "outstanding",
                 'badge_qty' => count($badge_qty),
@@ -113,7 +113,7 @@ class RecruitController extends Controller
 
         //return view with values ( name search, recruits menu option)
         return view('recruit.preselected')
-            ->with('s', $name )
+            ->with('search_name', $name )
             ->with([
                 'tab' => "preselected",
                 'badge_qty' => count($badge_qty),
@@ -136,7 +136,7 @@ class RecruitController extends Controller
 
         //return view with values ( name search, recruits menu option)
         return view('recruit.softskills')
-            ->with('s', $name )
+            ->with('search_name', $name )
             ->with([
                 'tab' => "softskills",
                 'badge_qty' => count($badge_qty),
@@ -159,7 +159,7 @@ class RecruitController extends Controller
 
         //return view with values ( name search, recruits menu option)
         return view('recruit.selected')
-            ->with('s', $name )
+            ->with('search_name', $name )
             ->with([
                 'tab' => "selected",
                 'badge_qty' => count($badge_qty),
@@ -363,7 +363,11 @@ class RecruitController extends Controller
                     $query->where('recruit_positions.outstanding_report', '=', 'disapprove')
                           ->orWhere('recruit_positions.call_report', '=', 'disapprove')
                           ->orWhere('recruit_positions.audio_report', '=', 'disapprove')
-                          ->orWhere('recruit_positions.soft_report', '=', 'disapprove');
+                          ->orWhere('recruit_positions.soft_report', '=', 'disapprove')
+                          ->orwhere('recruit_positions.outstanding_report', '=', 'approve')
+                          ->orWhere('recruit_positions.call_report', '=', 'approve')
+                          ->orWhere('recruit_positions.audio_report', '=', 'approve')
+                          ->orWhere('recruit_positions.soft_report', '=', 'approve');
                 })
                 ->select('recruit.*',
                     'positions.name AS position_name',
@@ -374,29 +378,67 @@ class RecruitController extends Controller
                     'recruit_positions.call_report AS call_report',
                     'recruit_positions.audio_report AS audio_report',
                     'recruit_positions.soft_report AS soft_report',
-                    'recruit_positions.id AS rp_id');
+                    'recruit_positions.id AS rp_id')
+                ->orderByDesc('recruit.created_at');
 
         $rows = $recruits->get();
 
         foreach ($rows as $key => $value) {
             $reached_value = '';
-            if($value['outstanding_report'] == 'disapprove'){
-                $reached_value = 'Postulantes';
+            $status = 'disapprove';
+            if($value['outstanding_report'] == $status || $value['call_report'] == $status ||
+            $value['audio_report'] == $status || $value['soft_report'] == $status){
+                $rows[$key]['status'] = $status;
+            }else{
+                $status = 'approve';
+                $rows[$key]['status'] = $status;
+            }
+            
+            if($value['outstanding_report'] == $status){
+                switch ($status){
+                    case 'disapprove':
+                        $reached_value = 'Postulantes';
+                        break;
+                    case 'approve':
+                        $reached_value = 'Perfiles Destacados';
+                        break;
+                }
                 $rows[$key]['reached'] = $reached_value;
             }
 
-            if($value['call_report'] == 'disapprove'){
-                $reached_value = 'Perfiles Destacados';
+            if($value['call_report'] == $status){
+                switch ($status){
+                    case 'disapprove':
+                        $reached_value = 'Perfiles Destacados';
+                        break;
+                    case 'approve':
+                        $reached_value = 'Pre-Seleccionados';
+                        break;
+                }
                 $rows[$key]['reached'] = $reached_value;
             }
 
-            if($value['audio_report'] == 'disapprove'){
-                $reached_value = 'Pre-Seleccionados';
+            if($value['audio_report'] == $status){
+                switch ($status){
+                    case 'disapprove':
+                        $reached_value = 'Pre-Seleccionados';
+                        break;
+                    case 'approve':
+                        $reached_value = 'Para Evaluar';
+                        break;
+                }
                 $rows[$key]['reached'] = $reached_value;
             }
 
-            if($value['soft_report'] == 'disapprove'){
-                $reached_value = 'Para Evaluar';
+            if($value['soft_report'] == $status){
+                switch ($status){
+                    case 'disapprove':
+                        $reached_value = 'Para Evaluar';
+                        break;
+                    case 'approve':
+                        $reached_value = 'Seleccionados';
+                        break;
+                }
                 $rows[$key]['reached'] = $reached_value;
             }
         }

@@ -263,7 +263,12 @@ a.badge-primary:focus{
             </div>
             <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
         </div>
-
+        <div class="col-6 text-right">
+          <div class="form-group d-inline-block" style="max-width:300px;">
+            <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
+          </div>
+          <button type="button" class="btn btn-info" id="search" style="vertical-align: top;">Search</button>
+        </div>
         <!--
         POSTULANTS TABLE SECTION
         -->
@@ -297,7 +302,7 @@ a.badge-primary:focus{
       var _dataRows = [];
       var _page = 1;
       
-      var search_name = "{{ $s }}";
+      var search_name = "{{ $search_name }}";
 
       $("#search-column-name").val( search_name );
 
@@ -338,6 +343,21 @@ a.badge-primary:focus{
               }
           });
       }
+
+      $('#search').on('click' , function(){
+        
+        search_name = $('#search-column-name').val();
+        
+        window.history.replaceState({
+            edwin: "Fulltimeforce"
+            }, "Page" , "{{ route('recruit.selected') }}" + '?'+ $.param(
+                {name: search_name})
+            );
+        _page = 1;
+        _count_records = 0;
+        location.reload();
+        
+      });
 
       ajax_recruits(search_name, 1);
 

@@ -7,204 +7,204 @@
 <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
 
 <style>
-/* The switch - the box around the slider */
-.SliderSwitch {
-  max-width: 600px;
-  margin-left:auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-.SliderSwitch input{
-  visibility: hidden;
-  display: inline-block;
-  width: 1px;
-  height: 1px;
-}
-
-.SliderSwitch label{
-  font-family: Helvetica, Arial, sans-serif;
-  pointer: cursor;
-}
-
-.SliderSwitch__container{
-  background-color: #FF0000;
-  height: 20px;
-  display: inline-block;
-  width: 50px;
-  border-radius: 10px;
-  position: relative;
-  vertical-align: middle;
-  box-shadow: inset 0px 0px 3px 1px rgba(0,0,0,0.3);
-  margin-left: 10px;
-  
-  transition: background-color 300ms ease-in-out;
-}
-
-.SliderSwitch__toggle {
-  display: block;
-  height: 24px;
-  width: 24px;
-  border-radius: 12px;
-  background-color: white;
-  border: 1px solid #DDD;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  box-shadow: 0px 0px 3px rgba(0,0,0,0.2);
-  cursor: pointer;
-  
-  transition: left 300ms ease-in-out;
-}
-
-.SliderSwitch__toggle:after {
-  content: '\f00d';
-  font-size: 12px;
-  color: #FF4136;
-  display: block;
-  position: absolute;
-  top: 50%;
-  margin-top: -6px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  
-  transition: color 300ms ease-in-out;
-  
-}
-
-input:checked + .SliderSwitch__container{
-  background-color: #01FF70;
-}
-
-input:checked + .SliderSwitch__container .SliderSwitch__toggle {
-  left: calc( 100% - 20px );
-}
-
-input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
-  content: '\f00c';
-  color: #2ECC40;
-}
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting:after{
-    content: '';
-}
-
-td.stickout{
-    background-color: yellow;
-}
-td.frozencell{
-    background-color : #fafafa;
-}
-
-a.badge-success.focus, 
-a.badge-success:focus,
-a.badge-secondary.focus, 
-a.badge-secondary:focus,
-a.badge-danger.focus, 
-a.badge-danger:focus,
-a.badge-warning.focus, 
-a.badge-warning:focus,
-a.badge-primary.focus, 
-a.badge-primary:focus{
-    box-shadow: none;
-}
-
-.btn-group>.badge:not(:last-child):not(.dropdown-toggle){
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-.btn-group>.badge:not(:first-child){
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-.btn-group>.badge:not(:first-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-.btn-group>.badge{
-    height: 21px;
-}
-.btn-group>.badge.badge-primary{
-    font-size: 9px;
-}
-.btn-group>.badge.badge-primary i.fas:before{
-    vertical-align: -webkit-baseline-middle;
-}
-
-.lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border: 8px solid #17a2b8;
-  border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #17a2b8 transparent transparent transparent;
-}
-.lds-ring div:nth-child(1) {
-  animation-delay: -0.45s;
-}
-.lds-ring div:nth-child(2) {
-  animation-delay: -0.3s;
-}
-.lds-ring div:nth-child(3) {
-  animation-delay: -0.15s;
-}
-.nav-item-custom {
-    border: 1px solid rgba(86, 61, 124, .2);
-}
-
-@keyframes lds-ring {
-  0% {
-    transform: rotate(0deg);
+  /* The switch - the box around the slider */
+  .SliderSwitch {
+    max-width: 600px;
+    margin-left:auto;
+    margin-right: auto;
+    text-align: center;
   }
-  100% {
-    transform: rotate(360deg);
+
+  .SliderSwitch input{
+    visibility: hidden;
+    display: inline-block;
+    width: 1px;
+    height: 1px;
   }
-}
 
-.button-disabled {
-  cursor: not-allowed;
-}
+  .SliderSwitch label{
+    font-family: Helvetica, Arial, sans-serif;
+    pointer: cursor;
+  }
 
-.basic-background{
-    color: #fff;
-    background-color: #96c4f3;
-    border-color: #96c4f3;
-}
+  .SliderSwitch__container{
+    background-color: #FF0000;
+    height: 20px;
+    display: inline-block;
+    width: 50px;
+    border-radius: 10px;
+    position: relative;
+    vertical-align: middle;
+    box-shadow: inset 0px 0px 3px 1px rgba(0,0,0,0.3);
+    margin-left: 10px;
+    
+    transition: background-color 300ms ease-in-out;
+  }
 
-.inter-background{
-    color: #fff;
-    background-color: #deb038;
-    border-color: #deb038;
-}
+  .SliderSwitch__toggle {
+    display: block;
+    height: 24px;
+    width: 24px;
+    border-radius: 12px;
+    background-color: white;
+    border: 1px solid #DDD;
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    box-shadow: 0px 0px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+    
+    transition: left 300ms ease-in-out;
+  }
 
-.advan-background{
-    color: #fff;
-    background-color: #f98677;
-    border-color: #f98677;
-}
+  .SliderSwitch__toggle:after {
+    content: '\f00d';
+    font-size: 12px;
+    color: #FF4136;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -6px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    
+    transition: color 300ms ease-in-out;
+    
+  }
 
-.toggle.btn {
-    min-width: 8rem;
-    min-height: 2.15rem;
-}
+  input:checked + .SliderSwitch__container{
+    background-color: #01FF70;
+  }
 
-.count-notif{
-  vertical-align: middle;
-  margin-left: -8px;
-  margin-top: -17px;
-  font-size: 13px;
-}
+  input:checked + .SliderSwitch__container .SliderSwitch__toggle {
+    left: calc( 100% - 20px );
+  }
+
+  input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
+    content: '\f00c';
+    color: #2ECC40;
+  }
+  table.dataTable thead .sorting:before,
+  table.dataTable thead .sorting:after{
+      content: '';
+  }
+
+  td.stickout{
+      background-color: yellow;
+  }
+  td.frozencell{
+      background-color : #fafafa;
+  }
+
+  a.badge-success.focus, 
+  a.badge-success:focus,
+  a.badge-secondary.focus, 
+  a.badge-secondary:focus,
+  a.badge-danger.focus, 
+  a.badge-danger:focus,
+  a.badge-warning.focus, 
+  a.badge-warning:focus,
+  a.badge-primary.focus, 
+  a.badge-primary:focus{
+      box-shadow: none;
+  }
+
+  .btn-group>.badge:not(:last-child):not(.dropdown-toggle){
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+  }
+  .btn-group>.badge:not(:first-child){
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+  }
+  .btn-group>.badge:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+  }
+  .btn-group>.badge{
+      height: 21px;
+  }
+  .btn-group>.badge.badge-primary{
+      font-size: 9px;
+  }
+  .btn-group>.badge.badge-primary i.fas:before{
+      vertical-align: -webkit-baseline-middle;
+  }
+
+  .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #17a2b8;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #17a2b8 transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  .nav-item-custom {
+      border: 1px solid rgba(86, 61, 124, .2);
+  }
+
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .button-disabled {
+    cursor: not-allowed;
+  }
+
+  .basic-background{
+      color: #fff;
+      background-color: #96c4f3;
+      border-color: #96c4f3;
+  }
+
+  .inter-background{
+      color: #fff;
+      background-color: #deb038;
+      border-color: #deb038;
+  }
+
+  .advan-background{
+      color: #fff;
+      background-color: #f98677;
+      border-color: #f98677;
+  }
+
+  .toggle.btn {
+      min-width: 8rem;
+      min-height: 2.15rem;
+  }
+
+  .count-notif{
+    vertical-align: middle;
+    margin-left: -8px;
+    margin-top: -17px;
+    font-size: 13px;
+  }
 </style>
 @endsection
  
@@ -282,7 +282,7 @@ a.badge-primary:focus{
 
         <div class="col-12 text-right">
           <div class="form-group d-inline-block" style="max-width: 300px;">
-              <input type="text" placeholder="Search By Name (*)" class="form-control" id="search-column-name">
+              <input type="text" placeholder="Search By Name (*)" class="form-control" id="search-history-name">
           </div>
           <button class="btn advan-background" id="search-recruit" type="button" style="vertical-align: top;">History</button>
         </div>
@@ -475,7 +475,7 @@ a.badge-primary:focus{
           <!--
           BULK ACTIONS SECTION
           -->
-          <div class="col-12 text-left">
+          <div class="col-8 text-left">
               <div class="form-group d-inline-block" style="max-width: 300px;">
                   <select name="bulk-action" id="bulk-action" class="form-control" >
                       <option value="">-- Bulk Actions --</option>
@@ -497,6 +497,12 @@ a.badge-primary:focus{
               |
               <input type="checkbox" {{$_auto=='false'?'':'checked'}} {{$_user==''?'':'disabled'}} data-toggle="toggle" data-on="Auto" data-off="Auto" data-onstyle="primary" data-offstyle="secondary" class="filter-element col-xs-8" id="auto-toggle" name="auto-toggle">
               <input type="checkbox" {{$_hand=='false'?'':'checked'}} {{$_user==''?'':'disabled'}} data-toggle="toggle" data-on="Manual" data-off="Manual" data-onstyle="primary" data-offstyle="secondary" class="filter-element col-xs-8" id="handmade-toggle" name="handmade-toggle">
+          </div>
+          <div class="col-4 text-right">
+              <div class="form-group d-inline-block" style="max-width:300px;">
+                <input type="text" placeholder="Search By Name" class="form-control" id="search-column-name">
+              </div>
+              <button type="button" class="btn btn-info" id="search" style="vertical-align: top;">Search</button>
           </div>
 
 
@@ -533,7 +539,7 @@ a.badge-primary:focus{
       var _dataRows = [];
       var _page = 1;
       
-      var search_name = "{{ $s }}";
+      var search_name = "{{ $search_name }}";
 
       var _user =  "{{ $_user }}";
       var _hand =  "{{ $_hand }}";
@@ -588,6 +594,21 @@ a.badge-primary:focus{
               }
           });
       }
+
+      $('#search').on('click' , function(){
+        
+        search_name = $('#search-column-name').val();
+        
+        window.history.replaceState({
+            edwin: "Fulltimeforce"
+            }, "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param(
+                {name: search_name})
+            );
+        _page = 1;
+        _count_records = 0;
+        location.reload();
+        
+    });
 
       ajax_recruits(search_name, 1, _user, _hand, _auto);
 
@@ -749,7 +770,7 @@ a.badge-primary:focus{
                         "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
                           'rows' : 50,
                           'page' : 1,
-                          'name' : $('#search-column-name').val(),
+                          'name' : $('#search-history-name').val(),
                           'tab'  : "{{ $tab }}",
                           'user' : $("#recruiter-action").children("option:selected").val(),
                           'hand' : $("#handmade-toggle").prop('checked'),
@@ -786,7 +807,7 @@ a.badge-primary:focus{
                         "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
                           'rows' : 50,
                           'page' : 1,
-                          'name' : $('#search-column-name').val(),
+                          'name' : $('#search-history-name').val(),
                           'tab'  : "{{ $tab }}",
                           'user' : $("#recruiter-action").children("option:selected").val(),
                           'hand' : $("#handmade-toggle").prop('checked'),
@@ -1081,7 +1102,7 @@ a.badge-primary:focus{
                         "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
                           'rows' : 50,
                           'page' : 1,
-                          'name' : $('#search-column-name').val(),
+                          'name' : $('#search-history-name').val(),
                           'tab'  : "{{ $tab }}",
                           'user' : $("#recruiter-action").children("option:selected").val(),
                           'hand' : $("#handmade-toggle").prop('checked'),
@@ -1105,7 +1126,7 @@ a.badge-primary:focus{
       //SEARCH POSTULANTS HISTORY BUTTON FUNCTION
       $('#search-recruit').on('click' , function(ev){
         ev.preventDefault();
-        search_name = $('#search-column-name').val();
+        search_name = $('#search-history-name').val();
 
         if(search_name){
           $("#search-table").modal();
@@ -1152,9 +1173,70 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
-            { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
+            { field: 'fullname', title: "Postulant", class: 'frozencell'},
             { field: 'position_name', title: "Position", width: 75 , class: 'frozencell'},
             { field: 'reached', title: "Stage Reached", width: 75 , class: 'frozencell'},
+            { 
+              field: 'status', 
+              title: "Status", 
+              width: 75,
+              class: 'frozencell',
+              formatter : function(value,rowData,index) {    
+                  var actions = '';
+                  var status = '';
+                  var badge = '';
+                  switch(rowData.status){
+                    case 'approve':
+                      if(rowData.reached == 'Seleccionados'){
+                        status = "SELECTED"
+                        badge = 'badge-success';
+                      }else{
+                        status = 'IN EVALUATION';
+                        badge = 'badge-primary';
+                      }
+                      break;
+                    case 'disapprove':
+                      status = 'DISAPPROVED';
+                      badge = 'badge-danger';
+                      break;
+                  }
+                  actions += '<span class="badge '+ badge + ' recruit-status" data-outstanding="approve" data-id="'+rowData.recruit_id+'">'+status+
+                            '</span>';
+
+                  return actions;
+                },
+            },
+            { field: 'status', 
+              title: "Accion", 
+              width: 75 , 
+              class: 'frozencell',
+              formatter: function(value, rowData, index){
+                var actions = '';
+                var section_redirect = "";
+                switch(rowData.reached){
+                  case 'Postulantes':
+                    section_redirect = '{{route("recruit.menu")}}?name='+rowData.fullname;
+                    break;
+                  case 'Perfiles Destacados':
+                    section_redirect = '{{route("recruit.outstanding")}}?name='+rowData.fullname;
+                    break;
+                  case 'Pre-Seleccionados':
+                    section_redirect = '{{route("recruit.preselected")}}?name='+rowData.fullname;
+                    break;
+                  case 'Para Evaluar':
+                    section_redirect = '{{route("recruit.softskills")}}?name='+rowData.fullname;
+                    break;
+                  case 'Seleccionados':
+                    section_redirect = '{{route("recruit.selected")}}?name='+rowData.fullname;
+                    break;
+                }
+                if(rowData.status == 'disapprove'){
+                  section_redirect = '{{route("experts.home")}}?search=true&name='+rowData.fullname;
+                }
+                actions +='<a class="btn btn-success" href="'+section_redirect+'">View</a>';
+                return actions;
+              }
+            },
         ];
         
         //SET TABLE PROPERTIES
@@ -1177,7 +1259,7 @@ a.badge-primary:focus{
             console.log( _count_records , _total_records, _before_rows , _records , "##################" );
             if( _count_records < _total_records && _before_rows == _records ){
                 _page++;
-                var _text = $('#search-column-name').val();
+                var _text = $('#search-history-name').val();
                 var data = {
                         'offset': _records,
                         'rows': _records,
@@ -1340,7 +1422,7 @@ a.badge-primary:focus{
                         "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
                           'rows' : 50,
                           'page' : 1,
-                          'name' : $('#search-column-name').val(),
+                          'name' : $('#search-history-name').val(),
                           'tab'  : "{{ $tab }}",
                           'user' : $("#recruiter-action").children("option:selected").val(),
                           'hand' : $("#handmade-toggle").prop('checked'),
