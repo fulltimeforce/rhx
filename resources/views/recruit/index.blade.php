@@ -1231,6 +1231,7 @@
                     break;
                 }
                 if(rowData.status == 'disapprove'){
+                  // section_redirect = '{{route("experts.beta")}}?search=true&name='+rowData.fullname;
                   section_redirect = '{{route("experts.home")}}?search=true&name='+rowData.fullname;
                 }
                 actions +='<a class="btn btn-success" href="'+section_redirect+'">View</a>';

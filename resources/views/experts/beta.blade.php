@@ -272,7 +272,7 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <h1>Experts ({{ $recruits }})</h1>
+            <h1>Experts BETA ({{ $recruits }})</h1>
         </div>
         <div class="col text-right">
             
@@ -604,7 +604,7 @@
             };
             $.ajax({
                 type:'GET',
-                url: '{{ route("experts.list.bootstrap") }}',
+                url: '{{ route("experts.beta.list.bootstrap") }}',
                 data: $.param(params),
                 headers: {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
@@ -724,6 +724,7 @@
                     },
                     width: 100
                 },
+                
             ];
 
             @foreach($technologies as $categoryid => $category)
@@ -947,7 +948,7 @@
             a_advanced_level = $(".search-level.advanced").val();
             window.history.replaceState({
                 edwin: "Fulltimeforce"
-                }, "Page" , "{{ route('experts.home') }}" + '?'+ $.param(
+                }, "Page" , "{{ route('experts.beta') }}" + '?'+ $.param(
                     {   search : true , 
                         basic: a_basic_level.join(","),
                         intermediate: a_intermediate_level.join(","),
@@ -1160,7 +1161,7 @@
                     $(".lds-ring").show();
                     $.ajax({
                         type:'GET',
-                        url: '{{ route("experts.list.bootstrap") }}',
+                        url: '{{ route("experts.beta.list.bootstrap") }}',
                         data: $.param(data),
                         headers: {
                             'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
@@ -1309,7 +1310,7 @@
 
                     window.history.replaceState(
                         {edwin: "Fulltimeforce"}, 
-                        "Page" , "{{ route('experts.home') }}" + '?'+ $.param({   
+                        "Page" , "{{ route('experts.beta') }}" + '?'+ $.param({   
                             search : search , 
                             basic: basic,
                             intermediate: intermediate,

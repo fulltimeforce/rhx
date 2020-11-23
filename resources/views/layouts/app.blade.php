@@ -102,6 +102,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
                             </li>
+                            {{-- <li class="nav-item">
+                                <a class="nav-link" href="{{ route('experts.beta') }}">{{ __('Experts') }} BETA</a>
+                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>

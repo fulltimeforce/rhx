@@ -6,6 +6,7 @@ use App\Recruiterlog;
 
 use App\Recruit;
 use App\RecruitPosition;
+use App\Expert;
 use App\Position;
 use App\Portfolio;
 use App\SearchHistory;
@@ -401,6 +402,9 @@ class RecruitController extends Controller
                         break;
                     case 'approve':
                         $reached_value = 'Perfiles Destacados';
+                        break;
+                    default:
+                        $reached_value = 'Postulantes';
                         break;
                 }
                 $rows[$key]['reached'] = $reached_value;
@@ -863,15 +867,37 @@ class RecruitController extends Controller
                 );
             //If dont, we create the Postulant and the Postulation
             }else{
-                Recruit::create($input);
+                $recruitInput = [
+                    "id"                    => $input['id'],
+                    "fullname"              => $input["fullname"],
+                    "email_address"         => $input["email_address"],
+                    "phone_number"          => $input["phone_number"],
+                    "identification_number" => $input["identification_number"],
+                    "file_path"             => $input['file_path'],
+                    "profile_link"          => $input['profile_link']
+                ];
+                $recruit = Recruit::create($recruitInput);
 
-                RecruitPosition::create(
+                $recruitPos = RecruitPosition::create(
                     array(
                         "recruit_id"         =>  $input['id'],
                         "position_id"        =>  $request->input('position_id'),
                         "user_id"            =>  Auth::id(),
                     )
                 );
+
+                // $expertInput = [
+                //     "id"                    => $input['id'],
+                //     "fullname"              => $input["fullname"],
+                //     "email_address"         => $input["email_address"],
+                //     "phone"                 => $input["phone_number"],
+                //     "identification_number" => $input["identification_number"],
+                //     "file_path"             => $input['file_path'],
+                //     "user_id"            =>  Auth::id(),
+                // ];
+
+                // // we also create a new Expert instance
+                // $expert = Expert::create($expertInput);
             }
             
             if(Auth::check()){
@@ -989,9 +1015,8 @@ class RecruitController extends Controller
 
         if( $file ){
             $_fileName = "audio-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+            
             $newNameFile = $destinationPath."/" . $_fileName;
-            
-            
             // $file->move( $destinationPath, $newNameFile );
             $path = $request->file("file")->store("audio" , "s3");
             
@@ -1821,6 +1846,58 @@ class RecruitController extends Controller
             ->with('technologies', Recruit::getTechnologies() );
     }
 
+    /**
+     * BETA --------------------------------------------------------------------
+     */
+    public function expertBeta( Request $request )
+    {
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role->id >= 3) return redirect('/expert/fce');
+        $_recruits = Recruit::where(function ($query) {
+            $query->where('recruit.phone_number', 'not like', '-')
+                  ->orWhere('recruit.email_address', 'not like', '-');
+        })->where('recruit.tech_qtn', 'filled')->get();
+        $recruits = count($_recruits);
+        $query = $request->query();
+
+        $search = isset( $query['search'] )? true : false;
+        $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
+        $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
+        $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
+        $name = isset( $query['name'] )? $query['name'] : '';
+        $audio = isset( $query['audio'] )? filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) : true;
+        $selection = isset( $query['selection'] )? $query['selection'] : 1;
+        $profile = isset( $query['profile'] )? $query['profile'] : '';
+        
+        $basic = array();
+        $intermediate = array();
+        $advanced = array();
+
+        foreach(Recruit::getTechnologies() as $catid => $cat){
+            foreach($cat[1] as $techid => $techlabel){
+                if( in_array( $techid , $a_basic ) ) $basic = array_merge( $basic, array( $techid => $techlabel ));
+                if( in_array( $techid , $a_inter ) ) $intermediate = array_merge( $intermediate, array( $techid => $techlabel ));
+                if( in_array( $techid , $a_advan ) ) $advanced = array_merge( $advanced ,array( $techid => $techlabel ));
+            }
+        }
+
+        $search_profiles = SearchHistory::where('search_user_level', '=', Auth::user()->role->id)->get();
+        $positions = Position::whereNull('position_type')->get();
+        
+        return view('experts.beta',compact('recruits'))
+            ->with('search', $search )
+            ->with('audio', $audio )
+            ->with('selection', $selection )
+            ->with('name', $name )
+            ->with('basic', $basic )
+            ->with('intermediate', $intermediate )
+            ->with('advanced', $advanced )
+            ->with('search_profiles', $search_profiles )
+            ->with('profile', $profile )
+            ->with('positions', $positions )
+            ->with('technologies', Recruit::getTechnologies() );
+    }
+
     public function listExpertBootstrap(Request $request){
         $query = $request->query();
 
@@ -1838,7 +1915,7 @@ class RecruitController extends Controller
                   ->orWhere('recruit.email_address', 'not like', '-');
         });
 
-        $_recruits->where('recruit.tech_qtn', 'filled');
+        // $_recruits->where('recruit.tech_qtn', 'filled');
         
         foreach ($a_basic as $basic) {
             $_recruits->whereIn($basic, ['basic','intermediate','advanced']);
@@ -1861,11 +1938,75 @@ class RecruitController extends Controller
         }
 
         //AUDIO filter
-        if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) ){
-            $_recruits->whereNotNull('recruit.audio_path');
-        }else{
-            $_recruits->whereNull('recruit.audio_path');
-        }        
+
+        // if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) ){
+        //     $_recruits->whereNotNull('recruit.audio_path');
+        // }else{
+        //     $_recruits->whereNull('recruit.audio_path');
+        // }        
+
+        $_recruits->orderByDesc('recruit.created_at');
+        
+        $_recruits->select('recruit.*');
+
+        $recruit =  $_recruits->paginate( $query['rows'] );
+        $rows = $recruit->items();
+
+        return json_encode(array(
+            "total" => count($rows),
+            "totalNotFiltered" => $recruit->total(),
+            "rows" => $rows
+        ));
+    }
+
+    public function listExpertBetaBootstrap(Request $request){
+        $query = $request->query();
+
+        $a_basic = array();
+        $a_inter = array();
+        $a_advan = array();
+        
+        //BASIC, INTERMEDIATE, ADVANCED filters
+        if( isset( $query['basic'] ) ) $a_basic = ($query['basic'] != '')? explode("," , $query['basic']) : array();
+        if( isset( $query['intermediate'] ) ) $a_inter = ($query['intermediate'] != '')? explode("," , $query['intermediate']) : array();
+        if( isset( $query['advanced'] ) ) $a_advan = ($query['advanced'] != '')? explode("," , $query['advanced']) : array();
+        
+        $_recruits = Recruit::where(function ($query) {
+            $query->where('recruit.phone_number', 'not like', '-')
+                  ->orWhere('recruit.email_address', 'not like', '-');
+        });
+
+        // $_recruits->where('recruit.tech_qtn', 'filled');
+        
+        foreach ($a_basic as $basic) {
+            $_recruits->whereIn($basic, ['basic','intermediate','advanced']);
+        }
+
+        foreach ($a_inter as $inter) {
+            $_recruits->whereIn($inter, ['intermediate','advanced']);
+        }
+
+        foreach ($a_advan as $advan) {
+            $_recruits->whereIn($advan, ['advanced']);
+        }
+
+        //NAME filter
+        $_recruits->where('recruit.fullname' , 'like' , '%'.$query['name'].'%');
+
+        //SELECTION filter
+        if( $query['selection'] != 1 ){
+            $_recruits->where('recruit.selection' , intval( $query['selection']  ) );
+        }
+
+        //AUDIO filter
+        
+        // if( filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) ){
+        //     $_recruits->whereNotNull('recruit.audio_path');
+        // }else{
+        //     $_recruits->whereNull('recruit.audio_path');
+        // }
+
+        $_recruits->orderByDesc('recruit.created_at');
         
         $_recruits->select('recruit.*');
 
