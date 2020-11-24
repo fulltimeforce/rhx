@@ -186,6 +186,76 @@ a.badge-primary:focus{
   margin-top: -17px;
   font-size: 13px;
 }
+.buble-audio{
+    position: fixed;
+    padding: .7rem;
+    z-index: 2;
+    background: #FFFFFF;
+    right: 15px;
+    bottom: 16px;
+    max-width: 350px;
+    width: 100%;
+    border: 1px solid #000;
+    font-size: 14px;
+}
+.section-audio{
+    position: relative;
+}
+.buble-audio p{
+    margin-bottom: 3px;
+}
+.section-audio .close-audio{
+    position: absolute;
+    right: -12px;
+    top: -25px;
+    background: #FFF;
+    z-index: 4;
+    font-size: 24px;
+    line-height: 1;
+    border-radius: 27px;
+}
+.speed-audio{
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.tab-fce{
+    display: none;
+}
+.tab-fce.fce-active{
+    display: flex;
+}
+.tech{
+    display: inline-block;
+    padding: 5px;
+    
+    border-radius: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+.tech_adv{
+    background-color: #536afc;
+    color: white;
+}
+.tech_int{
+    background-color: #e8ff63;
+    color: black;
+}
+.tech_bsc{
+    background-color: gray;
+    color: white;
+}
+#list-expert-audios{
+    background-color: #03132e;
+    padding: 5px;
+    text-align: center;
+}
+.info-speed-audio{
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.expert-audio{
+    margin: 5px 5px 5px 5px;
+}
 </style>
 @endsection
  
@@ -204,6 +274,128 @@ a.badge-primary:focus{
       <a class="nav-item nav-link nav-item-custom {{$tab == 'softskills' ? 'active' : ''}}" href="{{ route('recruit.softskills') }}">Para Evaluar</a>
       <a class="nav-item nav-link nav-item-custom {{$tab == 'selected' ? 'active' : ''}}" href="{{ route('recruit.selected') }}">Seleccionados</a>
     </nav>
+
+    <!--======================================================================================================================  
+    ==================================================EXPERT INFORMATION MODAL================================================    
+    =======================================================================================================================-->
+    <div class="modal" id="info-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="interviews-expertLabel"><span class="show_expert_name">{expert Name}</span> - INFO</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <!-- Basic Info -->
+                  <div class="row">
+                      <div class="col-sm-6">
+                          <label class="font-weight-bold">Name</label>
+                          <h5 class="show_expert_name"></h5>
+                      </div>
+                      <div class="col-sm-6">
+                          <label class="font-weight-bold">Email</label>
+                          <h5 class="show_expert_email"></h5>
+                      </div>
+                  </div>
+                  <hr/>
+                  <!-- Additional info -->
+                  <div class="row">
+                      <div class="col-6 col-sm-2">
+                          <label class="font-weight-bold">Age</label>
+                          <p class="show_expert_age"></p>
+                      </div>
+                      <div class="col-6 col-sm-3">
+                          <label class="font-weight-bold">Phone</label>
+                          <p class="show_expert_phone"></p>
+                      </div>
+                      <div class="col-6 col-sm-3">
+                          <label class="font-weight-bold">Availability</label>
+                          <p class="show_expert_availability"></p>
+                      </div>
+                      <div class="col-6 col-sm-2">
+                          <label class="font-weight-bold">Salary</label>
+                          <p class="show_expert_salary"></p>
+                      </div>
+                      <div class="col-6 col-sm-2">
+                          <label class="font-weight-bold">FCE</label>
+                          <p class="show_expert_fce"></p>
+                      </div>
+                  </div>
+                  <hr/>
+                  <!-- Links -->
+                  <div class="row">
+                      <div class="col-12 col-sm-4">
+                          <label class="font-weight-bold">Links</label>
+                          <p>
+                              <a class="show_expert_github" href="#"><button class="btn btn-primary">Github</button></a>
+                              <a class="show_expert_linkedin" href="#"><button class="btn btn-primary">LinkedIn</button></a>
+                          </p>
+                      </div>
+                      <div id="list-expert-audios" class="col-12 col-sm-8 dark-player">
+                          <div class="row"></div>
+                      </div>
+                  </div>
+                  <hr/>
+                  <!-- English Proficiency -->
+                  <div class="row">
+                      <div class="col-12">
+                          <h5>English</h5>
+                      </div>
+                      <div class="col-md-4">
+                          <label class="font-weight-bold">Speaking</label>
+                          <div class="progress">
+                              <div class="progress-bar show_expert_eng_speak" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ></div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <label class="font-weight-bold">Writing</label>
+                          <div class="progress">
+                              <div class="progress-bar show_expert_eng_write" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" ></div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <label class="font-weight-bold">Reading</label>
+                          <div class="progress">
+                              <div class="progress-bar show_expert_eng_read" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" ></div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Technologies -->
+                  <hr/>
+                  <div class="row">
+                      <div class="col-12">
+                          <h5>Techonologies</h5>
+                      </div>
+                      <hr>
+                      <div class="col-12">
+                          <h6>Advanced</h6>
+                          <p class="show_expert_adv_tech"></p>
+                      </div>
+                      <div class="col-12">
+                          <h6>Intermediate</h6>
+                          <p class="show_expert_int_tech"></p>
+                      </div>
+                      <div class="col-12">
+                          <h6>Basic</h6>
+                          <p class="show_expert_bsc_tech"></p>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <div class="row">
+                      <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-prev-expert" data-id="" data-index=""><</button>
+                      </div>
+                      <div class="col-6">
+                        <button class="btn btn-outline-secondary btn-next-expert" data-id="" data-index="">></button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
 
     <!--
     ERROR - SUCCESS MESSAGE SECTION
@@ -300,6 +492,7 @@ a.badge-primary:focus{
       var _before_rows = 0;
 
       var _dataRows = [];
+      var _idMap = [];
       var _page = 1;
       
       var search_name = "{{ $search_name }}";
@@ -336,6 +529,9 @@ a.badge-primary:focus{
                   _count_records = _count_records + _data.rows.length;
                   $("#count-recruit").html( _count_records );
                   _dataRows = _data.rows;
+                  for (var i = 0; _dataRows.length > i ; i++) {
+                    _idMap.push(_dataRows[i].id);
+                  }
                   tablebootstrap_filter( _data.rows );
                   if( page == 1 ) $("html, body").animate({ scrollTop: 0 }, "slow");
                   $(".lds-ring").hide();
@@ -398,7 +594,17 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell'},
-            { field: 'fullname', title: "Postulant", width: 75 , class: 'frozencell'},
+            { 
+              field: 'fullname', 
+              title: "Postulant",  
+              width : 300,
+              class: 'frozencell recruit-fullname',
+              formatter: function(value, rowData, index){
+                var cell = '';
+                cell += '<a href="#" class="btn-show" data-id="'+rowData.recruit_id+'" data-name="'+rowData.fullname+'" data-index="'+index+'">'+rowData.fullname+'</a>';
+                return cell;
+              }
+            },
             {
               field: 'crit_1', 
               title: "Persona Ambiente",
@@ -441,6 +647,259 @@ a.badge-primary:focus{
             uniqueId: 'id'
         });
 
+        //SHOW RECRUIT INFOMATION MODAL
+        $("table tbody").on("click", "a.btn-show",function(ev){
+            ev.preventDefault();
+            var recruitId = $(this).attr("data-id");
+            var index = $(this).attr("data-index");
+            $.ajax({
+                type:"POST",
+                url: '{{ route("experts.btn.show") }}',
+                data:{id: recruitId},
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    var recruit = data.recruit;
+                    var age = "-";
+
+                    if(recruit.birthday){
+                        var date = new Date(recruit.birthday).getTime();
+                        var now = Date.now();
+
+                        var age_time = new Date(now-date);
+                        age = Math.abs(age_time.getUTCFullYear() - 1970);
+                    }
+                    
+                    $(".show_expert_name").html(recruit.fullname)
+                    $(".show_expert_email").html(recruit.email_address);
+                    $(".show_expert_age").html(age);
+                    $(".show_expert_phone").html(recruit.phone_number);
+                    $(".show_expert_availability").html(recruit.availability);
+                    $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$') + ' ' +(recruit.salary!=null?recruit.salary:0));
+                    $(".show_expert_fce").html(recruit.fce_overall);
+                    $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+                    $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                    $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+                    $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                    $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+                    $(".show_expert_eng_speak").html(recruit.english_speaking);
+
+                    $(".show_expert_eng_write").html(recruit.english_writing);
+                    $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
+
+                    $(".show_expert_eng_read").html(recruit.english_reading);
+                    $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
+                    
+                    var html='';
+                    if(recruit.audio_path){
+                            html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                            html+='<p style="color:white; text-align: left">Audio 1</p>'
+                            html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                            html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
+                            html+='</div></div>';
+                    }
+                    $("#list-expert-audios>.row").html(html);
+
+                    var adv_tech = [];
+                    var int_tech = [];
+                    var bsc_tech = [];
+                    for(i=0;data.advanced.length > i; i++){
+                        var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+                        adv_tech.push(span);
+                    }
+                    for(i=0;data.intermediate.length > i; i++){
+                        var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+                        int_tech.push(span);
+                    }
+                    for(i=0;data.basic.length > i; i++){
+                        var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+                        bsc_tech.push(span);
+                    }
+                    $(".show_expert_adv_tech").html(adv_tech);
+                    $(".show_expert_int_tech").html(int_tech);
+                    $(".show_expert_bsc_tech").html(bsc_tech);
+                    $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+                    $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
+
+                    $("#info-expert").modal();
+                }
+            });
+        });
+
+      }
+
+      //==========AUDIO SPEED BUTTON FUNCTION
+      $("body").on('click' , 'a.speed-audio' , function(ev){
+          ev.preventDefault();
+          var speed = $(this).data("speed");
+          var index = $(this).parent().parent().data("audio");
+          console.log( parseFloat( speed ) , speed )
+          document.getElementById("audio-player-"+index).playbackRate = parseFloat(speed);
+      })
+
+      //==========SHOW EXPERT - PREV BUTTON FUNCTION
+      $("#info-expert").on("click",".btn-prev-expert",function(ev){
+        ev.preventDefault();
+        var id = $(this).attr("data-id");
+        var index = $(this).attr("data-index");
+        index = parseInt(index) - 1;
+        var prev = getPrevId(id);
+        if(prev != "-"){
+          loadModalExpert(prev, index);
+        }
+      });
+
+      //==========SHOW EXPERT - NEXT BUTTON FUNCTION
+      $("#info-expert").on("click",".btn-next-expert",function(ev){
+        ev.preventDefault();
+        var id = $(this).attr("data-id");
+        var index = $(this).attr("data-index");
+        index = parseInt(index) + 1;
+        var next = getNextId(id);
+        if(next!="-"){
+          loadModalExpert(next, index);
+        }
+      });
+
+      //==========SHOW EXPERT - PREV BUTTON FUNCTION (ARROW)
+      $("#info-expert").on("keydown",function(ev){
+        if(ev.keyCode == 37){
+          var id = $(".btn-prev-expert").attr("data-id");
+          var index = $(".btn-prev-expert").attr("data-index");
+          index = parseInt(index) - 1;
+          var prev = getPrevId(id);
+          if(prev != "-"){
+            loadModalExpert(prev, index);
+          }
+        }
+      });
+
+      //==========SHOW EXPERT - NEXT BUTTON FUNCTION (ARROW)
+      $("#info-expert").on("keydown",function(ev){
+        if(ev.keyCode == 39){
+          var id = $(".btn-next-expert").attr("data-id");
+          var index = $(".btn-next-expert").attr("data-index");
+          index = parseInt(index) + 1;
+          var next = getNextId(id);
+          if(next!="-"){
+            loadModalExpert(next, index);
+          }
+        }      
+      });
+
+      //==========NEXT/PREV MODAL - AUDIO SPEED BUTTON FUNCTION
+      $("#info-expert").on('click' , 'a.info-speed-audio' , function(ev){
+          ev.preventDefault();
+          var speed = $(this).data("speed");
+          var index = $(this).parent().data("index");
+          console.log( parseFloat( speed ) , speed )
+          document.getElementById("info-audio-player-"+index).playbackRate = parseFloat(speed);
+      })
+
+      //==========NEXT/PREV MODAL - LOAD EXPERT INFORMATION FUNCTION
+      function loadModalExpert(id, index){
+        $.ajax({
+          type:"POST",
+          url: '{{ route("experts.btn.show") }}',
+          data:{id: id},
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success:function(data){
+              var recruit = data.recruit;
+              var age = "-";
+
+              if(recruit.birthday){
+                  var date = new Date(recruit.birthday).getTime();
+                  var now = Date.now();
+
+                  var age_time = new Date(now-date);
+                  age = Math.abs(age_time.getUTCFullYear() - 1970);
+              }
+
+              $(".show_expert_name").html(recruit.fullname)
+              $(".show_expert_email").html(recruit.email_address);
+              $(".show_expert_age").html(age);
+              $(".show_expert_phone").html(recruit.phone_number);
+              $(".show_expert_availability").html(recruit.availability);
+              $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$')+' '+(recruit.salary!=null?recruit.salary:0));
+              $(".show_expert_fce").html(recruit.fce_overall);
+              $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+              $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+              $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+              $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+              $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+              $(".show_expert_eng_speak").html(recruit.english_speaking);
+
+              $(".show_expert_eng_write").html(recruit.english_writing);
+              $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
+
+              $(".show_expert_eng_read").html(recruit.english_reading);
+              $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
+              
+              var html='';
+              if(recruit.audio_path){
+                      html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                      html+='<p style="color:white; text-align: left">Audio 1</p>'
+                      html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                      html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
+                      html+='</div></div>';
+              }
+              $("#list-expert-audios>.row").html(html);
+
+              var adv_tech = [];
+              var int_tech = [];
+              var bsc_tech = [];
+              for(i=0;data.advanced.length > i; i++){
+                  var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+                  adv_tech.push(span);
+              }
+              for(i=0;data.intermediate.length > i; i++){
+                  var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+                  int_tech.push(span);
+              }
+              for(i=0;data.basic.length > i; i++){
+                  var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+                  bsc_tech.push(span);
+              }
+              $(".show_expert_adv_tech").html(adv_tech);
+              $(".show_expert_int_tech").html(int_tech);
+              $(".show_expert_bsc_tech").html(bsc_tech);
+              $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+              $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
+          }
+        });
+      }
+
+      //==========GET NEXT ID AUXILIARY FUNCTION
+      function getNextId(id){
+        var currIdFound = false;
+        for (var i = 0; i < _idMap.length; i++) {
+          if(currIdFound){
+            return _idMap[i];
+          }
+          if (_idMap[i]==id) {
+            currIdFound = true;
+          }
+        }
+        return "-";
+      }
+
+      //==========GET PREV ID AUXILIARY FUNCTION
+      function getPrevId(id){
+        for (var i = 0; i < _idMap.length; i++) {
+          if (_idMap[i]==id && _idMap[0] != id) {
+            i--;
+            return _idMap[i];
+          }else{
+            if(i == _idMap.length-1){
+              return "-";
+            }
+          }
+        }
       }
 
       //===================================================================================
@@ -475,6 +934,9 @@ a.badge-primary:focus{
 
                         let _data = JSON.parse(data);
                         _before_rows = _data.total;
+                        for (var i = 0; _dataRows.length > i ; i++) {
+                          _idMap.push(_dataRows[i].id);
+                        }
                         $("#list-sales").bootstrapTable('append', _data.rows );
                         
                         _count_records = _count_records + _data.rows.length;

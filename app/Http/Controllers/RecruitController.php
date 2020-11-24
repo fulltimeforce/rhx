@@ -1194,41 +1194,59 @@ class RecruitController extends Controller
         $recruit = Recruit::where('id' , $id)->first();
 
         $current_date_time = Carbon::now()->toDateTimeString();
+
+
+        //dont verify, just approve/disapprove evaluation
+        RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+            array("audio_report"=>$audio,
+                  "audio_ev_date"=>$current_date_time)
+        );
+
+        if($audio == 'approve'){
+            //return view with success message
+            redirect()->route('recruit.preselected')
+                ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
+        }else{
+            //return view with warning message
+            redirect()->route('recruit.preselected')
+                ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
+        }
+        return;
         
         //verify it recuir have CV FILE or PROFILE LINK (1 at least)
-        if($recruit['file_path'] == null && $recruit['profile_link'] == null){
-            //return with error message
-            redirect()->route('recruit.preselected')
-                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
-        }else{
-            if($recruit['audio_path'] == null){
-                //return with error message
-                redirect()->route('recruit.preselected')
-                            ->with('error', 'Need to upload "AUDIO FILE".');
-            }else{
-                if($recruit['crit_1'] == null || $recruit['crit_2'] == null){
-                    //return with error message
-                    redirect()->route('recruit.preselected')
-                                ->with('error', 'Need to complete "PERSONA AMBIENTE" and "AUTO CONFIANZA" evaluations.');
-                }else{
-                    //if exists 1 at least, approve call evaluation
-                    RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
-                        array("audio_report"=>$audio,
-                              "audio_ev_date"=>$current_date_time)
-                    );
+        // if($recruit['file_path'] == null && $recruit['profile_link'] == null){
+        //     //return with error message
+        //     redirect()->route('recruit.preselected')
+        //                     ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+        // }else{
+        //     if($recruit['audio_path'] == null){
+        //         //return with error message
+        //         redirect()->route('recruit.preselected')
+        //                     ->with('error', 'Need to upload "AUDIO FILE".');
+        //     }else{
+        //         if($recruit['crit_1'] == null || $recruit['crit_2'] == null){
+        //             //return with error message
+        //             redirect()->route('recruit.preselected')
+        //                         ->with('error', 'Need to complete "PERSONA AMBIENTE" and "AUTO CONFIANZA" evaluations.');
+        //         }else{
+        //             //if exists 1 at least, approve call evaluation
+        //             RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+        //                 array("audio_report"=>$audio,
+        //                       "audio_ev_date"=>$current_date_time)
+        //             );
 
-                    if($audio == 'approve'){
-                        //return view with success message
-                        redirect()->route('recruit.preselected')
-                            ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
-                    }else{
-                        //return view with warning message
-                        redirect()->route('recruit.preselected')
-                            ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
-                    }
-                }
-            }
-        }
+        //             if($audio == 'approve'){
+        //                 //return view with success message
+        //                 redirect()->route('recruit.preselected')
+        //                     ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
+        //             }else{
+        //                 //return view with warning message
+        //                 redirect()->route('recruit.preselected')
+        //                     ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     public function recruitsEvaluateEvaluation(Request $request){
@@ -1642,10 +1660,9 @@ class RecruitController extends Controller
     //==============================================================================
     public function getRecruitPositionNotes(Request $request){
         $input = $request->all();
-
         $rp_id = $input['rpid'];
         $positionid = $input['positionid'];
-        $row_name = ($input['tab']=='preselected')?'evaluation_notes':'audio_notes';
+        $row_name = ($input['tab']=='preselected' || $input['tab']=='postulant')?'evaluation_notes':'audio_notes';
 
         $recruit_position = RecruitPosition::where('id', $rp_id)->get();
         $snippet = Position::where('id', $positionid)->get();
@@ -1661,13 +1678,41 @@ class RecruitController extends Controller
         
         $rp_id = $input['rpid'];
         $textarea = $input['textarea'];
-        $row_name = ($input['tab']=='preselected')?'evaluation_notes':'audio_notes';
+        $row_name = ($input['tab']=='preselected'|| $input['tab']=='postulant')?'evaluation_notes':'audio_notes';
 
         RecruitPosition::where('id' , $rp_id)->update(array($row_name=> $textarea));
 
         return json_encode(array(
             "state" => true
         ));
+
+        
+    }
+
+    public function deleteRecruitWithNotes(Request $request){
+        //call route parameters
+        $input = $request->all();
+
+        //set values in variables
+        $rp_id = $input["rp_id"];
+        $textarea = $input['textarea'];
+        $row_name = ($input['tab']=='preselected'|| $input['tab']=='postulant')?'evaluation_notes':'audio_notes';
+        $recruit_id = $input["recruit_id"];
+        $position_id = $input["position_id"];
+
+        $current_date_time = Carbon::now()->toDateTimeString();
+        
+        RecruitPosition::where('recruit_id' , $recruit_id)
+                        ->where('position_id' , $position_id)
+                        ->where('id' , $rp_id)
+                        ->update([
+                            "outstanding_report"=>'disapprove',
+                            "outstanding_ev_date"=>$current_date_time,
+                            $row_name=> $textarea,
+                            "user_id"=>Auth::id(),
+                        ]);
+
+        return json_encode(["state" => true]);
     }
 
     //==============================================================================

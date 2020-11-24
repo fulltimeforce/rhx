@@ -104,6 +104,7 @@ Route::post('recruits/{id}/update','RecruitController@updateRecruit')->name("rec
 Route::post('recruits/edit/get','RecruitController@getRecruit')->name('recruit.edit.get');
 Route::post('recruits/edit/change','RecruitController@changeRecruit')->name('recruit.edit.update');
 Route::post('recruits/delete','RecruitController@deleteRecruit')->name("recruit.postulant.delete");
+Route::post('recruits/delete/notes','RecruitController@deleteRecruitWithNotes')->name('recruit.postulant.delete.notes');
 Route::post('recruits/save/link', 'RecruitController@save')->name('recruit.save.link');
 
 Route::post('recruits/bulk', 'RecruitController@bulkActions')->name('recruit.bulk');
