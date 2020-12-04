@@ -177,25 +177,25 @@ textarea.form-control{
         <div class="form-row">
             <div class="form-group col-12 col-sm-4">
                 <label for="fullname">Nombre completo *</label>
-                <input type="text" name="fullname" id="fullname" class="form-control" value="" required> 
+            <input type="text" name="fullname" id="fullname" class="form-control" value="{{old('fullname')}}" required> 
             </div>
             <div class="form-group col-12 col-sm-4">
                 <label for="email_address">Correo electrónico *</label>
-                <input type="text" name="email_address" class="form-control" id="email_address" value="" required >
+                <input type="text" name="email_address" class="form-control" id="email_address" value="{{old('email_address')}}" required >
             </div>
             <div class="form-group col-12 col-sm-4">
-                <label for="email_address">DNI/CE/Pasaporte *</label>
-                <input type="text" name="identification_number" class="form-control" id="email_address" value="" required >
+                <label for="identification">DNI/CE/Pasaporte *</label>
+                <input type="text" name="identification_number" class="form-control" id="identification" value="{{old('identification_number')}}" required >
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-12 col-sm-4">
                 <label for="phone_number">Teléfono/Celular *</label>
-                <input type="text" name="phone_number" class="form-control" id="phone_number" value="" required>
+            <input type="text" name="phone_number" class="form-control" id="phone_number" value="{{old('phone_number')}}" required>
             </div>
             <div class="form-group col-12 col-sm-8">
                 <label for="profile_link">Perfil Profesional (Link)</label>
-                <input type="text" name="profile_link" class="form-control" id="profile_link" value="">
+                <input type="text" name="profile_link" class="form-control" id="profile_link" value="{{old('profile_link')}}">
             </div>
         </div>
         

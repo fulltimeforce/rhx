@@ -153,6 +153,12 @@ textarea.form-control{
 
         <form action="{{ route('recruit.save.tech') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @php
+                $educ =         $recruit['english_education'] ?:old('english_education');
+                $typeMoney =    $recruit['type_money'] ?:       old('type_money');
+                $availability = $recruit['availability'] ?:     old('availability');
+                $focus =        $recruit['focus'] ?:            old('focus');
+            @endphp
             <input type="hidden" name="recruit_id" value="{{ $recruit['id'] }}" id="recruit_id">
 
             <div class="mb-4">
@@ -174,57 +180,57 @@ textarea.form-control{
                 </div>
                 <div class="form-group col-sm-6 col-md-2">
                     <label for="birthday">Fecha de nacimiento *</label>
-                    <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{ ($recruit['birthday']!=null)? date('m-d-Y', strtotime($recruit['birthday'])):'' }}">
+                    <input type="text" name="birthday" class="form-control date" id="birthday" data-toggle="datetimepicker" data-target="#birthday" value="{{ ($recruit['birthday']!=null)? date('m-d-Y', strtotime($recruit['birthday'])):'' }}" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-12 col-sm-4">
                     <label for="education">Universidad/Instituto - Carrera</label>
-                    <input type="text" name="education" class="form-control" id="education" value="{{ $recruit['education'] }}">
+                    <input type="text" name="education" class="form-control" id="education" value="{{ $recruit['education'] ?:old('education') }}">
                 </div>
                 <div class="form-group col-12 col-sm-4">
                     <label for="english_education">¿Donde aprendiste inglés?</label>
-                    <select name="english_education" class="form-control" id="english_education" value="{{ $recruit['english_education'] }}">
-                        <option value=""></option> 
-                        <option value="self" {{$recruit['english_education']=='self'?'selected':''}}>Independiente</option> 
-                        <option value="academy" {{$recruit['english_education']=='academy'?'selected':''}}>ICPNA, Británico, Idiomas Católica</option>
-                        <option value="university" {{$recruit['english_education']=='university'?'selected':''}}>Universidad o instituto</option>
+                    <select name="english_education" class="form-control" id="english_education">
+                        <option value=""></option>
+                        <option value="self" {{$educ=='self'?'selected':''}}>Independiente</option> 
+                        <option value="academy" {{$educ=='academy'?'selected':''}}>ICPNA, Británico, Idiomas Católica</option>
+                        <option value="university" {{$educ=='university'?'selected':''}}>Universidad o instituto</option>
                     </select>
                 </div>
                 <div class="form-group col">
                     <label for="phone_number">Teléfono/Celular *</label>
-                    <input type="text" name="phone_number" class="form-control" id="phone_number" value="{{ $recruit['phone_number'] }}" required>
+                    <input type="text" name="phone_number" class="form-control" id="phone_number" value="{{ $recruit['phone_number']?:old('phone_number') }}" required>
                 </div>
             </div>
 
             <div class="form-row"> 
                 <div class="form-group col-12 col-sm-4">
                     <label for="address">País - Ciudad</label>
-                    <input type="text" name="address" class="form-control" id="address" value="{{ $recruit['address'] }}">
+                    <input type="text" name="address" class="form-control" id="address" value="{{ $recruit['address']?:old('address') }}">
                 </div>
                 <div class="form-group col-12 col-sm-6 col-lg-4">
                     <label for="salary"><b>Expectativa salarial</b></label>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $recruit['type_money'] == 'sol' ? 'S/' : '$' }}</button>
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ $typeMoney == 'sol' ? 'S/' : '$' }}</button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
                                 <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
                             </div>
                         </div>
-                        <input type="hidden" name="type_money" value="{{ $recruit['type_money'] }}" id="type_money">
-                        <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $recruit['salary'] }}">
+                        <input type="hidden" name="type_money" value="{{ $typeMoney }}" id="type_money">
+                        <input type="number" min="0" name="salary" class="form-control" id="salary" value="{{ $recruit['salary']?:old('salary') }}">
                     </div>
                 </div>
                 <div class="form-group col-12 col-sm-6 col-sm-4 col-lg-4">
                     <label for="availability"><b>Disponibilidad</b></label>
                     <select name="availability" id="availability" class="form-control">
-                        <option value="Inmediata" {{$recruit['availability']=='Inmediata'?'selected':''}}>Inmediata</option>
-                        <option value="1 semana" {{$recruit['availability']=='1 semana'?'selected':''}}>1 semana</option>
-                        <option value="2 semanas" {{$recruit['availability']=='2 semanas'?'selected':''}}>2 semanas</option>
-                        <option value="3 semanas" {{$recruit['availability']=='3 semanas'?'selected':''}}>3 semanas</option>
-                        <option value="1 mes o más" {{$recruit['availability']=='1 mes o más'?'selected':''}}>1 mes o más</option>
+                        <option value="Inmediata" {{$availability=='Inmediata'?'selected':''}}>Inmediata</option>
+                        <option value="1 semana" {{$availability=='1 semana'?'selected':''}}>1 semana</option>
+                        <option value="2 semanas" {{$availability=='2 semanas'?'selected':''}}>2 semanas</option>
+                        <option value="3 semanas" {{$availability=='3 semanas'?'selected':''}}>3 semanas</option>
+                        <option value="1 mes o más" {{$availability=='1 mes o más'?'selected':''}}>1 mes o más</option>
                     </select>
                 </div>
             </div>
@@ -259,19 +265,19 @@ textarea.form-control{
                     <div class="form-group row">
                         <label class="col-12 col-md-3" for="linkedin"><i class="svg-icon svg-icon-low svg-icon-linkedin"></i> Linkedin</label>
                         <div class="col-12 col-md-9">
-                            <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{ $recruit['linkedin'] }}">
+                            <input type="text" name="linkedin" class="form-control" id="linkedin" value="{{ $recruit['linkedin']?:old('linkedin') }}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-12 col-md-3" for="github"><i class="svg-icon svg-icon-low svg-icon-github"></i> Github</label>
                         <div class="col-12 col-md-9">
-                            <input type="text" name="github" class="form-control" id="github" value="{{ $recruit['github'] }}">
+                            <input type="text" name="github" class="form-control" id="github" value="{{ $recruit['github']?:old('github') }}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-12 col-md-3" for="twitter"> <i class="svg-icon svg-icon-low svg-icon-twitter"></i> Twitter</label>
                         <div class="col-12 col-md-9">
-                            <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $recruit['twitter'] }}">
+                            <input type="text" name="twitter" class="form-control" id="twitter" value="{{ $recruit['twitter']?:old('twitter') }}">
                         </div>
                     </div>
                 </div>
@@ -284,22 +290,22 @@ textarea.form-control{
             <div class="form-row mb-4">
                 <div class="form-group col-12 col-sm-4">
                     <label for="other_knowledge">¿Qué otros conocimientos tienes?</label>
-                    <input type="text" name="other_knowledge" class="form-control" id="other_knowledge" value="{{ $recruit['other_knowledge'] }}">
+                    <input type="text" name="other_knowledge" class="form-control" id="other_knowledge" value="{{ $recruit['other_knowledge']?:old('other_knowledge') }}">
                 </div>
                 <div class="form-group col-12 col-sm-4">
                     <label for="wish_knowledge">¿Qué te gustaría aprender?</label>
-                    <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{ $recruit['wish_knowledge'] }}">
+                    <input type="text" name="wish_knowledge" class="form-control" id="wish_knowledge" value="{{ $recruit['wish_knowledge']?:old('wish_knowledge') }}">
                 </div>
                 <div class="form-group col">
                     <label for="focus">Has tenido mayor experience en:</label>
                     <select name="focus" class="form-control" id="focus">
                         <option value=""></option> 
-                        <option value="fullstack" {{$recruit['focus']=='fullstack'?'selected':''}}>Fullstack</option>
-                        <option value="backend" {{$recruit['focus']=='backend'?'selected':''}}>Backend</option>
-                        <option value="frontend" {{$recruit['focus']=='frontend'?'selected':''}}>Frontend</option>
-                        <option value="mobile" {{$recruit['focus']=='mobile'?'selected':''}}>Mobile</option>
-                        <option value="devops" {{$recruit['focus']=='devops'?'selected':''}}>DevOps</option>
-                        <option value="game" {{$recruit['focus']=='game'?'selected':''}}>Games</option>
+                        <option value="fullstack" {{$focus=='fullstack'?'selected':''}}>Fullstack</option>
+                        <option value="backend" {{$focus=='backend'?'selected':''}}>Backend</option>
+                        <option value="frontend" {{$focus=='frontend'?'selected':''}}>Frontend</option>
+                        <option value="mobile" {{$focus=='mobile'?'selected':''}}>Mobile</option>
+                        <option value="devops" {{$focus=='devops'?'selected':''}}>DevOps</option>
+                        <option value="game" {{$focus=='game'?'selected':''}}>Games</option>
                     </select>
                 </div>
             </div>
@@ -332,13 +338,16 @@ textarea.form-control{
                     </div>
                     <div class="form-row">
                     @foreach($category[1] as $key => $value)
+                    @php
+                        $tech = $recruit[$key]?:old($key);
+                    @endphp
                         <div class="col-12 col-md-4 mb-3">
                             <label for="">{{$value}}</label>
                             <select name="{{$key}}" id="{{$key}}" class="form-control selection-tech" data-cat="{{$categoryid}}">
-                                <option value="unknown" {{$recruit[$key]=='unknown'?'selected':''}}>No lo manejo</option>
-                                <option value="basic" {{$recruit[$key]=='basic'?'selected':''}}>Básico</option>
-                                <option value="intermediate" {{$recruit[$key]=='intermediate'?'selected':''}}>Intermedio</option>
-                                <option value="advanced" {{$recruit[$key]=='advanced'?'selected':''}}>Avanzado</option>
+                                <option value="unknown" {{$tech=='unknown'?'selected':''}}>No lo manejo</option>
+                                <option value="basic" {{$tech=='basic'?'selected':''}}>Básico</option>
+                                <option value="intermediate" {{$tech=='intermediate'?'selected':''}}>Intermedio</option>
+                                <option value="advanced" {{$tech=='advanced'?'selected':''}}>Avanzado</option>
                             </select>
                         </div>
                     @endforeach

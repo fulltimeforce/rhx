@@ -811,7 +811,7 @@ class RecruitController extends Controller
             if ($validator->fails()) {
                 return back()
                             ->withErrors($validator)
-                            ->withInput();
+                            ->withInput($request->input());
             }
         }    
         
@@ -1494,7 +1494,7 @@ class RecruitController extends Controller
             if ($validator->fails()) {
                 return back()
                             ->withErrors($validator)
-                            ->withInput();
+                            ->withInput($request->input());
             }
         }
 
