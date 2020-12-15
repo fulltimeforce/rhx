@@ -360,16 +360,6 @@ class RecruitController extends Controller
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
-                // ->where(function ($query) use ($fces) {
-                //     $query->where('recruit_positions.outstanding_report', '=', 'disapprove')
-                //           ->orWhere('recruit_positions.call_report', '=', 'disapprove')
-                //           ->orWhere('recruit_positions.audio_report', '=', 'disapprove')
-                //           ->orWhere('recruit_positions.soft_report', '=', 'disapprove')
-                //           ->orwhere('recruit_positions.outstanding_report', '=', 'approve')
-                //           ->orWhere('recruit_positions.call_report', '=', 'approve')
-                //           ->orWhere('recruit_positions.audio_report', '=', 'approve')
-                //           ->orWhere('recruit_positions.soft_report', '=', 'approve');
-                // })
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
