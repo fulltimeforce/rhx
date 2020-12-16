@@ -358,7 +358,21 @@
                             <p class="show_expert_fce"></p>
                         </div>
                     </div>
+                    <div class="row">
+                      <div class="col-12 col-sm-6">
+                        <label class="font-weight-bold">Persona Ambiente</label>
+                        <select class="form-control show_expert_crit_1" data-crit="1">
+                        </select>
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <label class="font-weight-bold">Autoconfianza</label>
+                        <select class="form-control show_expert_crit_2" data-crit="2">
+                        </select>
+                      </div>
+                    </div>
+
                     <hr/>
+                    
                     <!-- Links -->
                     <div class="row">
                         <div class="col-12 col-sm-4">
@@ -421,9 +435,12 @@
                 <div class="modal-footer">
                     <div class="row">
                         <div class="col-6">
+                          <button class="btn btn-primary btn-update-expert" data-id="" style="width:100%;">Save</button>
+                        </div>
+                        <div class="col-3">
                           <button class="btn btn-outline-secondary btn-prev-expert" data-id="" data-index=""><</button>
                         </div>
-                        <div class="col-6">
+                        <div class="col-3">
                           <button class="btn btn-outline-secondary btn-next-expert" data-id="" data-index="">></button>
                         </div>
                     </div>
@@ -1185,8 +1202,8 @@
                 url: '{{ route("experts.btn.show") }}',
                 data:{id: recruitId},
                 headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success:function(data){
                     var recruit = data.recruit;
@@ -1220,15 +1237,32 @@
                     $(".show_expert_eng_read").html(recruit.english_reading);
                     $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
                     
-                    var html='';
+                    var audioHtml='';
                     if(recruit.audio_path){
-                            html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
-                            html+='<p style="color:white; text-align: left">Audio 1</p>'
-                            html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                            html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
-                            html+='</div></div>';
+                      audioHtml+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                      audioHtml+='<p style="color:white; text-align: left">Audio 1</p>'
+                      audioHtml += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                      audioHtml += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
+                      audioHtml+='</div></div>';
                     }
-                    $("#list-expert-audios>.row").html(html);
+                    $("#list-expert-audios>.row").html(audioHtml);
+
+                    var crit1Html = "";
+                    crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+                    crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                    crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                    crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                    crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+                    $(".show_expert_crit_1").html(crit1Html);
+
+                    var crit2Html = "";
+                    crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+                    crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                    crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                    crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                    crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                    $(".show_expert_crit_2").html(crit2Html);
 
                     var adv_tech = [];
                     var int_tech = [];
@@ -1248,6 +1282,7 @@
                     $(".show_expert_adv_tech").html(adv_tech);
                     $(".show_expert_int_tech").html(int_tech);
                     $(".show_expert_bsc_tech").html(bsc_tech);
+                    $(".btn-update-expert").attr("data-id",recruit.id);
                     $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
                     $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
 
@@ -1447,6 +1482,33 @@
           document.getElementById("info-audio-player-"+index).playbackRate = parseFloat(speed);
       })
 
+      //==========UPDATE EXPERT INFORMATION ON MODAL
+      $("#info-expert").on('click' , 'button.btn-update-expert' , function(ev){
+        ev.preventDefault();
+        var id = $(this).attr("data-id");        
+        var crit_1 = $(".show_expert_crit_1").val();
+        var crit_2 = $(".show_expert_crit_2").val();
+        var data = {
+          id: id,
+          crit_1: crit_1,
+          crit_2: crit_2,
+        };
+
+        $.ajax({
+          type:"POST",
+          url: '{{ route("experts.popup.edit") }}',
+          data: data,
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success:function(data){
+            console.log("success");
+            location.reload();
+          },
+        });
+      }); 
+
       //==========NEXT/PREV MODAL - LOAD EXPERT INFORMATION FUNCTION
       function loadModalExpert(id, index){
         $.ajax({
@@ -1458,67 +1520,7 @@
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
           success:function(data){
-              var recruit = data.recruit;
-              var age = "-";
-
-              if(recruit.birthday){
-                  var date = new Date(recruit.birthday).getTime();
-                  var now = Date.now();
-
-                  var age_time = new Date(now-date);
-                  age = Math.abs(age_time.getUTCFullYear() - 1970);
-              }
-
-              $(".show_expert_name").html(recruit.fullname)
-              $(".show_expert_email").html(recruit.email_address);
-              $(".show_expert_age").html(age);
-              $(".show_expert_phone").html(recruit.phone_number);
-              $(".show_expert_availability").html(recruit.availability);
-              $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$')+' '+(recruit.salary!=null?recruit.salary:0));
-              $(".show_expert_fce").html(recruit.fce_overall);
-              $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
-              $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
-              $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
-              $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
-              $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
-              $(".show_expert_eng_speak").html(recruit.english_speaking);
-
-              $(".show_expert_eng_write").html(recruit.english_writing);
-              $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
-
-              $(".show_expert_eng_read").html(recruit.english_reading);
-              $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
-              
-              var html='';
-              if(recruit.audio_path){
-                      html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
-                      html+='<p style="color:white; text-align: left">Audio 1</p>'
-                      html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                      html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
-                      html+='</div></div>';
-              }
-              $("#list-expert-audios>.row").html(html);
-
-              var adv_tech = [];
-              var int_tech = [];
-              var bsc_tech = [];
-              for(i=0;data.advanced.length > i; i++){
-                  var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
-                  adv_tech.push(span);
-              }
-              for(i=0;data.intermediate.length > i; i++){
-                  var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
-                  int_tech.push(span);
-              }
-              for(i=0;data.basic.length > i; i++){
-                  var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
-                  bsc_tech.push(span);
-              }
-              $(".show_expert_adv_tech").html(adv_tech);
-              $(".show_expert_int_tech").html(int_tech);
-              $(".show_expert_bsc_tech").html(bsc_tech);
-              $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
-              $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
+              setInfoModal(data);
           }
         });
       }
@@ -1549,6 +1551,89 @@
             }
           }
         }
+      }
+
+      //==========POPULATE INFO ON MODAL AUXILIARY FUNCTION
+      function setInfoModal(data){
+        var recruit = data.recruit;
+        var age = "-";
+
+        if(recruit.birthday){
+            var date = new Date(recruit.birthday).getTime();
+            var now = Date.now();
+
+            var age_time = new Date(now-date);
+            age = Math.abs(age_time.getUTCFullYear() - 1970);
+        }
+
+        $(".show_expert_name").html(recruit.fullname)
+        $(".show_expert_email").html(recruit.email_address);
+        $(".show_expert_age").html(age);
+        $(".show_expert_phone").html(recruit.phone_number);
+        $(".show_expert_availability").html(recruit.availability);
+        $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$')+' '+(recruit.salary!=null?recruit.salary:0));
+        $(".show_expert_fce").html(recruit.fce_overall);
+        $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+        $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+        $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+        $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+        $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+        $(".show_expert_eng_speak").html(recruit.english_speaking);
+
+        $(".show_expert_eng_write").html(recruit.english_writing);
+        $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
+
+        $(".show_expert_eng_read").html(recruit.english_reading);
+        $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
+        
+        var html='';
+        if(recruit.audio_path){
+                html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                html+='<p style="color:white; text-align: left">Audio 1</p>'
+                html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
+                html+='</div></div>';
+        }
+        $("#list-expert-audios>.row").html(html);
+
+        var crit1Html = "";
+        crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+        crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+        crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+        crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+        crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+        $(".show_expert_crit_1").html(crit1Html);
+
+        var crit2Html = "";
+        crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+        crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+        crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+        crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+        crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+        $(".show_expert_crit_2").html(crit2Html);
+
+        var adv_tech = [];
+        var int_tech = [];
+        var bsc_tech = [];
+        for(i=0;data.advanced.length > i; i++){
+            var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+            adv_tech.push(span);
+        }
+        for(i=0;data.intermediate.length > i; i++){
+            var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+            int_tech.push(span);
+        }
+        for(i=0;data.basic.length > i; i++){
+            var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+            bsc_tech.push(span);
+        }
+        $(".show_expert_adv_tech").html(adv_tech);
+        $(".show_expert_int_tech").html(int_tech);
+        $(".show_expert_bsc_tech").html(bsc_tech);
+        $(".btn-update-expert").attr("data-id",recruit.id);
+        $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+        $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
       }
 
       //===================================================================================
@@ -1805,7 +1890,6 @@
                     break;
                 }
                 if(rowData.status == 'disapprove'){
-                  // section_redirect = '{{route("experts.beta")}}?search=true&name='+rowData.fullname;
                   section_redirect = '{{route("experts.home")}}?search=true&name='+rowData.fullname;
                 }
                 actions +='<a class="btn btn-success" href="'+section_redirect+'">View</a>';

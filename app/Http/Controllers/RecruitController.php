@@ -1947,12 +1947,14 @@ class RecruitController extends Controller
         if( isset( $query['intermediate'] ) ) $a_inter = ($query['intermediate'] != '')? explode("," , $query['intermediate']) : array();
         if( isset( $query['advanced'] ) ) $a_advan = ($query['advanced'] != '')? explode("," , $query['advanced']) : array();
         
-        $_recruits = Recruit::where(function ($query) {
-            $query->where('recruit.phone_number', 'not like', '-')
-                  ->orWhere('recruit.email_address', 'not like', '-');
-        });
+        // $_recruits = Recruit::where(function ($query) {
+        //     $query->where('recruit.phone_number', 'not like', '-')
+        //           ->orWhere('recruit.email_address', 'not like', '-');
+        // });
 
         // $_recruits->where('recruit.tech_qtn', 'filled');
+
+        $_recruits = Recruit::whereNotNull('id');
         
         foreach ($a_basic as $basic) {
             $_recruits->whereIn($basic, ['basic','intermediate','advanced']);
@@ -2057,6 +2059,15 @@ class RecruitController extends Controller
         ));
     }
 
+    public function getExpertNotes(Request $request){
+        $position = RecruitPosition::where('recruit_id', $request->recruitId)->first();
+        
+        return [
+            "evaluation_notes" => $position->evaluation_notes,
+            "audio_notes" => $position->audio_notes,
+        ];
+    }
+
     public function getExpertAudio( Request $request ){
         $input = $request->all();
 
@@ -2105,6 +2116,15 @@ class RecruitController extends Controller
             }
         }
         return ["recruit"=>$recruit,"basic"=>$basic,"intermediate"=>$intermediate,"advanced"=>$advanced];
+    }
+
+    public function updateExpertPopup(Request $request){
+        $id = $request->id;
+        $recruit = Recruit::where('id', $id)->update([
+            'crit_1'=>$request->crit_1,
+            'crit_2'=>$request->crit_2,
+        ]);
+        return $recruit;
     }
 
     public function getTechnologies(Request $request){

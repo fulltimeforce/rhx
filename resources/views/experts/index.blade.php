@@ -329,6 +329,37 @@
         </div>
     </div>
     </div>
+    <!--======================================================================================================================  
+    ==================================================EXPERT INFORMATION MODAL================================================    
+    =======================================================================================================================-->
+    <div class="modal fade" id="notes-expert" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class='modal-content'>
+            <div class='modal-header'>
+            <h5 class='modal-title'>Notes</h5>
+            </div>
+            <div class='modal-body'>
+                <div class='row'>
+                    <div class='col-12'>
+                        <h5>Evaluation Notes</h5>
+                    </div>
+                    <div class='col-12'>
+                        <textarea class="form-control" id="expert_ev_notes" style="height: 150px;" disabled></textarea>
+                    </div>
+                </div>
+                <hr>
+                <div class='row'>
+                    <div class='col-12'>
+                        <h5>Audio Notes</h5>
+                    </div>
+                    <div class='col-12'>
+                        <textarea class="form-control" id="expert_audio_notes" style="height: 150px;" disabled></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 
     <!--======================================================================================================================  
     ==================================================EXPERT INFORMATION MODAL================================================    
@@ -376,6 +407,18 @@
                     <div class="col-6 col-sm-2">
                         <label class="font-weight-bold">FCE</label>
                         <p class="show_expert_fce"></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <label class="font-weight-bold">Persona Ambiente</label>
+                        <select class="form-control show_expert_crit_1" data-crit="1">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="font-weight-bold">Autoconfianza</label>
+                        <select class="form-control show_expert_crit_2" data-crit="2">
+                        </select>
                     </div>
                 </div>
                 <hr/>
@@ -441,9 +484,12 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-6">
+                      <button class="btn btn-primary btn-update-expert" data-id="" style="width:100%;">Save</button>
+                    </div>
+                    <div class="col-3">
                       <button class="btn btn-outline-secondary btn-prev-expert" data-id="" data-index=""><</button>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                       <button class="btn btn-outline-secondary btn-next-expert" data-id="" data-index="">></button>
                     </div>
                 </div>
@@ -657,6 +703,7 @@
                         actions += (!rowData.audio_path) ? '' : '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Audio</a>\n';
                         actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" data-index="'+index+'">Show</a>';
                         actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
+                        actions += '<a href="#" class="badge btn-notes badge-info" data-id="'+rowData.id+'">Notes</a>';
                         actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-id="'+rowData.id+'" data-fullname="'+rowData.fullname+'">';
 
                         actions = actions.replace(/:id/gi , rowData.id);
@@ -803,6 +850,23 @@
                         }
                         $("#list-expert-audios>.row").html(html);
 
+                        var crit1Html = "";
+                        crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+                        crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                        crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                        crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                        crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+                        $(".show_expert_crit_1").html(crit1Html);
+
+                        var crit2Html = "";
+                        crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+                        crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                        crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                        crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                        crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                        $(".show_expert_crit_2").html(crit2Html);
+
                         var adv_tech = [];
                         var int_tech = [];
                         var bsc_tech = [];
@@ -821,6 +885,7 @@
                         $(".show_expert_adv_tech").html(adv_tech);
                         $(".show_expert_int_tech").html(int_tech);
                         $(".show_expert_bsc_tech").html(bsc_tech);
+                        $(".btn-update-expert").attr("data-id",recruit.id);
                         $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
                         $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
 
@@ -883,6 +948,27 @@
                         }
                         $this.attr("data-selection" , select )
                     }
+                });
+            });
+
+            $("table tbody").on('click' , 'a.btn-notes' , function(ev){
+                ev.preventDefault();
+                var recruitId = $(this).attr("data-id");
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("experts.notes") }}',
+                    data: {recruitId : recruitId},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        var ev_notes = data.evaluation_notes ? data.evaluation_notes: 'No hay notas...';
+                        var audio_notes = data.audio_notes ? data.audio_notes: 'No hay notas...';
+                        $("#expert_ev_notes").html(ev_notes);
+                        $("#expert_audio_notes").html(audio_notes);
+                        $("#notes-expert").modal('show');
+                    },
                 });
             });
             
@@ -1031,6 +1117,32 @@
             document.getElementById("info-audio-player-"+index).playbackRate = parseFloat(speed);
         })
 
+        $("#info-expert").on('click' , 'button.btn-update-expert' , function(ev){
+            ev.preventDefault();
+            var id = $(this).attr("data-id");        
+            var crit_1 = $(".show_expert_crit_1").val();
+            var crit_2 = $(".show_expert_crit_2").val();
+            var data = {
+            id: id,
+            crit_1: crit_1,
+            crit_2: crit_2,
+            };
+
+            $.ajax({
+            type:"POST",
+            url: '{{ route("experts.popup.edit") }}',
+            data: data,
+            headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+                console.log("success");
+                location.reload();
+            },
+            });
+        }); 
+
         //==========NEXT/PREV MODAL - LOAD EXPERT INFORMATION FUNCTION
         function loadModalExpert(id, index){
           $.ajax({
@@ -1083,6 +1195,23 @@
                 }
                 $("#list-expert-audios>.row").html(html);
 
+                var crit1Html = "";
+                crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+                crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+                $(".show_expert_crit_1").html(crit1Html);
+
+                var crit2Html = "";
+                crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+                crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                $(".show_expert_crit_2").html(crit2Html);
+
                 var adv_tech = [];
                 var int_tech = [];
                 var bsc_tech = [];
@@ -1101,6 +1230,7 @@
                 $(".show_expert_adv_tech").html(adv_tech);
                 $(".show_expert_int_tech").html(int_tech);
                 $(".show_expert_bsc_tech").html(bsc_tech);
+                $(".btn-update-expert").attr("data-id",recruit.id);
                 $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
                 $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
             }

@@ -323,6 +323,18 @@ a.badge-primary:focus{
                           <p class="show_expert_fce"></p>
                       </div>
                   </div>
+                  <div class="row">
+                    <div class="col-12 col-sm-6">
+                      <label class="font-weight-bold">Persona Ambiente</label>
+                      <select class="form-control show_expert_crit_1" data-crit="1">
+                      </select>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <label class="font-weight-bold">Autoconfianza</label>
+                      <select class="form-control show_expert_crit_2" data-crit="2">
+                      </select>
+                    </div>
+                  </div>
                   <hr/>
                   <!-- Links -->
                   <div class="row">
@@ -385,12 +397,15 @@ a.badge-primary:focus{
               </div>
               <div class="modal-footer">
                   <div class="row">
-                      <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-prev-expert" data-id="" data-index=""><</button>
-                      </div>
-                      <div class="col-6">
-                        <button class="btn btn-outline-secondary btn-next-expert" data-id="" data-index="">></button>
-                      </div>
+                    <div class="col-6">
+                      <button class="btn btn-primary btn-update-expert" data-id="" style="width:100%;">Save</button>
+                    </div>
+                    <div class="col-3">
+                      <button class="btn btn-outline-secondary btn-prev-expert" data-id="" data-index=""><</button>
+                    </div>
+                    <div class="col-3">
+                      <button class="btn btn-outline-secondary btn-next-expert" data-id="" data-index="">></button>
+                    </div>
                   </div>
               </div>
           </div>
@@ -702,6 +717,23 @@ a.badge-primary:focus{
                     }
                     $("#list-expert-audios>.row").html(html);
 
+                    var crit1Html = "";
+                    crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+                    crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                    crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                    crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                    crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+                    $(".show_expert_crit_1").html(crit1Html);
+
+                    var crit2Html = "";
+                    crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+                    crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                    crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                    crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                    crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                    $(".show_expert_crit_2").html(crit2Html);
+
                     var adv_tech = [];
                     var int_tech = [];
                     var bsc_tech = [];
@@ -720,6 +752,7 @@ a.badge-primary:focus{
                     $(".show_expert_adv_tech").html(adv_tech);
                     $(".show_expert_int_tech").html(int_tech);
                     $(".show_expert_bsc_tech").html(bsc_tech);
+                    $(".btn-update-expert").attr("data-id",recruit.id);
                     $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
                     $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
 
@@ -798,6 +831,33 @@ a.badge-primary:focus{
           document.getElementById("info-audio-player-"+index).playbackRate = parseFloat(speed);
       })
 
+      //==========UPDATE EXPERT INFORMATION ON MODAL
+      $("#info-expert").on('click' , 'button.btn-update-expert' , function(ev){
+        ev.preventDefault();
+        var id = $(this).attr("data-id");        
+        var crit_1 = $(".show_expert_crit_1").val();
+        var crit_2 = $(".show_expert_crit_2").val();
+        var data = {
+          id: id,
+          crit_1: crit_1,
+          crit_2: crit_2,
+        };
+
+        $.ajax({
+          type:"POST",
+          url: '{{ route("experts.popup.edit") }}',
+          data: data,
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success:function(data){
+            console.log("success");
+            location.reload();
+          },
+        });
+      }); 
+
       //==========NEXT/PREV MODAL - LOAD EXPERT INFORMATION FUNCTION
       function loadModalExpert(id, index){
         $.ajax({
@@ -850,6 +910,23 @@ a.badge-primary:focus{
               }
               $("#list-expert-audios>.row").html(html);
 
+              var crit1Html = "";
+              crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+              crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+              crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+              crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+              crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+              $(".show_expert_crit_1").html(crit1Html);
+
+              var crit2Html = "";
+              crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+              crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+              crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+              crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+              crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+              $(".show_expert_crit_2").html(crit2Html);
+
               var adv_tech = [];
               var int_tech = [];
               var bsc_tech = [];
@@ -868,6 +945,7 @@ a.badge-primary:focus{
               $(".show_expert_adv_tech").html(adv_tech);
               $(".show_expert_int_tech").html(int_tech);
               $(".show_expert_bsc_tech").html(bsc_tech);
+              $(".btn-update-expert").attr("data-id",recruit.id);
               $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
               $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
           }
