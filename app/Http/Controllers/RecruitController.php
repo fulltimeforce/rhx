@@ -1109,25 +1109,26 @@ class RecruitController extends Controller
         //verify it recuir have CV FILE or PROFILE LINK (1 at least)
         if($recruit['file_path'] == null && $recruit['profile_link'] == null){
             //if not, return with error message
-            redirect()->route('recruit.menu')
-                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+            // redirect()->route('recruit.menu')
+            //                 ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
         }else{
             //if exists 1 at least, approve call evaluation
-            RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
-                array("outstanding_report"=>$outstanding,
-                      "user_id"=>Auth::id(),
-                      "outstanding_ev_date"=>$current_date_time)
-            );
+            
+        }
+        RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+            array("outstanding_report"=>$outstanding,
+                  "user_id"=>Auth::id(),
+                  "outstanding_ev_date"=>$current_date_time)
+        );
 
-            if($outstanding == 'approve'){
-                //return view with success message
-                redirect()->route('recruit.menu')
-                    ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
-            }else{
-                //return view with warning message
-                redirect()->route('recruit.menu')
-                    ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
-            }
+        if($outstanding == 'approve'){
+            //return view with success message
+            redirect()->route('recruit.menu')
+                ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
+        }else{
+            //return view with warning message
+            redirect()->route('recruit.menu')
+                ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
         }
     }
 
