@@ -1898,20 +1898,15 @@ class RecruitController extends Controller
         if( isset( $query['intermediate'] ) ) $a_inter = ($query['intermediate'] != '')? explode("," , $query['intermediate']) : array();
         if( isset( $query['advanced'] ) ) $a_advan = ($query['advanced'] != '')? explode("," , $query['advanced']) : array();
         
-        // if(isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0){
-        //     $_recruits = Recruit::whereNotNull('id');
-        // }else{
-        //     $_recruits = Recruit::where(function ($query) {
-        //         $query->where('recruit.phone_number', 'not like', '-')
-        //               ->orWhere('recruit.email_address', 'not like', '-');
-        //     });
-        //     $_recruits->where('recruit.tech_qtn', 'filled');
-        // }
-        $_recruits = Recruit::where(function ($query) {
-            $query->where('recruit.phone_number', 'not like', '-')
-                  ->orWhere('recruit.email_address', 'not like', '-');
-        });
-        $_recruits->where('recruit.tech_qtn', 'filled');
+        if(isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0){
+            $_recruits = Recruit::whereNotNull('id');
+        }else{
+            $_recruits = Recruit::where(function ($query) {
+                $query->where('recruit.phone_number', 'not like', '-')
+                      ->orWhere('recruit.email_address', 'not like', '-');
+            });
+            $_recruits->where('recruit.tech_qtn', 'filled');
+        }
 
         foreach ($a_basic as $basic) {
             $_recruits->whereIn($basic, ['basic','intermediate','advanced']);
