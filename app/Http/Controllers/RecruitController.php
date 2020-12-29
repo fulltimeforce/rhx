@@ -1847,6 +1847,7 @@ class RecruitController extends Controller
         $query = $request->query();
 
         $search = isset( $query['search'] )? true : false;
+        $deep_search = isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0;
         $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
         $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
         $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
@@ -1872,58 +1873,7 @@ class RecruitController extends Controller
         
         return view('experts.index',compact('recruits'))
             ->with('search', $search )
-            ->with('audio', $audio )
-            ->with('selection', $selection )
-            ->with('name', $name )
-            ->with('basic', $basic )
-            ->with('intermediate', $intermediate )
-            ->with('advanced', $advanced )
-            ->with('search_profiles', $search_profiles )
-            ->with('profile', $profile )
-            ->with('positions', $positions )
-            ->with('technologies', Recruit::getTechnologies() );
-    }
-
-    /**
-     * BETA --------------------------------------------------------------------
-     */
-    public function expertBeta( Request $request )
-    {
-        if(!Auth::check()) return redirect('login');
-        if(Auth::user()->role->id >= 3) return redirect('/expert/fce');
-        $_recruits = Recruit::where(function ($query) {
-            $query->where('recruit.phone_number', 'not like', '-')
-                  ->orWhere('recruit.email_address', 'not like', '-');
-        })->where('recruit.tech_qtn', 'filled')->get();
-        $recruits = count($_recruits);
-        $query = $request->query();
-
-        $search = isset( $query['search'] )? true : false;
-        $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
-        $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
-        $a_advan = isset( $query['advanced'] )? explode(",", $query['advanced']) : array();
-        $name = isset( $query['name'] )? $query['name'] : '';
-        $audio = isset( $query['audio'] )? filter_var($query['audio'] , FILTER_VALIDATE_BOOLEAN) : true;
-        $selection = isset( $query['selection'] )? $query['selection'] : 1;
-        $profile = isset( $query['profile'] )? $query['profile'] : '';
-        
-        $basic = array();
-        $intermediate = array();
-        $advanced = array();
-
-        foreach(Recruit::getTechnologies() as $catid => $cat){
-            foreach($cat[1] as $techid => $techlabel){
-                if( in_array( $techid , $a_basic ) ) $basic = array_merge( $basic, array( $techid => $techlabel ));
-                if( in_array( $techid , $a_inter ) ) $intermediate = array_merge( $intermediate, array( $techid => $techlabel ));
-                if( in_array( $techid , $a_advan ) ) $advanced = array_merge( $advanced ,array( $techid => $techlabel ));
-            }
-        }
-
-        $search_profiles = SearchHistory::where('search_user_level', '=', Auth::user()->role->id)->get();
-        $positions = Position::whereNull('position_type')->get();
-        
-        return view('experts.beta',compact('recruits'))
-            ->with('search', $search )
+            ->with('deep_search', $deep_search)
             ->with('audio', $audio )
             ->with('selection', $selection )
             ->with('name', $name )
@@ -1948,15 +1898,21 @@ class RecruitController extends Controller
         if( isset( $query['intermediate'] ) ) $a_inter = ($query['intermediate'] != '')? explode("," , $query['intermediate']) : array();
         if( isset( $query['advanced'] ) ) $a_advan = ($query['advanced'] != '')? explode("," , $query['advanced']) : array();
         
-        // $_recruits = Recruit::where(function ($query) {
-        //     $query->where('recruit.phone_number', 'not like', '-')
-        //           ->orWhere('recruit.email_address', 'not like', '-');
-        // });
+        // if(isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0){
+        //     $_recruits = Recruit::whereNotNull('id');
+        // }else{
+        //     $_recruits = Recruit::where(function ($query) {
+        //         $query->where('recruit.phone_number', 'not like', '-')
+        //               ->orWhere('recruit.email_address', 'not like', '-');
+        //     });
+        //     $_recruits->where('recruit.tech_qtn', 'filled');
+        // }
+        $_recruits = Recruit::where(function ($query) {
+            $query->where('recruit.phone_number', 'not like', '-')
+                  ->orWhere('recruit.email_address', 'not like', '-');
+        });
+        $_recruits->where('recruit.tech_qtn', 'filled');
 
-        // $_recruits->where('recruit.tech_qtn', 'filled');
-
-        $_recruits = Recruit::whereNotNull('id');
-        
         foreach ($a_basic as $basic) {
             $_recruits->whereIn($basic, ['basic','intermediate','advanced']);
         }
@@ -1995,7 +1951,8 @@ class RecruitController extends Controller
         return json_encode(array(
             "total" => count($rows),
             "totalNotFiltered" => $recruit->total(),
-            "rows" => $rows
+            "rows" => $rows,
+            "query" => $query,
         ));
     }
 

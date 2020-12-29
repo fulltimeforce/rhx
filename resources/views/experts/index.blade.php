@@ -633,10 +633,11 @@
         var audios_evaluate = [];
         var audios = [];
         var isSearch = false;
+        var deepSearch = {{$deep_search}};
 
         $("#search-column-name").val( search_name );
 
-        function ajax_experts( basic , intermediate , advanced , _search_name , page){
+        function ajax_experts( basic , intermediate , advanced , deep_search, _search_name , page){
             $(".lds-ring").show();
             var params = {
                 'rows': _records,
@@ -645,6 +646,7 @@
                 'intermediate': intermediate.join(',') ,
                 'advanced' : advanced.join(','),
                 'name' : _search_name,
+                'deep_search': deep_search,
                 'selection' : $("#selection").val(),
                 'audio': $("#audio").is(":checked")
             };
@@ -1335,10 +1337,10 @@
                 advanced.push( "{{$tid}}" );
             @endforeach
             
-            ajax_experts( basic , intermediate , advanced , search_name , 1);
+            ajax_experts( basic , intermediate , advanced , deepSearch , search_name , 1);
         @else
 
-            ajax_experts( [] , [] , [] , '' , 1);
+            ajax_experts( [] , [] , [] , deepSearch, '' , 1);
         @endif
 
         //==========GET SELECT TECHNOLOGIES DATA

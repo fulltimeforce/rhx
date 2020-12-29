@@ -150,9 +150,7 @@ Route::post('specific/apply','EspecificpositionsController@applyEspecificPositio
 //===================================================================================================================================
 //METHODS EXPERTS TABLE
 Route::get('experts', 'RecruitController@expertIndex')->name('experts.home');
-Route::get('beta', 'RecruitController@expertBeta')->name('experts.beta');
 Route::get('experts/bootstrap/list','RecruitController@listExpertBootstrap')->name('experts.list.bootstrap');
-Route::get('beta/bootstrap/list','RecruitController@listExpertBetaBootstrap')->name('experts.beta.list.bootstrap');
 
 Route::post('experts/notes','RecruitController@getExpertNotes')->name('experts.notes');
 Route::post('experts/btn/audio','RecruitController@getExpertAudio')->name('experts.btn.audio');
