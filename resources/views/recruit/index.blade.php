@@ -951,23 +951,6 @@
               class: 'frozencell',
             },
             {
-              field: 'tech_qtn',
-              title: "Tech Qtn",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                var actions = '';
-
-                actions += '<a id="show-tech-link-'+rowData.rp_id+'" class="badge badge-warning btn-tech-recruit '+( rowData.tech_qtn != 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" href="#">Generate</a>\n';
-
-                actions += '<a id="hide-tech-link-'+rowData.rp_id+'" class="badge badge-secondary button-disabled '+( rowData.tech_qtn == 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" disabled>Completed</a>\n';
-
-                return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'pos_id',
               title: "Outstanding",
               valign: 'middle',

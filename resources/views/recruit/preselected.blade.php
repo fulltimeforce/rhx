@@ -798,7 +798,7 @@ a.badge-primary:focus{
 
                 actions += '<a id="show-tech-link-'+rowData.rp_id+'" class="badge badge-warning btn-tech-recruit '+( rowData.tech_qtn != 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" href="#">Generate</a>\n';
 
-                actions += '<a id="hide-tech-link-'+rowData.rp_id+'" class="badge badge-secondary button-disabled '+( rowData.tech_qtn == 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" disabled>Completed</a>\n';
+                actions += '<a id="hide-tech-link-'+rowData.rp_id+'" class="badge badge-success button-disabled text-white '+( rowData.tech_qtn == 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" disabled>Completed</a>\n';
 
                 return actions;
                 },
