@@ -14,6 +14,8 @@ use App\Notification;
 use App\User;
 use App\Config;
 
+use App\Quiz;
+use Mail;
 use Exception;
 use Google_Client;
 use Google_Service_Drive;
@@ -1188,7 +1190,6 @@ class RecruitController extends Controller
 
         $current_date_time = Carbon::now()->toDateTimeString();
 
-
         //dont verify, just approve/disapprove evaluation
         RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
             array("audio_report"=>$audio,
@@ -1196,6 +1197,20 @@ class RecruitController extends Controller
         );
 
         if($audio == 'approve'){
+            // if recruit has email, send quiz direct link
+            if($recruit->email_address != null){
+                $query = ['recruitId' => $id, 'position' => time()];
+                $signed_url = URL::temporarySignedRoute('recruit.quiz', now()->addDays(7), $query);
+
+                self::sendMail(
+                    'emails.mail',
+                    'Fulltimeforce - Prueba Psicologica',
+                    $recruit->email_address,
+                    $recruit->fullname,
+                    ['name'=>$recruit->fullname, 'link' => $signed_url]
+                );
+            }
+            
             //return view with success message
             redirect()->route('recruit.preselected')
                 ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
@@ -1227,7 +1242,7 @@ class RecruitController extends Controller
         //                 array("audio_report"=>$audio,
         //                       "audio_ev_date"=>$current_date_time)
         //             );
-
+        //
         //             if($audio == 'approve'){
         //                 //return view with success message
         //                 redirect()->route('recruit.preselected')
@@ -1285,6 +1300,16 @@ class RecruitController extends Controller
                 }
             }
         }
+    }
+
+    function sendMail($view, $subject, $email, $name, $data){
+        $to_name = $name;
+        $to_email = $email;
+        Mail::send($view, $data, function($message) use ($to_name, $to_email, $subject) {
+            $message->to($to_email, $to_name)->subject($subject);
+            $message->from('alejandro.daza@fulltimeforce.com','Fulltimeforce');
+        });
+        return 'success';
     }
 
     //==============================================================================
@@ -1439,6 +1464,149 @@ class RecruitController extends Controller
         foreach ($rp_id_array as $rp_id) {
             RecruitPosition::where('id' , $rp_id)->delete();
         }
+    }
+    
+    public function quizIndex(Request $request, $recruitId){
+        if(!Auth::check() && !$request->hasValidSignature()) return redirect('/');
+        $recruit = Recruit::find($recruitId);
+        if($recruit == null){
+            return redirect('/');
+        }
+        return view('quiz.index')->with('recruit',$recruit);
+    }
+
+    public function quizStart(Request $request){
+        $quiz = new Quiz;
+        session([
+            'recruit_id'=> $request->rcn,
+            'curr_question_number' => 1,
+            'quiz' => [],
+        ]);
+        return [
+            'code' => session('recruit_id'),
+            'curr_question' => session('curr_question_number'),
+            'quiz' => session('quiz'),
+            'img'=> $quiz->getImgFromQuestion(1)
+        ];
+    }
+
+    public function quizContinue(Request $request){
+        if(session('recruit_id') != $request->rcn){
+            return [
+                'success' => false,
+                'error' => 'the answer was register under a different recruit code'
+            ];
+        }
+        $quiz = new Quiz;
+        $curr_question = session('curr_question_number');
+        $curr_quiz = session('quiz');
+        $quiz_status = 'continue';
+
+        $curr_quiz['q'.$curr_question] = $request->answer;
+        
+        //Save current quiz
+        session(['quiz' => $curr_quiz]);
+
+        //Next question index
+        if($curr_question < 60){
+            session(['curr_question_number' => $curr_question + 1]);
+        }else{
+            $quiz_status = 'ended';
+            $quiz_result = $quiz->evaluateResults($curr_quiz);
+            return [
+                'status' => $quiz_status,
+                'quiz' => session('quiz'),
+                'quiz_result' => $quiz_result
+            ];
+        }
+
+        return [
+            'status' => $quiz_status,
+            'code' => session('recruit_id'),
+            'curr_question' => session('curr_question_number'),
+            'quiz' => session('quiz'),
+            'img'=> $quiz->getImgFromQuestion($curr_question + 1)
+        ];
+    }
+
+    public function quizSigned($recruitId){
+        $query = array(
+            'recruitId' => $recruitId 
+        );
+        if( Recruit::where('id' , $recruitId)->count() > 0 ){
+            $query['position'] = time();
+        }
+
+        return URL::temporarySignedRoute(
+            'recruit.quiz', now()->addDays(7), $query
+        );
+    }
+
+    public function quizTest(){
+        $quiz = new Quiz;
+        $test_quiz = [
+            'q1'=>"4",
+            'q2'=>"5",
+            'q3'=>"3",
+            'q4'=>"2",
+            'q5'=>"4",
+            'q6'=>"5",
+            'q7'=>"3",
+            'q8'=>"2",
+            'q9'=>"4",
+            'q10'=>"1",
+            'q11'=>"3",
+            'q12'=>"4",
+            'q13'=>"1",
+            'q14'=>"3",
+            'q15'=>"4",
+            'q16'=>"1",
+            'q17'=>"3",
+            'q18'=>"4",
+            'q19'=>"1",
+            'q20'=>"3",
+            'q21'=>"3",
+            'q22'=>"4",
+            'q23'=>"1",
+            'q24'=>"3",
+            'q25'=>"4",
+            'q26'=>"1",
+            'q27'=>"3",
+            'q28'=>"4",
+            'q29'=>"1",
+            'q30'=>"3",
+            'q31'=>"3",
+            'q32'=>"4",
+            'q33'=>"1",
+            'q34'=>"3",
+            'q35'=>"4",
+            'q36'=>"1",
+            'q37'=>"3",
+            'q38'=>"4",
+            'q39'=>"1",
+            'q40'=>"3",
+            'q41'=>"3",
+            'q42'=>"4",
+            'q43'=>"1",
+            'q44'=>"3",
+            'q45'=>"4",
+            'q46'=>"1",
+            'q47'=>"3",
+            'q48'=>"4",
+            'q49'=>"1",
+            'q50'=>"3",
+            'q51'=>"3",
+            'q52'=>"4",
+            'q53'=>"1",
+            'q54'=>"3",
+            'q55'=>"4",
+            'q56'=>"1",
+            'q57'=>"3",
+            'q58'=>"4",
+            'q59'=>"1",
+            'q60'=>"3",
+        ];
+        return $quiz->evaluateResults($test_quiz);
     }
 
     //==============================================================================
@@ -1921,7 +2089,11 @@ class RecruitController extends Controller
         }
 
         //NAME filter
-        $_recruits->where('recruit.fullname' , 'like' , '%'.$query['name'].'%');
+        $names = explode(" ", $query['name']);
+        foreach($names as $name){
+            $_recruits->where('recruit.fullname' , 'like' , '%'.$name.'%');
+        }
+        // $_recruits->where('recruit.fullname' , 'like' , '%'.$query['name'].'%');
 
         //SELECTION filter
         if( $query['selection'] != 1 ){

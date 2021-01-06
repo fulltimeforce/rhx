@@ -216,7 +216,9 @@ class PositionController extends Controller
 
         if( !empty( $request->query('name') ) ) $recruits->where('recruit.fullname' , 'like' , '%'.$request->query('name').'%');
         
+        $recruits->orderBy('recruit_positions.created_at','desc');
         $recruits->distinct();
+        
         
         $_recruits = $recruits->paginate( $request->query('rows') );
 

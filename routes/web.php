@@ -55,6 +55,16 @@ Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('
 // Route::get('expert/tech/show','ExpertController@showTech')->name('experts.tech.show');
 
 //===================================================================================================================================
+//====================================================RAVEN METHODS==================================================================
+//===================================================================================================================================
+
+Route::get('quiz/{recruitId}','RecruitController@quizIndex')->name('recruit.quiz')->middleware('signed');
+Route::get('quiz/signed/{recruitId}','RecruitController@quizSigned')->name('recruit.quiz.signed');
+Route::post('quiz/start','RecruitController@quizStart')->name('recruit.quiz.start');
+Route::post('quiz/validate','RecruitController@quizContinue')->name('recruit.quiz.continue');
+Route::get('quiz/test/demo','RecruitController@quizTest');
+
+//===================================================================================================================================
 //====================================================SALES METHODS==================================================================
 //===================================================================================================================================
 //METODOS SALES
