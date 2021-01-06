@@ -1198,18 +1198,18 @@ class RecruitController extends Controller
 
         if($audio == 'approve'){
             // if recruit has email, send quiz direct link
-            if($recruit->email_address != null){
-                $query = ['recruitId' => $id, 'position' => time()];
-                $signed_url = URL::temporarySignedRoute('recruit.quiz', now()->addDays(7), $query);
+            // if($recruit->email_address != null){
+            //     $query = ['recruitId' => $id, 'position' => time()];
+            //     $signed_url = URL::temporarySignedRoute('recruit.quiz', now()->addDays(7), $query);
 
-                self::sendMail(
-                    'emails.mail',
-                    'Fulltimeforce - Prueba Psicologica',
-                    $recruit->email_address,
-                    $recruit->fullname,
-                    ['name'=>$recruit->fullname, 'link' => $signed_url]
-                );
-            }
+            //     self::sendMail(
+            //         'emails.mail',
+            //         'Fulltimeforce - Prueba Psicologica',
+            //         $recruit->email_address,
+            //         $recruit->fullname,
+            //         ['name'=>$recruit->fullname, 'link' => $signed_url]
+            //     );
+            // }
             
             //return view with success message
             redirect()->route('recruit.preselected')
