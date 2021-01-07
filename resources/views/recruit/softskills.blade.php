@@ -442,6 +442,16 @@ a.badge-primary:focus{
     <div class="row">
 
         <!--
+        POSTULANT TECHNICAL QUESTIONARY URL COPY SECTION
+        -->
+        <div class="col-12 mb-3">
+          <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
+              <b>Copy successful!!!!</b>
+              <p id="showURL"></p>
+          </div>
+        </div>
+
+        <!--
         TOTAL RECORDS SECTION
         -->
         <div class="col-12">
@@ -624,6 +634,27 @@ a.badge-primary:focus{
               class: 'frozencell',
             },
             {
+              field: 'raven_status', 
+              title: "Raven",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = "";
+
+                  if(rowData.raven_status == null){
+                    actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Generate Link</a>';
+                  }
+                  if(rowData.raven_status == 'invalid'){
+                    actions += "INVALIDO";
+                  }
+                  if(rowData.raven_status == 'completed'){
+                    actions += rowData.raven_overall+" ("+rowData.raven_perc.toString()+")";
+                  }
+
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
               field: 'pos_id',
               title: "Selected",
               valign: 'middle',
@@ -777,6 +808,48 @@ a.badge-primary:focus{
                 }
             });
         });
+
+        //GENERATE RAVEN QUIZ LINK
+        $('.btn-raven-quiz').on('click', function (ev) {
+            ev.preventDefault();
+            var url = '{{ route("recruit.quiz.signed" , ":id") }}';
+            url = url.replace( ":id" , $(this).data("id") );
+            $.ajax({
+                type:'GET',
+                url: url,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    $('#showURL').html(data);
+                    
+                    var el = document.createElement("textarea");
+                    el.value = data;
+                    el.style.position = 'absolute';                 
+                    el.style.left = '-9999px';
+                    el.style.top = '0';
+                    el.setSelectionRange(0, 99999);
+                    el.setAttribute('readonly', ''); 
+                    document.body.appendChild(el);
+                    
+                    el.focus();
+                    el.select();
+
+                    var success = document.execCommand('copy')
+                    if(success){
+                        $(".alert-dismissible").slideDown(200, function() {
+                                
+                        });
+                    }
+                    setTimeout(() => {
+                        $(".alert-dismissible").slideUp(500, function() {
+                            document.body.removeChild(el);
+                        });
+                    }, 4000);
+                }
+            });
+        }); 
 
       }
 

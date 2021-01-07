@@ -1283,10 +1283,9 @@ class RecruitController extends Controller
                 redirect()->route('recruit.softskills')
                             ->with('error', 'Need to evaluate "ZOOM AUDIO (FCE)".');
             }else{
-                //if exists 1 at least, approve call evaluation
                 RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
                     array("soft_report"=>$evaluation,
-                          "soft_ev_date"=>$current_date_time)
+                        "soft_ev_date"=>$current_date_time)
                 );
 
                 if($evaluation == 'approve'){
@@ -1298,6 +1297,29 @@ class RecruitController extends Controller
                     redirect()->route('recruit.softskills')
                         ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
                 }
+                // if($recruit['raven_status'] == null){
+                //     redirect()->route('recruit.softskills')
+                //             ->with('error', 'Need to take Raven Quiz.');
+                // }else if($recruit['raven_status'] == 'invalid'){
+                //     redirect()->route('recruit.softskills')
+                //             ->with('error', 'Raven result was not valid for consideration.');
+                // }else{
+                //     //if exists 1 at least, approve call evaluation
+                //     RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+                //         array("soft_report"=>$evaluation,
+                //             "soft_ev_date"=>$current_date_time)
+                //     );
+
+                //     if($evaluation == 'approve'){
+                //         //return view with success message
+                //         redirect()->route('recruit.softskills')
+                //             ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
+                //     }else{
+                //         //return view with warning message
+                //         redirect()->route('recruit.softskills')
+                //             ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
+                //     }
+                // }
             }
         }
     }
@@ -1483,9 +1505,9 @@ class RecruitController extends Controller
             'quiz' => [],
         ]);
         return [
-            'code' => session('recruit_id'),
+            // 'code' => session('recruit_id'),
+            // 'quiz' => session('quiz'),
             'curr_question' => session('curr_question_number'),
-            'quiz' => session('quiz'),
             'img'=> $quiz->getImgFromQuestion(1)
         ];
     }
@@ -1513,20 +1535,79 @@ class RecruitController extends Controller
         }else{
             $quiz_status = 'ended';
             $quiz_result = $quiz->evaluateResults($curr_quiz);
+
+            $recruit = Recruit::where('id',session('recruit_id'));
+            if($quiz_result['valid']){    
+                $recruit->update([
+                    'raven_total'=>$quiz_result['total'],
+                    'raven_overall'=>$quiz_result['raven_overall'],
+                    'raven_perc'=>$quiz_result['raven_perc'],
+                    'raven_status'=>'completed',
+                ]);
+            }else{
+                $recruit->update([
+                    'raven_status'=>'invalid',
+                ]);
+            }
             return [
                 'status' => $quiz_status,
-                'quiz' => session('quiz'),
-                'quiz_result' => $quiz_result
+                // 'quiz_result' => $quiz_result
             ];
         }
 
         return [
             'status' => $quiz_status,
-            'code' => session('recruit_id'),
             'curr_question' => session('curr_question_number'),
-            'quiz' => session('quiz'),
+            // 'code' => session('recruit_id'),
+            // 'quiz' => session('quiz'),
             'img'=> $quiz->getImgFromQuestion($curr_question + 1)
         ];
+    }
+
+    public function quizEnd(Request $request){
+        $recruit = Recruit::where('id',session('recruit_id'));
+
+        if(session('recruit_id') != $request->rcn){
+            $recruit->update([
+                'raven_status'=>"invalid"
+            ]);
+            return [
+                'status' => "ended",
+                'recruit' => $recruit
+            ];
+        }
+        $quiz = new Quiz;
+        $curr_question = session('curr_question_number');
+        $curr_quiz = session('quiz');
+        $size_quiz = sizeof($curr_quiz) + 1;
+
+        for ($i=$size_quiz; $i <= 60; $i++) { 
+            $curr_quiz['q'.$i] = null;
+        }
+
+        $quiz_status = 'ended';
+        $quiz_result = $quiz->evaluateResults($curr_quiz);
+        
+
+        if($quiz_result['valid']){    
+            $recruit->update([
+                'raven_total'=>$quiz_result['total'],
+                'raven_overall'=>$quiz_result['raven_overall'],
+                'raven_perc'=>$quiz_result['raven_perc'],
+                'raven_status'=>'completed'
+            ]);
+        }else{
+            $recruit->update([
+                'raven_status'=>"invalid"
+            ]);
+        }
+        
+        return [
+            'status' => $quiz_status,
+            'recruit' => $recruit
+            // 'quiz_result' => $quiz_result
+        ];
+
     }
 
     public function quizSigned($recruitId){
@@ -1547,64 +1628,64 @@ class RecruitController extends Controller
         $test_quiz = [
             'q1'=>"4",
             'q2'=>"5",
-            'q3'=>"3",
+            'q3'=>"1",
             'q4'=>"2",
-            'q5'=>"4",
-            'q6'=>"5",
-            'q7'=>"3",
+            'q5'=>"6",
+            'q6'=>"3",
+            'q7'=>"6",
             'q8'=>"2",
-            'q9'=>"4",
-            'q10'=>"1",
-            'q11'=>"3",
+            'q9'=>"1",
+            'q10'=>"3",
+            'q11'=>"5",
             'q12'=>"4",
-            'q13'=>"1",
-            'q14'=>"3",
-            'q15'=>"4",
-            'q16'=>"1",
-            'q17'=>"3",
-            'q18'=>"4",
-            'q19'=>"1",
-            'q20'=>"3",
-            'q21'=>"3",
-            'q22'=>"4",
-            'q23'=>"1",
-            'q24'=>"3",
-            'q25'=>"4",
-            'q26'=>"1",
+            'q13'=>"2",
+            'q14'=>"6",
+            'q15'=>"1",
+            'q16'=>"2",
+            'q17'=>"1",
+            'q18'=>"3",
+            'q19'=>"5",
+            'q20'=>"6",
+            'q21'=>"4",
+            'q22'=>"3",
+            'q23'=>"4",
+            'q24'=>"5",
+            'q25'=>"8",
+            'q26'=>"2",
             'q27'=>"3",
-            'q28'=>"4",
-            'q29'=>"1",
-            'q30'=>"3",
-            'q31'=>"3",
-            'q32'=>"4",
-            'q33'=>"1",
-            'q34'=>"3",
-            'q35'=>"4",
-            'q36'=>"1",
+            'q28'=>"8",
+            'q29'=>"7",
+            'q30'=>"4",
+            'q31'=>"5",
+            'q32'=>"1",
+            'q33'=>"7",
+            'q34'=>"6",
+            'q35'=>"1",
+            'q36'=>"2",
             'q37'=>"3",
             'q38'=>"4",
-            'q39'=>"1",
-            'q40'=>"3",
-            'q41'=>"3",
-            'q42'=>"4",
-            'q43'=>"1",
-            'q44'=>"3",
-            'q45'=>"4",
-            'q46'=>"1",
-            'q47'=>"3",
-            'q48'=>"4",
-            'q49'=>"1",
-            'q50'=>"3",
-            'q51'=>"3",
-            'q52'=>"4",
+            'q39'=>"3",
+            'q40'=>"7",
+            'q41'=>"8",
+            'q42'=>"6",
+            'q43'=>"5",
+            'q44'=>"4",
+            'q45'=>"1",
+            'q46'=>"2",
+            'q47'=>"5",
+            'q48'=>"6",
+            'q49'=>"7",
+            'q50'=>"6",
+            'q51'=>"8",
+            'q52'=>"2",
             'q53'=>"1",
-            'q54'=>"3",
-            'q55'=>"4",
-            'q56'=>"1",
-            'q57'=>"3",
-            'q58'=>"4",
-            'q59'=>"1",
-            'q60'=>"3",
+            'q54'=>"5",
+            'q55'=>"2",
+            'q56'=>"4",
+            'q57'=>"1",
+            'q58'=>"6",
+            'q59'=>"3",
+            'q60'=>"5",
         ];
         return $quiz->evaluateResults($test_quiz);
     }

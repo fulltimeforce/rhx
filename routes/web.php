@@ -62,6 +62,7 @@ Route::get('quiz/{recruitId}','RecruitController@quizIndex')->name('recruit.quiz
 Route::get('quiz/signed/{recruitId}','RecruitController@quizSigned')->name('recruit.quiz.signed');
 Route::post('quiz/start','RecruitController@quizStart')->name('recruit.quiz.start');
 Route::post('quiz/validate','RecruitController@quizContinue')->name('recruit.quiz.continue');
+Route::post('quiz/end','RecruitController@quizEnd')->name('recruit.quiz.end');
 Route::get('quiz/test/demo','RecruitController@quizTest');
 
 //===================================================================================================================================
