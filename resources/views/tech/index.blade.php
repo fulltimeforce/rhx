@@ -486,7 +486,7 @@ $(document).ready(function () {
         };
         $.ajax({
             type:'GET',
-            url: '{{ route("experts.tech.list") }}',
+            url: '{{ route("recruits.tech.list") }}',
             data: $.param(params),
             headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
@@ -523,7 +523,7 @@ $(document).ready(function () {
                 clickToSelect: false,
                 formatter : function(value,rowData,index) {                        
                     var actions = '<a class="badge badge-info btn-tech" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Evaluate</a>\n';
-                    actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" >Show</a>';
+                    actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" data-index="'+index+'" >Show</a>';
                     actions = actions.replace(/:id/gi , rowData.id);
                     return actions;
                 },
@@ -570,8 +570,8 @@ $(document).ready(function () {
                 valign: 'middle',
                 align: 'left',
                 clickToSelect: false,
-                formatter : function(value,rowData,index) {                        
-                    var actions = ""
+                formatter : function(value,rowData,index) {
+                    var actions = "";
                     if(rowData.type_money == 'sol'){actions += 'S/ ';}else{actions += '$ ';}
                     if(rowData.salary){actions += rowData.salary;}else{actions += '0';}
                     return actions;
@@ -595,45 +595,53 @@ $(document).ready(function () {
           ev.preventDefault();
           var expertId = $(this).attr("data-id");
           var expertName = $(this).attr("data-name");
+          var index = $(this).attr("data-index");
           $.ajax({
             type:"POST",
-            url: '{{ route("experts.show") }}',
+            url: '{{ route("experts.btn.show") }}',
             data:{id: expertId},
             headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(data){
-                var expert = data.expert;
+                var recruit = data.recruit;
+                var age = "-";
+
+                if(recruit.birthday){
+                    var date = new Date(recruit.birthday).getTime();
+                    var now = Date.now();
+
+                    var age_time = new Date(now-date);
+                    age = Math.abs(age_time.getUTCFullYear() - 1970);
+                }
                 // set data
-                $(".show_expert_name").html(expert.fullname)
-                $(".show_expert_email").html(expert.email_address);
-                $(".show_expert_age").html(expert.age);
-                $(".show_expert_phone").html(expert.phone);
-                $(".show_expert_availability").html(expert.availability);
-                $(".show_expert_salary").html((expert.type_money == 'sol' ? 'S/' : '$') + ' ' +(expert.salary!=null?expert.salary:0));
-                $(".show_expert_fce").html(expert.fce_overall);
-                $("a.show_expert_linkedin").attr("href",(expert.linkedin!=undefined?expert.linkedin:"#"));
-                $("a.show_expert_linkedin").html((expert.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
-                $("a.show_expert_github").attr("href",(expert.github!=undefined?expert.github:"#"));
-                $("a.show_expert_github").html((expert.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
-                $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
-                $(".show_expert_eng_speak").html(expert.english_speaking);
+                $(".show_expert_name").html(recruit.fullname)
+                $(".show_expert_email").html(recruit.email_address);
+                $(".show_expert_age").html(age);
+                $(".show_expert_phone").html(recruit.phone_number);
+                $(".show_expert_availability").html(recruit.availability);
+                $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$') + ' ' +(recruit.salary!=null?recruit.salary:0));
+                $(".show_expert_fce").html(recruit.fce_overall);
+                $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+                $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+                $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+                $(".show_expert_eng_speak").html(recruit.english_speaking);
 
-                $(".show_expert_eng_write").html(expert.english_writing);
-                $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+                $(".show_expert_eng_write").html(recruit.english_writing);
+                $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
 
-                $(".show_expert_eng_read").html(expert.english_reading);
-                $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                $(".show_expert_eng_read").html(recruit.english_reading);
+                $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
                 var html='';
-                if(data.audios){
-                    for (let index = 0; index < data.audios.length; index++) {
-                        html+='<div class="col-12"><div class="expert-audio" data-audio="'+index+'">';
-                        html+='<p style="color:white; text-align: left">Audio '+(index+1)+': '+data.audios[index].type+'</p>'
+                if(recruit.audio_path){
+                        html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                        html+='<p style="color:white; text-align: left">Audio 1</p>'
                         html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                        html += '<audio id="info-audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
+                        html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
                         html+='</div></div>';
-                    }
                 }
                 $("#list-expert-audios>.row").html(html);
                 var adv_tech = [];
@@ -654,8 +662,8 @@ $(document).ready(function () {
                 $(".show_expert_adv_tech").html(adv_tech);
                 $(".show_expert_int_tech").html(int_tech);
                 $(".show_expert_bsc_tech").html(bsc_tech);
-                $(".btn-prev-expert").attr("data-id",expert.id);
-                $(".btn-next-expert").attr("data-id",expert.id);
+                $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+                $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
 
                 $("#info-expert").modal();
             }
@@ -673,18 +681,22 @@ $(document).ready(function () {
     $("#info-expert").on("click",".btn-prev-expert",function(ev){
       ev.preventDefault();
       var id = $(this).attr("data-id");
+      var index = $(".btn-prev-expert").attr("data-index");
+      index = parseInt(index) - 1;
       var prev = getPrevId(id);
       if(prev != "-"){
-        loadModalExpert(prev);
+        loadModalExpert(prev,index);
       }
     });
     $("#info-expert").on("keydown",function(ev){
       // ev.preventDefault();
       if(ev.keyCode == 37){
         var id = $(".btn-prev-expert").attr("data-id");
+        var index = $(".btn-prev-expert").attr("data-index");
+        index = parseInt(index) - 1;
         var prev = getPrevId(id);
         if(prev != "-"){
-          loadModalExpert(prev);
+            loadModalExpert(prev,index);
         }
       }
     });
@@ -692,63 +704,75 @@ $(document).ready(function () {
     $("#info-expert").on("click",".btn-next-expert",function(ev){
       ev.preventDefault();
       var id = $(this).attr("data-id");
+      var index = $(".btn-next-expert").attr("data-index");
+      index = parseInt(index) - 1;
       var next = getNextId(id);
       if(next!="-"){
-        loadModalExpert(next);
+        loadModalExpert(next, index);
       }
     });
-
+    
+    //==========SHOW EXPERT - NEXT BUTTON FUNCTION (ARROW)
     $("#info-expert").on("keydown",function(ev){
       // ev.preventDefault();
       if(ev.keyCode == 39){
         var id = $(".btn-next-expert").attr("data-id");
+        var index = $(".btn-next-expert").attr("data-index");
+        index = parseInt(index) + 1;
         var next = getNextId(id);
         if(next!="-"){
-          loadModalExpert(next);
+          loadModalExpert(next, index);
         }
       }      
     });
 
-    function loadModalExpert(id){
+    function loadModalExpert(id, index){
           $.ajax({
             type:"POST",
-            url: '{{ route("experts.show") }}',
+            url: '{{ route("experts.btn.show") }}',
             data:{id: id},
             headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(data){
-                var expert = data.expert;
+                var recruit = data.recruit;
+                var age = "-";
+
+                if(recruit.birthday){
+                    var date = new Date(recruit.birthday).getTime();
+                    var now = Date.now();
+
+                    var age_time = new Date(now-date);
+                    age = Math.abs(age_time.getUTCFullYear() - 1970);
+                }
                 // set data
-                $(".show_expert_name").html(expert.fullname)
-                $(".show_expert_email").html(expert.email_address);
-                $(".show_expert_age").html(expert.age);
-                $(".show_expert_phone").html(expert.phone);
-                $(".show_expert_availability").html(expert.availability);
-                $(".show_expert_salary").html((expert.type_money == 'sol' ? 'S/' : '$')+' '+(expert.salary!=null?expert.salary:0));
-                $(".show_expert_fce").html(expert.fce_overall);
-                $("a.show_expert_linkedin").attr("href",(expert.linkedin!=undefined?expert.linkedin:"#"));
-                $("a.show_expert_linkedin").html((expert.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
-                $("a.show_expert_github").attr("href",(expert.github!=undefined?expert.github:"#"));
-                $("a.show_expert_github").html((expert.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
-                $(".show_expert_eng_speak").css("width",(expert.english_speaking=="advanced"?"100%":expert.english_speaking=="intermediate"?"70%":expert.english_speaking=="basic"?"30%":"0%"));
-                $(".show_expert_eng_speak").html(expert.english_speaking);
+                $(".show_expert_name").html(recruit.fullname)
+                $(".show_expert_email").html(recruit.email_address);
+                $(".show_expert_age").html(age);
+                $(".show_expert_phone").html(recruit.phone_number);
+                $(".show_expert_availability").html(recruit.availability);
+                $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$')+' '+(recruit.salary!=null?recruit.salary:0));
+                $(".show_expert_fce").html(recruit.fce_overall);
+                $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+                $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+                $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+                $(".show_expert_eng_speak").html(recruit.english_speaking);
 
-                $(".show_expert_eng_write").html(expert.english_writing);
-                $(".show_expert_eng_write").css("width",(expert.english_writing=="advanced"?"100%":expert.english_writing=="intermediate"?"70%":expert.english_writing=="basic"?"30%":"0%"));
+                $(".show_expert_eng_write").html(recruit.english_writing);
+                $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
 
-                $(".show_expert_eng_read").html(expert.english_reading);
-                $(".show_expert_eng_read").css("width",(expert.english_reading=="advanced"?"100%":expert.english_reading=="intermediate"?"70%":expert.english_reading=="basic"?"30%":"0%"));
+                $(".show_expert_eng_read").html(recruit.english_reading);
+                $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
                 var html='';
-                if(data.audios){
-                    for (let index = 0; index < data.audios.length; index++) {
-                        html+='<div class="col-12"><div class="expert-audio" data-audio="'+index+'">';
-                        html+='<p style="color:white; text-align: left">Audio '+(index+1)+': '+data.audios[index].type+'</p>'
+                if(recruit.audio_path){
+                        html+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                        html+='<p style="color:white; text-align: left">Audio 1</p>'
                         html += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                        html += '<audio id="info-audio-player-'+index+'" src="'+data.audios[index].audio+'" controls></audio></td>';
+                        html += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
                         html+='</div></div>';
-                    }
                 }
                 $("#list-expert-audios>.row").html(html);
                 var adv_tech = [];
@@ -769,8 +793,8 @@ $(document).ready(function () {
                 $(".show_expert_adv_tech").html(adv_tech);
                 $(".show_expert_int_tech").html(int_tech);
                 $(".show_expert_bsc_tech").html(bsc_tech);
-                $(".btn-prev-expert").attr("data-id",expert.id);
-                $(".btn-next-expert").attr("data-id",expert.id);
+                $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+                $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
             }
           });
         }
@@ -781,7 +805,7 @@ $(document).ready(function () {
         
         window.history.replaceState({
             edwin: "Fulltimeforce"
-            }, "Page" , "{{ route('experts.tech.menu') }}" + '?'+ $.param(
+            }, "Page" , "{{ route('recruits.tech.menu') }}" + '?'+ $.param(
                 {   search : true , 
                     name: search_name
                 }
@@ -840,7 +864,7 @@ $(document).ready(function () {
                 $(".lds-ring").show();
                 $.ajax({
                     type:'GET',
-                    url: '{{ route("experts.tech.list") }}',
+                    url: '{{ route("recruits.tech.list") }}',
                     data: $.param(data),
                     headers: {
                         'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),

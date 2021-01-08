@@ -50,8 +50,8 @@ Route::get('login/google/callback', 'Auth\LoginController@handleProviderCallback
 
 Route::post('/upload/drive','ExpertController@uploadDrive')->name('experts.upload.drive');
 
-Route::get('expert/tech','ExpertController@listTech')->name('experts.tech.menu');
-Route::get('expert/tech/bootstrap','ExpertController@listTechBootstrap')->name('experts.tech.list');
+Route::get('expert/tech','RecruitController@listTech')->name('recruits.tech.menu');
+Route::get('expert/tech/bootstrap','RecruitController@recruitsTechBootstrap')->name('recruits.tech.list');
 // Route::get('expert/tech/show','ExpertController@showTech')->name('experts.tech.show');
 
 //===================================================================================================================================

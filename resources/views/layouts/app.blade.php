@@ -72,7 +72,7 @@
                                 <a class="nav-link" href="{{ route('user.menu') }}">{{ __('Users') }}</a>
                             </li>
                             </li><li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.tech.menu') }}">{{ __('TECH') }}</a>
+                                <a class="nav-link" href="{{ route('recruits.tech.menu') }}">{{ __('TECH') }}</a>
                             </li>
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('sales.menu') }}">{{ __('Sales') }}</a>

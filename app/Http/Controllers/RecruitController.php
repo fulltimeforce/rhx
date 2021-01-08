@@ -170,6 +170,19 @@ class RecruitController extends Controller
     }
 
     //==============================================================================
+    //======================== TECH MENU METHODS=============================
+    //==============================================================================
+
+    public function listTech(Request $request){
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id != 1) return redirect('login');
+        $query = $request->query();
+        $name = isset($query['name']) ? $query['name'] : '';
+
+        return view('tech.index')->with('name',$name);
+    }
+
+    //==============================================================================
     //==========================TABLE BOOTSTRAP METHODS=============================
     //==============================================================================
     public function recruitsBootstrap(Request $request){
@@ -467,6 +480,30 @@ class RecruitController extends Controller
             "total" => count($rows),
             "rows" => $rows,
             "positions" => $positions,
+        ));
+    }
+
+    public function recruitsTechBootstrap(Request $request){
+        $query = $request->query();
+        $fce_lower = Config::first()->fce_lower_overall;
+        
+        if($fce_lower){
+            $fces = Config::getListFceSuperior($fce_lower);
+        }else{
+            $fces = [''];
+        }
+        $recruits = Recruit::where('fullname' , 'like' , '%'.$query['name'].'%');
+
+        $recruits->whereIn('fce_overall' , $fces);
+        $recruits->orderBy("fce_total","DESC");
+         
+        $expert =  $recruits->paginate( $query['rows'] );
+        $rows = $expert->items();
+
+        return json_encode(array(
+            "total" => count($rows),
+            "totalNotFiltered" => $expert->total(),
+            "rows" => $rows
         ));
     }
 
