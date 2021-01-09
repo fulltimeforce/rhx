@@ -1537,6 +1537,7 @@ class RecruitController extends Controller
     public function quizStart(Request $request){
         $quiz = new Quiz;
         session([
+            'endtime'=>strtotime("now") + 3900, // SET END TO 1H 5MIN
             'recruit_id'=> $request->rcn,
             'curr_question_number' => 1,
             'quiz' => [],
@@ -1561,15 +1562,14 @@ class RecruitController extends Controller
         $curr_quiz = session('quiz');
         $quiz_status = 'continue';
 
-        $curr_quiz['q'.$curr_question] = $request->answer;
-        
-        //Save current quiz
-        session(['quiz' => $curr_quiz]);
-
-        //Next question index
-        if($curr_question < 60){
-            session(['curr_question_number' => $curr_question + 1]);
-        }else{
+        // if time is already up
+        if(session('endtime')<strtotime("now")){
+            // END TEST - FILL EMPTY ANSWERS -  CALCULATE & SAVE RESULTS
+            $size_quiz = sizeof($curr_quiz) + 1;
+            for ($i=$size_quiz; $i <= 60; $i++) { 
+                $curr_quiz['q'.$i] = null;
+            }
+            
             $quiz_status = 'ended';
             $quiz_result = $quiz->evaluateResults($curr_quiz);
 
@@ -1588,15 +1588,44 @@ class RecruitController extends Controller
             }
             return [
                 'status' => $quiz_status,
-                // 'quiz_result' => $quiz_result
+            ];
+        }
+
+        //SAVE ANSWER IN QUIZ ARRAY
+        $curr_quiz['q'.$curr_question] = $request->answer;
+        
+        //Save current quiz
+        session(['quiz' => $curr_quiz]);
+
+        //SET NEXT QUESTION INDEX
+        if($curr_question < 60){
+            session(['curr_question_number' => $curr_question + 1]);
+        }else{
+            // END TEST AND SAVE RESULTS
+            $quiz_status = 'ended';
+            $quiz_result = $quiz->evaluateResults($curr_quiz);
+
+            $recruit = Recruit::where('id',session('recruit_id'));
+            if($quiz_result['valid']){    
+                $recruit->update([
+                    'raven_total'=>$quiz_result['total'],
+                    'raven_overall'=>$quiz_result['raven_overall'],
+                    'raven_perc'=>$quiz_result['raven_perc'],
+                    'raven_status'=>'completed',
+                ]);
+            }else{
+                $recruit->update([
+                    'raven_status'=>'invalid',
+                ]);
+            }
+            return [
+                'status' => $quiz_status,
             ];
         }
 
         return [
             'status' => $quiz_status,
             'curr_question' => session('curr_question_number'),
-            // 'code' => session('recruit_id'),
-            // 'quiz' => session('quiz'),
             'img'=> $quiz->getImgFromQuestion($curr_question + 1)
         ];
     }
@@ -1658,73 +1687,6 @@ class RecruitController extends Controller
         return URL::temporarySignedRoute(
             'recruit.quiz', now()->addDays(7), $query
         );
-    }
-
-    public function quizTest(){
-        $quiz = new Quiz;
-        $test_quiz = [
-            'q1'=>"4",
-            'q2'=>"5",
-            'q3'=>"1",
-            'q4'=>"2",
-            'q5'=>"6",
-            'q6'=>"3",
-            'q7'=>"6",
-            'q8'=>"2",
-            'q9'=>"1",
-            'q10'=>"3",
-            'q11'=>"5",
-            'q12'=>"4",
-            'q13'=>"2",
-            'q14'=>"6",
-            'q15'=>"1",
-            'q16'=>"2",
-            'q17'=>"1",
-            'q18'=>"3",
-            'q19'=>"5",
-            'q20'=>"6",
-            'q21'=>"4",
-            'q22'=>"3",
-            'q23'=>"4",
-            'q24'=>"5",
-            'q25'=>"8",
-            'q26'=>"2",
-            'q27'=>"3",
-            'q28'=>"8",
-            'q29'=>"7",
-            'q30'=>"4",
-            'q31'=>"5",
-            'q32'=>"1",
-            'q33'=>"7",
-            'q34'=>"6",
-            'q35'=>"1",
-            'q36'=>"2",
-            'q37'=>"3",
-            'q38'=>"4",
-            'q39'=>"3",
-            'q40'=>"7",
-            'q41'=>"8",
-            'q42'=>"6",
-            'q43'=>"5",
-            'q44'=>"4",
-            'q45'=>"1",
-            'q46'=>"2",
-            'q47'=>"5",
-            'q48'=>"6",
-            'q49'=>"7",
-            'q50'=>"6",
-            'q51'=>"8",
-            'q52'=>"2",
-            'q53'=>"1",
-            'q54'=>"5",
-            'q55'=>"2",
-            'q56'=>"4",
-            'q57'=>"1",
-            'q58'=>"6",
-            'q59'=>"3",
-            'q60'=>"5",
-        ];
-        return $quiz->evaluateResults($test_quiz);
     }
 
     //==============================================================================
