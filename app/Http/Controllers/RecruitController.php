@@ -1242,7 +1242,7 @@ class RecruitController extends Controller
             //     self::sendMail(
             //         'emails.mail',
             //         'Fulltimeforce - Prueba Psicologica',
-            //         $recruit->email_address,
+            //         'alejandrodazaculqui@hotmail.com',// $recruit->email_address,
             //         $recruit->fullname,
             //         ['name'=>$recruit->fullname, 'link' => $signed_url]
             //     );
@@ -1324,7 +1324,6 @@ class RecruitController extends Controller
                     array("soft_report"=>$evaluation,
                         "soft_ev_date"=>$current_date_time)
                 );
-
                 if($evaluation == 'approve'){
                     //return view with success message
                     redirect()->route('recruit.softskills')
@@ -1334,6 +1333,7 @@ class RecruitController extends Controller
                     redirect()->route('recruit.softskills')
                         ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
                 }
+
                 // if($recruit['raven_status'] == null){
                 //     redirect()->route('recruit.softskills')
                 //             ->with('error', 'Need to take Raven Quiz.');
@@ -1537,16 +1537,27 @@ class RecruitController extends Controller
     public function quizStart(Request $request){
         $quiz = new Quiz;
         session([
-            'endtime'=>strtotime("now") + 3900, // SET END TO 1H 5MIN
+            'endtime'=>strtotime("now") + 10,//3900, // SET END TO 1H 5MIN
             'recruit_id'=> $request->rcn,
             'curr_question_number' => 1,
             'quiz' => [],
         ]);
+        $recruit = Recruit::where('id',$request->rcn);
+        if($recruit->count() > 0){
+            $recruit->update([
+                'raven_status'=>'invalid',
+            ]);
+            return [
+                // 'code' => session('recruit_id'),
+                // 'quiz' => session('quiz'),
+                'status' => 'continue',
+                'curr_question' => session('curr_question_number'),
+                'img'=> $quiz->getImgFromQuestion(1)
+            ];
+        }
+
         return [
-            // 'code' => session('recruit_id'),
-            // 'quiz' => session('quiz'),
-            'curr_question' => session('curr_question_number'),
-            'img'=> $quiz->getImgFromQuestion(1)
+            'success' => false,
         ];
     }
 
@@ -1687,6 +1698,18 @@ class RecruitController extends Controller
         return URL::temporarySignedRoute(
             'recruit.quiz', now()->addDays(7), $query
         );
+    }
+
+    public function quizRestore(Request $request){
+        $recruit = Recruit::where('id',$request->id);
+        if($recruit->count() > 0){
+            $recruit->update([
+                'raven_total'   =>null,
+                'raven_overall' =>null,
+                'raven_perc'    =>null,
+                'raven_status'  =>null,
+            ]);
+        }
     }
 
     //==============================================================================

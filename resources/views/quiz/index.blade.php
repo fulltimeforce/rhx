@@ -145,15 +145,17 @@ $("#begin-test").on('click',function(e){
             $("#overlay").show();
         },
         success:function(data){
-            var timeInSeconds = 60 * 60;
-            display = $('#time');
-            startTimer(timeInSeconds, display);
-            $("#q_img").html("<img id='question_img' src='{{asset('workat/quiz_assets/')}}"+"/"+data.img+"' height=600>");
+            if(data.status == 'continue'){
+                var timeInSeconds = 60 * 60;
+                display = $('#time');
+                startTimer(timeInSeconds, display);
+                $("#q_img").html("<img id='question_img' src='{{asset('workat/quiz_assets/')}}"+"/"+data.img+"' height=600>");
 
-            // $("#question_img").attr('src',"{{asset('workat/quiz_assets/')}}"+"/"+data.img)
-            loadOptions(data.curr_question);
-            $("#welcome-view").html("");
-            $("#questionaire").show();
+                // $("#question_img").attr('src',"{{asset('workat/quiz_assets/')}}"+"/"+data.img)
+                loadOptions(data.curr_question);
+                $("#welcome-view").html("");
+                $("#questionaire").show();
+            }            
         },
         complete: function(){
             $("#overlay").hide();

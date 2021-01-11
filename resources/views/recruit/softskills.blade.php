@@ -644,7 +644,7 @@ a.badge-primary:focus{
                     actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Generate Link</a>';
                   }
                   if(rowData.raven_status == 'invalid'){
-                    actions += "INVALIDO";
+                    actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALIDO</a>';
                   }
                   if(rowData.raven_status == 'completed'){
                     actions += rowData.raven_overall+" ("+rowData.raven_perc.toString()+")";
@@ -850,6 +850,24 @@ a.badge-primary:focus{
                 }
             });
         }); 
+
+        $('.btn-quiz-restore').on('click',function (ev){
+          ev.preventDefault();
+          var url = '{{ route("recruit.quiz.restore") }}';
+          var recruitId = $(this).data("id");
+          $.ajax({
+            type:'POST',
+            url: url,
+            data:{id: recruitId},
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              location.reload();
+            }
+          });
+        });
 
       }
 
