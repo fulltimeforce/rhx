@@ -1242,7 +1242,7 @@ class RecruitController extends Controller
             //     self::sendMail(
             //         'emails.mail',
             //         'Fulltimeforce - Prueba Psicologica',
-            //         'alejandrodazaculqui@hotmail.com',// $recruit->email_address,
+            //         'hr@fulltimeforce.com',// $recruit->email_address,
             //         $recruit->fullname,
             //         ['name'=>$recruit->fullname, 'link' => $signed_url]
             //     );
@@ -1320,43 +1320,43 @@ class RecruitController extends Controller
                 redirect()->route('recruit.softskills')
                             ->with('error', 'Need to evaluate "ZOOM AUDIO (FCE)".');
             }else{
-                RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
-                    array("soft_report"=>$evaluation,
-                        "soft_ev_date"=>$current_date_time)
-                );
-                if($evaluation == 'approve'){
-                    //return view with success message
-                    redirect()->route('recruit.softskills')
-                        ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
-                }else{
-                    //return view with warning message
-                    redirect()->route('recruit.softskills')
-                        ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
-                }
-
-                // if($recruit['raven_status'] == null){
+                // RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+                //     array("soft_report"=>$evaluation,
+                //         "soft_ev_date"=>$current_date_time)
+                // );
+                // if($evaluation == 'approve'){
+                //     //return view with success message
                 //     redirect()->route('recruit.softskills')
-                //             ->with('error', 'Need to take Raven Quiz.');
-                // }else if($recruit['raven_status'] == 'invalid'){
-                //     redirect()->route('recruit.softskills')
-                //             ->with('error', 'Raven result was not valid for consideration.');
+                //         ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
                 // }else{
-                //     //if exists 1 at least, approve call evaluation
-                //     RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
-                //         array("soft_report"=>$evaluation,
-                //             "soft_ev_date"=>$current_date_time)
-                //     );
-
-                //     if($evaluation == 'approve'){
-                //         //return view with success message
-                //         redirect()->route('recruit.softskills')
-                //             ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
-                //     }else{
-                //         //return view with warning message
-                //         redirect()->route('recruit.softskills')
-                //             ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
-                //     }
+                //     //return view with warning message
+                //     redirect()->route('recruit.softskills')
+                //         ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
                 // }
+
+                if($recruit['raven_status'] == null){
+                    redirect()->route('recruit.softskills')
+                            ->with('error', 'Need to take Raven Quiz.');
+                }else if($recruit['raven_status'] == 'invalid'){
+                    redirect()->route('recruit.softskills')
+                            ->with('error', 'Raven result was not valid for consideration.');
+                }else{
+                    //if exists 1 at least, approve call evaluation
+                    RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+                        array("soft_report"=>$evaluation,
+                            "soft_ev_date"=>$current_date_time)
+                    );
+
+                    if($evaluation == 'approve'){
+                        //return view with success message
+                        redirect()->route('recruit.softskills')
+                            ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
+                    }else{
+                        //return view with warning message
+                        redirect()->route('recruit.softskills')
+                            ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
+                    }
+                }
             }
         }
     }
@@ -1366,7 +1366,7 @@ class RecruitController extends Controller
         $to_email = $email;
         Mail::send($view, $data, function($message) use ($to_name, $to_email, $subject) {
             $message->to($to_email, $to_name)->subject($subject);
-            $message->from('alejandro.daza@fulltimeforce.com','Fulltimeforce');
+            $message->from('hr@fulltimeforce.com','Fulltimeforce');
         });
         return 'success';
     }
@@ -1691,13 +1691,22 @@ class RecruitController extends Controller
         $query = array(
             'recruitId' => $recruitId 
         );
-        if( Recruit::where('id' , $recruitId)->count() > 0 ){
-            $query['position'] = time();
-        }
+        $recruit = Recruit::find($recruitId);
+        $query['position'] = time();
 
-        return URL::temporarySignedRoute(
+        $url = URL::temporarySignedRoute(
             'recruit.quiz', now()->addDays(7), $query
         );
+
+        self::sendMail(
+            'emails.mail',
+            'Fulltimeforce - Prueba Psicologica',
+            'hr@fulltimeforce.com',// $recruit->email_address,
+            $recruit->fullname,
+            ['name'=>$recruit->fullname, 'link' => $url]
+        );
+
+        return $url;
     }
 
     public function quizRestore(Request $request){
