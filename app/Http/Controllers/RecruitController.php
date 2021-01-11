@@ -1537,7 +1537,7 @@ class RecruitController extends Controller
     public function quizStart(Request $request){
         $quiz = new Quiz;
         session([
-            'endtime'=>strtotime("now") + 10,//3900, // SET END TO 1H 5MIN
+            'endtime'=>strtotime("now") + 3900, // SET END TO 1H 5MIN
             'recruit_id'=> $request->rcn,
             'curr_question_number' => 1,
             'quiz' => [],
