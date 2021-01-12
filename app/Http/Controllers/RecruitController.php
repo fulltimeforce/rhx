@@ -1693,7 +1693,7 @@ class RecruitController extends Controller
             'Fulltimeforce - Prueba Psicologica',
             'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
             'Alejandro Daza',
-            ['name'=>'ALejandro Daza', 'link' => 'this-is-link']
+            ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
         );
         return 'all good';
     }
