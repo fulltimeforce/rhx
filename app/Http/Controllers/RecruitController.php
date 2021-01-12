@@ -1688,13 +1688,23 @@ class RecruitController extends Controller
     }
 
     public function testMail(){
-        self::sendMail(
-            'emails.mail',
-            'Fulltimeforce - Prueba Psicologica',
-            'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
-            'Alejandro Daza',
-            ['name'=>'ALejandro Daza', 'link' => 'this-is-link']
-        );
+        return [
+            'MAIL_DRIVER'=>env('MAIL_DRIVER'),
+            'MAIL_HOST'=>env('MAIL_HOST'),
+            'MAIL_PORT'=>env('MAIL_PORT'),
+            'MAIL_USERNAME'=>env('MAIL_USERNAME'),
+            'MAIL_PASSWORD'=>env('MAIL_PASSWORD'),
+            'MAIL_ENCRYPTION'=>env('MAIL_ENCRYPTION'),
+            'MAIL_FROM_ADDRESS'=>env('MAIL_FROM_ADDRESS'),
+            'MAIL_FROM_NAME'=>env('MAIL_FROM_NAME'),
+        ];
+        // self::sendMail(
+        //     'emails.mail',
+        //     'Fulltimeforce - Prueba Psicologica',
+        //     'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
+        //     'Alejandro Daza',
+        //     ['name'=>'ALejandro Daza', 'link' => 'this-is-link']
+        // );
         return 'all good';
     }
 
