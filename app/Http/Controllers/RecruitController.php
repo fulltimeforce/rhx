@@ -1687,6 +1687,17 @@ class RecruitController extends Controller
 
     }
 
+    public function testMail(){
+        self::sendMail(
+            'emails.mail',
+            'Fulltimeforce - Prueba Psicologica',
+            'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
+            'Alejandro Daza',
+            ['name'=>'ALejandro Daza', 'link' => 'this-is-link']
+        );
+        return 'all good';
+    }
+
     public function quizSigned($recruitId){
         $query = array(
             'recruitId' => $recruitId 
