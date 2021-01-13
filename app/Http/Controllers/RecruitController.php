@@ -1715,13 +1715,13 @@ class RecruitController extends Controller
             'recruit.quiz', now()->addDays(7), $query
         );
 
-        self::sendMail(
-            'emails.mail',
-            'Fulltimeforce - Prueba Psicologica',
-            'hr@fulltimeforce.com',// $recruit->email_address,
-            $recruit->fullname,
-            ['name'=>$recruit->fullname, 'link' => $url]
-        );
+        // self::sendMail(
+        //     'emails.mail',
+        //     'Fulltimeforce - Prueba Psicologica',
+        //     'hr@fulltimeforce.com',// $recruit->email_address,
+        //     $recruit->fullname,
+        //     ['name'=>$recruit->fullname, 'link' => $url]
+        // );
 
         return $url;
     }

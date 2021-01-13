@@ -67,6 +67,7 @@
                         </ul>
                         <button class="btn btn-secondary demo_button">Validar</button>
                         <span id="demo_message"></span>
+                        <p>This is a message</p>
                     </form>
                 </div>
             </div>
