@@ -23,6 +23,9 @@
     height: 100%;
     display: none;
 }
+#demo_expl{
+    padding: 5px;
+}
 </style>
 @endsection
  
@@ -40,8 +43,18 @@
             <h5><strong>INDICACIONES</strong></h5>
             <div class="card">
                 <div class="card-body">
-                    <p>Ahora pasaremos a realizar una breve prueba, la cual tiene como objetivo evaluar tu capacidad de razonamiento lógico. Te mostraré una serie de láminas en power point, en donde habrá una serie de figuras incompletas que tienes que observar atentamente. Abajo de estas, tendrás distintas opciones de respuesta. Lo que tienes que hacer es simplemente decir que opción piensas que completaría la figura. No te preocupes, seguramente van a haber ejercicios que te parecerán más fáciles y otros más difíciles, esto es totalmente natural. Si no tienes ninguna duda, continuemos.</p>
-                    <p><strong>Tendras un tiempo límite para hacer ello de 60 min.</strong></p>
+                    <p>
+                        La presente prueba busca evaluar tu capacidad de <strong>razonamiento lógico</strong>.
+                        Para ello, se te presentarán una serie de láminas, cada una de ellas muestra una figura 
+                        incompleta que tienes que observar atentamente. Abajo de esta, tendrás distintas opciones de respuesta.
+                        El objetivo de la prueba es que indiques <strong>cuál de estas alternativas completa dicha figura</strong>.
+                        Seguramente van a haber ejercicios que te parecerán más fáciles y otros más difíciles, esto es totalmente normal.
+                    </p>
+                    <p>
+                        Si bien no hay un tiempo límite por ítem, tendrás máximo <strong>60 minutos</strong>
+                        para completar la prueba. No te apures, es tiempo suficiente.
+                        Además, faltando 10 minutos serás notificado.
+                    </p>
                 </div>
             </div>
         </div>
@@ -67,7 +80,9 @@
                         </ul>
                         <button class="btn btn-secondary demo_button">Validar</button>
                         <span id="demo_message"></span>
-                        <p>This is a message</p>
+                        <div id="demo_expl">
+                            <p id="review_message">This is a message...</p>
+                        </div>
                     </form>
                 </div>
             </div>
