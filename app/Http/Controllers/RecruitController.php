@@ -19,7 +19,9 @@ use Mail;
 use Exception;
 use Google_Client;
 use Google_Service_Drive;
+
 use Carbon\Carbon;
+use App\Mail\ravenEmail;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -1689,13 +1691,16 @@ class RecruitController extends Controller
 
     public function testMail(){
         try{
-            self::sendMail(
-                'emails.mail',
-                'Fulltimeforce - Prueba Psicologica',
-                'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
-                'Alejandro Daza',
-                ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
-            );
+            // self::sendMail(
+            //     'emails.mail',
+            //     'Fulltimeforce - Prueba Psicologica',
+            //     'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
+            //     'Alejandro Daza',
+            //     ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
+            // );
+            Mail::to('alejandro.daza@fulltimeforce.com')
+                ->send(new ravenEmail('Alejandro Daza','this-is-link'));
+
             return 'all good';
         }catch(\Swift_TransportException $e){
             if($e->getMessage()) {
