@@ -1366,7 +1366,7 @@ class RecruitController extends Controller
         $to_email = $email;
         Mail::send($view, $data, function($message) use ($to_name, $to_email, $subject) {
             $message->to($to_email, $to_name)->subject($subject);
-            $message->from('hr@fulltimeforce.com','Fulltimeforce');
+            // $message->from('hr@fulltimeforce.com','Fulltimeforce');
         });
         return 'success';
     }
