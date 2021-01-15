@@ -1248,6 +1248,9 @@ class RecruitController extends Controller
             //         $recruit->fullname,
             //         ['name'=>$recruit->fullname, 'link' => $signed_url]
             //     );
+            //
+            //     Mail::to('alejandro.daza@fulltimeforce.com')
+            //         ->send(new ravenEmail($recruit->fullname,$signed_url));
             // }
             
             //return view with success message
@@ -1691,15 +1694,15 @@ class RecruitController extends Controller
 
     public function testMail(){
         try{
-            self::sendMail(
-                'emails.mail',
-                'Fulltimeforce - Prueba Psicologica',
-                'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
-                'Alejandro Daza',
-                ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
-            );
-            // Mail::to('alejandro.daza@fulltimeforce.com')
-            //     ->send(new ravenEmail('Alejandro Daza','this-is-link'));
+            // self::sendMail(
+            //     'emails.mail',
+            //     'Fulltimeforce - Prueba Psicologica',
+            //     'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
+            //     'Alejandro Daza',
+            //     ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
+            // );
+            Mail::to('alejandro.daza@fulltimeforce.com')
+                ->send(new ravenEmail('Alejandro Daza','this-is-link'));
 
             return 'all good';
         }catch(\Swift_TransportException $e){
@@ -1727,6 +1730,9 @@ class RecruitController extends Controller
         //     $recruit->fullname,
         //     ['name'=>$recruit->fullname, 'link' => $url]
         // );
+
+        Mail::to('alejandro.daza@fulltimeforce.com')
+                ->send(new ravenEmail($recruit->fullname,$url));
 
         return $url;
     }
