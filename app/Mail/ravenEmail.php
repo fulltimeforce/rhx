@@ -35,7 +35,7 @@ class ravenEmail extends Mailable
         return $this->subject('Fulltimeforce - Prueba Psicologica')
                     ->markdown('emails.raven')
                     ->with('name', $this->name)
-                    ->with('link', $this->name);
+                    ->with('link', $this->link);
         // return $this->markdown('emails.raven');
     }
 }
