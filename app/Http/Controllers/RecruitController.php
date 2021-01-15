@@ -1368,7 +1368,7 @@ class RecruitController extends Controller
         $to_email = $email;
         Mail::send($view, $data, function($message) use ($to_name, $to_email, $subject) {
             $message->to($to_email, $to_name)->subject($subject);
-            // $message->from('hr@fulltimeforce.com','FullTimeForce');
+            $message->from('hr@fulltimeforce.com','FullTimeForce');
         });
         return 'success';
     }
@@ -1691,16 +1691,15 @@ class RecruitController extends Controller
 
     public function testMail(){
         try{
-            // self::sendMail(
-            //     'emails.mail',
-            //     'Fulltimeforce - Prueba Psicologica',
-            //     'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
-            //     'Alejandro Daza',
-            //     ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
-            // );
-            Mail::to('alejandro.daza@fulltimeforce.com')
-                ->from('hr@fulltimeforce.com','FullTimeForce')
-                ->send(new ravenEmail('Alejandro Daza','this-is-link'));
+            self::sendMail(
+                'emails.mail',
+                'Fulltimeforce - Prueba Psicologica',
+                'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
+                'Alejandro Daza',
+                ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
+            );
+            // Mail::to('alejandro.daza@fulltimeforce.com')
+            //     ->send(new ravenEmail('Alejandro Daza','this-is-link'));
 
             return 'all good';
         }catch(\Swift_TransportException $e){
