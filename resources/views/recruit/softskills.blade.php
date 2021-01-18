@@ -7,256 +7,256 @@
 
 <style>
     /* The switch - the box around the slider */
-.SliderSwitch {
-  max-width: 600px;
-  margin-left:auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-.SliderSwitch input{
-  visibility: hidden;
-  display: inline-block;
-  width: 1px;
-  height: 1px;
-}
-
-.SliderSwitch label{
-  font-family: Helvetica, Arial, sans-serif;
-  pointer: cursor;
-}
-
-.SliderSwitch__container{
-  background-color: #FF0000;
-  height: 20px;
-  display: inline-block;
-  width: 50px;
-  border-radius: 10px;
-  position: relative;
-  vertical-align: middle;
-  box-shadow: inset 0px 0px 3px 1px rgba(0,0,0,0.3);
-  margin-left: 10px;
-  
-  transition: background-color 300ms ease-in-out;
-}
-
-.SliderSwitch__toggle {
-  display: block;
-  height: 24px;
-  width: 24px;
-  border-radius: 12px;
-  background-color: white;
-  border: 1px solid #DDD;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  box-shadow: 0px 0px 3px rgba(0,0,0,0.2);
-  cursor: pointer;
-  
-  transition: left 300ms ease-in-out;
-}
-
-.SliderSwitch__toggle:after {
-  content: '\f00d';
-  font-size: 12px;
-  color: #FF4136;
-  display: block;
-  position: absolute;
-  top: 50%;
-  margin-top: -6px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  
-  transition: color 300ms ease-in-out;
-  
-}
-
-input:checked + .SliderSwitch__container{
-  background-color: #01FF70;
-}
-
-input:checked + .SliderSwitch__container .SliderSwitch__toggle {
-  left: calc( 100% - 20px );
-}
-
-input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
-  content: '\f00c';
-  color: #2ECC40;
-}
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting:after{
-    content: '';
-}
-
-td.stickout{
-    background-color: yellow;
-}
-td.frozencell{
-    background-color : #fafafa;
-}
-
-a.badge-success.focus, 
-a.badge-success:focus,
-a.badge-secondary.focus, 
-a.badge-secondary:focus,
-a.badge-danger.focus, 
-a.badge-danger:focus,
-a.badge-warning.focus, 
-a.badge-warning:focus,
-a.badge-primary.focus, 
-a.badge-primary:focus{
-    box-shadow: none;
-}
-
-.btn-group>.badge:not(:last-child):not(.dropdown-toggle){
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-.btn-group>.badge:not(:first-child){
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-.btn-group>.badge:not(:first-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-.btn-group>.badge{
-    height: 21px;
-}
-.btn-group>.badge.badge-primary{
-    font-size: 9px;
-}
-.btn-group>.badge.badge-primary i.fas:before{
-    vertical-align: -webkit-baseline-middle;
-}
-
-.lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border: 8px solid #17a2b8;
-  border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #17a2b8 transparent transparent transparent;
-}
-.lds-ring div:nth-child(1) {
-  animation-delay: -0.45s;
-}
-.lds-ring div:nth-child(2) {
-  animation-delay: -0.3s;
-}
-.lds-ring div:nth-child(3) {
-  animation-delay: -0.15s;
-}
-.nav-item-custom {
-    border: 1px solid rgba(86, 61, 124, .2);
-}
-
-@keyframes lds-ring {
-  0% {
-    transform: rotate(0deg);
+  .SliderSwitch {
+    max-width: 600px;
+    margin-left:auto;
+    margin-right: auto;
+    text-align: center;
   }
-  100% {
-    transform: rotate(360deg);
+
+  .SliderSwitch input{
+    visibility: hidden;
+    display: inline-block;
+    width: 1px;
+    height: 1px;
   }
-}
 
-.button-disabled {
-  cursor: not-allowed;
-}
+  .SliderSwitch label{
+    font-family: Helvetica, Arial, sans-serif;
+    pointer: cursor;
+  }
 
-.toggle.btn {
-    min-width: 8rem;
-    min-height: 2.15rem;
-}
+  .SliderSwitch__container{
+    background-color: #FF0000;
+    height: 20px;
+    display: inline-block;
+    width: 50px;
+    border-radius: 10px;
+    position: relative;
+    vertical-align: middle;
+    box-shadow: inset 0px 0px 3px 1px rgba(0,0,0,0.3);
+    margin-left: 10px;
+    
+    transition: background-color 300ms ease-in-out;
+  }
 
-.count-notif{
-  vertical-align: middle;
-  margin-left: -8px;
-  margin-top: -17px;
-  font-size: 13px;
-}
+  .SliderSwitch__toggle {
+    display: block;
+    height: 24px;
+    width: 24px;
+    border-radius: 12px;
+    background-color: white;
+    border: 1px solid #DDD;
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    box-shadow: 0px 0px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+    
+    transition: left 300ms ease-in-out;
+  }
 
-.buble-audio{
-  position: fixed;
-  padding: .7rem;
-  z-index: 2;
-  background: #FFFFFF;
-  right: 15px;
-  bottom: 16px;
-  max-width: 350px;
-  width: 100%;
-  border: 1px solid #000;
-  font-size: 14px;
-}
-.section-audio{
-  position: relative;
-}
-.buble-audio p{
-  margin-bottom: 3px;
-}
-.section-audio .close-audio{
-  position: absolute;
-  right: -12px;
-  top: -25px;
-  background: #FFF;
-  z-index: 4;
-  font-size: 24px;
-  line-height: 1;
-  border-radius: 27px;
-}
-.speed-audio{
-  font-size: 12px;
-  margin-bottom: 5px;
-}
-.tab-fce{
-  display: none;
-}
-.tab-fce.fce-active{
-  display: flex;
-}
-.tech{
-  display: inline-block;
-  padding: 5px;
-  
-  border-radius: 5px;
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
-.tech_adv{
-  background-color: #536afc;
-  color: white;
-}
-.tech_int{
-  background-color: #e8ff63;
-  color: black;
-}
-.tech_bsc{
-  background-color: gray;
-  color: white;
-}
-#list-expert-audios{
-  background-color: #03132e;
-  padding: 5px;
-  text-align: center;
-}
-.info-speed-audio{
-  font-size: 12px;
-  margin-bottom: 5px;
-}
-.expert-audio{
-  margin: 5px 5px 5px 5px;
-}
+  .SliderSwitch__toggle:after {
+    content: '\f00d';
+    font-size: 12px;
+    color: #FF4136;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -6px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    
+    transition: color 300ms ease-in-out;
+    
+  }
+
+  input:checked + .SliderSwitch__container{
+    background-color: #01FF70;
+  }
+
+  input:checked + .SliderSwitch__container .SliderSwitch__toggle {
+    left: calc( 100% - 20px );
+  }
+
+  input:checked + .SliderSwitch__container .SliderSwitch__toggle:after {
+    content: '\f00c';
+    color: #2ECC40;
+  }
+  table.dataTable thead .sorting:before,
+  table.dataTable thead .sorting:after{
+      content: '';
+  }
+
+  td.stickout{
+      background-color: yellow;
+  }
+  td.frozencell{
+      background-color : #fafafa;
+  }
+
+  a.badge-success.focus, 
+  a.badge-success:focus,
+  a.badge-secondary.focus, 
+  a.badge-secondary:focus,
+  a.badge-danger.focus, 
+  a.badge-danger:focus,
+  a.badge-warning.focus, 
+  a.badge-warning:focus,
+  a.badge-primary.focus, 
+  a.badge-primary:focus{
+      box-shadow: none;
+  }
+
+  .btn-group>.badge:not(:last-child):not(.dropdown-toggle){
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+  }
+  .btn-group>.badge:not(:first-child){
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+  }
+  .btn-group>.badge:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+  }
+  .btn-group>.badge{
+      height: 21px;
+  }
+  .btn-group>.badge.badge-primary{
+      font-size: 9px;
+  }
+  .btn-group>.badge.badge-primary i.fas:before{
+      vertical-align: -webkit-baseline-middle;
+  }
+
+  .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #17a2b8;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #17a2b8 transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  .nav-item-custom {
+      border: 1px solid rgba(86, 61, 124, .2);
+  }
+
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .button-disabled {
+    cursor: not-allowed;
+  }
+
+  .toggle.btn {
+      min-width: 8rem;
+      min-height: 2.15rem;
+  }
+
+  .count-notif{
+    vertical-align: middle;
+    margin-left: -8px;
+    margin-top: -17px;
+    font-size: 13px;
+  }
+
+  .buble-audio{
+    position: fixed;
+    padding: .7rem;
+    z-index: 2;
+    background: #FFFFFF;
+    right: 15px;
+    bottom: 16px;
+    max-width: 350px;
+    width: 100%;
+    border: 1px solid #000;
+    font-size: 14px;
+  }
+  .section-audio{
+    position: relative;
+  }
+  .buble-audio p{
+    margin-bottom: 3px;
+  }
+  .section-audio .close-audio{
+    position: absolute;
+    right: -12px;
+    top: -25px;
+    background: #FFF;
+    z-index: 4;
+    font-size: 24px;
+    line-height: 1;
+    border-radius: 27px;
+  }
+  .speed-audio{
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  .tab-fce{
+    display: none;
+  }
+  .tab-fce.fce-active{
+    display: flex;
+  }
+  .tech{
+    display: inline-block;
+    padding: 5px;
+    
+    border-radius: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  .tech_adv{
+    background-color: #536afc;
+    color: white;
+  }
+  .tech_int{
+    background-color: #e8ff63;
+    color: black;
+  }
+  .tech_bsc{
+    background-color: gray;
+    color: white;
+  }
+  #list-expert-audios{
+    background-color: #03132e;
+    padding: 5px;
+    text-align: center;
+  }
+  .info-speed-audio{
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  .expert-audio{
+    margin: 5px 5px 5px 5px;
+  }
 </style>
 @endsection
  
@@ -413,6 +413,11 @@ a.badge-primary:focus{
       </div>
     </div>
 
+
+    <div class="modal" id="schedule-modal" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document"></div>
+    </div>
+
     <!--
     ERROR - SUCCESS MESSAGE SECTION
     -->
@@ -497,7 +502,6 @@ a.badge-primary:focus{
 
 <script type="text/javascript" src="{{ asset('/bootstrap-table/bootstrap-table.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.js') }}"></script>
-
 <script type="text/javascript">
     $(document).ready(function (ev) {
         
@@ -641,7 +645,8 @@ a.badge-primary:focus{
                   var actions = "";
 
                   if(rowData.raven_status == null){
-                    actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Generate Link</a>';
+                    actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Generate Link</a> ';
+                    actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
                   }
                   if(rowData.raven_status == 'invalid'){
                     actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALIDO</a>';
@@ -811,7 +816,7 @@ a.badge-primary:focus{
 
         //GENERATE RAVEN QUIZ LINK
         $('.btn-raven-quiz').on('click', function (ev) {
-            ev.preventDefault();
+          ev.preventDefault();
             var url = '{{ route("recruit.quiz.signed" , ":id") }}';
             url = url.replace( ":id" , $(this).data("id") );
             $.ajax({
@@ -851,6 +856,38 @@ a.badge-primary:focus{
             });
         }); 
 
+        //GENERATE RAVEN QUIZ LINK
+        $('.btn-schedule-quiz').on('click', function (ev) {
+            ev.preventDefault();
+            var url = '{{ route("recruit.schedule.quiz") }}';
+            var now = new Date();
+            $.ajax({
+                type:'POST',
+                url: url,
+                data: {
+                  id: $(this).data("id")
+                },
+                headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                  $("#schedule-modal").html(data);
+                  
+
+                  console.log('datepicker');
+                  $('[data-toggle="datepicker"]').datepicker({
+                    autoHide: true,
+                    zIndex: 2048,
+                    format: 'yyyy-mm-dd',
+                    startDate: now
+                  });
+                  
+                  $("#schedule-modal").modal();
+                }
+            });
+        }); 
+
         $('.btn-quiz-restore').on('click',function (ev){
           ev.preventDefault();
           var url = '{{ route("recruit.quiz.restore") }}';
@@ -868,8 +905,30 @@ a.badge-primary:focus{
             }
           });
         });
-
       }
+
+      $("#schedule-modal").on('click','#schedule_btn',function(e){
+        var form = getFormData($('#schedule_form'));
+        console.log(form);
+        $.ajax({
+          type:'POST',
+          url: '{{route("recruit.schedule.save")}}',
+          data:{
+            date: form['schedule_date'],
+            time: form['schedule_time'],
+            id: $(this).data("id"),
+          },
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(data){
+            console.log(data);
+          }
+        });
+      });
+
+      
 
       //==========AUDIO SPEED BUTTON FUNCTION
       $("body").on('click' , 'a.speed-audio' , function(ev){
@@ -1084,6 +1143,18 @@ a.badge-primary:focus{
             }
           }
         }
+      }
+
+      //==========GET FORM DATA AUXILIARY FUNCTION
+      function getFormData(form){
+          var unindexed_array = form.serializeArray();
+          var indexed_array = {};
+
+          $.map(unindexed_array, function(n, i){
+              indexed_array[n['name']] = n['value'];
+          });
+
+          return indexed_array;
       }
 
       //===================================================================================

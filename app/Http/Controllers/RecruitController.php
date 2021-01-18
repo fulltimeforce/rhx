@@ -1549,9 +1549,9 @@ class RecruitController extends Controller
         ]);
         $recruit = Recruit::where('id',$request->rcn);
         if($recruit->count() > 0){
-            $recruit->update([
-                'raven_status'=>'invalid',
-            ]);
+            // $recruit->update([
+            //     'raven_status'=>'invalid',
+            // ]);
             return [
                 // 'code' => session('recruit_id'),
                 // 'quiz' => session('quiz'),
@@ -1720,7 +1720,7 @@ class RecruitController extends Controller
         $query['position'] = time();
 
         $url = URL::temporarySignedRoute(
-            'recruit.quiz', now()->addDays(7), $query
+            'recruit.quiz', now()->addHours(2), $query
         );
 
         // self::sendMail(
@@ -1747,6 +1747,35 @@ class RecruitController extends Controller
                 'raven_status'  =>null,
             ]);
         }
+    }
+
+    public function scheduleQuizView(Request $request){
+        $recruit = Recruit::find($request->id);
+        $date = date('Y-m-d');
+        $time = date('H',strtotime('1 hour'));
+        if($recruit->raven_date != null){
+            $d = strtotime($recruit->raven_date);
+
+            $date = date('Y-m-d',$d);
+            $time = date('H',$d);
+        }
+
+        return view('quiz.schedule_modal',[
+            'recruit'=>$recruit,
+            'nowDate'=>$date,
+            'nowTime'=>$time,
+        ]);
+    }
+
+    public function scheduleSave(Request $request){
+        $date = date($request->date.' '.$request->time.':00');
+        $recruit = Recruit::where('id',$request->id);
+        if($recruit->count() > 0){
+            $recruit->update([
+                'raven_date' => $date,
+            ]);
+        }
+        return $date;
     }
 
     //==============================================================================

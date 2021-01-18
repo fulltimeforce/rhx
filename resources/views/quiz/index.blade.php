@@ -26,6 +26,34 @@
 #demo_expl{
     padding: 5px;
 }
+#message_box {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    /* background: #ffc; */
+    padding: 5px;
+    /* border: 1px solid #CCCCCC; */
+    text-align: center;
+    font-weight: bold;
+    width: 100%;
+}
+.answer_option, .demo_option{
+    display: inline-block;
+    margin: 2px 0px;
+    padding: 5px 15px;
+    background-color: #4691e0;
+    color: #ffffff;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.ans_selected{
+    background-color: #053c85 !important;
+}
+#question_img{
+    border: 1px solid #292929;
+    border-radius: 5px;
+}
 </style>
 @endsection
  
@@ -39,7 +67,7 @@
                 <img src="https://fulltimeforce.com/wp-content/themes/ftf-2020/images/fulltimeforce-logo.svg" alt="Fulltimeforce Logo" id="logo">
             </div>
         </div>
-        <div class="col-10 mt-3">
+        <div class="col-md-10 col-sm-12 mt-3">
             <h5><strong>INDICACIONES</strong></h5>
             <div class="card">
                 <div class="card-body">
@@ -60,28 +88,29 @@
         </div>
     </div>
     <div class="row justify-content-sm-center mt-3">
-        <div class="col-10">
+        <div class="col-md-10 col-sm-12">
             <h5><strong>ITEM DE EJEMPLO</strong></h5>
         </div>
-        <div class="col-10">
+        <div class="col-md-10 col-sm-12">
             <div class="row">
                 <div class="col-md-7 col-sm-12 text-right">
                     <img src="{{asset('workat/quiz_assets/quiz_example.png')}}" height=350>
                 </div>
-                <div class="col-5">
-                    <form id="demo_form" action="#">
+                <div class="col-md-5 col-sm-12">
+                    <form id="demo_form" class="quiz_form" action="#">
                         <ul id="demo_options" style="list-style-type:none; padding:0;">
-                            <li><input type="radio" name="demo" value="1"> 1</li>
-                            <li><input type="radio" name="demo" value="2"> 2</li>
-                            <li><input type="radio" name="demo" value="3"> 3</li>
-                            <li><input type="radio" name="demo" value="4"> 4</li>
-                            <li><input type="radio" name="demo" value="5"> 5</li>
-                            <li><input type="radio" name="demo" value="6"> 6</li>
+                            <li><div class="demo_option" data-answer="1">1</div></li>
+                            <li><div class="demo_option" data-answer="2">2</div></li>
+                            <li><div class="demo_option" data-answer="3">3</div></li>
+                            <li><div class="demo_option" data-answer="4">4</div></li>
+                            <li><div class="demo_option" data-answer="5">5</div></li>
+                            <li><div class="demo_option" data-answer="6">6</div></li>
+                            <input type="hidden" name="demo" class="demo_answer" value="">
                         </ul>
                         <button class="btn btn-secondary demo_button">Validar</button>
                         <span id="demo_message"></span>
                         <div id="demo_expl">
-                            <p id="review_message">This is a message...</p>
+                            <p id="review_message"></p>
                         </div>
                     </form>
                 </div>
@@ -97,21 +126,19 @@
 </div>
 <div id="questionaire" style="display: none">
     <form id="question_form">
-        <div class="row">
-            <div class="col-12 text-center">
-                <p>Te quedan <span id="time">60:00</span> minutos!</p>
-            </div>
+        <div class="row mt-5">
             <div id="q_img" class="col-md-7 col-sm-12 text-right">
                 <img id="question_img" src="{{asset('workat/quiz_assets/1441512.jpg')}}" height=600>
             </div>
             <div class="col-md-5 col-sm-12">
                 <div class="m-md-5">
                     <ul id="quiz_options" style="list-style-type:none; padding:0;">
-                        <li><input type="radio" name="q" value="1"> 1</li>
+                        <li><div class="answer_option" data-answer="1">1</div></li>
                     </ul>
                     <button class="btn btn-primary next_button">Continuar</button>
                 </div>
             </div>
+            <input type="hidden" name="q" class="answer" value="">
             <input type="hidden" name="rcn" value="{{$recruit->id}}">
         </div>
     </form>
@@ -136,6 +163,7 @@ $(".demo_button").on('click',function(e){
     e.preventDefault();
     var form = getFormData($("#demo_form"));
     var message = $("#demo_message");
+    var review = $("#review_message");
     if(form['demo'] == '2'){
         message.removeClass('demo-failure');
         message.addClass('demo-success');
@@ -145,6 +173,7 @@ $(".demo_button").on('click',function(e){
         message.removeClass('demo-success');
         message.html("¡Incorrecto!");
     }
+    review.html("Si observas bien sólo la alternativa 2 completa la figura.");
 });
 
 $("#begin-test").on('click',function(e){
@@ -216,6 +245,26 @@ $(document).on('click','.next_button',function(e){
     });
 });
 
+$(document).on('click','.answer_option',function(e){
+    var answer = $(this);
+    var ans_input = $(".answer");
+
+    $('.answer_option').removeClass('ans_selected');
+    answer.addClass('ans_selected');
+
+    ans_input.val(answer.data('answer'));
+});
+
+$(document).on('click','.demo_option',function(e){
+    var answer = $(this);
+    var ans_input = $(".demo_answer");
+
+    $('.demo_option').removeClass('ans_selected');
+    answer.addClass('ans_selected');
+
+    ans_input.val(answer.data('answer'));
+});
+
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     var interval = setInterval(function () {
@@ -225,7 +274,11 @@ function startTimer(duration, display) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.html(minutes + ":" + seconds);
+        // display.html(minutes + ":" + seconds);
+
+        if(timer == 600){
+            toastr.warning('Te quedan 10 minutos del examen');
+        }
 
         if (--timer < 0) {
             timer = 0;
@@ -263,7 +316,8 @@ function loadOptions(number){
     var options = "";
     var amount = number < 25 ? 6:8;
     for (let i = 1; i <= amount; i++) {
-        options += '<li><input type="radio" name="q" value="'+i+'"> '+i+'</li>';
+        options += '<li><div class="answer_option" data-answer="'+i+'">'+i+'</div></li>';
+        // options += '<li><input type="radio" name="q" value="'+i+'"> '+i+'</li>';
     }
     ul.html(options);
 }
