@@ -874,8 +874,6 @@
                 success:function(data){
                   $("#schedule-modal").html(data);
                   
-
-                  console.log('datepicker');
                   $('[data-toggle="datepicker"]').datepicker({
                     autoHide: true,
                     zIndex: 2048,
