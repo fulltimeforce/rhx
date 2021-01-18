@@ -104,6 +104,7 @@ Route::post('recruits/evaluate/criteria','RecruitController@evaluateCriteria')->
 
 //METODOS EVALUADOS SOFT SKILLS
 Route::get('recruits/softskills','RecruitController@softskills')->name('recruit.softskills');
+Route::get('recruits/schedule/test','RecruitController@scheduleCron');
 Route::post('recruits/schedule/quiz','RecruitController@scheduleQuizView')->name('recruit.schedule.quiz');
 Route::post('recruits/schedule/save','RecruitController@scheduleSave')->name('recruit.schedule.save');
 Route::post('recruits/evaluate/evaluation','RecruitController@recruitsEvaluateEvaluation')->name('recruit.postulant.evaluation');

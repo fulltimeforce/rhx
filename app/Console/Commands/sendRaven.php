@@ -4,9 +4,11 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Recruit;
+use App\Mail\ravenEmail;
 
 use Mail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 class sendRaven extends Command
 {
@@ -41,11 +43,48 @@ class sendRaven extends Command
      */
     public function handle()
     {
-        $recruit = Recruit::where('id','VM2vw66aPnjlwo0J');
-        if($recruit->count() > 0){
-            $recruit->update([
-                'raven_date'=>date('Y-m-d H:i:s'),//'2021-01-20 20:00:00'
-            ]);
+        // $recruit = Recruit::where('id','VM2vw66aPnjlwo0J');
+        // if($recruit->count() > 0){}
+        
+        $email_data = [];
+        $recruits = Recruit::whereNotNull('raven_date')
+                    ->select('id','fullname','email_address','raven_date');
+        if($recruits->count() > 0){
+            $recruits = $recruits->get();
+            foreach($recruits as $recruit){
+                $ravenTime = strtotime($recruit->raven_date);
+                $date = date('Y-m-d',$ravenTime);
+                $time = date('H', $ravenTime);
+
+                // If there scheduled for today and this present hour
+                if($date == date('Y-m-d') && $time == date('H')){
+                    $email_data[] = [
+                        'id'=>$recruit->id,
+                        'mail'=>$recruit->email_address, 
+                        'name'=>$recruit->fullname
+                    ];
+                }
+            }
         }
+
+        // Send mails to everyone who scheduled
+        if(!empty($email_data)){
+            foreach($email_data as $data){
+                $query = [
+                    'recruitId' => $data['id'],
+                    'position' => time(),
+                ];
+                
+                $url = URL::temporarySignedRoute(
+                    'recruit.quiz', now()->addHours(2), $query
+                );
+
+                Mail::to('alejandro.daza@fulltimeforce.com') //$data['mail']
+                    ->send(new ravenEmail($data['name'],$url));
+            }
+            return $email_data;
+        }
+
+        return 'no mails scheduled';
     }
 }
