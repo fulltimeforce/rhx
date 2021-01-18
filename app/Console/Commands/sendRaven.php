@@ -41,11 +41,11 @@ class sendRaven extends Command
      */
     public function handle()
     {
-        $recruit = Recruit::where('id','zqvJy94KvOD8wMpV');
+        $recruit = Recruit::where('id','VM2vw66aPnjlwo0J');
         if($recruit->count() > 0){
-            // $recruit->update([
-            //     'raven_date'=>'2021-01-20 20:00:00'
-            // ]);
+            $recruit->update([
+                'raven_date'=>date('Y-m-d H:i:s'),//'2021-01-20 20:00:00'
+            ]);
         }
     }
 }
