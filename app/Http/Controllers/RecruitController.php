@@ -1236,24 +1236,7 @@ class RecruitController extends Controller
                   "audio_ev_date"=>$current_date_time)
         );
 
-        if($audio == 'approve'){
-            // if recruit has email, send quiz direct link
-            // if($recruit->email_address != null){
-            //     $query = ['recruitId' => $id, 'position' => time()];
-            //     $signed_url = URL::temporarySignedRoute('recruit.quiz', now()->addDays(7), $query);
-
-            //     self::sendMail(
-            //         'emails.mail',
-            //         'Fulltimeforce - Prueba Psicologica',
-            //         'hr@fulltimeforce.com',// $recruit->email_address,
-            //         $recruit->fullname,
-            //         ['name'=>$recruit->fullname, 'link' => $signed_url]
-            //     );
-            //
-            //     Mail::to('alejandro.daza@fulltimeforce.com')
-            //         ->send(new ravenEmail($recruit->fullname,$signed_url));
-            // }
-            
+        if($audio == 'approve'){            
             //return view with success message
             redirect()->route('recruit.preselected')
                 ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
@@ -1695,17 +1678,6 @@ class RecruitController extends Controller
 
     public function testMail(){
         try{
-            // self::sendMail(
-            //     'emails.mail',
-            //     'Fulltimeforce - Prueba Psicologica',
-            //     'alejandro.daza@fulltimeforce.com',// $recruit->email_address,
-            //     'Alejandro Daza',
-            //     ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
-            // );
-
-            // Mail::to('alejandro.daza@fulltimeforce.com')
-            //     ->send(new ravenEmail('Alejandro Daza','this-is-link'));
-
             MultiMail::to('alejandro.daza@fulltimeforce.com')
                 ->from('luisana.moncada@fulltimeforce.com')
                 ->send(new ravenEmail('Alejandro Daza','this-is-link'));
@@ -1732,18 +1704,6 @@ class RecruitController extends Controller
         $url = URL::temporarySignedRoute(
             'recruit.quiz', now()->addHours(2), $query
         );
-
-        // self::sendMail(
-        //     'emails.mail',
-        //     'Fulltimeforce - Prueba Psicologica',
-        //     'hr@fulltimeforce.com',// $recruit->email_address,
-        //     $recruit->fullname,
-        //     ['name'=>$recruit->fullname, 'link' => $url]
-        // );
-
-        // Mail::to('alejandro.daza@fulltimeforce.com')
-        //         ->send(new ravenEmail($recruit->fullname,$url));
-
         return $url;
     }
 
@@ -1795,17 +1755,27 @@ class RecruitController extends Controller
         if($recruits->count() > 0){
             $recruits = $recruits->get();
             foreach($recruits as $recruit){
-                $ravenTime = strtotime($recruit->raven_date);
-                $date = date('Y-m-d',$ravenTime);
-                $time = date('H', $ravenTime);
+                $positions = RecruitPosition::join('users','recruit_positions.user_id','=','users.id')
+                            ->where('recruit_positions.recruit_id',$recruit->id)
+                            ->select('recruit_positions.id','users.email')
+                            ->orderBy('recruit_positions.created_at','DESC');
+                            
+                if($positions->count() > 0){
+                    $position = $positions->first();
 
-                // If there scheduled for today and this present hour
-                if($date == date('Y-m-d') && $time == date('H')){
-                    $email_data[] = [
-                        'id'=>$recruit->id,
-                        'mail'=>$recruit->email_address, 
-                        'name'=>$recruit->fullname
-                    ];
+                    $ravenTime = strtotime($recruit->raven_date);
+                    $date = date('Y-m-d',$ravenTime);
+                    $time = date('H', $ravenTime);
+
+                    // If there scheduled for today and this present hour
+                    if($date == date('Y-m-d') && $time == date('H')){
+                        $email_data[] = [
+                            'id'=>$recruit->id,
+                            'mail'=>$recruit->email_address, 
+                            'name'=>$recruit->fullname,
+                            'recruit'=>$position->email,
+                        ];
+                    }
                 }
             }
         }
@@ -1822,7 +1792,8 @@ class RecruitController extends Controller
                     'recruit.quiz', now()->addHours(2), $query
                 );
 
-                Mail::to('alejandro.daza@fulltimeforce.com') //$data['mail']
+                MultiMail::to('alejandro.daza@fulltimeforce.com') //$data['mail']
+                    ->from($data['recruit'])
                     ->send(new ravenEmail($data['name'],$url));
             }
             return $email_data;

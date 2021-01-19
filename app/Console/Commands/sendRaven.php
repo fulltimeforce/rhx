@@ -4,9 +4,11 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Recruit;
+use App\RecruitPosition;
 use App\Mail\ravenEmail;
 
 use Mail;
+use MultiMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
@@ -42,27 +44,34 @@ class sendRaven extends Command
      * @return mixed
      */
     public function handle()
-    {
-        // $recruit = Recruit::where('id','VM2vw66aPnjlwo0J');
-        // if($recruit->count() > 0){}
-        
+    {        
         $email_data = [];
         $recruits = Recruit::whereNotNull('raven_date')
                     ->select('id','fullname','email_address','raven_date');
         if($recruits->count() > 0){
             $recruits = $recruits->get();
             foreach($recruits as $recruit){
-                $ravenTime = strtotime($recruit->raven_date);
-                $date = date('Y-m-d',$ravenTime);
-                $time = date('H', $ravenTime);
+                $positions = RecruitPosition::join('users','recruit_positions.user_id','=','users.id')
+                            ->where('recruit_positions.recruit_id',$recruit->id)
+                            ->select('recruit_positions.id','users.email')
+                            ->orderBy('recruit_positions.created_at','DESC');
+                            
+                if($positions->count() > 0){
+                    $position = $positions->first();
 
-                // If there scheduled for today and this present hour
-                if($date == date('Y-m-d') && $time == date('H')){
-                    $email_data[] = [
-                        'id'=>$recruit->id,
-                        'mail'=>$recruit->email_address, 
-                        'name'=>$recruit->fullname
-                    ];
+                    $ravenTime = strtotime($recruit->raven_date);
+                    $date = date('Y-m-d',$ravenTime);
+                    $time = date('H', $ravenTime);
+
+                    // If there scheduled for today and this present hour
+                    if($date == date('Y-m-d') && $time == date('H')){
+                        $email_data[] = [
+                            'id'=>$recruit->id,
+                            'mail'=>$recruit->email_address, 
+                            'name'=>$recruit->fullname,
+                            'recruit'=>$position->email,
+                        ];
+                    }
                 }
             }
         }
@@ -79,7 +88,8 @@ class sendRaven extends Command
                     'recruit.quiz', now()->addHours(2), $query
                 );
 
-                Mail::to('alejandro.daza@fulltimeforce.com') //$data['mail']
+                MultiMail::to('alejandro.daza@fulltimeforce.com') //$data['mail']
+                    ->from($data['recruit'])
                     ->send(new ravenEmail($data['name'],$url));
             }
             return $email_data;
