@@ -1755,20 +1755,21 @@ class RecruitController extends Controller
         if($recruits->count() > 0){
             $recruits = $recruits->get();
             foreach($recruits as $recruit){
-                $positions = RecruitPosition::join('users','recruit_positions.user_id','=','users.id')
+
+                $ravenTime = strtotime($recruit->raven_date);
+                $date = date('Y-m-d',$ravenTime);
+                $time = date('H', $ravenTime);
+
+                // If there scheduled for today and this present hour
+                if($date == date('Y-m-d') && $time == date('H')){
+                    
+                    $positions = RecruitPosition::join('users','recruit_positions.user_id','=','users.id')
                             ->where('recruit_positions.recruit_id',$recruit->id)
                             ->select('recruit_positions.id','users.email')
                             ->orderBy('recruit_positions.created_at','DESC');
                             
-                if($positions->count() > 0){
-                    $position = $positions->first();
-
-                    $ravenTime = strtotime($recruit->raven_date);
-                    $date = date('Y-m-d',$ravenTime);
-                    $time = date('H', $ravenTime);
-
-                    // If there scheduled for today and this present hour
-                    if($date == date('Y-m-d') && $time == date('H')){
+                    if($positions->count() > 0){
+                        $position = $positions->first();
                         $email_data[] = [
                             'id'=>$recruit->id,
                             'mail'=>$recruit->email_address, 
