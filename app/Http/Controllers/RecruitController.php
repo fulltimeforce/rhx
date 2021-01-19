@@ -1745,7 +1745,7 @@ class RecruitController extends Controller
                 'raven_date' => $date,
             ]);
         }
-        return $date;
+        return 'success';
     }
 
     public function scheduleCron(){
