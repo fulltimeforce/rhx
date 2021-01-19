@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6927050d17bae15b23a91ade862bc769",
+    "content-hash": "c1f4bf24f9edd3b4c02079ff1afcad89",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1396,6 +1396,63 @@
                 "source": "https://github.com/vinkla/hashids/tree/4.1.0"
             },
             "time": "2020-11-26T19:24:33+00:00"
+        },
+        {
+            "name": "iwasherefirst2/laravel-multimail",
+            "version": "1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iwasherefirst2/laravel-multimail.git",
+                "reference": "6ecf93a71294f9d6d9e8624a5aa2a6eb1d5722d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iwasherefirst2/laravel-multimail/zipball/6ecf93a71294f9d6d9e8624a5aa2a6eb1d5722d2",
+                "reference": "6ecf93a71294f9d6d9e8624a5aa2a6eb1d5722d2",
+                "shasum": ""
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.4",
+                "orchestra/testbench": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "IWasHereFirst2\\LaravelMultiMail\\MultiMailServiceProvider"
+                    ],
+                    "aliases": {
+                        "MultiMail": "IWasHereFirst2\\LaravelMultiMail\\Facades\\MultiMail"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "IWasHereFirst2\\LaravelMultiMail\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dr. Adam Nielsen",
+                    "email": "info@drnielsen.de"
+                }
+            ],
+            "description": "A package to send mails easily from multiple mail accounts with Laravel",
+            "homepage": "https://github.com/iwasherefirst2/Laravel-MultiMail",
+            "keywords": [
+                "emails",
+                "laravel",
+                "multiple providers"
+            ],
+            "support": {
+                "issues": "https://github.com/iwasherefirst2/laravel-multimail/issues",
+                "source": "https://github.com/iwasherefirst2/laravel-multimail/tree/1.3.1"
+            },
+            "time": "2020-10-25T13:54:45+00:00"
         },
         {
             "name": "laravel/framework",

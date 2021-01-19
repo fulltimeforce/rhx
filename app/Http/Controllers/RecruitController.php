@@ -16,6 +16,7 @@ use App\Config;
 
 use App\Quiz;
 use Mail;
+use MultiMail;
 use Exception;
 use Google_Client;
 use Google_Service_Drive;
@@ -1701,7 +1702,12 @@ class RecruitController extends Controller
             //     'Alejandro Daza',
             //     ['name'=>'Alejandro Daza', 'link' => 'this-is-link']
             // );
-            Mail::to('alejandro.daza@fulltimeforce.com')
+
+            // Mail::to('alejandro.daza@fulltimeforce.com')
+            //     ->send(new ravenEmail('Alejandro Daza','this-is-link'));
+
+            MultiMail::to('alejandro.daza@fulltimeforce.com')
+                ->from('luisana.moncada@fulltimeforce.com')
                 ->send(new ravenEmail('Alejandro Daza','this-is-link'));
 
             return 'all good';
@@ -1731,8 +1737,8 @@ class RecruitController extends Controller
         //     ['name'=>$recruit->fullname, 'link' => $url]
         // );
 
-        Mail::to('alejandro.daza@fulltimeforce.com')
-                ->send(new ravenEmail($recruit->fullname,$url));
+        // Mail::to('alejandro.daza@fulltimeforce.com')
+        //         ->send(new ravenEmail($recruit->fullname,$url));
 
         return $url;
     }
