@@ -1715,6 +1715,10 @@ class RecruitController extends Controller
             if($e->getMessage()) {
                 dd($e->getMessage());
             }             
+        }catch(Exception $ex){
+            if($ex->getMessage()) {
+                dd($ex->getMessage());
+            }             
         }
     }
 
