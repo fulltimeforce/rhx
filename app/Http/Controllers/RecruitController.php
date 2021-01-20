@@ -1323,6 +1323,7 @@ class RecruitController extends Controller
                 //         ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
                 // }
 
+                // Check if recruit has taken Raven Examen
                 if($recruit['raven_status'] == null){
                     redirect()->route('recruit.softskills')
                             ->with('error', 'Need to take Raven Quiz.');
@@ -1348,16 +1349,6 @@ class RecruitController extends Controller
                 }
             }
         }
-    }
-
-    function sendMail($view, $subject, $email, $name, $data){
-        $to_name = $name;
-        $to_email = $email;
-        Mail::send($view, $data, function($message) use ($to_name, $to_email, $subject) {
-            $message->to($to_email, $to_name)->subject($subject);
-            $message->from('hr@fulltimeforce.com','FullTimeForce');
-        });
-        return 'success';
     }
 
     //==============================================================================
@@ -1513,6 +1504,10 @@ class RecruitController extends Controller
             RecruitPosition::where('id' , $rp_id)->delete();
         }
     }
+
+    //==============================================================================
+    //=============================RAVEN QUIZ METHODS===============================
+    //==============================================================================
     
     public function quizIndex(Request $request, $recruitId){
         if(!Auth::check() && !$request->hasValidSignature()) return redirect('/');
@@ -1533,12 +1528,10 @@ class RecruitController extends Controller
         ]);
         $recruit = Recruit::where('id',$request->rcn);
         if($recruit->count() > 0){
-            // $recruit->update([
-            //     'raven_status'=>'invalid',
-            // ]);
+            $recruit->update([
+                'raven_status'=>'invalid',
+            ]);
             return [
-                // 'code' => session('recruit_id'),
-                // 'quiz' => session('quiz'),
                 'status' => 'continue',
                 'curr_question' => session('curr_question_number'),
                 'img'=> $quiz->getImgFromQuestion(1)
@@ -1686,10 +1679,6 @@ class RecruitController extends Controller
         }catch(\Swift_TransportException $e){
             if($e->getMessage()) {
                 dd($e->getMessage());
-            }             
-        }catch(Exception $ex){
-            if($ex->getMessage()) {
-                dd($ex->getMessage());
             }             
         }
     }
