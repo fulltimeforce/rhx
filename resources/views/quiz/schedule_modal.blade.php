@@ -19,7 +19,7 @@
                         <div class="form-group">
                             <label for="datetime">Time</label>
                             <select name="schedule_time" class="form-control" id="hour_picker">
-                            @for ($i = 1; $i <= 24; $i++)
+                            @for ($i = 0; $i <= 23; $i++)
                                 <option {{(intval($nowTime)) == $i?'selected':''}}>{{$i}}:00</option>
                             @endfor
                             </select>
