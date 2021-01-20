@@ -418,6 +418,10 @@
       <div class="modal-dialog" role="document"></div>
     </div>
 
+    <div class="modal" id="score-modal" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document"></div>
+    </div>
+
     <!--
     ERROR - SUCCESS MESSAGE SECTION
     -->
@@ -645,7 +649,8 @@
                   var actions = "";
 
                   if(rowData.raven_status == null){
-                    actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Generate Link</a> ';
+                    actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Link</a> ';
+                    actions += '<a class="badge badge-info btn-manual-score" data-id="'+rowData.recruit_id+'" href="#">Score</a> ';
                     actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
                   }
                   if(rowData.raven_status == 'invalid'){
@@ -903,6 +908,27 @@
             }
           });
         });
+
+        $('.btn-manual-score').on('click',function(ev){
+          ev.preventDefault();
+          var url = '{{route("recruit.score.form")}}';
+          var recruitId = $(this).data("id");
+          $.ajax({
+            type:'POST',
+            url: url,
+            data: {
+              id: $(this).data("id")
+            },
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              $("#score-modal").html(data);              
+              $("#score-modal").modal();
+            }
+          });
+        })
       }
 
       $("#schedule-modal").on('click','#schedule_btn',function(e){
@@ -922,6 +948,32 @@
           },
           success: function(data){
             $("#schedule-modal").modal('toggle');
+          }
+        });
+      });
+
+      $("#score-modal").on('click',"#score_btn",function(e){
+        var form = getFormData($('#score_form'));
+        console.log(form);
+        var total = form['total_score'];
+        if(total == ""){
+          console.log('empty');
+          return;
+        }
+        $.ajax({
+          type:'POST',
+          url: '{{route("recruit.score.save")}}',
+          data:{
+            total_score: form['total_score'],
+            id: $(this).data("id"),
+          },
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(data){
+            $("#score-modal").modal('toggle');
+            location.reload();
           }
         });
       });

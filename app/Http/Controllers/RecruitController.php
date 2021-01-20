@@ -1792,6 +1792,28 @@ class RecruitController extends Controller
         return 'no mails scheduled';
     }
 
+    public function manualScore(Request $request){
+        $recruit = Recruit::find($request->id);
+        return view('quiz.manual_score',[
+            'recruit'=>$recruit,
+        ]);
+    }
+
+    public function scoreSave(Request $request){
+        $recruit = Recruit::where('id',$request->id);
+        $totalScore = $request->total_score;
+        $quiz = new Quiz;
+        if($recruit->count() > 0){
+            $recruit->update([
+                'raven_total'   =>  $totalScore,
+                'raven_overall' =>  $quiz->getRavenOverallScore($totalScore),
+                'raven_perc'    =>  $quiz->getRavenPercentile($totalScore),
+                'raven_status'  =>  'completed',
+                'raven_date'    =>  null
+            ]);
+        }
+    }
+
     //==============================================================================
     //=====================POSTULANTS TECHNICAL QUESTIONARIE========================
     //==============================================================================

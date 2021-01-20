@@ -107,6 +107,8 @@ Route::get('recruits/softskills','RecruitController@softskills')->name('recruit.
 Route::get('recruits/schedule/test','RecruitController@scheduleCron');
 Route::post('recruits/schedule/quiz','RecruitController@scheduleQuizView')->name('recruit.schedule.quiz');
 Route::post('recruits/schedule/save','RecruitController@scheduleSave')->name('recruit.schedule.save');
+Route::post('recruits/score/quiz','RecruitController@manualScore')->name('recruit.score.form');
+Route::post('recruits/score/save','RecruitController@scoreSave')->name('recruit.score.save');
 Route::post('recruits/evaluate/evaluation','RecruitController@recruitsEvaluateEvaluation')->name('recruit.postulant.evaluation');
 
 //METODOS SELECCIONADOS
