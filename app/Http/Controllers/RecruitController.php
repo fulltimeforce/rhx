@@ -1671,7 +1671,7 @@ class RecruitController extends Controller
 
     public function testMail(){
         try{
-            MultiMail::to('alejandro.daza@fulltimeforce.com')
+            MultiMail::to('alejandrodazaculqui@hotmail.com')
                 ->from('luisana.moncada@fulltimeforce.com')
                 ->send(new ravenEmail('Alejandro Daza','this-is-link'));
 
