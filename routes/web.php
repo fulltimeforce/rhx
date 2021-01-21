@@ -114,12 +114,6 @@ Route::post('recruits/score/quiz','RecruitController@manualScore')->name('recrui
 Route::post('recruits/score/save','RecruitController@scoreSave')->name('recruit.score.save');
 Route::post('recruits/evaluate/evaluation','RecruitController@recruitsEvaluateEvaluation')->name('recruit.postulant.evaluation');
 
-
-Route::get('/test-mail', function (){
-    Notification::route('mail', 'alejandro.daza@fulltimeforce.com')->notify(new NewMessage());
-    return 'Sent';
-});
-
 //METODOS SELECCIONADOS
 Route::get('recruits/selected','RecruitController@selected')->name('recruit.selected');
 
