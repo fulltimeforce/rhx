@@ -16,23 +16,23 @@
         }
         .title_row{
             background-color: #00ADEF;
-            background-image: url("{{$banner}}") ;
+            background-image: url("{{asset('mail/mail_banner.png')}}") ;
             background-repeat: no-repeat;
             background-size:100% 100%;
             color: #ffffff;
             border-radius: 15px 15px 0 0;
-            padding: 20px 20px 0 20px;
+            padding: 50px 20px 0 20px;
         }
         .content_row{
             background-color: #ffffff;
-            padding: 20px;
+            padding: 40px 20px;
         }
         .content_row p{
             color: #485665;
         }
         .footer_row{
             background-color: #00ADEF;
-            background-image: url("{{$footer}}") ;
+            background-image: url("{{asset('mail/mail_footer.png')}}") ;
             background-repeat: no-repeat;
             background-size:100% 100%;
             color: #ffffff;
@@ -43,9 +43,11 @@
             text-align: center;
         }
         #link-btn{
+            font-size: 20px;
             background-color: #00DFEF;
             border:none;
             box-shadow: 0 0 10px 5px #00000020;
+            padding: .375rem 1.3rem
         }
         #sub-info{
             font-size: 11px;
@@ -58,14 +60,14 @@
             <div class="row title_row">
                 <div class="col-6">
                     <div>
-                        <img src="{{$logo}}" height="50">
+                        <img src="{{asset('mail/mail_logo.png')}}" height="50">
                     </div>
                     <h5 class="mt-5" style="color:#ffffff">
                         ¡Felicitaciones, has pasado satisfactoriamente la última fase del proceso de selección!
                     </h5>
                 </div>
                 <div class="col-6" style="text-align: center">
-                    <img src="{{$img}}" height="250">
+                    <img src="{{asset('mail/mail_img.png')}}" height="250">
                 </div>
             </div>
             <div class="row content_row">
@@ -76,7 +78,7 @@
                     </p>
                     <p>
                         Te recomendamos buscar un espacio cómodo y tranquilo, con poco ruido o distractores 
-                        externos. Recuerda, además, que necesitarás <strong>60 minutos initerrumpidos</strong> 
+                        externos. Recuerda, además, que necesitarás <strong>60 minutos ininterrumpidos</strong> 
                         de tu tiempo para su realización.
                     </p>
                 </div>
@@ -91,7 +93,7 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p><a href="{{$link}}" id="link-btn" class="btn btn-primary">Estoy list@ por comenzar</a></p>
+                        <p><a href="{{$link}}" id="link-btn" class="btn btn-primary"><strong>Estoy list@ para comenzar</strong></a></p>
                     </div>
                 </div>
                 <div class="row">

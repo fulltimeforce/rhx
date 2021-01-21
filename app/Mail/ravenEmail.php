@@ -37,13 +37,6 @@ class ravenEmail extends Mailable
                     ->with([
                         'name'=>$this->name,
                         'link'=>$this->link,
-                        'banner'=>asset('mail/mail_banner.png'),
-                        'footer'=>asset('mail/mail_footer.png'),
-                        'img'=>asset('mail/mail_img.png'),
-                        'logo'=>asset('mail/mail_logo.png'),
                     ]);
-                    // ->with('name', $this->name)
-                    // ->with('link', $this->link);
-        // return $this->markdown('emails.raven');
     }
 }

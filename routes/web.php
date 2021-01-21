@@ -118,11 +118,7 @@ Route::post('recruits/evaluate/evaluation','RecruitController@recruitsEvaluateEv
 Route::get('/test-mail', function (){
     return view('emails.raven')->with([
         'name'=>'Alejandro',
-        'link'=>'this-link',
-        'banner'=>asset('mail/mail_banner.png'),
-        'footer'=>asset('mail/mail_footer.png'),
-        'img'=>asset('mail/mail_img.png'),
-        'logo'=>asset('mail/mail_logo.png'),
+        'link'=>'this-link'
     ]);;
 });
 
