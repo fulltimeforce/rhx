@@ -114,6 +114,18 @@ Route::post('recruits/score/quiz','RecruitController@manualScore')->name('recrui
 Route::post('recruits/score/save','RecruitController@scoreSave')->name('recruit.score.save');
 Route::post('recruits/evaluate/evaluation','RecruitController@recruitsEvaluateEvaluation')->name('recruit.postulant.evaluation');
 
+
+Route::get('/test-mail', function (){
+    return view('emails.raven')->with([
+        'name'=>'Alejandro',
+        'link'=>'this-link',
+        'banner'=>asset('mail/mail_banner.png'),
+        'footer'=>asset('mail/mail_footer.png'),
+        'img'=>asset('mail/mail_img.png'),
+        'logo'=>asset('mail/mail_logo.png'),
+    ]);;
+});
+
 //METODOS SELECCIONADOS
 Route::get('recruits/selected','RecruitController@selected')->name('recruit.selected');
 

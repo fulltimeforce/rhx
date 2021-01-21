@@ -17,9 +17,11 @@
         .title_row{
             background-color: #00ADEF;
             background-image: url("{{$banner}}") ;
+            background-repeat: no-repeat;
+            background-size:100% 100%;
             color: #ffffff;
             border-radius: 15px 15px 0 0;
-            padding: 20px;
+            padding: 20px 20px 0 20px;
         }
         .content_row{
             background-color: #ffffff;
@@ -31,6 +33,8 @@
         .footer_row{
             background-color: #00ADEF;
             background-image: url("{{$footer}}") ;
+            background-repeat: no-repeat;
+            background-size:100% 100%;
             color: #ffffff;
             border-radius: 0 0 15px 15px;
             padding: 20px;
@@ -38,23 +42,36 @@
         .footer_row p{
             text-align: center;
         }
+        #link-btn{
+            background-color: #00DFEF;
+            border:none;
+            box-shadow: 0 0 10px 5px #00000020;
+        }
+        #sub-info{
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
-    <main>
+    <main style="width: 600px;">
         <div class="container-fluid">
             <div class="row title_row">
-                <div class="col-12">
-                    <h3 style="color:#ffffff">
+                <div class="col-6">
+                    <div>
+                        <img src="{{$logo}}" height="50">
+                    </div>
+                    <h5 class="mt-5" style="color:#ffffff">
                         ¡Felicitaciones, has pasado satisfactoriamente la última fase del proceso de selección!
-                    </h3>
-                    <img src="{{$img}}">
+                    </h5>
+                </div>
+                <div class="col-6" style="text-align: center">
+                    <img src="{{$img}}" height="250">
                 </div>
             </div>
             <div class="row content_row">
                 <div class="col-12">
                     <p>
-                        Por ello, deseasmos invitarte a la <strong>siguiente fase</strong> que consiste en la 
+                        Por ello, deseamos invitarte a la <strong>siguiente fase</strong> que consiste en la 
                         <strong>realización de una prueba psicológica</strong>.
                     </p>
                     <p>
@@ -65,22 +82,21 @@
                 </div>
             </div>
             <div class="footer_row">
-                <div class="row">
+                <div class="row mb-4">
                     <div class="col-12">
                         <p style="color:#ffffff">
-                            Muchas gracias por tu interés en querer formar parte de FULLTIMEFORCE. 
-                            Te deseamos muchos éxitos. 
+                            Muchas gracias por tu interés en querer formar parte de <br>FULLTIMEFORCE. Te deseamos muchos éxitos. 
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p><a href="{{$link}}" class="btn btn-primary">Estoy list@ por comenzar</a></p>
+                        <p><a href="{{$link}}" id="link-btn" class="btn btn-primary">Estoy list@ por comenzar</a></p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p style="color:#ffffff">Este link estará vigente por dos horas</p>
+                        <p id="sub-info" style="color:#ffffff">Este link estará vigente por dos horas</p>
                     </div>
                 </div>
             </div>
