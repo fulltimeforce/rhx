@@ -84,7 +84,7 @@
                 </div>
             </div>
             <div class="footer_row">
-                <div class="row mb-4">
+                <div class="row mb-2">
                     <div class="col-12">
                         <p style="color:#ffffff">
                             Muchas gracias por tu interés en querer formar parte de <br>FULLTIMEFORCE. Te deseamos muchos éxitos. 
