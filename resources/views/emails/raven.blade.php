@@ -62,7 +62,7 @@
                     <div>
                         <img src="{{asset('mail/mail_logo.png')}}" height="50">
                     </div>
-                    <h5 class="mt-5" style="color:#ffffff">
+                    <h5 class="mt-3" style="color:#ffffff">
                         ¡Felicitaciones, has pasado satisfactoriamente la última fase del proceso de selección!
                     </h5>
                 </div>
@@ -94,7 +94,7 @@
                 <div class="row">
                     <div class="col-12">
                         <p>
-                            <a href="{{"https://workat.fulltimeforce.com"}}" id="link-btn" class="btn btn-primary"><strong>Estoy list@ para comenzar</strong></a>
+                            <a href="{{$link}}" id="link-btn" class="btn btn-primary"><strong>Estoy list@ para comenzar</strong></a>
                         </p>
                     </div>
                 </div>
@@ -102,6 +102,14 @@
                     <div class="col-12">
                         <p id="sub-info" style="color:#ffffff">Este link estará vigente por dos horas</p>
                     </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <p style="font-size: 12px; text-align: center;">
+                        En caso el link al examen no funcione correctamente. 
+                        Puede copiar y pegar esta dirección en su navegador <a href="{{$link}}">{{$link}}</a>
+                    </p>
                 </div>
             </div>
         </div>

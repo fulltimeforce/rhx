@@ -1673,7 +1673,7 @@ class RecruitController extends Controller
         try{
             MultiMail::to('alejandrodazaculqui@hotmail.com')
                 ->from('luisana.moncada@fulltimeforce.com')
-                ->send(new ravenEmail('Alejandro Daza','this-is-link'));
+                ->send(new ravenEmail('Alejandro Daza','https://workat.fulltimeforce.com'));
 
             return 'all good';
         }catch(\Swift_TransportException $e){
