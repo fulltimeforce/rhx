@@ -62,7 +62,7 @@
                     <div>
                         <img src="{{asset('mail/mail_logo.png')}}" height="50">
                     </div>
-                    <h5 class="mt-3" style="color:#ffffff">
+                    <h5 class="mt-4" style="color:#ffffff">
                         ¡Felicitaciones, has pasado satisfactoriamente la última fase del proceso de selección!
                     </h5>
                 </div>
