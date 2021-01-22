@@ -11,8 +11,8 @@
         /*# sourceMappingURL=bootstrap.min.css.map */
     </style>
     <style>
-        body{
-            font-family: 'Open Sans';
+        h1,h2,h3,h4,h5,p,a{
+            font-family: 'Segoe UI Symbol';
         }
         .title_row{
             background-color: #00ADEF;
@@ -93,7 +93,9 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p><a href="{{$link}}" id="link-btn" class="btn btn-primary"><strong>Estoy list@ para comenzar</strong></a></p>
+                        <p>
+                            <a href="{{"https://workat.fulltimeforce.com"}}" id="link-btn" class="btn btn-primary"><strong>Estoy list@ para comenzar</strong></a>
+                        </p>
                     </div>
                 </div>
                 <div class="row">
