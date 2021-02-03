@@ -25,9 +25,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('raven:mail')
-                ->everyFiveMinutes();
+                ->hourly();
+                // ->everyFiveMinutes();
                 // ->everyMinute();
-                // ->hourly();
+                
     }
 
     /**
