@@ -1782,7 +1782,7 @@ class RecruitController extends Controller
                     'recruit.quiz', now()->addHours(2), $query
                 );
 
-                MultiMail::to("alejandro.daza@fulltimeforce.com") //$data['mail']
+                MultiMail::to("numbworld1999@gmail.com") //$data['mail']
                     ->from($data['recruiter'])
                     ->send(new ravenEmail($data['name'],$url));
             }
