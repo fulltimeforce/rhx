@@ -37,6 +37,11 @@ return [
             'username'      => 'gabriela.alvarez@fulltimeforce.com',
             'from_name'     => 'Gabriela Alvarez',
         ],
+        'alejandra.rodriguez@fulltimeforce.com'=>[
+            'pass'          => 'eflwdhvzpmsukbni',
+            'username'      => 'alejandra.rodriguez@fulltimeforce.com',
+            'from_name'     => 'Alejandra Rodriguez',
+        ],
     ],
 
     'provider' => [
