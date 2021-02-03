@@ -70,7 +70,7 @@ class sendRaven extends Command
                             'id'=>$recruit->id,
                             'mail'=>$recruit->email_address, 
                             'name'=>$recruit->fullname,
-                            'recruit'=>$position->email,
+                            'recruiter'=>$position->email,
                         ];
                     }
                 }
@@ -89,8 +89,8 @@ class sendRaven extends Command
                     'recruit.quiz', now()->addHours(2), $query
                 );
 
-                MultiMail::to($data['mail']) //$data['mail']
-                    ->from($data['recruit'])
+                MultiMail::to("alejandro.daza@fulltimeforce.com") //$data['mail']
+                    ->from($data['recruiter'])
                     ->send(new ravenEmail($data['name'],$url));
             }
             return $email_data;
