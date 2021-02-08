@@ -2316,13 +2316,51 @@ class RecruitController extends Controller
         $_recruits->orderByDesc('recruit.created_at');
         
         $_recruits->select('recruit.*');
+        $_recruits = $_recruits->paginate( $query['rows'] )->toArray();
+        
+        foreach($_recruits['data'] as $k => $recruit){
+            // verify and add https:// if needed for correct formating
+            if($recruit['linkedin'] != null){
+                $linkUrl = substr($recruit['linkedin'],0,8);
+                if($linkUrl == 'https://'){
+                    continue;
+                }else{
+                    $linkUrl = substr($recruit['linkedin'],0,7);
+                    if($linkUrl == 'http://'){
+                        continue;
+                    }
+                    else{
+                        $recruit['linkedin'] = 'https://'.$recruit['linkedin'];
+                    }
+                }
+            }
 
-        $recruit =  $_recruits->paginate( $query['rows'] );
-        $rows = $recruit->items();
+            // verify and add https:// if needed for correct formating
+            if($recruit['github'] != null){
+                $linkUrl = substr($recruit['github'],0,8);
+                if($linkUrl == 'https://'){
+                    continue;
+                }else{
+                    $linkUrl = substr($recruit['github'],0,7);
+                    if($linkUrl == 'http://'){
+                        continue;
+                    }
+                    else{
+                        $recruit['github'] = 'https://'.$recruit['github'];
+                    }
+                }
+            }
+
+            // update on list
+            $_recruits['data'][$k] = $recruit;
+
+        }
+
+        $rows = $_recruits['data'];
 
         return json_encode(array(
             "total" => count($rows),
-            "totalNotFiltered" => $recruit->total(),
+            "totalNotFiltered" => $_recruits['total'],
             "rows" => $rows,
             "query" => $query,
         ));
@@ -2431,6 +2469,28 @@ class RecruitController extends Controller
         $input = $request->all();
         
         $recruit = Recruit::find($input["id"]);
+        
+        // verify and add https:// if needed for correct formating
+        if($recruit->linkedin != null){
+            $linkUrl = substr($recruit->linkedin,0,8);
+            if($linkUrl != 'https://'){
+                $linkUrl = substr($recruit->linkedin,0,7);
+                if($linkUrl != 'http://'){
+                    $recruit->linkedin = 'https://'.$recruit->linkedin;
+                }
+            }
+        }
+
+        // verify and add https:// if needed for correct formating
+        if($recruit->github != null){
+            $linkUrl = substr($recruit->github,0,8);
+            if($linkUrl != 'https://'){
+                $linkUrl = substr($recruit->github,0,7);
+                if($linkUrl != 'http://'){
+                    $recruit->github = 'https://'.$recruit->github;
+                }
+            }
+        }
 
         $basic = [];
         $intermediate = [];
@@ -2445,7 +2505,12 @@ class RecruitController extends Controller
                 if($recruit[$techId] == "advanced"){$advanced[] = $techLabel;}
             }
         }
-        return ["recruit"=>$recruit,"basic"=>$basic,"intermediate"=>$intermediate,"advanced"=>$advanced];
+        return [
+            "recruit"=>$recruit,
+            "basic"=>$basic,
+            "intermediate"=>$intermediate,
+            "advanced"=>$advanced
+        ];
     }
 
     public function updateExpertPopup(Request $request){
