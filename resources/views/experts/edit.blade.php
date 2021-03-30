@@ -147,11 +147,11 @@
             <div class="form-group col-6 col-sm-4 col-lg-3">
                 <label for="availability">Disponibilidad</label>
                 <select name="availability" id="availability" class="form-control">
-                    <option value="Inmediata"   {{ $recruit->availability == 'Inmediata' ? 'checked' : '' }}>Inmediata</option>
-                    <option value="1 semana"    {{ $recruit->availability == '1 semana' ? 'checked' : '' }}>1 semana</option>
-                    <option value="2 semanas"   {{ $recruit->availability == '2 semanas' ? 'checked' : '' }}>2 semanas</option>
-                    <option value="3 semanas"   {{ $recruit->availability == '3 semanas' ? 'checked' : '' }}>3 semanas</option>
-                    <option value="1 mes o más" {{ $recruit->availability == '1 mes o más' ? 'checked' : '' }}>1 mes o más</option>
+                    <option value="Inmediata"   {{ $recruit->availability == "Inmediata" ? 'selected' : '' }}>Inmediata</option>
+                    <option value="1 semana"    {{ $recruit->availability == "1 semana" ? 'selected' : '' }}>1 semana</option>
+                    <option value="2 semanas"   {{ $recruit->availability == "2 semanas" ? 'selected' : '' }}>2 semanas</option>
+                    <option value="3 semanas"   {{ $recruit->availability == "3 semanas" ? 'selected' : '' }}>3 semanas</option>
+                    <option value="1 mes o más" {{ $recruit->availability == "1 mes o más" ? 'selected' : '' }}>1 mes o más</option>
                 </select>
                 
             </div>
