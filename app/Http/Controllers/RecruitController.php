@@ -2151,12 +2151,20 @@ class RecruitController extends Controller
     private function platforms(){
         return array(
             (object) array(
+                "value" => "acciontrabajo",
+                "label" => "AcciónTrabajo"
+            ),
+            (object) array(
                 "value" => "linkedin",
                 "label" => "Linkedin"
             ),
             (object) array(
                 "value" => "computrabajo",
                 "label" => "Computrabajo"
+            ),
+            (object) array(
+                "value" => "cibertec",
+                "label" => "Cibertec"
             ),
             (object) array(
                 "value" => "indeed",
@@ -2169,6 +2177,22 @@ class RecruitController extends Controller
             (object) array(
                 "value" => "bumeran",
                 "label" => "Bumeran"
+            ),
+            (object) array(
+                "value" => "talently",
+                "label" => "Talently"
+            ),
+            (object) array(
+                "value" => "gitawards",
+                "label" => "GitAwards"
+            ),
+            (object) array(
+                "value" => "keepcoding",
+                "label" => "KeepCoding "
+            ),
+            (object) array(
+                "value" => "isil",
+                "label" => "ISIL"
             ),
             (object) array(
                 "value" => "catolica",
