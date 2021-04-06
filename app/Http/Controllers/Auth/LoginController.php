@@ -90,7 +90,6 @@ class LoginController extends Controller
     public function handleProviderCallback()
     {
         $auth_user = Socialite::driver('google')->stateless()->user();
-        // return "dddd";
         $page = '/';
         if( User::where('email' , $auth_user->email )->where('status','ENABLED')->count() > 0 ){
             $user = User::updateOrCreate(
@@ -110,11 +109,17 @@ class LoginController extends Controller
                 case 'expert':
                     $page = '/experts';
                     break;
+                case 'recruitment':
+                    $page = '/recruits';
+                    break;
                 case 'careers':
                     $page = '/';
                     break;
                 case 'fce':
                     $page = '/recruits/show/fce';
+                    break;
+                case 'test':
+                    $page = '/recruits/show/test';
                     break;
                 default:
                     $page = '/';

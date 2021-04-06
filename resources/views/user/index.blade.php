@@ -532,7 +532,7 @@ $(document).ready(function () {
                 $("#user-role").html(roles_options);
 
                 var default_pages = "";
-                var pages = ['log','expert','careers','resume'];
+                var pages = ['log','expert','recruitment','careers','resume','fce','test'];
                 for (let index = 0; index < pages.length; index++) {
                   default_pages += '<option value="'+pages[index]+'" '+ (user.default_page == pages[index]? 'selected':'') +' >'+pages[index]+' </option>';
                 }
