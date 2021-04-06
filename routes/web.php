@@ -148,6 +148,16 @@ Route::post('recruits/fce/call','RecruitController@getRecruitForFce')->name('rec
 Route::post('recruits/fce/save','RecruitController@saveRecruitFce')->name('recruit.fce.save');
 
 //===================================================================================================================================
+//====================================================TEST METHODS===================================================================
+//===================================================================================================================================
+//METODOS FCE2
+Route::get('recruits/show/test','RecruitTestController@test')->name('recruit.test.menu');
+Route::get('recruits/test/bootstrap','RecruitTestController@listTestBootstrap')->name('recruit.test.list');
+Route::post('recruits/test/call','RecruitTestController@getRecruitForTest')->name('recruit.test.call');
+Route::post('recruits/test/save','RecruitTestController@saveRecruitTest')->name('recruit.test.save');
+Route::post('recruits/test/send/mail','RecruitTestController@sendMail')->name('recruit.test.sendmail');
+
+//===================================================================================================================================
 //===========================================ESPECIFIC RECRUITMENT METHODS===========================================================
 //===================================================================================================================================
 //METODOS ESPECIFIC RECRUITMENT

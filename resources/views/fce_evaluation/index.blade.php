@@ -1002,7 +1002,7 @@
                     $(".lds-ring").show();
                     $.ajax({
                         type:'GET',
-                        url: '{{ route("experts.fce.list") }}',
+                        url: '{{ route("recruit.fce.list") }}',
                         data: $.param(data),
                         headers: {
                             'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),

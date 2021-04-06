@@ -291,6 +291,7 @@ class RecruitController extends Controller
                     'recruit_positions.id AS rp_id');
         }elseif($query['tab'] == "softskills"){
             $recruits->distinct()
+                ->leftJoin('recruit_test','recruit_test.recruit_id','=','recruit.id')
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
@@ -309,7 +310,15 @@ class RecruitController extends Controller
                     'positions.id AS pos_id',
                     'recruit_positions.audio_report AS audio_report',
                     'recruit_positions.recruit_id AS recruit_id',
-                    'recruit_positions.id AS rp_id');
+                    'recruit_positions.id AS rp_id',
+                    'recruit_test.mail_sent AS mail_sent',
+                    'recruit_test.test_status AS test_status',
+                    'recruit_test.completeness_score AS completeness_score',
+                    'recruit_test.code_score AS code_score',
+                    'recruit_test.design_score AS design_score',
+                    'recruit_test.technologies_score AS technologies_score',
+                    'recruit_test.readme_score AS readme_score'
+                );
         }elseif($query['tab'] == "selected"){
             $recruits->distinct()
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
@@ -1295,60 +1304,66 @@ class RecruitController extends Controller
         $evaluation       = $input['evaluation'];
 
         //call recruit by id
-        $recruit = Recruit::where('id' , $id)->first();
+        $recruit = Recruit::join('recruit_test','recruit_test.recruit_id','=','recruit.id')
+                ->where('recruit.id' , $id)
+                ->select(
+                    'recruit.*',
+                    'recruit_test.test_status AS test_status'
+                )
+                ->first();
 
         $current_date_time = Carbon::now()->toDateTimeString();
-        
-        //verify it recuir have CV FILE or PROFILE LINK (1 at least)
+
+        // DATA VALIDATIONS
+
+        //verify it has CV FILE or PROFILE LINK (1 at least)
         if($recruit['file_path'] == null && $recruit['profile_link'] == null){
             //if not, return with error message
             redirect()->route('recruit.softskills')
-                            ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
-        }else{
-            if($recruit['fce_overall'] == '-'){
-                redirect()->route('recruit.softskills')
-                            ->with('error', 'Need to evaluate "ZOOM AUDIO (FCE)".');
-            }else{
-                // RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
-                //     array("soft_report"=>$evaluation,
-                //         "soft_ev_date"=>$current_date_time)
-                // );
-                // if($evaluation == 'approve'){
-                //     //return view with success message
-                //     redirect()->route('recruit.softskills')
-                //         ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
-                // }else{
-                //     //return view with warning message
-                //     redirect()->route('recruit.softskills')
-                //         ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
-                // }
-
-                // Check if recruit has taken Raven Examen
-                if($recruit['raven_status'] == null){
-                    redirect()->route('recruit.softskills')
-                            ->with('error', 'Need to take Raven Quiz.');
-                }else if($recruit['raven_status'] == 'invalid'){
-                    redirect()->route('recruit.softskills')
-                            ->with('error', 'Raven result was not valid for consideration.');
-                }else{
-                    //if exists 1 at least, approve call evaluation
-                    RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
-                        array("soft_report"=>$evaluation,
-                            "soft_ev_date"=>$current_date_time)
-                    );
-
-                    if($evaluation == 'approve'){
-                        //return view with success message
-                        redirect()->route('recruit.softskills')
-                            ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
-                    }else{
-                        //return view with warning message
-                        redirect()->route('recruit.softskills')
-                            ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
-                    }
-                }
-            }
+                    ->with('error', 'Need to have "PROFILE LINK" or "CV FILE".');
+            return;
         }
+        if($recruit['fce_overall'] == '-'){
+            redirect()->route('recruit.softskills')
+                    ->with('error', 'Need to evaluate "ZOOM AUDIO (FCE)".');
+            return;
+        }
+        if($recruit['raven_status'] == null){
+            redirect()->route('recruit.softskills')
+                    ->with('error', 'Need to take Raven Quiz.');
+            return;
+        }
+        if($recruit['raven_status'] == 'invalid'){
+            redirect()->route('recruit.softskills')
+                    ->with('error', 'Raven test is INVALID.');
+            return;
+        }
+        if($recruit['test_status'] == 0){
+            redirect()->route('recruit.softskills')
+                    ->with('error', 'Need to have Technical Test results.');
+            return;
+        }
+        if($recruit['raven_status'] == 'invalid'){
+            redirect()->route('recruit.softskills')
+                    ->with('error', 'Raven result was not valid for consideration.');
+            return;
+        }
+            //if exists 1 at least, approve call evaluation
+        RecruitPosition::where('recruit_id' , $id)->where('position_id' , $positionid)->where('id' , $rpid)->update(
+            array("soft_report"=>$evaluation,
+                "soft_ev_date"=>$current_date_time)
+        );
+
+        if($evaluation == 'approve'){
+            //return view with success message
+            redirect()->route('recruit.softskills')
+                ->with('success', '&#8226; "'. $fullname . '" move onto the next stage.');
+        }else{
+            //return view with warning message
+            redirect()->route('recruit.softskills')
+                ->with('warning', '&#8226; "'. $fullname . '" finished his/her career.');
+        }
+        
     }
 
     //==============================================================================

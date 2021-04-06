@@ -6,6 +6,16 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/bootstrap-table/extensions/fixed-columns/bootstrap-table-fixed-columns.min.css') }}"/>
 
 <style>
+  #overlay {
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 999;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
     /* The switch - the box around the slider */
   .SliderSwitch {
     max-width: 600px;
@@ -256,6 +266,44 @@
   }
   .expert-audio{
     margin: 5px 5px 5px 5px;
+  }
+  .ttip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .ttip .ttiptext {
+    font-size: 9px;
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .ttip .ttiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .ttip:hover .ttiptext {
+    visibility: visible;
+    opacity: 1;
   }
 </style>
 @endsection
@@ -645,7 +693,7 @@
               field: 'raven_status', 
               title: "Raven",
               width: 50,
-              formatter : function(value,rowData,index) { 
+              formatter : function(value,rowData,index) {
                   var actions = "";
 
                   if(rowData.raven_status == null){
@@ -654,12 +702,40 @@
                     actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
                   }
                   if(rowData.raven_status == 'invalid'){
-                    actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALIDO</a>';
+                    actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
                   }
                   if(rowData.raven_status == 'completed'){
                     actions += rowData.raven_overall+" ("+rowData.raven_perc.toString()+")";
                   }
 
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'test_status',
+              title: "Test",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = "";
+                  if(rowData.test_status == 0){
+                    actions = '<a class="badge '
+                                +(rowData.mail_sent == 0?'badge-success':'badge-warning')
+                                +' btn-mail-test" data-id="'+rowData.recruit_id+'" href="#">'
+                                +(rowData.mail_sent == 0?'Send Mail':'Send Again')+'</a>';
+                  }else{
+                    var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
+                    actions = "<div class='ttip'>"
+                    + rankString(min)
+                    + "<span class='ttiptext'>"
+                    + "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
+                    + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
+                    + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
+                    + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
+                    + "Readme: "+rankInitial(rowData.readme_score)
+                    + "</span>"
+                    + "</div>";
+                  }
                   return actions;
                 },
               class: 'frozencell',
@@ -929,6 +1005,49 @@
             }
           });
         })
+
+        //SEND TECH TEST MAIL
+        $('.btn-mail-test').on('click', function (ev) {
+          ev.preventDefault();
+          var recruit_id = $(this).data("id");
+          $.ajax({
+                type:'POST',
+                data:{id:recruit_id},
+                url: '{{ route("recruit.test.sendmail" ) }}',
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                beforeSend:function(){
+                    $("#overlay").show();
+                },
+                success:function(data){
+                    if(data.status == "success"){
+                      location.reload();
+                    }else{
+                      alert("Error: "+data.message);
+                    }
+                },
+                complete: function(){
+                    $("#overlay").hide();
+                }
+            });
+        });
+      }
+
+      function rankString(rank){
+        if(rank < 0 || rank > 5){
+          return "INVALID SCORE";
+        }
+        var ranks = ['Fail', 'Trainee', 'Junior', 'Middle', 'Senior', 'Rockstar'];
+        return ranks[rank];
+      }
+      function rankInitial(rank){
+        if(rank < 0 || rank > 5){
+          return "??";
+        }
+        var ranks = ['F', 'T', 'J', 'M', 'S', 'R'];
+        return ranks[rank];
       }
 
       $("#schedule-modal").on('click','#schedule_btn',function(e){

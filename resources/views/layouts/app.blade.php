@@ -43,6 +43,7 @@
     @yield('styles')
 </head>
 <body>
+    <div id="overlay"></div>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container-fluid">
@@ -94,19 +95,20 @@
                                 <a class="nav-link" href="{{ route('recruiter.log') }}">{{ __('Logs') }}</a>
                             </li>
                             @endif
+                            @if( Auth::user()->role->id == 3 || Auth::user()->role->id == 1 )
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruit.fce.menu') }}">{{ __('FCE') }}</a>
                             </li>
-                            <!--</li><li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.fce.menu') }}">{{ __('FCE') }}</a>
-                            </li> -->
+                            @endif
+                            @if( Auth::user()->role->id == 4 || Auth::user()->role->id == 1 )
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('recruit.test.menu') }}">{{ __('TEST') }}</a>
+                            </li>
+                            @endif
                             @if( Auth::user()->role->id < 3 )
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('experts.home') }}">{{ __('Experts') }}</a>
                             </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link" href="{{ route('experts.beta') }}">{{ __('Experts') }} BETA</a>
-                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Careers') }}</a>
                             </li>
