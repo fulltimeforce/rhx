@@ -73,10 +73,10 @@
             <div class="row content_row">
                 <div class="col-12">
                     <p>
-                        Fulltimeforce es una empresa que tiene más de 5 años brindando equipos de trabajo remoto al mercado norteamericano. En este momento tenemos una alta demanda de desarrolladores latinoamericanos. Por ello, tú puedes ser el siguiente miembro de uno de nuestros equipos. 
+                        <strong>Fulltimeforce</strong> es una empresa que tiene <strong>más de 5 años</strong> brindando equipos de trabajo remoto al <strong>mercado norteamericano</strong>. En este momento tenemos una alta demanda de desarrolladores latinoamericanos. Por ello, tú puedes ser el siguiente <strong>miembro de uno de nuestros equipos</strong>. 
                     </p>
                     <p>
-                        Para poder ubicarte en un proyecto que sea acorde a tus conocimientos y experiencia requerimos que realices esta prueba técnica. Haz clic al botón inferior y verás las instrucciones completas de cómo realizar tu prueba y a dónde enviarla una vez que hayas terminado.
+                        Para poder ubicarte en un proyecto que sea acorde a tus <strong>conocimientos y experiencia</strong> requerimos que realices esta prueba técnica. Haz clic al <strong>botón inferior</strong> y verás las instrucciones completas de cómo realizar tu prueba y a dónde enviarla una vez que hayas terminado.
                     </p>
                 </div>
             </div>
