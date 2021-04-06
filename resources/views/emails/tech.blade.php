@@ -63,7 +63,7 @@
                         <img src="{{asset('mail/mail_logo.png')}}" height="50">
                     </div>
                     <h5 class="mt-4" style="color:#ffffff">
-                        ¡Felicitaciones, has pasado satisfactoriamente la última fase del proceso de selección!
+                        Gracias por participar en nuestro proceso de selección
                     </h5>
                 </div>
                 <div class="col-6" style="text-align: center">
@@ -73,13 +73,10 @@
             <div class="row content_row">
                 <div class="col-12">
                     <p>
-                        Por ello, deseamos invitarte a la <strong>siguiente fase</strong> que consiste en la 
-                        <strong>realización de una prueba psicológica</strong>.
+                        Fulltimeforce es una empresa que tiene más de 5 años brindando equipos de trabajo remoto al mercado norteamericano. En este momento tenemos una alta demanda de desarrolladores latinoamericanos. Por ello, tú puedes ser el siguiente miembro de uno de nuestros equipos. 
                     </p>
                     <p>
-                        Te recomendamos buscar un espacio cómodo y tranquilo, con poco ruido o distractores 
-                        externos. Recuerda, además, que necesitarás <strong>60 minutos ininterrumpidos</strong> 
-                        de tu tiempo para su realización.
+                        Para poder ubicarte en un proyecto que sea acorde a tus conocimientos y experiencia requerimos que realices esta prueba técnica. Haz clic al botón inferior y verás las instrucciones completas de cómo realizar tu prueba y a dónde enviarla una vez que hayas terminado.
                     </p>
                 </div>
             </div>
@@ -94,13 +91,13 @@
                 <div class="row">
                     <div class="col-12">
                         <p>
-                            <a href="{{$link}}" id="link-btn" class="btn btn-primary"><strong>Estoy list@ para comenzar</strong></a>
+                            <a href="{{$link}}" id="link-btn" class="btn btn-primary"><strong>Ver instrucciones de la prueba aquí</strong></a>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p id="sub-info" style="color:#ffffff">Este link estará vigente por dos horas</p>
+                        <p id="sub-info" style="color:#ffffff"></p>
                     </div>
                 </div>
             </div>

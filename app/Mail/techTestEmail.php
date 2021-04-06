@@ -16,12 +16,10 @@ class techTestEmail extends Mailable
      *
      * @return void
      */
-    public $name;
     public $link;
 
-    public function __construct($name, $link)
+    public function __construct($link)
     {
-        $this->name = $name;
         $this->link = $link;
     }
 
@@ -32,10 +30,9 @@ class techTestEmail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Fulltimeforce - Prueba Técnica')
+        return $this->subject('¡Empieza tu prueba técnica!')
                     ->markdown('emails.tech')
                     ->with([
-                        'name'=>$this->name,
                         'link'=>$this->link,
                     ]);
     }
