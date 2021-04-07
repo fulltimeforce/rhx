@@ -237,7 +237,7 @@
 
 @section('content')
 
-<?php $default_pages = ['log','expert','careers','resume'] ?>
+<?php $default_pages = ['log','expert','recruitment','careers','resume','fce','test'] ?>
 <!--  
         /*========================================== FCE ==========================================*/
     -->

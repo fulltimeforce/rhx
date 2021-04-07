@@ -383,31 +383,25 @@
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="technologies_score">The solution correctly uses testing, architecture, microservices/containerization, cloud services, design patterns and several main technologies/frameworks</label>
+                                <label class="col-9" for="technologies_score">The solution uses correctly testing, architecture, microservices/containerization, cloud services, design patterns, several cutting-edge technologies/frameworks</label>
                                 <input type="radio" class="col-3" name="technologies_score" value="5">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="technologies_score">The solution correctly uses testing, architecture, microservices/containerization, cloud services, design patterns and several main technologies</label>
-                                <input type="radio" class="col-3" name="technologies_score" value="4">
-                            </div>
-                        </div>
-                        <div class="form-group col-12">
-                            <div class="row">
-                                <label class="col-9" for="technologies_score">The solution correctly uses microservices/containerization, cloud services and several main technologies</label>
+                                <label class="col-9" for="technologies_score">The solution uses correctly microservices/containerization, cloud services, several cutting-edge technologies</label>
                                 <input type="radio" class="col-3" name="technologies_score" value="3">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="technologies_score">The solution correctly uses cloud services and several main technologies</label>
+                                <label class="col-9" for="technologies_score">The solution uses correctly cloud services and several cutting-edge technologies</label>
                                 <input type="radio" class="col-3" name="technologies_score" value="2">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="technologies_score">The solution correctly uses one or more main technologies</label>
+                                <label class="col-9" for="technologies_score">The solution uses correctly one or more cutting-edge technologies</label>
                                 <input type="radio" class="col-3" name="technologies_score" value="1">
                             </div>
                         </div>
@@ -424,7 +418,7 @@
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="readme_score">Indications to run the app are clear. However, when needed, it hasn't been commented all the possible cases where the instructions won't work</label>
+                                <label class="col-9" for="readme_score">Indications to run the app are clear. </label>
                                 <input type="radio" class="col-3" name="readme_score" value="3">
                             </div>
                         </div>
@@ -432,12 +426,6 @@
                             <div class="row">
                                 <label class="col-9" for="readme_score">Indications are a little incomplete or unclear</label>
                                 <input type="radio" class="col-3" name="readme_score" value="2">
-                            </div>
-                        </div>
-                        <div class="form-group col-12">
-                            <div class="row">
-                                <label class="col-9" for="readme_score">Indications are incomplete, unclear or sloppy</label>
-                                <input type="radio" class="col-3" name="readme_score" value="1">
                             </div>
                         </div>
                         <div class="form-group col-12">
