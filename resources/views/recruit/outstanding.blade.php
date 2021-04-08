@@ -1267,7 +1267,7 @@
                         for (var i = 0; _dataRows.length > i ; i++) {
                           _idMap.push(_dataRows[i].id);
                         }
-                        $("#list-sales").bootstrapTable('append', _data.rows );
+                        $("#list-recruits").bootstrapTable('append', _data.rows );
                         
                         _count_records = _count_records + _data.rows.length;
                         $("#count-sale").html( _count_records );

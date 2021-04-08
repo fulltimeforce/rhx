@@ -1355,13 +1355,14 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
-
+                        console.log("data got!");
                         let _data = JSON.parse(data);
                         _before_rows = _data.total;
                         for (var i = 0; _dataRows.length > i ; i++) {
                           _idMap.push(_dataRows[i].id);
                         }
-                        $("#list-sales").bootstrapTable('append', _data.rows );
+                        console.log(_data.rows)
+                        $("#list-recruits").bootstrapTable('append', _data.rows );
                         
                         _count_records = _count_records + _data.rows.length;
                         $("#count-sale").html( _count_records );
@@ -1391,29 +1392,29 @@
 
         if(checked.length>0){
             checked.each(function (){
-                var checkbox_index = $(this).data("index");
-                var rp_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("rpid");
-                var recruit_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("recruit-id");
+              var checkbox_index = $(this).data("index");
+              var rp_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("rpid");
+              var recruit_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("recruit-id");
 
-                rp_id_array.push(rp_id_by_index)
-                recruit_id_array.push(recruit_id_by_index)
+              rp_id_array.push(rp_id_by_index)
+              recruit_id_array.push(recruit_id_by_index)
             });
             $.ajax({
-                type:'POST',
-                url: "{{ route('recruit.bulk') }}",
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    action : action,
-                    rp_id_array: rp_id_array,
-                    recruit_id_array: recruit_id_array,
-                    tab: "{{ $tab }}",
-                },
-                success:function(data){
-                  location.reload();
-                }
+              type:'POST',
+              url: "{{ route('recruit.bulk') }}",
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              data: {
+                  action : action,
+                  rp_id_array: rp_id_array,
+                  recruit_id_array: recruit_id_array,
+                  tab: "{{ $tab }}",
+              },
+              success:function(data){
+                location.reload();
+              }
             });
         }else{
           alert('Please, select at least 1 POSTULANT to continue.');

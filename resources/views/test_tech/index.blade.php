@@ -481,7 +481,7 @@
     </div>
 @endif
 
-<div class="row mb-4">
+<div class="row">
     <div class="col">
             <p>Result: <span id="count-recruits"></span></p>
         </div>
@@ -494,13 +494,10 @@
         </div>
     </div>
 
-    <div class="row mb-5">
-        <div class="col-12">
-            <table id="list-recruits"></table>
-        </div>
-        <div class="col-12 text-center">
-            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-        </div>
+    <div class="col-12 mb-5">
+        <table class="table row-border order-column" id="list-recruits" data-toggle="list-recruits"> 
+        </table>
+        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     </div>
 </div>
 @endsection
@@ -575,7 +572,24 @@
                     width: 100,
                     class: 'frozencell'
                 },
-                { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'}
+                { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'},
+                {
+                    field: 'sent_at',
+                    title: 'Sent At',
+                    width: 100,
+                    class: 'frozencell',
+                    formatter: function(value, rowData, index){
+                        if(rowData.sent_at == null){
+                            return "-";
+                        }
+                        var d = new Date(rowData.sent_at);
+                        var dateString =
+                                d.getUTCFullYear() + "-" +
+                                ("0" + (d.getUTCMonth()+1)).slice(-2) + "-" +
+                                ("0" + d.getUTCDate()).slice(-2);
+                        return dateString;
+                    }
+                }
             ];
             
             $("#list-recruits").bootstrapTable('destroy').bootstrapTable({
@@ -717,9 +731,12 @@
         ajax_experts(search_name , 1);
 
         $(window).on('scroll', function (e){
-            console.log( $(window).scrollTop() + $(window).height() , $(document).height() )
-            if($(window).scrollTop() + $(window).height() >= $(document).height()) {
+            console.log("SCROLL TOP: "+$(window).scrollTop()+"|| WINDOW HEIGHT: "+$(window).height()+"|| DOCUMENT HEIGHT: "+$(document).height());
+            console.log( $(window).scrollTop() + $(window).height() , $(document).height()-1 )
+            if($(window).scrollTop() + $(window).height() >= $(document).height()-1) {
                 console.log( _count_records , _total_records, _before_rows , _records , "##################" );
+                console.log(_count_records < _total_records && _before_rows == _records);
+                console.log("PAGE: "+_page);
                 if( _count_records < _total_records && _before_rows == _records ){
                     _page++;
                     var _text = $('#search-column-name').val();

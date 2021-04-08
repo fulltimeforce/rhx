@@ -47,8 +47,8 @@ class RecruitTestController extends Controller
             ->where('recruit_positions.audio_report','approve')
             ->where('recruit_test.test_status',0)
             ->where('recruit_test.mail_sent',1)
-            ->select('recruit.*')
-            ->orderBy('recruit.fullname','asc')
+            ->select('recruit.*','recruit_test.sent_at')
+            ->orderBy('recruit_test.sent_at','desc')
             ->distinct();
 
         //set rows value
