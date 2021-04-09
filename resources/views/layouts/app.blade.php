@@ -88,6 +88,9 @@
                             </li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('recruit.menu') }}">{{ __('RECRUITMENT') }}</a>
                             </li>
+                            </li><li class="nav-item">
+                                <a class="nav-link" href="{{ route('externals.menu') }}">{{ __('EXTERNALS') }}</a>
+                            </li>
                             <!--</li><li class="nav-item">
                                 <a class="nav-link" href="{{ route('specific.menu') }}">{{ __('SPCF. RECRUITMENT') }}</a>
                             </li> -->

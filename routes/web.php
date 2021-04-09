@@ -78,6 +78,14 @@ Route::get('sales/bootstrap','SaleController@salesBootstrap')->name('sales.list'
 Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
 
 //===================================================================================================================================
+//=================================================EXTERNALS METHODS================================================================
+//===================================================================================================================================
+
+Route::get('externals','RecruitController@externalsIndex')->name('externals.menu');
+Route::get('externals/bootstrap','RecruitController@externalsBootstrap')->name('externals.list');
+Route::post('externals/save','RecruitController@saveExternal')->name('externals.save');
+
+//===================================================================================================================================
 //=================================================POSTULANTS METHODS================================================================
 //===================================================================================================================================
 
@@ -186,7 +194,7 @@ Route::post('experts/notes','RecruitController@getExpertNotes')->name('experts.n
 Route::post('experts/btn/audio','RecruitController@getExpertAudio')->name('experts.btn.audio');
 Route::post('experts/btn/selection','RecruitController@updateExpertSelection')->name('experts.btn.selection');
 Route::post('experts/btn/delete', 'RecruitController@deleteExpert')->name('experts.btn.delete');
-Route::post('experts/btn/how','RecruitController@showExpert')->name('experts.btn.show');
+Route::post('experts/btn/show','RecruitController@showExpert')->name('experts.btn.show');
 Route::post('experts/popup/edit','RecruitController@updateExpertPopup')->name('experts.popup.edit');
 Route::get('experts/select/technologies','RecruitController@getTechnologies')->name('experts.select.technologies');
 Route::get('experts/edit/{recruitId}','RecruitController@editExpert')->name('experts.btn.edit');

@@ -42,9 +42,26 @@ class RecruitTestController extends Controller
         //verify tab route parameter to set recruits filters
         $recruits->join('recruit_test','recruit.id','=','recruit_test.recruit_id')
             ->join('recruit_positions','recruit.id','=','recruit_positions.recruit_id')
-            ->where('recruit_positions.outstanding_report','approve')
-            ->where('recruit_positions.call_report','approve')
-            ->where('recruit_positions.audio_report','approve')
+            ->where(function($q){
+                $q->where('recruit_positions.outstanding_report','!=','disapprove')
+                ->orWhere('recruit_positions.outstanding_report',null);
+            })
+            ->where(function($q){
+                $q->where('recruit_positions.call_report','!=','disapprove')
+                ->orWhere('recruit_positions.call_report',null);
+            })
+            ->where(function($q){
+                $q->where('recruit_positions.audio_report','!=','disapprove')
+                ->orWhere('recruit_positions.audio_report',null);
+            })
+            ->where(function($q){
+                $q->where('recruit_positions.soft_report','!=','disapprove')
+                ->orWhere('recruit_positions.soft_report',null);
+            })
+            // ->where('recruit_positions.outstanding_report','not like','disapprove')
+            // ->where('recruit_positions.call_report','not like','disapprove')
+            // ->where('recruit_positions.audio_repor','not like','disapprove')
+            // ->where('recruit_positions.soft_report','not like','disapprove')
             ->where('recruit_test.test_status',0)
             ->where('recruit_test.mail_sent',1)
             ->select('recruit.*','recruit_test.sent_at')
@@ -128,12 +145,15 @@ class RecruitTestController extends Controller
         $url = "https://docs.google.com/document/d/1EtOeiVmGH2W3sYwe7YKKw8AhiLC_TxIDiG83wNKPmqk/edit?usp=sharing";
         
         // send mail
-        MultiMail::to($recruit->email_address)//$recruit->email_address
-            ->from($recruiter->email)
-            ->send(new techTestEmail($url));
+        // MultiMail::to($recruit->email_address)//$recruit->email_address
+        //     ->from($recruiter->email)
+        //     ->send(new techTestEmail($url));
 
         // set mail flag to true
-        $test = RecruitTest::where('recruit_id',$recruit->id)->update(['mail_sent' => 1]);
+        $test = RecruitTest::where('recruit_id',$recruit->id)->update([
+            'mail_sent' => 1,
+            'sent_at'=> now(),
+        ]);
         
         return ["status"=>"success","message"=>"mail sent!"];
     }

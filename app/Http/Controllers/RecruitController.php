@@ -13,6 +13,7 @@ use App\SearchHistory;
 use App\Notification;
 use App\User;
 use App\Config;
+use App\Agent;
 
 use App\Quiz;
 use Mail;
@@ -171,6 +172,49 @@ class RecruitController extends Controller
                 'badge_qty' => count($badge_qty),
             ]);
     }
+
+    //==============================================================================
+    //======================== TECH MENU METHODS=============================
+    //==============================================================================
+
+    public function externalsIndex(Request $request){
+        //verify logged user and user level
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id >= 3) return redirect('login');
+
+        //call route parameters
+        $query = $request->query();
+
+        //check if parameters (name) exists
+        $name = isset($query['name']) ? $query['name'] : '';
+        $_user = isset($query['user']) ? $query['user'] : '';
+        $_hand = isset($query['hand']) ? $query['hand'] : "true";
+
+        //call positions, users and platforms
+        $positions = Position::whereNull('position_type')
+                            ->where('status' , 'enabled')
+                            ->orderBy('name','asc')
+                            ->get();
+        $users = User::whereIn('role_id' , [1, 2])->where('status', 'ENABLED')->get();
+        $agents = Agent::whereNotNull('id')->orderBy('name','asc')->get();
+                            
+        //return view with values ( name search, positions, agents, recruits menu option)
+        return view('externals.index')
+            ->with('search_name', $name )
+            ->with([
+                'positions' => $positions, 
+                'agents' => $agents,
+                'users' => $users,
+                'tab' => "postulant",
+                '_user' => $_user,
+                '_hand' => $_hand,
+            ]);
+    }
+
+    public function saveExternal(Request $request){
+        return $request->all();
+    }
+    
 
     //==============================================================================
     //======================== TECH MENU METHODS=============================
@@ -515,6 +559,69 @@ class RecruitController extends Controller
         return json_encode(array(
             "total" => count($rows),
             "totalNotFiltered" => $expert->total(),
+            "rows" => $rows
+        ));
+    }
+
+    public function externalsBootstrap(Request $request){
+        //verify logged user and user level
+        if(!Auth::check()) return redirect('login');
+        if(Auth::user()->role_id >= 3) return redirect('login');
+
+        //call route parameters
+        $query = $request->query();
+
+        //get FCE lower grade array
+        $fce_lower = Config::first()->fce_lower_overall;
+        
+        if($fce_lower){
+            $fces = Config::getListFceSuperior($fce_lower);
+        }else{
+            $fces = [''];
+        }
+
+        //get filter values
+        $filters['user'] = isset($query['user'])?$query['user']:null;
+        
+        //create query to call recruits externals
+        $recruits = Recruit::whereNotNull('recruit.agent_id');
+        
+        //check if $name route parameter is setted
+        if(isset($query['name'])){
+            $recruits->where('recruit.fullname' , 'like' , '%'.$query['name'].'%');
+        }
+
+        $recruits->distinct()
+                ->leftJoin('recruit_test','recruit_test.recruit_id','=','recruit.id')
+                ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
+                ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
+                ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
+                ->leftJoin('agents','recruit.agent_id','agents.id')
+                ->select('recruit.*',
+                    'positions.name AS position_name',
+                    'users.name AS user_name',
+                    'positions.id AS pos_id',
+                    'recruit_positions.audio_report AS audio_report',
+                    'recruit_positions.recruit_id AS recruit_id',
+                    'recruit_positions.id AS rp_id',
+                    'recruit_test.mail_sent AS mail_sent',
+                    'recruit_test.test_status AS test_status',
+                    'recruit_test.completeness_score AS completeness_score',
+                    'recruit_test.code_score AS code_score',
+                    'recruit_test.design_score AS design_score',
+                    'recruit_test.technologies_score AS technologies_score',
+                    'recruit_test.readme_score AS readme_score',
+                    'agents.name as agent_name'
+                );
+
+        //set rows value
+        $recruit =  $recruits->paginate( $query['rows'] );
+        $rows = $recruit->items();
+
+        //return view with values (total returned, total, rows values)
+        return json_encode(array(
+            "total" => count($rows),
+            "totalNotFiltered" => $recruit->total(),
             "rows" => $rows
         ));
     }
@@ -2505,8 +2612,7 @@ class RecruitController extends Controller
     }
 
     public function showExpert(Request $request){
-        $input = $request->all();
-        
+        $input = $request->all();        
         $recruit = Recruit::find($input["id"]);
         
         // verify and add https:// if needed for correct formating
