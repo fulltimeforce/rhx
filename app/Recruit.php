@@ -23,6 +23,10 @@ class Recruit extends Model
         'file_path',
         'audio_path',
         'tech_qtn',
+        'agent_id',
+        'availability',
+        'salary',
+        'type_money',
         //FCE - EVALUATION
         'grammar_vocabulary','grammatical_forms','vocabulary','discourse_management','stretch_language','cohesive_devices',
         'hesitation','organizations_ideas','pronunciation','intonation','phonological_features','intelligible',

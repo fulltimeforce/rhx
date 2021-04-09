@@ -286,7 +286,7 @@
   .expert-audio{
       margin: 5px 5px 5px 5px;
   }
-  #new-recruit td{
+  #new-recruit-form td{
       border:none;
   }
   #add-file-label{
@@ -436,37 +436,6 @@
             </div>
         </div>
     </div>
-
-      <!--
-      SHOW TEXT BLOCK MODAL
-      -->
-    <div class="modal fade" id="show_block" tabindex="-1" role="dialog" aria-labelledby="show-blockLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="show-blockLabel">NOTES - <span id="show_block_name"></span></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                  <div class="form-group">
-                    <p id="show_block_snippet"></p>
-                    <label for="show_block_textarea" class="col-form-label">Take notes:</label>
-                    <textarea class="form-control" id="show_block_textarea" style="height: 300px;"></textarea>
-                    <input type="hidden" id="show_block_id">
-                    <input type="hidden" id="show_block_rpid">
-                    <input type="hidden" id="show_block_fullname">
-                    <input type="hidden" id="show_block_positionid">
-                  </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="show_block_save">Save & Disapprove</button>
-            </div>
-            </div>
-        </div>
-    </div>
       <!--
       ERROR - SUCCESS MESSAGE SECTION
       -->
@@ -540,12 +509,11 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form name="new-recruit" id="new-recruit" action="{{ route('externals.save') }}" method="POST" enctype="multipart/form-data">@csrf
+                    <form name="new-recruit-form" id="new-recruit-form" action="{{ route('externals.save') }}" method="POST" enctype="multipart/form-data">@csrf
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="hidden" name="file_path" id="file_path" value="" class="form-control">
+                                {{-- <input type="hidden" name="file_path" id="file_path" value="" class="form-control"> --}}
                                 <input type="hidden" name="recruit_id" id="recruit_id" class="form-control">
-                                <input type="hidden" name="rp_id" id="rp_id" class="form-control">
                                 <input type="hidden" name="index" id="index" class="form-control">
                                 <div class="form-group">
                                     <label for="fullname">Name *</label>
@@ -565,8 +533,8 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="agent">Agent *</label>
-                                    <select name="agent" id="agent" class="form-control">
+                                    <label for="agent_id">Agent *</label>
+                                    <select name="agent_id" id="agent_id" class="form-control">
                                         <option value="">None</option>
                                         @foreach($agents as $pid => $agent)
                                             <option value="{{$agent->id}}">{{$agent->name}}</option>
@@ -616,10 +584,11 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group form-inline">
-                                    <div class="custom-file mt-2">
-                                        <input type="file" class="custom-file-input" name="file_path" id="file_path" accept="application/msword, application/pdf, .doc, .docx">
-                                        <label id="add-file-label" class="custom-file-label" for="file_path">Add a File (max 2M)</label>
-                                    </div>
+                                  <label for="availability">CV File</label>
+                                  <div class="custom-file mt-2">
+                                    <input type="file" class="custom-file-input" name="file_path" id="file_path" accept="application/msword, application/pdf, .doc, .docx">
+                                    <label id="add-file-label" class="custom-file-label" for="file_path">Add a File (max 2M)</label>
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -671,16 +640,6 @@
           BULK ACTIONS SECTION
           -->
           <div class="col-8 text-left">
-              <div class="form-group d-inline-block" style="max-width: 300px;">
-                  <select name="bulk-action" id="bulk-action" class="form-control" >
-                      <option value="">-- Bulk Actions --</option>
-                      <option value="approve">Approve</option>
-                      <option value="disapprove">Disapprove</option>
-                      <option value="trash">Move to Trash</option>
-                </select>
-              </div>
-              <button class="btn btn-info" id="bulk-recruit" type="button" style="vertical-align: top;">Apply</button>
-              |
               <div class="form-group d-inline-block" style="max-width: 300px;">
                   <select name="recruiter-action" id="recruiter-action" class="form-control filter-element col-xs-8" >
                       <option value="">-- Recruiter --</option>
@@ -762,7 +721,6 @@
               'rows' : _records,
               'page' : page,
               'name' : _search_name,
-              'tab'  : "{{ $tab }}",
               'user' : user,
               'hand' : hand,
               'auto' : auto,
@@ -919,23 +877,6 @@
                 },
               class: 'frozencell',
             },
-            {
-              field: 'pos_id',
-              title: "PASS",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '';
-                  
-                  actions += '<a class="badge badge-primary recruit-outstanding" data-outstanding="approve" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#">YES</a>';
-                  actions += ' <a class="badge badge-danger recruit-outstanding" data-outstanding="disapprove" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#">NO</a>';
-                  // actions += ' <a class="badge badge-warning call-notes" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-fullname="'+rowData.fullname+'" href="#"><i class="fas fa-book"></i></a>';
-
-                  return actions;
-                },
-              class: 'frozencell',
-            },
         ];
         
         //SET TABLE PROPERTIES
@@ -945,98 +886,6 @@
             data: data,
             theadClasses: 'table-dark',
             uniqueId: 'id'
-        });
-
-        //EVALUATE OUTSTANDING - (APPROVE - DISAPPROVE)
-        $("table tbody").on('click', 'a.recruit-outstanding' , function(ev){
-          ev.preventDefault();
-          var id = $(this).data("id");
-          var rpid = $(this).data("rpid");
-          var fullname = $(this).data("fullname");
-          var positionid = $(this).data("positionid");
-          var outstanding = $(this).data("outstanding");
-          var confirmed = true;
-
-          if(outstanding=="disapprove"){
-            var id = $(this).data("id");
-            var rpid = $(this).data("rpid");
-            var fullname = $(this).data("fullname");
-            var positionid = $(this).data("positionid");
-            var tab = "{{ $tab }}";
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("recruit.get.position.notes") }}',
-                data: {id : id, rpid: rpid, fullname: fullname, positionid: positionid, tab: tab},
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  let _data = JSON.parse(data)
-                  $("#show_block_snippet").html('');
-                  $("#show_block_id").val(id);
-                  $("#show_block_rpid").val(rpid);
-                  $("#show_block_fullname").val(fullname);
-                  $("#show_block_positionid").val(positionid);
-                  if(_data.snippet){$("#show_block_snippet").html(nl2br(_data.snippet));}
-                  $("#show_block_textarea").val(_data.notes);
-                  $("#show_block_name").html(fullname);
-                  $('#show_block').modal();
-                }
-            });
-          }else{
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.outstanding") }}',
-                data: {id: id,rpid: rpid,positionid: positionid,outstanding: outstanding,fullname: fullname},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  window.history.replaceState(
-                        {edwin: "Fulltimeforce"}, 
-                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
-                          'rows' : 50,
-                          'page' : 1,
-                          'name' : $('#search-history-name').val(),
-                          'tab'  : "{{ $tab }}",
-                          'user' : $("#recruiter-action").children("option:selected").val(),
-                          'hand' : $("#handmade-toggle").prop('checked'),
-                          'auto' : $("#auto-toggle").prop('checked'),
-                        })
-                  );
-                  location.reload();
-                }
-            });
-          }
-        });
-
-        $("#show_block_save").on('click', function(ev){
-          ev.preventDefault();
-          var id = $("#show_block_id").val();
-          var rpid = $("#show_block_rpid").val();
-          var fullname = $("#show_block_fullname").val();
-          var position_id = $("#show_block_positionid").val();
-          var recruit_id = $().val();
-          var textarea = $("#show_block_textarea").val();
-          var tab = "{{ $tab }}";
-
-          var data = {recruit_id : id,rp_id: rpid, fullname: fullname,position_id: position_id,tab: tab,textarea: textarea};
-
-          $.ajax({
-            type: 'POST',
-            url: '{{ route("recruit.postulant.delete.notes") }}',
-            data: data,
-            headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success:function(data){
-              $('#show_block').modal('hide');
-              location.reload();
-            }
-          });
         });
 
         //DELETE POSTULANT - POSITION INFORMATION
@@ -1064,7 +913,6 @@
                           'rows' : 50,
                           'page' : 1,
                           'name' : $('#search-history-name').val(),
-                          'tab'  : "{{ $tab }}",
                           'user' : $("#recruiter-action").children("option:selected").val(),
                           'hand' : $("#handmade-toggle").prop('checked'),
                           'auto' : $("#auto-toggle").prop('checked'),
@@ -1083,14 +931,17 @@
           var rp_id = $(this).data("rpid");
           var index = $(this).data("index");
 
-          $('#btn-form-update').removeClass("d-none");
-          $('#btn-form-cancel').removeClass("d-none");
-          $('#btn-form-save').addClass("d-none");
+          // $('#btn-form-update').removeClass("d-none");
+          // $('#btn-form-cancel').removeClass("d-none");
+          // $('#btn-form-save').addClass("d-none");
 
           $.ajax({
               type:'POST',
               url: '{{ route("recruit.edit.get") }}',
-              data: {recruit_id:recruit_id, rp_id:rp_id},
+              data: {
+                recruit_id: recruit_id,
+                rp_id: rp_id
+              },
               headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1103,43 +954,9 @@
                 $('#platform').val(recruit.platform);
                 $('#phone_number').val(recruit.phone_number);
                 $('#email_address').val(recruit.email_address);
-                $('#profile_link').val(recruit.profile_link);
                 $('#recruit_id').val(recruit.recruit_id);
                 $('#rp_id').val(recruit.rp_id);
                 $('#index').val(index);
-              }
-          });
-        });
-
-        //EVALUATION NOTES FUNCTION
-        $("table tbody").on('click', 'a.call-notes' , function(ev){
-          ev.preventDefault();
-          var id = $(this).data("id");
-          var rpid = $(this).data("rpid");
-          var fullname = $(this).data("fullname");
-          var positionid = $(this).data("positionid");
-          var tab = "{{ $tab }}";
-
-          $.ajax({
-              type: 'POST',
-              url: '{{ route("recruit.get.position.notes") }}',
-              data: {id : id,rpid: rpid,fullname: fullname,positionid: positionid,tab: tab},
-              headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              },
-              success:function(data){
-                let _data = JSON.parse(data)
-                
-                $("#show_block_snippet").html('');
-                $("#show_block_id").val(id);
-                $("#show_block_rpid").val(rpid);
-                $("#show_block_fullname").val(fullname);
-                $("#show_block_positionid").val(positionid);
-                if(_data.snippet){$("#show_block_snippet").html(nl2br(_data.snippet));}
-                $("#show_block_textarea").val(_data.notes);
-                $("#show_block_name").html(fullname);
-                $('#show_block').modal();             
               }
           });
         });
@@ -1243,84 +1060,6 @@
             });
         });
 
-        //CANCEL EDIT POSTULANT - POSITION INFORMATION FUNCTION
-        $('#cancel_recruit').on('click' , function(ev){
-          ev.preventDefault();
-          closeEditProcess();
-        });
-
-        //UPDATE POSTULANT - POSITION INFORMATION
-        $('#update_recruit').on('click' , function(ev){
-          ev.preventDefault();
-          var fullname      = $('#fullname').val();
-          var position_id   = $('#position_id').val();
-          var platform      = $('#platform').val();
-          var phone_number  = $('#phone_number').val();
-          var email_address = $('#email_address').val();
-          var profile_link  = $('#profile_link').val();
-          var recruit_id    = $('#recruit_id').val();
-          var rp_id         = $('#rp_id').val();
-          var index         = $('#index').val();
-
-          var position_id_text = $( "#position_id option:selected" ).text();
-
-          $.ajax({
-              type:'POST',
-              url: '{{ route("recruit.edit.update") }}',
-              data: {fullname:fullname,
-                     position_id:position_id,
-                     platform:platform,
-                     phone_number:phone_number,
-                     email_address:email_address,
-                     profile_link:profile_link,
-                     recruit_id:recruit_id,
-                     rp_id:rp_id,},
-              headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              },
-              success:function(data){
-                let _data = JSON.parse(data)
-                closeEditProcess();
-                if(_data.state){
-                    $('tr[data-index="'+index+'"]').find('td.recruit-fullname').text(fullname)
-                    $('tr[data-index="'+index+'"]').find('td.recruit-position-name').text(position_id_text)
-                    $('tr[data-index="'+index+'"]').find('td.recruit-phone-number').text(phone_number)
-                    $('tr[data-index="'+index+'"]').find('td.recruit-email-address').text(email_address)
-                    if(!profile_link){
-                      $('tr[data-index="'+index+'"]').find('a#show-recruit-link').addClass("d-none");
-                      $('tr[data-index="'+index+'"]').find('a#show-recruit-link').attr("href" , null);
-                      $('tr[data-index="'+index+'"]').find('a#hide-recruit-link').removeClass("d-none");
-                    }else{
-                      $('tr[data-index="'+index+'"]').find('a#show-recruit-link').removeClass("d-none");
-                      $('tr[data-index="'+index+'"]').find('a#show-recruit-link').attr("href" , profile_link);
-                      $('tr[data-index="'+index+'"]').find('a#hide-recruit-link').addClass("d-none");
-                    }
-
-                    alert('POSTULANT edited successfully')
-                }else{
-                    alert('Need to complete all (*) fields at least')
-                }
-              }
-          });
-        });
-
-        //CANCEL EDIT JQUERY FLOW
-        function closeEditProcess(){
-          $('#btn-form-update').addClass("d-none");
-          $('#btn-form-cancel').addClass("d-none");
-          $('#btn-form-save').removeClass("d-none");
-
-          $('#fullname').val("");
-          $('#position_id').val("");
-          $('#platform').val("");
-          $('#phone_number').val("");
-          $('#email_address').val("");
-          $('#profile_link').val("");
-          $('#recruit_id').val("");
-          $('#rp_id').val("");
-        }
-
         //SEND TECH TEST MAIL
         $('.btn-mail-test').on('click', function (ev) {
           ev.preventDefault();
@@ -1353,6 +1092,12 @@
       $("#new_external_btn").on('click',function(ev){
         ev.preventDefault();
         $("#new_external_modal").modal();
+      });
+
+      $("#save_recruit").on('click',function(ev){
+        ev.preventDefault();
+        console.log("verify form content...");
+        $("#new-recruit-form").submit();
       });
 
 
@@ -1605,7 +1350,6 @@
                         'offset': _records,
                         'rows': _records,
                         'page' : _page , 
-                        'tab'  : "{{ $tab }}",
                         'name' : _text,
                         'user' : $("#recruiter-action").children("option:selected").val(),
                         'hand' : $("#handmade-toggle").prop('checked'),
@@ -1729,64 +1473,9 @@
         });
     });
 
-    //BULK ACTIONS BUTTON
-    $("#bulk-recruit").on('click' , function(){
-        var action = $('#bulk-action').val();
-        var rp_id_array = [];
-        var recruit_id_array = [];
-
-        if(action){
-          var checked = $('input[name="btSelectItem"]:checked');
-
-          if(checked.length>0){
-              checked.each(function (){
-                  var checkbox_index = $(this).data("index");
-                  var rp_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("rpid");
-                  var recruit_id_by_index = $('.bulk-input-value[data-index="'+checkbox_index+'"]').data("recruit-id");
-
-                  rp_id_array.push(rp_id_by_index)
-                  recruit_id_array.push(recruit_id_by_index)
-              });
-              $.ajax({
-                  type:'POST',
-                  url: "{{ route('recruit.bulk') }}",
-                  headers: {
-                      'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  },
-                  data: {
-                      action : action,
-                      rp_id_array: rp_id_array,
-                      recruit_id_array: recruit_id_array,
-                      tab: "{{ $tab }}",
-                  },
-                  success:function(data){
-                    window.history.replaceState(
-                        {edwin: "Fulltimeforce"}, 
-                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
-                          'rows' : 50,
-                          'page' : 1,
-                          'name' : $('#search-history-name').val(),
-                          'tab'  : "{{ $tab }}",
-                          'user' : $("#recruiter-action").children("option:selected").val(),
-                          'hand' : $("#handmade-toggle").prop('checked'),
-                          'auto' : $("#auto-toggle").prop('checked'),
-                        })
-                    );
-                    location.reload();
-                  }
-              });
-          }else{
-            alert('Please, select at least 1 POSTULANT to continue.');
-          }
-
-        }else{
-          alert('Select a BULK ACTION to continue.');
-        }
-    });
-
     //FILE INPUT CHANGE NAME FUNCTION
-    $('#file_path').on('change',function(ev){
+    $('#file_path').on('change', function(ev){
+      console.log("file changed");
       var fileName = $(this).val();
       $(this).next('.custom-file-label').html(ev.target.files[0].name);
     });
@@ -1840,7 +1529,6 @@
           'rows' : 50,
           'page' : 1,
           'name' : '',
-          'tab'  : "{{ $tab }}",
           'user' : select_value,
           'auto' : auto_option.prop('checked'),
           'hand' : handmade_option.prop('checked'),

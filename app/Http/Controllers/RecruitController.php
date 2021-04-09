@@ -6,6 +6,7 @@ use App\Recruiterlog;
 
 use App\Recruit;
 use App\RecruitPosition;
+use App\RecruitTest;
 use App\Expert;
 use App\Position;
 use App\Portfolio;
@@ -188,7 +189,6 @@ class RecruitController extends Controller
         //check if parameters (name) exists
         $name = isset($query['name']) ? $query['name'] : '';
         $_user = isset($query['user']) ? $query['user'] : '';
-        $_hand = isset($query['hand']) ? $query['hand'] : "true";
 
         //call positions, users and platforms
         $positions = Position::whereNull('position_type')
@@ -205,14 +205,86 @@ class RecruitController extends Controller
                 'positions' => $positions, 
                 'agents' => $agents,
                 'users' => $users,
-                'tab' => "postulant",
                 '_user' => $_user,
-                '_hand' => $_hand,
             ]);
     }
 
     public function saveExternal(Request $request){
-        return $request->all();
+        $validator = $request->validate( [
+            'fullname'              => 'required',
+            'position_id'           => 'required',
+            'agent_id'              => 'required',
+            'file_path'             => 'mimes:pdf,doc,docx|max:2048',
+        ]);
+        
+        if( !is_array($validator) ){
+            if ($validator->fails()) {
+                return back()
+                            ->withErrors($validator)
+                            ->withInput($request->input());
+            }
+        }
+
+        try{
+
+            //call route parameters
+            $input = $request->all();
+
+            //set variables for uploading CV
+            $file = $request->file("file_path");
+            $destinationPath = 'uploads/cv';        
+            $newNameFile = '';
+
+            //upload CV to S3 server and string to DB
+            if( $file ){
+                $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
+                $newNameFile = $destinationPath."/" . $_fileName;
+                // $path = $request->file("file_path")->store("cv" , "s3");
+                // $path_s3 = Storage::disk("s3")->url($path);
+                // Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path") ) , 'public' );
+                // Storage::delete( $path );
+                $input["file_path"] = $newNameFile;//$path_s3;
+            }
+
+            $input['id'] = Hashids::encode(time());
+            $input['phone_number'] = ($input['phone_number'])?preg_replace('/[^0-9.]+/', '', $input['phone_number']):null;
+            $input['tech_qtn'] = 'filled'; // fake tech_qtn filled
+            $input['platform'] = ''; //blank platform for EXTERNALS
+            unset( $input["_token"] );
+            unset( $input["position_id"] );
+            unset( $input['index'] );
+
+            //create recruit with input values
+            Recruit::create($input);
+
+            //create recruit position with: recruit id, position id, user id
+            //fake completeness of reports
+            $now = now();
+            RecruitPosition::create(
+                [
+                    "recruit_id"         =>  $input['id'],
+                    "position_id"        =>  $request->input('position_id'),
+                    "user_id"            =>  Auth::id(),
+                    "outstanding_report" => 'approve',
+                    "call_report"        => 'approve',
+                    "audio_report"       => 'approve',
+                    "soft_report"        => 'approve',
+                    "outstanding_ev_date"=> $now,
+                    "call_ev_date"       => $now,
+                    "audio_ev_date"      => $now,
+                    "soft_ev_date"       => $now
+                ]
+            );
+
+            RecruitTest::create(
+                ['recruit_id' => $input['id']]
+            );
+
+        }catch (Exception $exception) {
+            return back()->withErrors($exception->getMessage())->withInput();
+        }
+
+        return back()->with('success', 'External added successfully.');
     }
     
 
@@ -255,7 +327,7 @@ class RecruitController extends Controller
         $filters['hand'] = isset($query['hand'])?$query['hand']:null;
         
         //create query to call recruits
-        $recruits = Recruit::whereNotNull('recruit.id');
+        $recruits = Recruit::whereNotNull('recruit.id')->whereNull('recruit.agent_id');
         
         //check if $name route parameter is setted
         if(isset($query['name'])){
@@ -612,7 +684,8 @@ class RecruitController extends Controller
                     'recruit_test.technologies_score AS technologies_score',
                     'recruit_test.readme_score AS readme_score',
                     'agents.name as agent_name'
-                );
+                )
+                ->orderByDesc('recruit.created_at');
 
         //set rows value
         $recruit =  $recruits->paginate( $query['rows'] );
@@ -757,11 +830,15 @@ class RecruitController extends Controller
 
             //create recruit position with: recruit id, position id, user id
             RecruitPosition::create(
-                array(
+                [
                     "recruit_id"         =>  $input['id'],
                     "position_id"        =>  $request->input('position_id'),
                     "user_id"            =>  Auth::id(),
-                )
+                ]
+            );
+
+            RecruitTest::create(
+                ['recruit_id' => $input['id']]
             );
             
             if(Auth::check()){
@@ -1034,6 +1111,9 @@ class RecruitController extends Controller
                         "position_id"        =>  $request->input('position_id'),
                         "user_id"            =>  Auth::id(),
                     )
+                );
+                $recruitTest = RecruitTest::create(
+                    ['recruit_id' => $input['id']]
                 );
 
                 // $expertInput = [
@@ -2261,6 +2341,9 @@ class RecruitController extends Controller
                     "created_at"          =>  $value['created_at'],
                     "update_at"           =>  $value['updated_at']
                 )
+            );
+            RecruitTest::create(
+                ['recruit_id' => $id]
             );
         }
         //=========================================================================================
