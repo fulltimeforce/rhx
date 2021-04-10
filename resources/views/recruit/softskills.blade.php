@@ -725,16 +725,22 @@
                                 +(rowData.mail_sent == 0?'Send Mail':'Send Again')+'</a>';
                   }else{
                     var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
-                    actions = "<div class='ttip'>"
-                    + rankString(min)
-                    + "<span class='ttiptext'>"
-                    + "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
-                    + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
-                    + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
-                    + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
-                    + "Readme: "+rankInitial(rowData.readme_score)
-                    + "</span>"
-                    + "</div>";
+                    actions += "<div class='ttip'>"+ rankString(min) + "<span class='ttiptext'>";
+                    switch(rowData.test_status){
+                      case 1: 
+                        actions += "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
+                          + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
+                          + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
+                          + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
+                          + "Readme: "+rankInitial(rowData.readme_score);
+                        break;
+                      case 2: 
+                        actions += "Test Failed";
+                        break;
+                      default: 
+                        actions += "-";
+                    }
+                    actions += "</span></div>";
                   }
                   return actions;
                 },

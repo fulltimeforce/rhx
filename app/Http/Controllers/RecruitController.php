@@ -277,11 +277,11 @@ class RecruitController extends Controller
             if( $file ){
                 $_fileName = "cv-".date("Y-m-d")."-".time().".".$file->getClientOriginalExtension();
                 $newNameFile = $destinationPath."/" . $_fileName;
-                // $path = $request->file("file_path")->store("cv" , "s3");
-                // $path_s3 = Storage::disk("s3")->url($path);
-                // Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path") ) , 'public' );
-                // Storage::delete( $path );
-                $input["file_path"] = $newNameFile;//$path_s3;
+                $path = $request->file("file_path")->store("cv" , "s3");
+                $path_s3 = Storage::disk("s3")->url($path);
+                Storage::disk("s3")->put($path , file_get_contents( $request->file("file_path") ) , 'public' );
+                Storage::delete( $path );
+                $input["file_path"] = $path_s3;
             }
 
             $input['id'] = $request->recruit_id ?:Hashids::encode(time());
@@ -1588,6 +1588,11 @@ class RecruitController extends Controller
                     ->with('error', 'Need to have Technical Test results.');
             return;
         }
+        if($recruit['test_status'] > 1){
+            redirect()->route('recruit.softskills')
+                    ->with('error', "Recruit didn't approve TEST");
+            return;
+        }
         if($recruit['raven_status'] == 'invalid'){
             redirect()->route('recruit.softskills')
                     ->with('error', 'Raven result was not valid for consideration.');
@@ -2599,10 +2604,19 @@ class RecruitController extends Controller
         // }else{
         //     $_recruits->whereNull('recruit.audio_path');
         // }        
+        $_recruits->leftJoin('recruit_test','recruit_test.recruit_id','=','recruit.id')
+                ->orderByDesc('recruit.created_at')
+                ->select(
+                    'recruit.*',
+                    'recruit_test.test_status',
+                    'recruit_test.mail_sent',
+                    'recruit_test.completeness_score',
+                    'recruit_test.code_score',
+                    'recruit_test.design_score',
+                    'recruit_test.technologies_score',
+                    'recruit_test.readme_score'
+                );
 
-        $_recruits->orderByDesc('recruit.created_at');
-        
-        $_recruits->select('recruit.*');
         $_recruits = $_recruits->paginate( $query['rows'] )->toArray();
         
         foreach($_recruits['data'] as $k => $recruit){

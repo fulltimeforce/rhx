@@ -266,6 +266,44 @@
     .expert-audio{
         margin: 5px 5px 5px 5px;
     }
+    .ttip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .ttip .ttiptext {
+    font-size: 9px;
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .ttip .ttiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .ttip:hover .ttiptext {
+    visibility: visible;
+    opacity: 1;
+  }
 </style>
 @endsection
 
@@ -742,7 +780,38 @@
                 { field: 'phone_number', title: "Phone" },
                 { field: 'availability', title: "Availability" },
                 { field: 'salary', title: "Salary" ,width: 110 , formatter: function(value,rowData,index){ return value== null ? '-' : (rowData.type_money == 'sol' ? 'S/' : '$') + ' ' +value;} },
-                { field: 'fce_overall', title: "FCE Overall", formatter : function(value,rowData,index) { return rowData.fce_overall == '' ? '-' : '<span title="'+rowData.fce_total+'" >'+rowData.fce_overall+'</span>' } },
+                { field: 'fce_overall', title: "FCE", formatter : function(value,rowData,index) { return rowData.fce_overall == '' ? '-' : '<span title="'+rowData.fce_total+'" >'+rowData.fce_overall+'</span>' } },
+                { 
+                    field: 'test_status', 
+                    title: "Test",
+                    width: 100,
+                    clickToSelect: false,
+                    formatter : function(value,rowData,index) { 
+                        var actions = "";
+                        if(rowData.test_status == 0){
+                            actions = '<span>---</span>';
+                        }else{
+                            var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
+                            actions += "<div class='ttip'>"+ rankString(min) + "<span class='ttiptext'>";
+                            switch(rowData.test_status){
+                            case 1: 
+                                actions += "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
+                                + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
+                                + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
+                                + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
+                                + "Readme: "+rankInitial(rowData.readme_score);
+                                break;
+                            case 2: 
+                                actions += "Test Failed";
+                                break;
+                            default: 
+                                actions += "-";
+                            }
+                            actions += "</span></div>";
+                        }
+                        return actions;
+                    },
+                },
                 { 
                     field: 'linkedin', 
                     title: "Linkedin",
@@ -1121,27 +1190,27 @@
 
         $("#info-expert").on('click' , 'button.btn-update-expert' , function(ev){
             ev.preventDefault();
-            var id = $(this).attr("data-id");        
+            var id = $(this).attr("data-id");
             var crit_1 = $(".show_expert_crit_1").val();
             var crit_2 = $(".show_expert_crit_2").val();
             var data = {
-            id: id,
-            crit_1: crit_1,
-            crit_2: crit_2,
+                id: id,
+                crit_1: crit_1,
+                crit_2: crit_2,
             };
 
             $.ajax({
-            type:"POST",
-            url: '{{ route("experts.popup.edit") }}',
-            data: data,
-            headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success:function(data){
-                console.log("success");
-                location.reload();
-            },
+                type:"POST",
+                url: '{{ route("experts.popup.edit") }}',
+                data: data,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    console.log("success");
+                    location.reload();
+                },
             });
         }); 
 
@@ -1645,6 +1714,21 @@
             alert('Please, select at least 1 EXPERT to continue.');
         }
     });
+
+    function rankString(rank){
+        if(rank < 0 || rank > 5){
+            return "INVALID SCORE";
+        }
+        var ranks = ['Fail', 'Trainee', 'Junior', 'Middle', 'Senior', 'Rockstar'];
+        return ranks[rank];
+    }
+    function rankInitial(rank){
+        if(rank < 0 || rank > 5){
+            return "??";
+        }
+        var ranks = ['F', 'T', 'J', 'M', 'S', 'R'];
+        return ranks[rank];
+    }
     
 </script>  
 

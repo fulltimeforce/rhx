@@ -164,6 +164,7 @@ Route::get('recruits/show/test','RecruitTestController@test')->name('recruit.tes
 Route::get('recruits/test/bootstrap','RecruitTestController@listTestBootstrap')->name('recruit.test.list');
 Route::post('recruits/test/call','RecruitTestController@getRecruitForTest')->name('recruit.test.call');
 Route::post('recruits/test/save','RecruitTestController@saveRecruitTest')->name('recruit.test.save');
+Route::post('recruits/test/fail','RecruitTestController@failTest')->name('recruit.test.fail');
 Route::post('recruits/test/send/mail','RecruitTestController@sendMail')->name('recruit.test.sendmail');
 
 //===================================================================================================================================

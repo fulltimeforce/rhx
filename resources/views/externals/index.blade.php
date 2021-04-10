@@ -678,297 +678,303 @@
         
     });
 
-      ajax_recruits(search_name, 1, _user, _hand, _auto);
+    ajax_recruits(search_name, 1, _user, _hand, _auto);
 
       //===================================================================================
       //=====================POSTULANTS TABLE AND ROWS FUNCTIONS===========================
       //===================================================================================
 
       //BUILD TABLE FUNCTION - ELEMENTS FUNCTIONS
-      window.tablebootstrap_filter = function tablebootstrap_filter( data ){
-        var columns = [
-            { 
-              field: 'id', 
-              valign: 'middle',
-              checkbox: true,
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '';
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'recruit_id', 
-              title: "Accion",
-              valign: 'middle',
-              clickToSelect: false,
-              width: 20,
-              formatter : function(value,rowData,index) {    
-                  var actions = '<a class="badge badge-primary recruit-edit" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-index="'+index+'" href="#">Edit</a>'+
-                                ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
-                                ' <a class="badge badge-danger recruit-delete" data-rpid="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
-                  return actions;
-                },
-              class: 'frozencell',
-            },
-            {
-              field: 'created_at', 
-              title: "Date",
-              width: 50,
-              formatter : function(value,rowData,index) { 
-                  var aux_date = new Date(rowData.created_at)
-                  var actions = (aux_date.getDate())+'/'+(aux_date.getMonth()+1)+'/'+(aux_date.getFullYear())
-                  return actions;
-                },
-              class: 'frozencell recruit-created-at',
-            },
-            { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell recruit-user-name'},
-            { 
-              field: 'fullname', 
-              title: "Postulant",  
-              class: 'frozencell recruit-fullname',
-              formatter: function(value, rowData, index){
-                var cell = '';
-                cell += '<a href="#" class="btn-show" data-id="'+rowData.recruit_id+'" data-name="'+rowData.fullname+'" data-index="'+index+'">'+rowData.fullname+'</a>';
-                return cell;
-              }
-            },
-            { field: 'agent_name', title: "Agent", width: 120, class: 'frozencell recruit-agent-name'},
-            { field: 'position_name', title: "Position", width: 75 , class: 'frozencell recruit-position-name'},
-            { field: 'phone_number', title: "Phone", width: 75 , class: 'frozencell recruit-phone-number'},
-            { field: 'email_address', title: "E-mail", width: 75 , class: 'frozencell recruit-email-address'},
-            {
-              field: 'test_status',
-              title: "Test",
-              width: 75,
-              class: 'frozencell',
-              formatter : function(value,rowData,index) { 
-                  var actions = "";
-                  if(rowData.test_status == 0){
-                    actions = '<span>---</span>';
-                  }else{
-                    var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
-                    actions = "<div class='ttip'>"
-                    + rankString(min)
-                    + "<span class='ttiptext'>"
-                    + "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
-                    + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
-                    + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
-                    + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
-                    + "Readme: "+rankInitial(rowData.readme_score)
-                    + "</span>"
-                    + "</div>";
-                  }
-                  return actions;
-                },
-            },
-            {
-              field: 'file_path', 
-              title: "CV",
-              width: 50,
-              class: 'frozencell',
-              formatter : function(value,rowData,index) {    
+    window.tablebootstrap_filter = function tablebootstrap_filter( data ){
+      var columns = [
+          { 
+            field: 'id', 
+            valign: 'middle',
+            checkbox: true,
+            clickToSelect: false,
+            width: 20,
+            formatter : function(value,rowData,index) {    
                 var actions = '';
-
-                actions += '<div class="btn-group mt-2 btn-upload-cv '+( rowData.file_path == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"> ';
-                actions += '<label class="badge badge-secondary" for="cv-upload-evaluate-'+rowData.rp_id+'">Upload CV File</label>';
-                actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" style="display:none;" >';
-                actions += '</div>';
-
-                actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
-                actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
-                actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
-                actions += '</div>';
-
                 return actions;
-                },
-            },
-        ];
-        
-        //SET TABLE PROPERTIES
-        $("#list-externals").bootstrapTable('destroy').bootstrapTable({
-            height: undefined,
-            columns: columns,
-            data: data,
-            theadClasses: 'table-dark',
-            uniqueId: 'id'
-        });
-
-        //DELETE POSTULANT - POSITION INFORMATION
-        $("table tbody").on('click', 'a.recruit-delete' , function(ev){
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          var position_id = $(this).data("positionid");
-          var rp_id = $(this).data("rpid");
-
-          var confirmed = confirm("Are you sure you want to DELETE this profile?");
-
-          if(confirmed){
-            $.ajax({
-                type:'POST',
-                url: '{{ route("recruit.postulant.delete") }}',
-                data: {recruit_id : recruit_id,position_id: position_id,rp_id: rp_id},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                  window.history.replaceState(
-                        {edwin: "Fulltimeforce"}, 
-                        "Page" , "{{ route('externals.menu') }}" + '?'+ $.param({   
-                          'rows' : 50,
-                          'page' : 1,
-                          'name' : $('#search-history-name').val(),
-                          'user' : $("#recruiter-action").children("option:selected").val(),
-                        })
-                  );
-                  location.reload();
+              },
+            class: 'frozencell',
+          },
+          {
+            field: 'recruit_id', 
+            title: "Accion",
+            valign: 'middle',
+            clickToSelect: false,
+            width: 20,
+            formatter : function(value,rowData,index) {    
+                var actions = '<a class="badge badge-primary recruit-edit" data-id="'+rowData.recruit_id+'" data-rpid="'+rowData.rp_id+'" data-index="'+index+'" href="#">Edit</a>'+
+                              ' <input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">'+
+                              ' <a class="badge badge-danger recruit-delete" data-rpid="'+rowData.rp_id+'" data-positionid="'+rowData.pos_id+'" data-id="'+rowData.recruit_id+'" href="#">Delete</a>';
+                return actions;
+              },
+            class: 'frozencell',
+          },
+          {
+            field: 'created_at', 
+            title: "Date",
+            width: 50,
+            formatter : function(value,rowData,index) { 
+                var aux_date = new Date(rowData.created_at)
+                var actions = (aux_date.getDate())+'/'+(aux_date.getMonth()+1)+'/'+(aux_date.getFullYear())
+                return actions;
+              },
+            class: 'frozencell recruit-created-at',
+          },
+          { field: 'user_name', title: "Recruiter", width: 75 , class: 'frozencell recruit-user-name'},
+          { 
+            field: 'fullname', 
+            title: "Postulant",  
+            class: 'frozencell recruit-fullname',
+            formatter: function(value, rowData, index){
+              var cell = '';
+              cell += '<a href="#" class="btn-show" data-id="'+rowData.recruit_id+'" data-name="'+rowData.fullname+'" data-index="'+index+'">'+rowData.fullname+'</a>';
+              return cell;
+            }
+          },
+          { field: 'agent_name', title: "Agent", width: 120, class: 'frozencell recruit-agent-name'},
+          { field: 'position_name', title: "Position", width: 75 , class: 'frozencell recruit-position-name'},
+          { field: 'phone_number', title: "Phone", width: 75 , class: 'frozencell recruit-phone-number'},
+          { field: 'email_address', title: "E-mail", width: 75 , class: 'frozencell recruit-email-address'},
+          {
+            field: 'test_status',
+            title: "Test",
+            width: 75,
+            class: 'frozencell',
+            formatter : function(value,rowData,index) { 
+                var actions = "";
+                if(rowData.test_status == 0){
+                  actions = '<span>---</span>';
+                }else{
+                  var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
+                    actions += "<div class='ttip'>"+ rankString(min) + "<span class='ttiptext'>";
+                    switch(rowData.test_status){
+                      case 1: 
+                        actions += "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
+                          + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
+                          + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
+                          + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
+                          + "Readme: "+rankInitial(rowData.readme_score);
+                        break;
+                      case 2: 
+                        actions += "Test Failed";
+                        break;
+                      default: 
+                        actions += "-";
+                    }
+                    actions += "</span></div>";
                 }
-            });
-          }
-        });
-        
-        //EDIT POSTULANT - POSITION INFORMATION
-        $("table tbody").on('click', 'a.recruit-edit' , function(ev){
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          var rp_id = $(this).data("rpid");
-          var index = $(this).data("index");
+                return actions;
+              },
+          },
+          {
+            field: 'file_path', 
+            title: "CV",
+            width: 50,
+            class: 'frozencell',
+            formatter : function(value,rowData,index) {    
+              var actions = '';
 
+              actions += '<div class="btn-group mt-2 btn-upload-cv '+( rowData.file_path == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"> ';
+              actions += '<label class="badge badge-secondary" for="cv-upload-evaluate-'+rowData.rp_id+'">Upload CV File</label>';
+              actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" style="display:none;" >';
+              actions += '</div>';
+
+              actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
+              actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
+              actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
+              actions += '</div>';
+
+              return actions;
+              },
+          },
+      ];
+      
+      //SET TABLE PROPERTIES
+      $("#list-externals").bootstrapTable('destroy').bootstrapTable({
+          height: undefined,
+          columns: columns,
+          data: data,
+          theadClasses: 'table-dark',
+          uniqueId: 'id'
+      });
+
+      //DELETE POSTULANT - POSITION INFORMATION
+      $("table tbody").on('click', 'a.recruit-delete' , function(ev){
+        ev.preventDefault();
+        var recruit_id = $(this).data("id");
+        var position_id = $(this).data("positionid");
+        var rp_id = $(this).data("rpid");
+
+        var confirmed = confirm("Are you sure you want to DELETE this profile?");
+
+        if(confirmed){
           $.ajax({
               type:'POST',
-              data: {id: recruit_id, rp_id: rp_id},
-              url: '{{route("external.save.popup")}}',
+              url: '{{ route("recruit.postulant.delete") }}',
+              data: {recruit_id : recruit_id,position_id: position_id,rp_id: rp_id},
               headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
               },
               success:function(data){
-                console.log(data);
-                $("#new_external_modal > .modal-dialog").html(data);
-                $("#new_external_modal").modal();
+                window.history.replaceState(
+                      {edwin: "Fulltimeforce"}, 
+                      "Page" , "{{ route('externals.menu') }}" + '?'+ $.param({   
+                        'rows' : 50,
+                        'page' : 1,
+                        'name' : $('#search-history-name').val(),
+                        'user' : $("#recruiter-action").children("option:selected").val(),
+                      })
+                );
+                location.reload();
               }
           });
-        });
-
-        //SHOW RECRUIT INFOMATION MODAL
-        $("table tbody").on("click", "a.btn-show",function(ev){
-            ev.preventDefault();
-            var recruitId = $(this).attr("data-id");
-            var index = $(this).attr("data-index");
-            $.ajax({
-                type:"POST",
-                url: '{{ route("experts.btn.show") }}',
-                data:{id: recruitId},
-                headers: {
-                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                    var recruit = data.recruit;
-                    var age = "-";
-
-                    if(recruit.birthday){
-                        var date = new Date(recruit.birthday).getTime();
-                        var now = Date.now();
-
-                        var age_time = new Date(now-date);
-                        age = Math.abs(age_time.getUTCFullYear() - 1970);
-                    }
-                    
-                    $(".show_expert_name").html(recruit.fullname)
-                    $(".show_expert_email").html(recruit.email_address);
-                    $(".show_expert_age").html(age);
-                    $(".show_expert_phone").html(recruit.phone_number);
-                    $(".show_expert_availability").html(recruit.availability);
-                    $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$') + ' ' +(recruit.salary!=null?recruit.salary:0));
-                    $(".show_expert_fce").html(recruit.fce_overall);
-                    $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
-                    $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
-                    $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
-                    $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
-                    $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
-                    $(".show_expert_eng_speak").html(recruit.english_speaking);
-
-                    $(".show_expert_eng_write").html(recruit.english_writing);
-                    $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
-
-                    $(".show_expert_eng_read").html(recruit.english_reading);
-                    $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
-                    
-                    var audioHtml='';
-                    if(recruit.audio_path){
-                      audioHtml+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
-                      audioHtml+='<p style="color:white; text-align: left">Audio 1</p>'
-                      audioHtml += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
-                      audioHtml += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
-                      audioHtml+='</div></div>';
-                    }
-                    $("#list-expert-audios>.row").html(audioHtml);
-
-                    var crit1Html = "";
-                    crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
-                    crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
-                    crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
-                    crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
-                    crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
-
-                    $(".show_expert_crit_1").html(crit1Html);
-
-                    var crit2Html = "";
-                    crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
-                    crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
-                    crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
-                    crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
-                    crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
-                    $(".show_expert_crit_2").html(crit2Html);
-
-                    var adv_tech = [];
-                    var int_tech = [];
-                    var bsc_tech = [];
-                    for(i=0;data.advanced.length > i; i++){
-                        var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
-                        adv_tech.push(span);
-                    }
-                    for(i=0;data.intermediate.length > i; i++){
-                        var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
-                        int_tech.push(span);
-                    }
-                    for(i=0;data.basic.length > i; i++){
-                        var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
-                        bsc_tech.push(span);
-                    }
-                    $(".show_expert_adv_tech").html(adv_tech);
-                    $(".show_expert_int_tech").html(int_tech);
-                    $(".show_expert_bsc_tech").html(bsc_tech);
-                    $(".btn-update-expert").attr("data-id",recruit.id);
-                    $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
-                    $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
-
-                    $("#info-expert").modal();
-                }
-            });
-        });
-      }
-
-      $("#new_external_btn").on('click',function(ev){
+        }
+      });
+      
+      //EDIT POSTULANT - POSITION INFORMATION
+      $("table tbody").on('click', 'a.recruit-edit' , function(ev){
         ev.preventDefault();
+        var recruit_id = $(this).data("id");
+        var rp_id = $(this).data("rpid");
+        var index = $(this).data("index");
+
         $.ajax({
-          type:'POST',
-          data: {},
-          url: '{{route("external.save.popup")}}',
-          headers: {
-            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          },
-          success:function(data){
-            $("#new_external_modal > .modal-dialog").html(data);
-            $("#new_external_modal").modal();
-          },
+            type:'POST',
+            data: {id: recruit_id, rp_id: rp_id},
+            url: '{{route("external.save.popup")}}',
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              console.log(data);
+              $("#new_external_modal > .modal-dialog").html(data);
+              $("#new_external_modal").modal();
+            }
         });
       });
+
+      //SHOW RECRUIT INFOMATION MODAL
+      $("table tbody").on("click", "a.btn-show",function(ev){
+          ev.preventDefault();
+          var recruitId = $(this).attr("data-id");
+          var index = $(this).attr("data-index");
+          $.ajax({
+              type:"POST",
+              url: '{{ route("experts.btn.show") }}',
+              data:{id: recruitId},
+              headers: {
+                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success:function(data){
+                  var recruit = data.recruit;
+                  var age = "-";
+
+                  if(recruit.birthday){
+                      var date = new Date(recruit.birthday).getTime();
+                      var now = Date.now();
+
+                      var age_time = new Date(now-date);
+                      age = Math.abs(age_time.getUTCFullYear() - 1970);
+                  }
+                  
+                  $(".show_expert_name").html(recruit.fullname)
+                  $(".show_expert_email").html(recruit.email_address);
+                  $(".show_expert_age").html(age);
+                  $(".show_expert_phone").html(recruit.phone_number);
+                  $(".show_expert_availability").html(recruit.availability);
+                  $(".show_expert_salary").html((recruit.type_money == 'sol' ? 'S/' : '$') + ' ' +(recruit.salary!=null?recruit.salary:0));
+                  $(".show_expert_fce").html(recruit.fce_overall);
+                  $("a.show_expert_linkedin").attr("href",(recruit.linkedin!=undefined?recruit.linkedin:"#"));
+                  $("a.show_expert_linkedin").html((recruit.linkedin!=undefined?'<button class="btn btn-primary">Linkedin</button>':''));
+                  $("a.show_expert_github").attr("href",(recruit.github!=undefined?recruit.github:"#"));
+                  $("a.show_expert_github").html((recruit.github!=undefined?'<button class="btn btn-primary">Github</button>':''));
+                  $(".show_expert_eng_speak").css("width",(recruit.english_speaking=="advanced"?"100%":recruit.english_speaking=="intermediate"?"70%":recruit.english_speaking=="basic"?"30%":"0%"));
+                  $(".show_expert_eng_speak").html(recruit.english_speaking);
+
+                  $(".show_expert_eng_write").html(recruit.english_writing);
+                  $(".show_expert_eng_write").css("width",(recruit.english_writing=="advanced"?"100%":recruit.english_writing=="intermediate"?"70%":recruit.english_writing=="basic"?"30%":"0%"));
+
+                  $(".show_expert_eng_read").html(recruit.english_reading);
+                  $(".show_expert_eng_read").css("width",(recruit.english_reading=="advanced"?"100%":recruit.english_reading=="intermediate"?"70%":recruit.english_reading=="basic"?"30%":"0%"));
+                  
+                  var audioHtml='';
+                  if(recruit.audio_path){
+                    audioHtml+='<div class="col-12"><div class="expert-audio" data-index="'+index+'">';
+                    audioHtml+='<p style="color:white; text-align: left">Audio 1</p>'
+                    audioHtml += '<a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1">x1.00</a><a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.25">x1.25</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.5">x1.5</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="1.75">x1.75</a> <a href="#" class="mr-1 btn btn-light info-speed-audio" data-speed="2">x2.0</a>'
+                    audioHtml += '<audio id="info-audio-player-'+index+'" src="'+recruit.audio_path+'" controls></audio></td>';
+                    audioHtml+='</div></div>';
+                  }
+                  $("#list-expert-audios>.row").html(audioHtml);
+
+                  var crit1Html = "";
+                  crit1Html += '<option value="" '+(recruit.crit_1 == null ? 'selected':'')+'>None</option>';
+                  crit1Html += '<option value="excellent" '+(recruit.crit_1 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                  crit1Html += '<option value="efficient" '+(recruit.crit_1 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                  crit1Html += '<option value="inefficient" '+(recruit.crit_1 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                  crit1Html += '<option value="lower" '+(recruit.crit_1 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+
+                  $(".show_expert_crit_1").html(crit1Html);
+
+                  var crit2Html = "";
+                  crit2Html += '<option value="" '+(recruit.crit_2 == null ? 'selected':'')+'>None</option>';
+                  crit2Html += '<option value="excellent" '+(recruit.crit_2 == 'excellent' ? 'selected':'')+'>Excellent</option>';
+                  crit2Html += '<option value="efficient" '+(recruit.crit_2 == 'efficient' ? 'selected':'')+'>Efficient</option>';
+                  crit2Html += '<option value="inefficient" '+(recruit.crit_2 == 'inefficient' ? 'selected':'')+'>Inefficient</option>';
+                  crit2Html += '<option value="lower" '+(recruit.crit_2 == 'lower' ? 'selected':'')+'>Lower than expected</option>';
+                  $(".show_expert_crit_2").html(crit2Html);
+
+                  var adv_tech = [];
+                  var int_tech = [];
+                  var bsc_tech = [];
+                  for(i=0;data.advanced.length > i; i++){
+                      var span = '<span class="tech tech_adv">'+data.advanced[i]+'</span>';
+                      adv_tech.push(span);
+                  }
+                  for(i=0;data.intermediate.length > i; i++){
+                      var span = '<span class="tech tech_int">'+data.intermediate[i]+'</span>';
+                      int_tech.push(span);
+                  }
+                  for(i=0;data.basic.length > i; i++){
+                      var span = '<span class="tech tech_bsc">'+data.basic[i]+'</span>';
+                      bsc_tech.push(span);
+                  }
+                  $(".show_expert_adv_tech").html(adv_tech);
+                  $(".show_expert_int_tech").html(int_tech);
+                  $(".show_expert_bsc_tech").html(bsc_tech);
+                  $(".btn-update-expert").attr("data-id",recruit.id);
+                  $(".btn-prev-expert").attr("data-id",recruit.id).attr("data-index",index);
+                  $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
+
+                  $("#info-expert").modal();
+              }
+          });
+      });
+    }
+
+    $("#new_external_btn").on('click',function(ev){
+      ev.preventDefault();
+      $.ajax({
+        type:'POST',
+        data: {},
+        url: '{{route("external.save.popup")}}',
+        headers: {
+          'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success:function(data){
+          $("#new_external_modal > .modal-dialog").html(data);
+          $("#new_external_modal").modal();
+        },
+      });
+    });
 
       $("#new_external_modal").on('click','#save_recruit',function(ev){
         ev.preventDefault();
@@ -1214,17 +1220,17 @@
         $(".btn-next-expert").attr("data-id",recruit.id).attr("data-index",index);
       }
 
-        $(document).on("keydown", "form", function(event) { 
-            return event.key != "Enter";
-        });
+      $(document).on("keydown", "form", function(event) { 
+          return event.key != "Enter";
+      });
 
-        $('.change-money').on('click' , function(ev){
-            ev.preventDefault();
-            var type = $(this).data("money");
-            var label = $(this).html();
-            $(this).parent().parent().find('button').html(label);
-            $("#type_money").val(type);
-        })
+      $('.change-money').on('click' , function(ev){
+          ev.preventDefault();
+          var type = $(this).data("money");
+          var label = $(this).html();
+          $(this).parent().parent().find('button').html(label);
+          $("#type_money").val(type);
+      })
 
       //===================================================================================
       //================================SCROLL FUNCTIONS===================================
@@ -1366,7 +1372,6 @@
 
     //FILE INPUT CHANGE NAME FUNCTION
     $("#new_external_modal").on('change','#file_path',function(ev){
-      console.log("file changed");
       var fileName = $(this).val();
       $(this).next('.custom-file-label').html(ev.target.files[0].name);
     });

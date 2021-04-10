@@ -157,4 +157,14 @@ class RecruitTestController extends Controller
         
         return ["status"=>"success","message"=>"mail sent!"];
     }
+
+    public function failTest(Request $request){
+        RecruitTest::where('recruit_id',$request->id)->update([
+            'test_status' => 2
+        ]);
+
+        //return with success message
+        redirect()->route('recruit.test.menu')
+                    ->with('success', 'TEST disapproved successfully.');
+    }
 }

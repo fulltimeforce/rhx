@@ -562,8 +562,10 @@
                     align: 'left',
                     clickToSelect: false,
                     formatter : function(value,rowData,index) {
+                        var actions = "";
                         
-                        var actions = '<a class="badge badge-info btn-test" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Evaluate</a>\n';
+                        actions += '<a class="badge badge-info btn-test" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Evaluate</a>\n';
+                        actions += '<a class="badge badge-danger btn-fail" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" data-index="'+index+'" href="#">Fail</a>';
                         
                         actions = actions.replace(/:id/gi , rowData.id);
 
@@ -639,7 +641,30 @@
                         $('#testRecruit').modal();
                     }
                 });
-            })
+            });
+
+            $("table tbody").on('click','a.btn-fail', function(ev){
+                ev.preventDefault();
+                var recruit_id = $(this).attr("data-id");
+                var name = $(this).data("name");
+                var fail = confirm("You are about to FAIL the recruit: "+name);
+                if(fail){
+                    $.ajax({
+                        type:'POST',
+                        data:{id:recruit_id},
+                        url:'{{ route("recruit.test.fail") }}',
+                        headers: {
+                            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success:function(data){
+                            if(data.stats = "success"){
+                                location.reload();
+                            }
+                        },
+                    });
+                }
+            });
 
         }
 
