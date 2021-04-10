@@ -293,6 +293,43 @@
     align-items: start!important;
     justify-content: start!important;
   }
+  .ttip {
+    position: relative;
+    display: inline-block;
+  }
+  .ttip .ttiptext {
+    font-size: 9px;
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .ttip .ttiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .ttip:hover .ttiptext {
+    visibility: visible;
+    opacity: 1;
+  }
 </style>
 @endsection
  
@@ -501,106 +538,6 @@
 
       <div class="modal fade" id="new_external_modal" tabindex="-1" role="dialog" aria-labelledby="create-external" aria-hidden="true">
           <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="create_external">Add new External Expert</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="close">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form name="new-recruit-form" id="new-recruit-form" action="{{ route('externals.save') }}" method="POST" enctype="multipart/form-data">@csrf
-                        <div class="row">
-                            <div class="col-md-12">
-                                {{-- <input type="hidden" name="file_path" id="file_path" value="" class="form-control"> --}}
-                                <input type="hidden" name="recruit_id" id="recruit_id" class="form-control">
-                                <input type="hidden" name="index" id="index" class="form-control">
-                                <div class="form-group">
-                                    <label for="fullname">Name *</label>
-                                    <input type="text" name="fullname" id="fullname" class="form-control">
-                                </div>                      
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="position_id">Positions *</label>
-                                    <select id="position_id" class="form-control" name="position_id" >
-                                        <option value="">None</option>
-                                        @foreach($positions as $pid => $position)
-                                            <option value="{{ $position->id }}">{{ $position->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="agent_id">Agent *</label>
-                                    <select name="agent_id" id="agent_id" class="form-control">
-                                        <option value="">None</option>
-                                        @foreach($agents as $pid => $agent)
-                                            <option value="{{$agent->id}}">{{$agent->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone_number">Phone</label>
-                                    <input type="text" name="phone_number" id="phone_number" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email_address">Email</label>
-                                    <input type="text" name="email_address" id="email_address" class="form-control">
-                                </div> 
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="salary">Salary</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">S/</button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item change-money" data-money="sol" href="#">S/</a>
-                                                <a class="dropdown-item change-money" data-money="dolar" href="#">$</a>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="type_money" value="sol" id="type_money">
-                                        <input type="number" min="0" name="salary" class="form-control" id="salary" value="">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="availability">Availability</label>
-                                    <select name="availability" id="availability" class="form-control">
-                                        <option value="Inmediata">Inmediata</option>
-                                        <option value="1 semana">1 semana</option>
-                                        <option value="2 semanas">2 semanas</option>
-                                        <option value="3 semanas">3 semanas</option>
-                                        <option value="1 mes o más">1 mes o más</option>
-                                    </select>
-                                </div> 
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group form-inline">
-                                  <label for="availability">CV File</label>
-                                  <div class="custom-file mt-2">
-                                    <input type="file" class="custom-file-input" name="file_path" id="file_path" accept="application/msword, application/pdf, .doc, .docx">
-                                    <label id="add-file-label" class="custom-file-label" for="file_path">Add a File (max 2M)</label>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div class="form-group" id="btn-form-save">
-                        <label>&nbsp;</label>
-                        <button type="submit" id="save_recruit" class="btn btn-success form-control">Save</button>
-                    </div>
-                </div>
-            </div>
           </div>
       </div>
 
@@ -619,38 +556,12 @@
           <div class="col-12 text-right p-2 pr-3">
               <a id="new_external_btn" class="btn btn-success" href="#">New External</a>
           </div>
-          <!--
-          POSTULANT TECHNICAL QUESTIONARY URL COPY SECTION
-          -->
-          <div class="col-12 mb-3">
-            <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
-                <b>Copy successful!!!!</b>
-                <p id="showURL"></p>
-            </div>
-          </div>
-
+          
           <!--
           TOTAL RECORDS SECTION
           -->
-          <div class="col-12">
-            <p>Records: <span id="count-recruit"></span></p>
-          </div>
-          
-          <!--
-          BULK ACTIONS SECTION
-          -->
           <div class="col-8 text-left">
-              <div class="form-group d-inline-block" style="max-width: 300px;">
-                  <select name="recruiter-action" id="recruiter-action" class="form-control filter-element col-xs-8" >
-                      <option value="">-- Recruiter --</option>
-                      @foreach($users as $uid => $user)
-                          <option value="{{$user->id}}" {{($_user==$user->id)?'selected':''}}>{{$user->name}}</option>
-                      @endforeach
-                </select>
-              </div>
-              {{-- |
-              <input type="checkbox" {{$_auto=='false'?'':'checked'}} {{$_user==''?'':'disabled'}} data-toggle="toggle" data-on="Auto" data-off="Auto" data-onstyle="primary" data-offstyle="secondary" class="filter-element col-xs-8" id="auto-toggle" name="auto-toggle">
-              <input type="checkbox" {{$_hand=='false'?'':'checked'}} {{$_user==''?'':'disabled'}} data-toggle="toggle" data-on="Manual" data-off="Manual" data-onstyle="primary" data-offstyle="secondary" class="filter-element col-xs-8" id="handmade-toggle" name="handmade-toggle"> --}}
+            <p>Records: <span id="count-recruit"></span></p>
           </div>
           <div class="col-4 text-right">
               <div class="form-group d-inline-block" style="max-width:300px;">
@@ -829,37 +740,14 @@
             { field: 'phone_number', title: "Phone", width: 75 , class: 'frozencell recruit-phone-number'},
             { field: 'email_address', title: "E-mail", width: 75 , class: 'frozencell recruit-email-address'},
             {
-              field: 'file_path', 
-              title: "CV",
-              width: 50,
-              formatter : function(value,rowData,index) {    
-                var actions = '';
-
-                actions += '<div class="btn-group mt-2 btn-upload-cv '+( rowData.file_path == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"> ';
-                actions += '<label class="badge badge-secondary" for="cv-upload-evaluate-'+rowData.rp_id+'">Upload CV File</label>';
-                actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" style="display:none;" >';
-                actions += '</div>';
-
-                actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
-                actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
-                actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
-                actions += '</div>';
-
-                return actions;
-                },
-              class: 'frozencell',
-            },
-            {
               field: 'test_status',
               title: "Test",
-              width: 50,
+              width: 75,
+              class: 'frozencell',
               formatter : function(value,rowData,index) { 
                   var actions = "";
                   if(rowData.test_status == 0){
-                    actions = '<a class="badge '
-                                +(rowData.mail_sent == 0?'badge-success':'badge-warning')
-                                +' btn-mail-test" data-id="'+rowData.recruit_id+'" href="#">'
-                                +(rowData.mail_sent == 0?'Send Mail':'Send Again')+'</a>';
+                    actions = '<span>---</span>';
                   }else{
                     var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
                     actions = "<div class='ttip'>"
@@ -875,7 +763,27 @@
                   }
                   return actions;
                 },
+            },
+            {
+              field: 'file_path', 
+              title: "CV",
+              width: 50,
               class: 'frozencell',
+              formatter : function(value,rowData,index) {    
+                var actions = '';
+
+                actions += '<div class="btn-group mt-2 btn-upload-cv '+( rowData.file_path == null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"> ';
+                actions += '<label class="badge badge-secondary" for="cv-upload-evaluate-'+rowData.rp_id+'">Upload CV File</label>';
+                actions += '<input type="file" class="custom-file-input cv-upload" id="cv-upload-evaluate-'+rowData.rp_id+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" style="display:none;" >';
+                actions += '</div>';
+
+                actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
+                actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
+                actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
+                actions += '</div>';
+
+                return actions;
+                },
             },
         ];
         
@@ -909,13 +817,11 @@
                 success:function(data){
                   window.history.replaceState(
                         {edwin: "Fulltimeforce"}, 
-                        "Page" , "{{ route('recruit.menu') }}" + '?'+ $.param({   
+                        "Page" , "{{ route('externals.menu') }}" + '?'+ $.param({   
                           'rows' : 50,
                           'page' : 1,
                           'name' : $('#search-history-name').val(),
                           'user' : $("#recruiter-action").children("option:selected").val(),
-                          'hand' : $("#handmade-toggle").prop('checked'),
-                          'auto' : $("#auto-toggle").prop('checked'),
                         })
                   );
                   location.reload();
@@ -931,32 +837,18 @@
           var rp_id = $(this).data("rpid");
           var index = $(this).data("index");
 
-          // $('#btn-form-update').removeClass("d-none");
-          // $('#btn-form-cancel').removeClass("d-none");
-          // $('#btn-form-save').addClass("d-none");
-
           $.ajax({
               type:'POST',
-              url: '{{ route("recruit.edit.get") }}',
-              data: {
-                recruit_id: recruit_id,
-                rp_id: rp_id
-              },
+              data: {id: recruit_id, rp_id: rp_id},
+              url: '{{route("external.save.popup")}}',
               headers: {
                 'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
               },
               success:function(data){
-                let _data = JSON.parse(data)
-                var recruit = _data.recruit[0];
-                $('#fullname').val(recruit.fullname);
-                $('#position_id').val(recruit.position_id);
-                $('#platform').val(recruit.platform);
-                $('#phone_number').val(recruit.phone_number);
-                $('#email_address').val(recruit.email_address);
-                $('#recruit_id').val(recruit.recruit_id);
-                $('#rp_id').val(recruit.rp_id);
-                $('#index').val(index);
+                console.log(data);
+                $("#new_external_modal > .modal-dialog").html(data);
+                $("#new_external_modal").modal();
               }
           });
         });
@@ -1059,46 +951,30 @@
                 }
             });
         });
-
-        //SEND TECH TEST MAIL
-        $('.btn-mail-test').on('click', function (ev) {
-          ev.preventDefault();
-          var recruit_id = $(this).data("id");
-          $.ajax({
-                type:'POST',
-                data:{id:recruit_id},
-                url: '{{ route("recruit.test.sendmail" ) }}',
-                headers: {
-                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                beforeSend:function(){
-                    $("#overlay").show();
-                },
-                success:function(data){
-                    if(data.status == "success"){
-                      location.reload();
-                    }else{
-                      alert("Error: "+data.message);
-                    }
-                },
-                complete: function(){
-                    $("#overlay").hide();
-                }
-            });
-        });
       }
 
       $("#new_external_btn").on('click',function(ev){
         ev.preventDefault();
-        $("#new_external_modal").modal();
+        $.ajax({
+          type:'POST',
+          data: {},
+          url: '{{route("external.save.popup")}}',
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success:function(data){
+            $("#new_external_modal > .modal-dialog").html(data);
+            $("#new_external_modal").modal();
+          },
+        });
       });
 
-      $("#save_recruit").on('click',function(ev){
+      $("#new_external_modal").on('click','#save_recruit',function(ev){
         ev.preventDefault();
         console.log("verify form content...");
         $("#new-recruit-form").submit();
-      });
+      })
 
 
       //==========AUDIO SPEED BUTTON FUNCTION
@@ -1195,6 +1071,21 @@
           },
         });
       }); 
+
+      function rankString(rank){
+        if(rank < 0 || rank > 5){
+          return "INVALID SCORE";
+        }
+        var ranks = ['Fail', 'Trainee', 'Junior', 'Middle', 'Senior', 'Rockstar'];
+        return ranks[rank];
+      }
+      function rankInitial(rank){
+        if(rank < 0 || rank > 5){
+          return "??";
+        }
+        var ranks = ['F', 'T', 'J', 'M', 'S', 'R'];
+        return ranks[rank];
+      }
 
       //==========NEXT/PREV MODAL - LOAD EXPERT INFORMATION FUNCTION
       function loadModalExpert(id, index){
@@ -1474,13 +1365,12 @@
     });
 
     //FILE INPUT CHANGE NAME FUNCTION
-    $('#file_path').on('change', function(ev){
+    $("#new_external_modal").on('change','#file_path',function(ev){
       console.log("file changed");
       var fileName = $(this).val();
       $(this).next('.custom-file-label').html(ev.target.files[0].name);
     });
-
-
+    
     $('.filter-element').change(function(ev) {
       ev.preventDefault();
 

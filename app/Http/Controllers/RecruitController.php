@@ -175,7 +175,7 @@ class RecruitController extends Controller
     }
 
     //==============================================================================
-    //======================== TECH MENU METHODS=============================
+    //======================== EXTERNAL MENU METHODS=============================
     //==============================================================================
 
     public function externalsIndex(Request $request){
@@ -209,6 +209,45 @@ class RecruitController extends Controller
             ]);
     }
 
+    public function savePopUp(Request $request){
+        $positions = Position::whereNull('position_type')
+                            ->where('status' , 'enabled')
+                            ->orderBy('name','asc')
+                            ->get();
+        $users = User::whereIn('role_id' , [1, 2])->where('status', 'ENABLED')->get();
+        $agents = Agent::whereNotNull('id')->orderBy('name','asc')->get();
+
+        $popUpData = [
+            'positions'=>$positions,
+            'agents'=>$agents,
+        ];
+
+        if($request->id){
+            $recruit = Recruit::whereNotNull('recruit.id')
+                ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
+                ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
+                ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
+                ->where('recruit.id' , $request->id)
+                ->where('recruit_positions.id' , $request->rp_id)
+                ->select(
+                    'recruit.id',
+                    'recruit.fullname',
+                    'recruit.phone_number',
+                    'recruit.email_address',
+                    'recruit.agent_id',
+                    'recruit.salary',
+                    'recruit.type_money',
+                    'recruit.availability',
+                    'recruit_positions.id AS rp_id',
+                    'recruit_positions.position_id')
+                ->get()
+                ->first();
+            $popUpData['recruit'] = $recruit;
+        }
+        // return $popUpData;
+        return view('externals.save_popup')->with($popUpData);
+    }
+
     public function saveExternal(Request $request){
         $validator = $request->validate( [
             'fullname'              => 'required',
@@ -226,7 +265,6 @@ class RecruitController extends Controller
         }
 
         try{
-
             //call route parameters
             $input = $request->all();
 
@@ -246,13 +284,25 @@ class RecruitController extends Controller
                 $input["file_path"] = $newNameFile;//$path_s3;
             }
 
-            $input['id'] = Hashids::encode(time());
+            $input['id'] = $request->recruit_id ?:Hashids::encode(time());
             $input['phone_number'] = ($input['phone_number'])?preg_replace('/[^0-9.]+/', '', $input['phone_number']):null;
             $input['tech_qtn'] = 'filled'; // fake tech_qtn filled
             $input['platform'] = ''; //blank platform for EXTERNALS
             unset( $input["_token"] );
+            unset( $input["recruit_id"] );
             unset( $input["position_id"] );
             unset( $input['index'] );
+            unset( $input['rp_id'] );
+
+            if($request->recruit_id){
+                unset($input['file_path']);
+
+                Recruit::where('id',$request->recruit_id)->update($input);
+                RecruitPosition::where('id',$request->rp_id)->update([
+                    'position_id' => $request->position_id
+                ]);
+                return back()->with('success', 'External edited successfully.');
+            }
 
             //create recruit with input values
             Recruit::create($input);
@@ -275,9 +325,13 @@ class RecruitController extends Controller
                     "soft_ev_date"       => $now
                 ]
             );
-
+            // create record as if mail has been sent
             RecruitTest::create(
-                ['recruit_id' => $input['id']]
+                [
+                    'recruit_id' => $input['id'],
+                    'mail_sent'  => 1,
+                    'sent_at' => now(),
+                ]
             );
 
         }catch (Exception $exception) {
@@ -669,6 +723,9 @@ class RecruitController extends Controller
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
                 ->leftJoin('agents','recruit.agent_id','agents.id')
+                ->whereNotNull('recruit_positions.id')
+                ->whereNotNull('recruit_positions.recruit_id')
+                ->whereNotNull('recruit_test.id')
                 ->select('recruit.*',
                     'positions.name AS position_name',
                     'users.name AS user_name',
@@ -791,6 +848,7 @@ class RecruitController extends Controller
 
         //delete recruit_positions row by: recruit_id and position_id
         RecruitPosition::where('recruit_id' , $recruit_id)->where('position_id' , $position_id)->where('id' , $rp_id)->delete();
+        RecruitTest::where('recruit_id',$recruit_id)->delete();
     }
 
     public function saveRecruit(Request $request){

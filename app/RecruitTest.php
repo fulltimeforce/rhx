@@ -32,5 +32,6 @@ class RecruitTest extends Model
         'readme_score',
         'mail_sent',
         'test_status',
+        'sent_at',
     ];
 }

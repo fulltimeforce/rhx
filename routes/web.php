@@ -84,6 +84,7 @@ Route::post('sales/update','SaleController@switchStatus')->name("sales.switch");
 Route::get('externals','RecruitController@externalsIndex')->name('externals.menu');
 Route::get('externals/bootstrap','RecruitController@externalsBootstrap')->name('externals.list');
 Route::post('externals/save','RecruitController@saveExternal')->name('externals.save');
+Route::post('externals/save/popup','RecruitController@savePopUp')->name('external.save.popup');
 
 //===================================================================================================================================
 //=================================================POSTULANTS METHODS================================================================
