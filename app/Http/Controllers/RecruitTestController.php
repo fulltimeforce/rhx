@@ -223,9 +223,9 @@ class RecruitTestController extends Controller
         $url = "https://docs.google.com/document/d/1EtOeiVmGH2W3sYwe7YKKw8AhiLC_TxIDiG83wNKPmqk/edit?usp=sharing";
         
         // send mail
-        // MultiMail::to($recruit->email_address)//$recruit->email_address
-        //     ->from($recruiter->email)
-        //     ->send(new techTestEmail($url));
+        MultiMail::to($recruit->email_address)//$recruit->email_address
+            ->from($recruiter->email)
+            ->send(new techTestEmail($url));
 
         // set mail flag to true
         $test = RecruitTest::where('recruit_id',$recruit->id)->update([
