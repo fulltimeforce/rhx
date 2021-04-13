@@ -33,5 +33,17 @@ class RecruitTest extends Model
         'mail_sent',
         'test_status',
         'sent_at',
+        'code_single_resp',
+        'code_open_closed',
+        'code_liskov_subs',
+        'code_int_segr',
+        'code_depend_invers',
+        'code_all_solid',
+        'code_unreadable',
+        'design_adaptability',
+        'design_changability',
+        'design_modularity',
+        'design_simplicity',
+        'design_robustness'
     ];
 }

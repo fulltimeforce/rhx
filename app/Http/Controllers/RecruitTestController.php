@@ -111,6 +111,84 @@ class RecruitTestController extends Controller
         $recruit_id = $input['recruit_id'];
         unset( $input['recruit_id'] );
 
+        // ANALIZE CLEAN CODE SCORE ---------------------------------------------------
+        //-------------------------------------------------------------------------
+        $input['code_single_resp']      = isset($input['code_single_resp']);
+        $input['code_open_closed']      = isset($input['code_open_closed']);
+        $input['code_liskov_subs']      = isset($input['code_liskov_subs']);
+        $input['code_int_segr']         = isset($input['code_int_segr']);
+        $input['code_depend_invers']    = isset($input['code_depend_invers']);
+        $input['code_all_solid']        = isset($input['code_all_solid']);
+        $input['code_unreadable']       = isset($input['code_unreadable']);
+
+        $code_criterias = [
+            $input['code_single_resp'],
+            $input['code_open_closed'],
+            $input['code_liskov_subs'],
+            $input['code_int_segr'],
+            $input['code_depend_invers']
+        ];
+        $c_counter = 0;
+        $input['code_score'] = 0;
+        
+        // count criterias
+        foreach($code_criterias as $criteria){
+            if($criteria) $c_counter ++;
+        }
+
+        // Asign code score
+        if($c_counter == 5){
+            $input['code_score'] = $input['code_all_solid'] ? 5 : 4;
+            $input['code_unreadable'] = false;
+        }
+        if($c_counter < 5){
+            $input['code_score'] = 3;
+        }
+        if($c_counter < 3){
+            $input['code_score'] = 2;
+        }
+        if($c_counter == 0){
+            $input['code_score'] = $input['code_unreadable'] ? 0 : 1;
+            $input['code_all_solid'] = false;
+        }
+
+        // ANALIZE DESIGN QUALITY SCORE ---------------------------------------------------
+        //-------------------------------------------------------------------------
+        $input['design_adaptability']   = isset($input['design_adaptability']);
+        $input['design_changability']   = isset($input['design_changability']);
+        $input['design_modularity']     = isset($input['design_modularity']);
+        $input['design_simplicity']     = isset($input['design_simplicity']);
+        $input['design_robustness']     = isset($input['design_robustness']);
+
+        $design_criterias = [
+            $input['design_adaptability'],
+            $input['design_changability'],
+            $input['design_modularity'],
+            $input['design_simplicity'],
+            $input['design_robustness']
+        ];
+        $d_counter = 0;
+        $input['design_score'] = 0;
+        
+        // count criterias
+        foreach($design_criterias as $criteria){
+            if($criteria) $d_counter ++;
+        }
+
+        // Asign design score
+        if($d_counter == 5){
+            $input['design_score'] = 5;
+        }
+        if($d_counter == 4){
+            $input['design_score'] = !$input['design_simplicity'] ? 4: $input['design_robustness'] ? 3 : 2;
+        }
+        if($d_counter == 3){
+            $input['design_score'] = $input['design_robustness'] ? 3 : 2;
+        }
+        if($d_counter < 3){
+            $input['design_score'] = $d_counter;
+        }
+
         RecruitTest::where('recruit_id', $recruit_id)->update($input);
     
         //return with success message

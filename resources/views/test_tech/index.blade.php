@@ -296,84 +296,90 @@
                         </div>
                     </div>
                     <div class="row tab-test" data-tab="2">
-                        <div class="col-12 mb-4">
+                        <div class="col-12">
                             <h3>Clean code</h3>
                         </div>
+                        <div class="col-12 mb-4">
+                            <p>Check the boxes of the SOLID criteria demonstrated</p>
+                        </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="code_score">The code has been created using all five SOLID principles in mind from start to finish</label>
-                                <input type="radio" class="col-3" name="code_score" value="5">
+                                <label class="col-9">Single Responsibility</label>
+                                <input type="checkbox" class="col-3 code_score code_score_input" name="code_single_resp">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="code_score">We can verify the existence of all five SOLID principles but not throughout all the code</label>
-                                <input type="radio" class="col-3" name="code_score" value="4">
+                                <label class="col-9">Open-Closed</label>
+                                <input type="checkbox" class="col-3 code_score code_score_input" name="code_open_closed">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="code_score">We can verify the existence of three or more SOLID principles in the code</label>
-                                <input type="radio" class="col-3" name="code_score" value="3">
+                                <label class="col-9">Liskov Substitution</label>
+                                <input type="checkbox" class="col-3 code_score code_score_input" name="code_liskov_subs">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="code_score">We can verify the existence of only two or less SOLID principles in the code. Perhaps added without real knowledge of their existence.</label>
-                                <input type="radio" class="col-3" name="code_score" value="2">
+                                <label class="col-9">Interface Segregation</label>
+                                <input type="checkbox" class="col-3 code_score code_score_input" name="code_int_segr">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="code_score">We cannot find any of the SOLID principles in the code</label>
-                                <input type="radio" class="col-3" name="code_score" value="1">
+                                <label class="col-9">Dependency Inversion</label>
+                                <input type="checkbox" class="col-3 code_score code_score_input" name="code_depend_invers">
                             </div>
                         </div>
-                        <div class="form-group col-12">
+                        <div id="solid_check" class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="code_score">The code is a mess / unreadable without proper explanation/documentation or sometimes even harcoded </label>
-                                <input type="radio" class="col-3" name="code_score" value="0">
+                                <label class="col-9">SOLID all the way</label>
+                                <input type="checkbox" class="col-3 code_score" name="code_all_solid">
+                            </div>
+                        </div>
+                        <div id="unreadable_check" class="form-group col-12">
+                            <div class="row">
+                                <label class="col-9">Unreadable code</label>
+                                <input type="checkbox" class="col-3 code_score" name="code_unreadable">
                             </div>
                         </div>
                     </div>
                     <div class="row tab-test" data-tab="3">
-                        <div class="col-12 mb-4">
+                        <div class="col-12">
                             <h3>Design quality</h3>
                         </div>
+                        <div class="col-12 mb-4">
+                            <p>Check the boxes of the design criteria demonstrated</p>
+                        </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="design_score">The solution meets all five criteria</label>
-                                <input type="radio" class="col-3" name="design_score" value="5">
+                                <label class="col-9">Adaptability</label>
+                                <input type="checkbox" class="col-3 design_score" name="design_adaptability">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="design_score">The solutions meets all criteria but Simplicity</label>
-                                <input type="radio" class="col-3" name="design_score" value="4">
+                                <label class="col-9">Changability</label>
+                                <input type="checkbox" class="col-3 design_score" name="design_changability">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="design_score">The solution meets three criteria including Robustness</label>
-                                <input type="radio" class="col-3" name="design_score" value="3">
+                                <label class="col-9">Modularity</label>
+                                <input type="checkbox" class="col-3 design_score" name="design_modularity">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="design_score">The solution meets two criteria</label>
-                                <input type="radio" class="col-3" name="design_score" value="2">
+                                <label class="col-9">Simplicity</label>
+                                <input type="checkbox" class="col-3 design_score" name="design_simplicity">
                             </div>
                         </div>
                         <div class="form-group col-12">
                             <div class="row">
-                                <label class="col-9" for="design_score">The solution meets one criteria</label>
-                                <input type="radio" class="col-3" name="design_score" value="1">
-                            </div>
-                        </div>
-                        <div class="form-group col-12">
-                            <div class="row">
-                                <label class="col-9" for="design_score">The solution meets no criteria</label>
-                                <input type="radio" class="col-3" name="design_score" value="0">
+                                <label class="col-9">Robustness</label>
+                                <input type="checkbox" class="col-3 design_score" name="design_robustness">
                             </div>
                         </div>
                     </div>
@@ -618,19 +624,41 @@
                     },
                     success:function(data){
                         let _data = JSON.parse(data)
-                        var html='';
+                        var html='';   
 
-                        $("input:radio[name=completeness_score]").filter('[value='+_data.recruit.completeness_score+']').prop('checked', true);
-                        $("input:radio[name=code_score]").filter('[value='+_data.recruit.code_score+']').prop('checked', true);
-                        $("input:radio[name=design_score]").filter('[value='+_data.recruit.design_score+']').prop('checked', true);
-                        $("input:radio[name=technologies_score]").filter('[value='+_data.recruit.technologies_score+']').prop('checked', true);
-                        $("input:radio[name=readme_score]").filter('[value='+_data.recruit.readme_score+']').prop('checked', true);
+                        // Clean inputs
+                        $("input:radio[name=completeness_score]").prop('checked', false);
 
+                        $('input:checkbox[name="code_single_resp"]').prop('checked', false);
+                        $('input:checkbox[name="code_open_closed"]').prop('checked', false);
+                        $('input:checkbox[name="code_liskov_subs"]').prop('checked', false);
+                        $('input:checkbox[name="code_int_segr"]').prop('checked', false);
+                        $('input:checkbox[name="code_depend_invers"]').prop('checked', false);
+
+                        $('input:checkbox[name="design_adaptability"]').prop('checked', false);
+                        $('input:checkbox[name="design_changability"]').prop('checked', false);
+                        $('input:checkbox[name="design_modularity"]').prop('checked', false);
+                        $('input:checkbox[name="design_simplicity"]').prop('checked', false);
+                        $('input:checkbox[name="design_robustness"]').prop('checked', false);
+                        
+                        $("input:radio[name=technologies_score]").prop('checked', false);
+                        $("input:radio[name=readme_score]").prop('checked', false);
+
+                        $("input:checkbox[name='code_all_solid']").prop('checked', false);
+                        $("input:checkbox[name='code_unreadable']").prop('checked', false);
+
+                        // hide & show extra options for code design
+                        $("#solid_check").hide();
+                        $("#unreadable_check").show();
+                        
+                        //hide error
                         $("#error-test-form").hide();
 
+                        //set ids
                         $('#recruit_index').val(index);
                         $('#recruit_id').val(recruit_id);
 
+                        // set name
                         $("#test_recruit_name").html(_data.recruit.fullname);
                         
                         $(".tab-test").removeClass("test-active");
@@ -641,6 +669,31 @@
                         $('#testRecruit').modal();
                     }
                 });
+            });
+
+            $(".code_score_input").on('change',function(ev){
+                var count = 0;
+                $(".code_score_input").each(function(index){
+                    if($(this).prop('checked')){
+                        count++;
+                    }
+                });
+                if(count == 0){
+                    $("#solid_check").hide();
+                    $("#unreadable_check").show();
+                    $("input:checkbox[name='code_all_solid']").prop('checked', false);
+                }
+                if(count > 0 && count < 5){
+                    $("#solid_check").hide();
+                    $("#unreadable_check").hide();
+                    $("input:checkbox[name='code_all_solid']").prop('checked', false);
+                    $("input:checkbox[name='code_unreadable']").prop('checked', false);
+                }
+                if(count == 5){
+                    $("#solid_check").show();
+                    $("#unreadable_check").hide();
+                    $("input:checkbox[name='code_unreadable']").prop('checked', false);
+                }
             });
 
             $("table tbody").on('click','a.btn-fail', function(ev){
@@ -702,13 +755,14 @@
                 $("#prev-test").show();
             }
             $(this).attr("data-test", tab);
-        })
+        });
 
         $("#save-test").on('click', function(){
             $("#error-test-form").hide();
             var max = $('#form_test').serializeArray();
             var count = $(".tab-test").length;
-            if( max.length < (count + 1) ){
+
+            if( !validateTestForm() ){
                 $("#error-test-form").show();
                 return true;
             }
@@ -725,7 +779,51 @@
                     location.reload();
                 }
             });
-        })
+        });
+
+        function validateTestForm(){
+            var count = 0;
+            $("input[name='completeness_score']").each(function(index){
+                if($(this).prop('checked')){
+                    count++;
+                }
+            });
+            if(count == 0) return false;
+            // 
+            count = 0;
+            $(".code_score").each(function(index){
+                if($(this).prop('checked')){
+                    count++;
+                }
+            });
+            if(count == 0) return false;
+            //
+            count = 0;
+            $(".design_score").each(function(index){
+                if($(this).prop('checked')){
+                    count++;
+                }
+            });
+            if(count == 0) return false;
+            //
+            count = 0;
+            $("input:radio[name=technologies_score]").each(function(index){
+                if($(this).prop('checked')){
+                    count++;
+                }
+            });
+            if(count == 0) return false;
+            //
+            count = 0;
+            $("input:radio[name=readme_score]").each(function(index){
+                if($(this).prop('checked')){
+                    count++;
+                }
+            });
+            if(count == 0) return false;
+
+            return true;
+        }
 
 
         $('#search').on('click' , function(){
