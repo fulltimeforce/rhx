@@ -189,6 +189,8 @@ class RecruitTestController extends Controller
             $input['design_score'] = $d_counter;
         }
 
+        unset($input['design_none']);
+
         RecruitTest::where('recruit_id', $recruit_id)->update($input);
     
         //return with success message

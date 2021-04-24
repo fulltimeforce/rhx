@@ -44,6 +44,7 @@ class RecruitTest extends Model
         'design_changability',
         'design_modularity',
         'design_simplicity',
-        'design_robustness'
+        'design_robustness',
+        'test_comments'
     ];
 }

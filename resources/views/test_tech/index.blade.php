@@ -232,6 +232,14 @@
   .tab-test.test-active{
       display: flex;
   }
+  #test_comments{
+    resize: none;
+    width: 100%;
+    height: 290px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 10px;
+  }
 </style>
 @endsection
 
@@ -340,7 +348,7 @@
                         </div>
                         <div id="unreadable_check" class="form-group col-12">
                             <div class="row">
-                                <label class="col-9">Unreadable code</label>
+                                <label class="col-9">No SOLID principles found / Unreadable Code</label>
                                 <input type="checkbox" class="col-3 code_score" name="code_unreadable">
                             </div>
                         </div>
@@ -380,6 +388,12 @@
                             <div class="row">
                                 <label class="col-9">Robustness</label>
                                 <input type="checkbox" class="col-3 design_score" name="design_robustness">
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <div class="row">
+                                <label class="col-9">None</label>
+                                <input type="checkbox" class="col-3 design_score" name="design_none">
                             </div>
                         </div>
                     </div>
@@ -438,6 +452,18 @@
                             <div class="row">
                                 <label class="col-9" for="readme_score">No Readme added</label>
                                 <input type="radio" class="col-3" name="readme_score" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row tab-test" data-tab="6">
+                        <div class="col-12 mb-4">
+                            <h3>Comments</h3>
+                        </div>
+                        <div class="form-group col-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <textarea name="test_comments" id="test_comments" maxlength="500" placeholder="You can add a comment here..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -779,6 +805,19 @@
                     location.reload();
                 }
             });
+        });
+
+        $(".design_score").on('change',function(ev){
+            var name = $(this).attr('name');
+            if(name == 'design_none'){
+                $(".design_score").each(function(index){
+                    if($(this).attr('name') != 'design_none'){
+                        $(this).prop('checked',false);
+                    }
+                });
+            }else{
+                $(".design_score[name=design_none]").prop('checked',false);
+            }
         });
 
         function validateTestForm(){
