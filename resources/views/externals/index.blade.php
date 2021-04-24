@@ -506,13 +506,69 @@
       @endif
 
       <!--
+      SHOW AUDIO MODAL
+      -->
+      <div class="modal fade" id="show-audio" tabindex="-1" role="dialog" aria-labelledby="show-audioLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col">
+                      
+                      <audio src="" controls autoplay id="audio-play"></audio>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+          </div>
+      </div>
+      </div>
+
+      <!--
       DELETE CV MODAL
+      -->
+      <div class="modal fade" id="delete-cv" tabindex="-1" role="dialog" aria-labelledby="delete-cvLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete-cvLabel">Delete CV File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        Are you sure you want to delete this file?
+                        <input type="hidden" id="delete-cv-rp-id">
+                        <input type="hidden" id="delete-cv-position-id">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="deleteCv">Delete</button>
+            </div>
+            </div>
+        </div>
+      </div>
+
+      <!--
+      DELETE AUDIO MODAL
       -->
       <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="delete-audioLabel">Delete CV File</h5>
+                <h5 class="modal-title" id="delete-audioLabel">Delete Audio File</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -548,6 +604,15 @@
           <div class="col-12 mb-3">
             <div class="progress">
               <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+          <!--
+          POSTULANT TECHNICAL QUESTIONARY URL COPY SECTION
+          -->
+          <div class="col-12 mb-3">
+            <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
+                <b>Copy successful!!!!</b>
+                <p id="showURL"></p>
             </div>
           </div>
           <!--
@@ -740,6 +805,47 @@
           { field: 'phone_number', title: "Phone", width: 75 , class: 'frozencell recruit-phone-number'},
           { field: 'email_address', title: "E-mail", width: 75 , class: 'frozencell recruit-email-address'},
           {
+            field: 'audio_path', 
+            title: "Zoom Audio",
+            width: 50,
+            formatter : function(value,rowData,index) { 
+                var actions = '';
+
+                actions += '<div class="btn-group mt-2 btn-upload-audio '+( rowData.audio_path == null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'"> ';
+                actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.recruit_id+'">Upload Audio</label>';
+                actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.recruit_id+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'" style="display:none;" >';
+                actions += '</div>';
+
+                actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
+            
+                actions += '<div class="btn-group btn-show-audio '+( rowData.audio_path != null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">';
+                actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_path+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">Show Audio</a>';
+                actions += '<a href="#" class="badge badge-primary confirmation-audio-delete" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'"><i class="fas fa-trash"></i></a>';
+                actions += '</div>';
+
+                actions = actions.replace(/:id/gi , rowData.id);
+                return actions;
+              },
+            class: 'frozencell',
+          },
+          {
+            field: 'tech_qtn',
+            title: "Tech Qtn",
+            valign: 'middle',
+            clickToSelect: false,
+            width: 20,
+            formatter : function(value,rowData,index) {    
+              var actions = '';
+
+              actions += '<a id="show-tech-link-'+rowData.rp_id+'" class="badge badge-warning btn-tech-recruit '+( rowData.tech_qtn != 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" href="#">Generate</a>\n';
+
+              actions += '<a id="hide-tech-link-'+rowData.rp_id+'" class="badge badge-success button-disabled text-white '+( rowData.tech_qtn == 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" disabled>Completed</a>\n';
+
+              return actions;
+              },
+            class: 'frozencell',
+          },
+          {
             field: 'test_status',
             title: "Test",
             width: 75,
@@ -785,7 +891,7 @@
 
               actions += '<div class="btn-group btn-show-cv '+( rowData.file_path != null ? '' : 'd-none')+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'">';
               actions += '<a class="badge badge-success show-cv" href="'+rowData.file_path+'" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'" target="_blank">Download CV File</a>';
-              actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
+              actions += '<a href="#" class="badge badge-primary confirmation-cv-delete" data-id="'+rowData.rp_id+'" data-positionid="'+rowData.recruit_id+'"><i class="fas fa-trash"></i></a>';
               actions += '</div>';
 
               return actions;
@@ -957,6 +1063,48 @@
               }
           });
       });
+
+      //GENERATE TECHNICAL QUESTIONARY LINK
+      $('.btn-tech-recruit').on('click', function (ev) {
+        ev.preventDefault();
+        var url = '{{ route("recruit.tech.signed" , ":id") }}';
+        url = url.replace( ":id" , $(this).data("id") );
+        $.ajax({
+          type:'GET',
+          url: url,
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success:function(data){
+            $('#showURL').html(data);
+            
+            var el = document.createElement("textarea");
+            el.value = data;
+            el.style.position = 'absolute';                 
+            el.style.left = '-9999px';
+            el.style.top = '0';
+            el.setSelectionRange(0, 99999);
+            el.setAttribute('readonly', ''); 
+            document.body.appendChild(el);
+            
+            el.focus();
+            el.select();
+
+            var success = document.execCommand('copy')
+            if(success){
+                $(".alert-dismissible").slideDown(200, function() {
+                        
+                });
+            }
+            setTimeout(() => {
+                $(".alert-dismissible").slideUp(500, function() {
+                    document.body.removeChild(el);
+                });
+            }, 4000);
+          }
+        });
+      }); 
     }
 
     $("#new_external_btn").on('click',function(ev){
@@ -1329,45 +1477,45 @@
     })
 
     //SET VALUES FOR CV FILE DELETE MODAL
-    $("body").on('click' , '.confirmation-upload-delete' , function(ev){
+    $("body").on('click' , '.confirmation-cv-delete' , function(ev){
         ev.preventDefault();
         var rp_id = $(this).data("id");
         var position_id = $(this).data("positionid");
 
-        $("#delete-audio-rp-id").val(rp_id);
-        $("#delete-audio-position-id").val(position_id);
+        $("#delete-cv-rp-id").val(rp_id);
+        $("#delete-cv-position-id").val(position_id);
 
-        $("#delete-audio").modal();
+        $("#delete-cv").modal();
 
     })
 
     //SET VALUES FOR CV FILE DELETE MODAL (NULL)
-    $('#delete-audio').on('hidden.bs.modal', function (e) {
-      $("#delete-audio-rp-id").val("");
-      $("#delete-audio-position-id").val("");
+    $('#delete-cv').on('hidden.bs.modal', function (e) {
+      $("#delete-cv-rp-id").val("");
+      $("#delete-cv-position-id").val("");
     })
 
     //DELETE CV FILE FUNCTION
-    $("#deleteAudio").on('click' , function(){
-        $.ajax({
-            type:'POST',
-            url: "{{ route('recruit.postulant.delete.cv') }}",
-            headers: {
-                'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                rp_id : $("#delete-audio-rp-id").val(),
-                position_id: $("#delete-audio-position-id").val()
-            },
-            success:function(data){
-                var rp_id = $("#delete-audio-rp-id").val();
-                var position_id = $("#delete-audio-position-id").val();
-                $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
-                $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
-                $("#delete-audio").modal('hide');
-            }
-        });
+    $("#deleteCv").on('click' , function(){
+      $.ajax({
+        type:'POST',
+        url: "{{ route('recruit.postulant.delete.cv') }}",
+        headers: {
+          'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+          rp_id : $("#delete-cv-rp-id").val(),
+          position_id: $("#delete-cv-position-id").val()
+        },
+        success:function(data){
+          var rp_id = $("#delete-cv-rp-id").val();
+          var position_id = $("#delete-cv-position-id").val();
+          $('.btn-upload-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+          $('.btn-show-cv[data-id="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+          $("#delete-cv").modal('hide');
+        }
+      });
     });
 
     //FILE INPUT CHANGE NAME FUNCTION
@@ -1453,5 +1601,106 @@
       });
     })
 </script>
+<script>
+  $('body').on('change' , '.audio-upload' , function(ev){
+      var file = this.files[0];
+      var recruit_id = $(this).data("recruitid");
+      var position_id = $(this).data("positionid");
+      var bar = $('.progress-bar');
+
+      var _formData = new FormData();
+      _formData.append('file', file);
+      _formData.append('recruit_id', recruit_id);
+      _formData.append('position_id', position_id);
+
+      $.ajax({
+          xhr: function() {
+              var xhr = new window.XMLHttpRequest();
+              xhr.upload.addEventListener("progress", function(evt) {
+                  if (evt.lengthComputable) {
+                      var percentComplete = (evt.loaded / evt.total) * 100;
+                        bar.width(percentComplete+'%');
+                  }
+              }, false);
+            return xhr;
+          },
+          type:'POST',
+          url: "{{ route('recruit.postulant.upload.audio') }}",
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          contentType: false,
+          cache: false,
+          processData: false,
+          data: _formData,
+          success:function(data){
+              $('.btn-upload-audio[data-recruitid="'+recruit_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+              $('.btn-show-audio[data-recruitid="'+recruit_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+              $('.show-audio[data-recruitid="'+recruit_id+'"][data-positionid="'+position_id+'"]').attr("data-audio" , data.file);
+              bar.width('0%');
+          }
+      });
+  })
+
+  //SET VALUES FOR AUDIO FILE DELETE MODAL
+  $("body").on('click' , '.confirmation-audio-delete' , function(ev){
+      ev.preventDefault();
+      var recruit_id = $(this).data("recruitid");
+      var position_id = $(this).data("positionid");
+
+      $("#delete-audio-rp-id").val(recruit_id);
+      $("#delete-audio-position-id").val(position_id);
+
+      $("#delete-audio").modal();
+
+  })
+
+  //SET VALUES FOR AUDIO FILE DELETE MODAL (NULL)
+  $('#delete-audio').on('hidden.bs.modal', function (e) {
+    $("#delete-audio-rp-id").val("");
+    $("#delete-audio-position-id").val("");
+  })
+
+  //DELETE AUDIO FILE FUNCTION
+  $("#deleteAudio").on('click' , function(){
+      $.ajax({
+          type:'POST',
+          url: "{{ route('recruit.postulant.delete.audio') }}",
+          headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          data: {
+              recruit_id : $("#delete-audio-rp-id").val(),
+              position_id: $("#delete-audio-position-id").val()
+          },
+          success:function(data){
+              var rp_id = $("#delete-audio-rp-id").val();
+              var position_id = $("#delete-audio-position-id").val();
+              $('.btn-upload-audio[data-recruitid="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+              $('.btn-show-audio[data-recruitid="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+              $("#delete-audio").modal('hide');
+          }
+      });
+
+  });
+
+  //SET VALUES FOR AUDIO FILE PLAY MODAL
+  $('body').on('click' , '.show-audio' ,function(ev){
+      ev.preventDefault();
+      var audio = $(this).data("audio");
+      var h = "{{ route('home') }}";
+      $("#audio-play").attr("src" , audio);
+      $("#show-audio").modal();
+  })
+
+  //SET VALUES FOR AUDIO FILE PLAY MODAL (NULL)
+  $('#show-audio').on('hidden.bs.modal', function (e) {
+      $("#audio-play").attr("src" , "");
+  })
+</script>
+
+
 
 @endsection
