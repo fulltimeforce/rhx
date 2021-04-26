@@ -286,7 +286,7 @@ class RecruitController extends Controller
 
             $input['id'] = $request->recruit_id ?:Hashids::encode(time());
             $input['phone_number'] = ($input['phone_number'])?preg_replace('/[^0-9.]+/', '', $input['phone_number']):null;
-            $input['tech_qtn'] = 'filled'; // fake tech_qtn filled
+            $input['tech_qtn'] = 'empty'; // tech_qtn empty
             $input['platform'] = ''; //blank platform for EXTERNALS
             unset( $input["_token"] );
             unset( $input["recruit_id"] );
