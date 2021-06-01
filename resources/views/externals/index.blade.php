@@ -1372,13 +1372,13 @@
           return event.key != "Enter";
       });
 
-      $('.change-money').on('click' , function(ev){
-          ev.preventDefault();
-          var type = $(this).data("money");
-          var label = $(this).html();
-          $(this).parent().parent().find('button').html(label);
-          $("#type_money").val(type);
-      })
+      $("#new_external_modal").on('click','.change-money', function(ev){
+        ev.preventDefault();
+        var type = $(this).data("money");
+        var label = $(this).html();
+        $(this).parent().parent().find('button').html(label);
+        $("#type_money").val(type);
+      });
 
       //===================================================================================
       //================================SCROLL FUNCTIONS===================================
