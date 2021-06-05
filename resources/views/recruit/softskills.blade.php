@@ -695,19 +695,23 @@
               width: 50,
               formatter : function(value,rowData,index) {
                   var actions = "";
-
-                  if(rowData.raven_status == null){
-                    actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Link</a> ';
-                    actions += '<a class="badge badge-info btn-manual-score" data-id="'+rowData.recruit_id+'" href="#">Score</a> ';
-                    actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
+                  switch(rowData.raven_status){
+                    case null:
+                      actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Link</a> ';
+                      actions += '<a class="badge badge-info btn-manual-score" data-id="'+rowData.recruit_id+'" href="#">Score</a> ';
+                      actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
+                      break;
+                    case 'invalid':
+                      actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
+                      break;
+                    case 'in_progress':
+                      actions += '<a class="badge badge-warning" data-id="'+rowData.recruit_id+'" href="#">IN PROGRESS</a>';
+                      break;
+                    case 'completed':
+                      actions += rowData.raven_overall+" ("+rowData.raven_perc.toString()+")";
+                      break;
+                    default: break;
                   }
-                  if(rowData.raven_status == 'invalid'){
-                    actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
-                  }
-                  if(rowData.raven_status == 'completed'){
-                    actions += rowData.raven_overall+" ("+rowData.raven_perc.toString()+")";
-                  }
-
                   return actions;
                 },
               class: 'frozencell',

@@ -1583,6 +1583,11 @@ class RecruitController extends Controller
                     ->with('error', 'Raven test is INVALID.');
             return;
         }
+        if($recruit['raven_status'] == 'in_progress'){
+            redirect()->route('recruit.softskills')
+                    ->with('error', 'Raven test is still in progress.');
+            return;
+        }
         if($recruit['test_status'] == 0){
             redirect()->route('recruit.softskills')
                     ->with('error', 'Need to have Technical Test results.');
@@ -1794,7 +1799,7 @@ class RecruitController extends Controller
         $recruit = Recruit::where('id',$request->rcn);
         if($recruit->count() > 0){
             $recruit->update([
-                'raven_status'=>'invalid',
+                'raven_status'=>'in_progress',
             ]);
             return [
                 'status' => 'continue',
@@ -1812,7 +1817,7 @@ class RecruitController extends Controller
         if(session('recruit_id') != $request->rcn){
             return [
                 'success' => false,
-                'error' => 'the answer was register under a different recruit code'
+                'error' => 'the answer was registered under a different recruit code'
             ];
         }
         $quiz = new Quiz;
@@ -1832,16 +1837,20 @@ class RecruitController extends Controller
             $quiz_result = $quiz->evaluateResults($curr_quiz);
 
             $recruit = Recruit::where('id',session('recruit_id'));
-            if($quiz_result['valid']){    
+
+            if($quiz_result['valid']){
                 $recruit->update([
                     'raven_total'=>$quiz_result['total'],
                     'raven_overall'=>$quiz_result['raven_overall'],
                     'raven_perc'=>$quiz_result['raven_perc'],
-                    'raven_status'=>'completed',
+                    'raven_status'=>'completed'
                 ]);
             }else{
                 $recruit->update([
-                    'raven_status'=>'invalid',
+                    'raven_total'=>$quiz_result['total'],
+                    'raven_overall'=>$quiz_result['raven_overall'],
+                    'raven_perc'=>$quiz_result['raven_perc'],
+                    'raven_status'=>'invalid'
                 ]);
             }
             return [
@@ -1864,16 +1873,19 @@ class RecruitController extends Controller
             $quiz_result = $quiz->evaluateResults($curr_quiz);
 
             $recruit = Recruit::where('id',session('recruit_id'));
-            if($quiz_result['valid']){    
+            if($quiz_result['valid']){
                 $recruit->update([
                     'raven_total'=>$quiz_result['total'],
                     'raven_overall'=>$quiz_result['raven_overall'],
                     'raven_perc'=>$quiz_result['raven_perc'],
-                    'raven_status'=>'completed',
+                    'raven_status'=>'completed'
                 ]);
             }else{
                 $recruit->update([
-                    'raven_status'=>'invalid',
+                    'raven_total'=>$quiz_result['total'],
+                    'raven_overall'=>$quiz_result['raven_overall'],
+                    'raven_perc'=>$quiz_result['raven_perc'],
+                    'raven_status'=>'invalid'
                 ]);
             }
             return [
@@ -1893,6 +1905,9 @@ class RecruitController extends Controller
 
         if(session('recruit_id') != $request->rcn){
             $recruit->update([
+                'raven_total' => 0,
+                'raven_overall' => 'I',
+                'raven_perc' => 0,
                 'raven_status'=>"invalid"
             ]);
             return [
@@ -1922,6 +1937,9 @@ class RecruitController extends Controller
             ]);
         }else{
             $recruit->update([
+                'raven_total'=>$quiz_result['total'],
+                'raven_overall'=>$quiz_result['raven_overall'],
+                'raven_perc'=>$quiz_result['raven_perc'],
                 'raven_status'=>"invalid"
             ]);
         }

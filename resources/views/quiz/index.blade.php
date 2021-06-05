@@ -58,8 +58,8 @@
 @endsection
  
 @section('content')
+@if($recruit->raven_status == null)
 <div id="welcome-view">
-    @if($recruit->raven_status == null)
     <div class="row justify-content-sm-center">
         <div class="col-12 mt-3">
             <h2 class="text-center">TEST PSICOLÓGICO <br> FULLTIMEFORCE</h2>
@@ -194,9 +194,7 @@ $("#begin-test").on('click',function(e){
                 var timeInSeconds = 60 * 60;
                 display = $('#time');
                 startTimer(timeInSeconds, display);
-                $("#q_img").html("<img id='question_img' src='{{asset('workat/quiz_assets/')}}"+"/"+data.img+"' height=600>");
-
-                // $("#question_img").attr('src',"{{asset('workat/quiz_assets/')}}"+"/"+data.img)
+                $("#q_img>img").attr("src","{{asset('workat/quiz_assets/')}}"+"/"+data.img);
                 loadOptions(data.curr_question);
                 $("#welcome-view").html("");
                 $("#questionaire").show();
@@ -212,7 +210,6 @@ $(document).on('click','.next_button',function(e){
     e.preventDefault();
     var form = getFormData($("#question_form"));
     var button = $(this);
-    // console.log(form);
     $.ajax({
         type: 'POST',
         url: '{{ route("recruit.quiz.continue") }}',
@@ -226,8 +223,7 @@ $(document).on('click','.next_button',function(e){
         },
         success:function(data){
             if(data.status == 'continue'){
-                $("#q_img").html("<img id='question_img' src='{{asset('workat/quiz_assets/')}}"+"/"+data.img+"' height=600>");
-                // $("#question_img").attr('src',"{{asset('workat/quiz_assets/')}}"+"/"+data.img);
+                $("#q_img>img").attr("src","{{asset('workat/quiz_assets/')}}"+"/"+data.img);
                 $("[name='q']").prop('checked', false);
                 loadOptions(data.curr_question);
                 if(data.curr_question >= 60){
@@ -235,7 +231,7 @@ $(document).on('click','.next_button',function(e){
                 }
             }else{
                 console.log("quiz ended");
-                console.log(data);
+                console.log("next Data:", data);
                 $("#questionaire").html('<div class="row"><div class="col-12"><h4 class="text-center">¡Muchas gracias por participar! <br> Nos estaremos poniendo en contacto contigo cuanto tengamos los resultados.</h4></div></div>');
             }
         },
@@ -292,8 +288,14 @@ function startTimer(duration, display) {
                     'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
+                beforeSend:function(){
+                    $("#overlay").show();
+                },
                 success:function(data){
                     $("#questionaire").html('<div class="row"><div class="col-12"><h4 class="text-center">¡Muchas gracias por participar! <br> Nos estaremos poniendo en contacto contigo cuanto tengamos los resultados.</h4></div></div>');
+                },
+                complete: function(){
+                    $("#overlay").hide();
                 }
             });
         }
