@@ -15,6 +15,7 @@ use App\Notification;
 use App\User;
 use App\Config;
 use App\Agent;
+use App\RavenTest;
 
 use App\Quiz;
 use Mail;
@@ -1797,14 +1798,21 @@ class RecruitController extends Controller
             'quiz' => [],
         ]);
         $recruit = Recruit::where('id',$request->rcn);
+        RavenTest::where('recruit_id',$request->rcn)->update(['status' => 0]);
         if($recruit->count() > 0){
             $recruit->update([
                 'raven_status'=>'in_progress',
             ]);
+            $raven_test = RavenTest::insertGetId([
+                'recruit_id' => $request->rcn,
+                'started_at' => date('Y-m-d H:i:s'),
+                'status' => 1
+            ]);
+            session(['test_id' => $raven_test]);
             return [
                 'status' => 'continue',
                 'curr_question' => session('curr_question_number'),
-                'img'=> $quiz->getImgFromQuestion(1)
+                'img'=> $quiz->getImgFromQuestion(1),
             ];
         }
 
@@ -1837,6 +1845,7 @@ class RecruitController extends Controller
             $quiz_result = $quiz->evaluateResults($curr_quiz);
 
             $recruit = Recruit::where('id',session('recruit_id'));
+            $raven_test = RavenTest::where('id',session('test_id'));
 
             if($quiz_result['valid']){
                 $recruit->update([
@@ -1853,8 +1862,10 @@ class RecruitController extends Controller
                     'raven_status'=>'invalid'
                 ]);
             }
+            $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
+            $raven_test->update($curr_quiz);
             return [
-                'status' => $quiz_status,
+                'status' => $quiz_status
             ];
         }
 
@@ -1873,6 +1884,7 @@ class RecruitController extends Controller
             $quiz_result = $quiz->evaluateResults($curr_quiz);
 
             $recruit = Recruit::where('id',session('recruit_id'));
+            $raven_test = RavenTest::where('id',session('test_id'));
             if($quiz_result['valid']){
                 $recruit->update([
                     'raven_total'=>$quiz_result['total'],
@@ -1888,6 +1900,8 @@ class RecruitController extends Controller
                     'raven_status'=>'invalid'
                 ]);
             }
+            $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
+            $raven_test->update($curr_quiz);
             return [
                 'status' => $quiz_status,
             ];
@@ -1896,13 +1910,21 @@ class RecruitController extends Controller
         return [
             'status' => $quiz_status,
             'curr_question' => session('curr_question_number'),
-            'img'=> $quiz->getImgFromQuestion($curr_question + 1)
+            'img'=> $quiz->getImgFromQuestion($curr_question + 1),
         ];
     }
 
     public function quizEnd(Request $request){
-        $recruit = Recruit::where('id',session('recruit_id'));
+        // FILL QUIZ ANSWERS
+        $curr_quiz = session('quiz');
+        $size_quiz = sizeof($curr_quiz) + 1;
 
+        for ($i=$size_quiz; $i <= 60; $i++) { 
+            $curr_quiz['q'.$i] = null;
+        }
+
+        $recruit = Recruit::where('id',session('recruit_id'));
+        $raven_test = RavenTest::where('id',session('test_id'));
         if(session('recruit_id') != $request->rcn){
             $recruit->update([
                 'raven_total' => 0,
@@ -1910,19 +1932,15 @@ class RecruitController extends Controller
                 'raven_perc' => 0,
                 'raven_status'=>"invalid"
             ]);
+            $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
+            $raven_test->update($curr_quiz);
             return [
                 'status' => "ended",
                 'recruit' => $recruit
             ];
         }
         $quiz = new Quiz;
-        $curr_question = session('curr_question_number');
-        $curr_quiz = session('quiz');
-        $size_quiz = sizeof($curr_quiz) + 1;
-
-        for ($i=$size_quiz; $i <= 60; $i++) { 
-            $curr_quiz['q'.$i] = null;
-        }
+        
 
         $quiz_status = 'ended';
         $quiz_result = $quiz->evaluateResults($curr_quiz);
@@ -1943,11 +1961,13 @@ class RecruitController extends Controller
                 'raven_status'=>"invalid"
             ]);
         }
+
+        $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
+        $raven_test->update($curr_quiz);
         
         return [
             'status' => $quiz_status,
             'recruit' => $recruit
-            // 'quiz_result' => $quiz_result
         ];
 
     }

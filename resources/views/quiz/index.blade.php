@@ -225,6 +225,7 @@ $(document).on('click','.next_button',function(e){
             if(data.status == 'continue'){
                 $("#q_img>img").attr("src","{{asset('workat/quiz_assets/')}}"+"/"+data.img);
                 $("[name='q']").prop('checked', false);
+                $(".answer").val('');
                 loadOptions(data.curr_question);
                 if(data.curr_question >= 60){
                     button.html('Terminar');
