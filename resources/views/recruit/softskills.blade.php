@@ -305,6 +305,82 @@
     visibility: visible;
     opacity: 1;
   }
+
+  #ov-columns{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .ov-col{
+    flex: 0 0 33.333333%;
+    padding: 0 0.75rem;
+  }
+  @media (min-width: 992px){
+    .ov-col{
+      flex: 0 0 20%;
+    }
+  }
+  .ov-col-title{
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .ov-col-rounded{
+    /* height: 150px; */
+    width: 100%;
+    border: 1px solid #bbbbbb;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  .ov-answer{
+    display: flex;
+    margin: 0.5rem 0;
+  }
+  .anw-input{
+    width: 100%;
+    text-align: center;
+  }
+  .anw-input>div{
+    width: 75%;
+    max-width: 75px;
+    margin: auto;
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+  }
+  .anw-input.correct>div{
+    background-color: #22c31f;
+  }
+  .anw-input.wrong>div{
+    background-color: #d32121;
+  }
+  .anw-input.empty>div{
+    background-color: #5d5d5d;
+  }
+  .ov-col-footer{
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    text-align: center;
+  }
+
+  .ov-result-container{
+    display: flex;
+    font-weight: bold;
+  }
+  .ov-result-container .container-title{
+    border-radius: 10px 0 0 10px;
+    border: 1px solid #bbbbbb;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    width: 100%;
+  }
+  .ov-result-container .container-append{
+    flex: 1;
+    border-radius: 0 10px 10px 0;
+    border: 1px solid #bbbbbb;
+    background-color: #bbbbbb;
+    padding: 0.5rem 0.75rem;
+  }
 </style>
 @endsection
  
@@ -461,12 +537,15 @@
       </div>
     </div>
 
-
     <div class="modal" id="schedule-modal" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
       <div class="modal-dialog" role="document"></div>
     </div>
 
     <div class="modal" id="score-modal" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document"></div>
+    </div>
+
+    <div class="modal" id="overview-modal" tabindex="-1" role="dialog" aria-labelledby="overview-title-label" aria-hidden="true">
       <div class="modal-dialog" role="document"></div>
     </div>
 
@@ -702,13 +781,14 @@
                       actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
                       break;
                     case 'invalid':
-                      actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
+                      // actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
+                      actions += '<a class="badge badge-secondary btn-overview" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
                       break;
                     case 'in_progress':
                       actions += '<a class="badge badge-warning" data-id="'+rowData.recruit_id+'" href="#">IN PROGRESS</a>';
                       break;
                     case 'completed':
-                      actions += rowData.raven_overall+" ("+rowData.raven_perc.toString()+")";
+                      actions += "<a class='btn-overview' data-id='"+rowData.recruit_id+"' href='#' >"+rowData.raven_overall+" ("+rowData.raven_perc.toString()+") </a>";
                       break;
                     default: break;
                   }
@@ -977,7 +1057,8 @@
             });
         }); 
 
-        $('.btn-quiz-restore').on('click',function (ev){
+        // $('.btn-quiz-restore').on('click',function (ev){
+        $("body").on("click",".btn-quiz-restore",function(ev){
           ev.preventDefault();
           var url = '{{ route("recruit.quiz.restore") }}';
           var recruitId = $(this).data("id");
@@ -1015,6 +1096,25 @@
             }
           });
         })
+
+        $('.btn-overview').on('click',function(ev){
+          ev.preventDefault();
+          var url = "{{route('recruit.overview')}}";
+          var recruitId = $(this).data("id");
+          $.ajax({
+            type:'POST',
+            url: url,
+            data: {recruitId: recruitId},
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              $("#overview-modal").html(data);              
+              $("#overview-modal").modal();
+            }
+          });
+        });
 
         //SEND TECH TEST MAIL
         $('.btn-mail-test').on('click', function (ev) {

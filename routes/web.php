@@ -62,6 +62,7 @@ Route::get('expert/tech/bootstrap','RecruitController@recruitsTechBootstrap')->n
 //===================================================================================================================================
 
 Route::get('quiz/{recruitId}','RecruitController@quizIndex')->name('recruit.quiz')->middleware('signed');
+Route::post('quiz/overview','RecruitController@quizOverview')->name('recruit.overview');
 Route::get('quiz/signed/{recruitId}','RecruitController@quizSigned')->name('recruit.quiz.signed');
 Route::post('quiz/restore','RecruitController@quizRestore')->name('recruit.quiz.restore');
 Route::post('quiz/start','RecruitController@quizStart')->name('recruit.quiz.start');

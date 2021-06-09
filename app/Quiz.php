@@ -259,4 +259,47 @@ Class Quiz{
         }
         return $this->quiz_questions[0];
     }
+
+    function mapStoredAnswers($raven_test){
+        $groups = ["A","B","C","D","E"];
+        $answers = [];
+        $q = 0;
+        for ($i=1; $i <= 60; $i++) { 
+            $f = ($i-1)/12;
+            $intStr = substr("$f",0,1);
+            $index = intval($intStr);
+            $group = $groups[$index];
+            $class = $this->answerInGroup($group, $q, $raven_test["q$i"]);
+
+            $q++;
+
+            $ans = [
+                "q" => $q,
+                "answer" => $raven_test["q$i"] ? intval($raven_test["q$i"]) : "?",
+                "class" => $class
+            ];
+            $answers[$group][] = $ans;
+            if($q == 12){
+                $q = 0;
+            }
+        }
+        return $answers;
+    }
+    function answerInGroup($group, $question, $answer){
+        if($answer){
+            $ans = intval($answer);
+            for ($g=0; $g < sizeof($this->quiz_answers); $g++) { 
+                $serie = $this->quiz_answers[$g];
+                if($serie['serie'] == $group){
+                    if($serie['answers'][$question] == $ans){
+                        return "correct";
+                    }else{
+                        return "wrong";
+                    }
+                }
+            }
+        }else{
+            return "empty";
+        }
+    }
 }

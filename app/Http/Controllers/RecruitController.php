@@ -1789,6 +1789,17 @@ class RecruitController extends Controller
         return view('quiz.index')->with('recruit',$recruit);
     }
 
+    public function quizOverview(Request $request){
+        $quiz = new Quiz;
+        $recruit = Recruit::find($request->recruitId);
+        $ravenTest = RavenTest::where("status",1)->where("recruit_id",$request->recruitId)->first();
+        return view('quiz.overview')->with([
+            "recruit" => $recruit,
+            "test" => $ravenTest,
+            "groups" => $ravenTest ? $quiz->mapStoredAnswers($ravenTest) : null
+        ]);
+    }
+
     public function quizStart(Request $request){
         $quiz = new Quiz;
         session([
