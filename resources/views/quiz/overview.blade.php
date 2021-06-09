@@ -51,7 +51,7 @@
                         TOTAL SCORE
                      </div>
                      <div class="container-append">
-                        {{$recruit->raven_total}}/60
+                        {{$recruit->raven_total?:'??'}}/60
                      </div>
                   </div>
                   @if ($recruit->raven_status == "invalid")
