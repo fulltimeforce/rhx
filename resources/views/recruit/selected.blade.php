@@ -256,6 +256,120 @@ a.badge-primary:focus{
 .expert-audio{
     margin: 5px 5px 5px 5px;
 }
+.ttip {
+  position: relative;
+  display: inline-block;
+}
+
+.ttip .ttiptext {
+  font-size: 9px;
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.ttip .ttiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.ttip:hover .ttiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+#ov-columns{
+  display: flex;
+  flex-wrap: wrap;
+}
+.ov-col{
+  flex: 0 0 33.333333%;
+  padding: 0 0.75rem;
+}
+@media (min-width: 992px){
+  .ov-col{
+    flex: 0 0 20%;
+  }
+}
+.ov-col-title{
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.ov-col-rounded{
+  /* height: 150px; */
+  width: 100%;
+  border: 1px solid #bbbbbb;
+  border-radius: 10px;
+  padding: 10px;
+}
+.ov-answer{
+  display: flex;
+  margin: 0.5rem 0;
+}
+.anw-input{
+  width: 100%;
+  text-align: center;
+}
+.anw-input>div{
+  width: 75%;
+  max-width: 75px;
+  margin: auto;
+  font-weight: bold;
+  color: white;
+  border-radius: 5px;
+}
+.anw-input.correct>div{
+  background-color: #22c31f;
+}
+.anw-input.wrong>div{
+  background-color: #d32121;
+}
+.anw-input.empty>div{
+  background-color: #5d5d5d;
+}
+.ov-col-footer{
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.ov-result-container{
+  display: flex;
+  font-weight: bold;
+}
+.ov-result-container .container-title{
+  border-radius: 10px 0 0 10px;
+  border: 1px solid #bbbbbb;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  width: 100%;
+}
+.ov-result-container .container-append{
+  flex: 1;
+  border-radius: 0 10px 10px 0;
+  border: 1px solid #bbbbbb;
+  background-color: #bbbbbb;
+  padding: 0.5rem 0.75rem;
+}
 </style>
 @endsection
  
@@ -412,6 +526,74 @@ a.badge-primary:focus{
       </div>
     </div>
 
+    <div class="modal" id="schedule-modal" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document"></div>
+    </div>
+
+    <div class="modal" id="score-modal" tabindex="-1" role="dialog" aria-labelledby="interviews-expertLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document"></div>
+    </div>
+
+    <div class="modal" id="overview-modal" tabindex="-1" role="dialog" aria-labelledby="overview-title-label" aria-hidden="true">
+      <div class="modal-dialog" role="document"></div>
+    </div>
+
+    <!--
+    DELETE AUDIO MODAL
+    -->
+    <div class="modal fade" id="delete-audio" tabindex="-1" role="dialog" aria-labelledby="delete-audioLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="delete-audioLabel">Delete audio</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">
+                    Are you sure you want to delete this file?
+                    <input type="hidden" id="delete-audio-rp-id">
+                    <input type="hidden" id="delete-audio-position-id">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="deleteAudio">Delete</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <!--
+    SHOW AUDIO MODAL
+    -->
+    <div class="modal fade" id="show-audio" tabindex="-1" role="dialog" aria-labelledby="show-audioLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col">
+                    
+                    <audio src="" controls autoplay id="audio-play"></audio>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
     <!--
     ERROR - SUCCESS MESSAGE SECTION
     -->
@@ -439,6 +621,15 @@ a.badge-primary:focus{
     @endif
     
     <div class="row">
+        <!--
+        POSTULANT TECHNICAL QUESTIONARY URL COPY SECTION
+        -->
+        <div class="col-12 mb-3">
+          <div class="alert alert-warning alert-dismissible mt-3 col-12" role="alert" style="display: none;">
+              <b>Copy successful!!!!</b>
+              <p id="showURL"></p>
+          </div>
+        </div>
 
         <!--
         PROGRESS BAR SECTION
@@ -650,7 +841,110 @@ a.badge-primary:focus{
                 },
               class: 'frozencell',
             },
+            {
+              field: 'audio_path', 
+              title: "Zoom Audio",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = '';
+
+                  actions += '<div class="btn-group mt-2 btn-upload-audio '+( rowData.audio_path == null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'"> ';
+                  actions += '<label class="badge badge-secondary" for="audio-upload-evaluate-'+rowData.recruit_id+'">Upload Audio</label>';
+                  actions += '<input type="file" class="custom-file-input audio-upload" id="audio-upload-evaluate-'+rowData.recruit_id+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'" style="display:none;" >';
+                  actions += '</div>';
+
+                  actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
+              
+                  actions += '<div class="btn-group btn-show-audio '+( rowData.audio_path != null ? '' : 'd-none')+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">';
+                  actions += '<a href="#" class="badge badge-success show-audio" data-audio="'+rowData.audio_path+'" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'">Show Audio</a>';
+                  actions += '<a href="#" class="badge badge-primary confirmation-upload-delete" data-recruitid="'+rowData.recruit_id+'" data-positionid="'+rowData.pos_id+'"><i class="fas fa-trash"></i></a>';
+                  actions += '</div>';
+
+                  actions = actions.replace(/:id/gi , rowData.id);
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'raven_status', 
+              title: "Raven",
+              width: 50,
+              formatter : function(value,rowData,index) {
+                  var actions = "";
+                  switch(rowData.raven_status){
+                    case null:
+                      actions += '<a class="badge badge-warning btn-raven-quiz" data-id="'+rowData.recruit_id+'" href="#">Link</a> ';
+                      actions += '<a class="badge badge-info btn-manual-score" data-id="'+rowData.recruit_id+'" href="#">Score</a> ';
+                      actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
+                      break;
+                    case 'invalid':
+                      // actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
+                      actions += '<a class="badge badge-secondary btn-overview" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
+                      break;
+                    case 'in_progress':
+                      actions += '<a class="badge badge-warning" data-id="'+rowData.recruit_id+'" href="#">IN PROGRESS</a>';
+                      break;
+                    case 'completed':
+                      actions += "<a class='btn-overview' data-id='"+rowData.recruit_id+"' href='#' >"+rowData.raven_overall+" ("+rowData.raven_perc.toString()+") </a>";
+                      break;
+                    default: break;
+                  }
+                  return actions;
+                },
+              class: 'frozencell',
+            },
+            {
+              field: 'test_status',
+              title: "Test",
+              width: 50,
+              formatter : function(value,rowData,index) { 
+                  var actions = "";
+                  if(rowData.test_status == 0){
+                    actions = '<a class="badge '
+                                +(rowData.mail_sent == 0?'badge-success':'badge-warning')
+                                +' btn-mail-test" data-id="'+rowData.recruit_id+'" href="#">'
+                                +(rowData.mail_sent == 0?'Send Mail':'Send Again')+'</a>';
+                  }else{
+                    var min = Math.min(rowData.completeness_score,rowData.code_score,rowData.design_score,rowData.technologies_score,rowData.readme_score);
+                    actions += "<div class='ttip'>"+ rankString(min) + "<span class='ttiptext'>";
+                    switch(rowData.test_status){
+                      case 1: 
+                        actions += "Completeness: "+rankInitial(rowData.completeness_score)+"<br>"
+                          + "Clean Code: "+rankInitial(rowData.code_score)+"<br>"
+                          + "Design Quality: "+rankInitial(rowData.design_score)+"<br>"
+                          + "Technologies: "+rankInitial(rowData.technologies_score)+"<br>"
+                          + "Readme: "+rankInitial(rowData.readme_score);
+                        break;
+                      case 2: 
+                        actions += "Test Failed";
+                        break;
+                      default: 
+                        actions += "-";
+                    }
+                    actions += "</span></div>";
+                  }
+                  return actions;
+                },
+              class: 'frozencell',
+            },
             { field: 'fce_overall', title: "English", width: 75 , class: 'frozencell'},
+            {
+              field: 'tech_qtn',
+              title: "Tech Qtn",
+              valign: 'middle',
+              clickToSelect: false,
+              width: 20,
+              formatter : function(value,rowData,index) {    
+                var actions = '';
+
+                actions += '<a id="show-tech-link-'+rowData.rp_id+'" class="badge badge-warning btn-tech-recruit '+( rowData.tech_qtn != 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" href="#">Generate</a>\n';
+
+                actions += '<a id="hide-tech-link-'+rowData.rp_id+'" class="badge badge-success button-disabled text-white '+( rowData.tech_qtn == 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" disabled>Completed</a>\n';
+
+                return actions;
+                },
+              class: 'frozencell',
+            },
         ];
         
         //SET TABLE PROPERTIES
@@ -761,7 +1055,228 @@ a.badge-primary:focus{
             });
         });
 
+        //GENERATE RAVEN QUIZ LINK
+        $('.btn-raven-quiz').on('click', function (ev) {
+          ev.preventDefault();
+            var url = '{{ route("recruit.quiz.signed" , ":id") }}';
+            url = url.replace( ":id" , $(this).data("id") );
+            $.ajax({
+                type:'GET',
+                url: url,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    $('#showURL').html(data);
+                    
+                    var el = document.createElement("textarea");
+                    el.value = data;
+                    el.style.position = 'absolute';                 
+                    el.style.left = '-9999px';
+                    el.style.top = '0';
+                    el.setSelectionRange(0, 99999);
+                    el.setAttribute('readonly', ''); 
+                    document.body.appendChild(el);
+                    
+                    el.focus();
+                    el.select();
+
+                    var success = document.execCommand('copy')
+                    if(success){
+                        $(".alert-dismissible").slideDown(200, function() {
+                                
+                        });
+                    }
+                    setTimeout(() => {
+                        $(".alert-dismissible").slideUp(500, function() {
+                            document.body.removeChild(el);
+                        });
+                    }, 4000);
+                }
+            });
+        }); 
+
+        //GENERATE RAVEN QUIZ LINK
+        $('.btn-schedule-quiz').on('click', function (ev) {
+            ev.preventDefault();
+            var url = '{{ route("recruit.schedule.quiz") }}';
+            var now = new Date();
+            $.ajax({
+                type:'POST',
+                url: url,
+                data: {
+                  id: $(this).data("id")
+                },
+                headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                  $("#schedule-modal").html(data);
+                  
+                  $('[data-toggle="datepicker"]').datepicker({
+                    autoHide: true,
+                    zIndex: 2048,
+                    format: 'yyyy-mm-dd',
+                    startDate: now
+                  });
+                  
+                  $("#schedule-modal").modal();
+                }
+            });
+        }); 
+
+        // $('.btn-quiz-restore').on('click',function (ev){
+        $("body").on("click",".btn-quiz-restore",function(ev){
+          ev.preventDefault();
+          var url = '{{ route("recruit.quiz.restore") }}';
+          var recruitId = $(this).data("id");
+          $.ajax({
+            type:'POST',
+            url: url,
+            data:{id: recruitId},
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              location.reload();
+            }
+          });
+        });
+
+        $('.btn-manual-score').on('click',function(ev){
+          ev.preventDefault();
+          var url = '{{route("recruit.score.form")}}';
+          var recruitId = $(this).data("id");
+          $.ajax({
+            type:'POST',
+            url: url,
+            data: {
+              id: $(this).data("id")
+            },
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              $("#score-modal").html(data);              
+              $("#score-modal").modal();
+            }
+          });
+        })
+
+        $('.btn-overview').on('click',function(ev){
+          ev.preventDefault();
+          var url = "{{route('recruit.overview')}}";
+          var recruitId = $(this).data("id");
+          $.ajax({
+            type:'POST',
+            url: url,
+            data: {recruitId: recruitId},
+            headers: {
+              'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(data){
+              $("#overview-modal").html(data);              
+              $("#overview-modal").modal();
+            }
+          });
+        });
+
+        //SEND TECH TEST MAIL
+        $('.btn-mail-test').on('click', function (ev) {
+          ev.preventDefault();
+          var recruit_id = $(this).data("id");
+          $.ajax({
+                type:'POST',
+                data:{id:recruit_id},
+                url: '{{ route("recruit.test.sendmail" ) }}',
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                beforeSend:function(){
+                    $("#overlay").show();
+                },
+                success:function(data){
+                    if(data.status == "success"){
+                      location.reload();
+                    }else{
+                      alert("Error: "+data.message);
+                    }
+                },
+                complete: function(){
+                    $("#overlay").hide();
+                }
+            });
+        });
+
       }
+
+      function rankString(rank){
+        if(rank < 0 || rank > 5){
+          return "INVALID SCORE";
+        }
+        var ranks = ['Fail', 'Trainee', 'Junior', 'Middle', 'Senior', 'Rockstar'];
+        return ranks[rank];
+      }
+      function rankInitial(rank){
+        if(rank < 0 || rank > 5){
+          return "??";
+        }
+        var ranks = ['F', 'T', 'J', 'M', 'S', 'R'];
+        return ranks[rank];
+      }
+
+      $("#schedule-modal").on('click','#schedule_btn',function(e){
+        var form = getFormData($('#schedule_form'));
+        console.log(form);
+        $.ajax({
+          type:'POST',
+          url: '{{route("recruit.schedule.save")}}',
+          data:{
+            date: form['schedule_date'],
+            time: form['schedule_time'],
+            id: $(this).data("id"),
+          },
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(data){
+            $("#schedule-modal").modal('toggle');
+          }
+        });
+      });
+
+      $("#score-modal").on('click',"#score_btn",function(e){
+        var form = getFormData($('#score_form'));
+        console.log(form);
+        var total = form['total_score'];
+        if(total == ""){
+          console.log('empty');
+          return;
+        }
+        $.ajax({
+          type:'POST',
+          url: '{{route("recruit.score.save")}}',
+          data:{
+            total_score: form['total_score'],
+            id: $(this).data("id"),
+          },
+          headers: {
+            'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(data){
+            $("#score-modal").modal('toggle');
+            location.reload();
+          }
+        });
+      });
 
       //==========AUDIO SPEED BUTTON FUNCTION
       $("body").on('click' , 'a.speed-audio' , function(ev){
@@ -979,6 +1494,116 @@ a.badge-primary:focus{
           }
         }
       }
+
+      function getFormData(form){
+          var unindexed_array = form.serializeArray();
+          var indexed_array = {};
+
+          $.map(unindexed_array, function(n, i){
+              indexed_array[n['name']] = n['value'];
+          });
+
+          return indexed_array;
+      }
+
+      //UPLOAD AUDIO FUNCTION - INCLUDING PROGRESS BAR
+      $('body').on('change' , '.audio-upload' , function(ev){
+          var file = this.files[0];
+          var recruit_id = $(this).data("recruitid");
+          var position_id = $(this).data("positionid");
+          var bar = $('.progress-bar');
+
+          var _formData = new FormData();
+          _formData.append('file', file);
+          _formData.append('recruit_id', recruit_id);
+          _formData.append('position_id', position_id);
+
+          $.ajax({
+              xhr: function() {
+                  var xhr = new window.XMLHttpRequest();
+                  xhr.upload.addEventListener("progress", function(evt) {
+                      if (evt.lengthComputable) {
+                          var percentComplete = (evt.loaded / evt.total) * 100;
+                            bar.width(percentComplete+'%');
+                      }
+                  }, false);
+                return xhr;
+              },
+              type:'POST',
+              url: "{{ route('recruit.postulant.upload.audio') }}",
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              contentType: false,
+              cache: false,
+              processData: false,
+              data: _formData,
+              success:function(data){
+                  $('.btn-upload-audio[data-recruitid="'+recruit_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+                  $('.btn-show-audio[data-recruitid="'+recruit_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+                  $('.show-audio[data-recruitid="'+recruit_id+'"][data-positionid="'+position_id+'"]').attr("data-audio" , data.file);
+                  bar.width('0%');
+              }
+          });
+      })
+
+      //SET VALUES FOR AUDIO FILE DELETE MODAL
+      $("body").on('click' , '.confirmation-upload-delete' , function(ev){
+          ev.preventDefault();
+          var recruit_id = $(this).data("recruitid");
+          var position_id = $(this).data("positionid");
+
+          $("#delete-audio-rp-id").val(recruit_id);
+          $("#delete-audio-position-id").val(position_id);
+
+          $("#delete-audio").modal();
+
+      })
+
+      //SET VALUES FOR AUDIO FILE DELETE MODAL (NULL)
+      $('#delete-audio').on('hidden.bs.modal', function (e) {
+        $("#delete-audio-rp-id").val("");
+        $("#delete-audio-position-id").val("");
+      })
+
+      //DELETE AUDIO FILE FUNCTION
+      $("#deleteAudio").on('click' , function(){
+          $.ajax({
+              type:'POST',
+              url: "{{ route('recruit.postulant.delete.audio') }}",
+              headers: {
+                  'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              data: {
+                  recruit_id : $("#delete-audio-rp-id").val(),
+                  position_id: $("#delete-audio-position-id").val()
+              },
+              success:function(data){
+                  var rp_id = $("#delete-audio-rp-id").val();
+                  var position_id = $("#delete-audio-position-id").val();
+                  $('.btn-upload-audio[data-recruitid="'+rp_id+'"][data-positionid="'+position_id+'"]').removeClass("d-none");
+                  $('.btn-show-audio[data-recruitid="'+rp_id+'"][data-positionid="'+position_id+'"]').addClass("d-none");
+                  $("#delete-audio").modal('hide');
+              }
+          });
+
+      });
+
+      //SET VALUES FOR AUDIO FILE PLAY MODAL
+      $('body').on('click' , '.show-audio' ,function(ev){
+          ev.preventDefault();
+          var audio = $(this).data("audio");
+          var h = "{{ route('home') }}";
+          $("#audio-play").attr("src" , audio);
+          $("#show-audio").modal();
+      })
+
+      //SET VALUES FOR AUDIO FILE PLAY MODAL (NULL)
+      $('#show-audio').on('hidden.bs.modal', function (e) {
+          $("#audio-play").attr("src" , "");
+      })
 
       //===================================================================================
       //================================SCROLL FUNCTIONS===================================

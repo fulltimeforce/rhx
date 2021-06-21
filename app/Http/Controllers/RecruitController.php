@@ -492,6 +492,7 @@ class RecruitController extends Controller
                 );
         }elseif($query['tab'] == "selected"){
             $recruits->distinct()
+                ->leftJoin('recruit_test','recruit_test.recruit_id','=','recruit.id')
                 ->leftJoin('recruit_positions' , 'recruit_positions.recruit_id' , '=' , 'recruit.id')
                 ->leftJoin('positions' , 'positions.id' , '=' , 'recruit_positions.position_id')
                 ->leftJoin('users' , 'users.id' , '=' , 'recruit_positions.user_id')
@@ -510,7 +511,14 @@ class RecruitController extends Controller
                     'positions.id AS pos_id',
                     'recruit_positions.audio_report AS audio_report',
                     'recruit_positions.recruit_id AS recruit_id',
-                    'recruit_positions.id AS rp_id');
+                    'recruit_positions.id AS rp_id',
+                    'recruit_test.mail_sent AS mail_sent',
+                    'recruit_test.test_status AS test_status',
+                    'recruit_test.completeness_score AS completeness_score',
+                    'recruit_test.code_score AS code_score',
+                    'recruit_test.design_score AS design_score',
+                    'recruit_test.technologies_score AS technologies_score',
+                    'recruit_test.readme_score AS readme_score');
         }
 
 
@@ -1330,9 +1338,25 @@ class RecruitController extends Controller
         $input = $request->all();
         $recruit_id = $input['recruit_id'];
         $position_id = $input['position_id'];
-        Recruit::where('id' , $recruit_id)->update(
-            array( "audio_path" => null )
-        );
+        Recruit::where('id' , $recruit_id)->update([
+            "audio_path"            => null,
+            "grammar_vocabulary"    => 0,
+            "grammatical_forms"     => null,
+            "vocabulary"            => null,
+            "discourse_management"  => 0,
+            "stretch_language"      => null,
+            "cohesive_devices"      => null,
+            "hesitation"            => null,
+            "organizations_ideas"   => null,
+            "pronunciation"         => 0,
+            "intonation"            => null,
+            "phonological_features" => null,
+            "intelligible"          => null,
+            "interactive_communication" => 0,
+            "interaction"           => null,
+            "fce_overall"           => '-',
+            "fce_total"             => 0.00
+        ]);
     }
 
     public function uploadCV( Request $request ){
