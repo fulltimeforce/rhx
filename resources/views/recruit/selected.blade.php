@@ -937,9 +937,7 @@ a.badge-primary:focus{
               formatter : function(value,rowData,index) {    
                 var actions = '';
 
-                actions += '<a id="show-tech-link-'+rowData.rp_id+'" class="badge badge-warning btn-tech-recruit '+( rowData.tech_qtn != 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" href="#">Generate</a>\n';
-
-                actions += '<a id="hide-tech-link-'+rowData.rp_id+'" class="badge badge-success button-disabled text-white '+( rowData.tech_qtn == 'filled' ? '' : 'd-none')+'" data-index="'+index+'" data-id="'+rowData.recruit_id+'" disabled>Completed</a>\n';
+                actions += '<a id="show-tech-link-'+rowData.rp_id+'" class="badge badge-warning btn-tech-recruit" data-index="'+index+'" data-id="'+rowData.recruit_id+'" href="#">Generate <br> New</a>\n';
 
                 return actions;
                 },
@@ -1054,6 +1052,48 @@ a.badge-primary:focus{
                 }
             });
         });
+
+        //GENERATE TECHNICAL QUESTIONARY LINK
+        $('.btn-tech-recruit').on('click', function (ev) {
+            ev.preventDefault();
+            var url = '{{ route("recruit.tech.signed" , ":id") }}';
+            url = url.replace( ":id" , $(this).data("id") );
+            $.ajax({
+                type:'GET',
+                url: url,
+                headers: {
+                    'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success:function(data){
+                    $('#showURL').html(data);
+                    
+                    var el = document.createElement("textarea");
+                    el.value = data;
+                    el.style.position = 'absolute';                 
+                    el.style.left = '-9999px';
+                    el.style.top = '0';
+                    el.setSelectionRange(0, 99999);
+                    el.setAttribute('readonly', ''); 
+                    document.body.appendChild(el);
+                    
+                    el.focus();
+                    el.select();
+
+                    var success = document.execCommand('copy')
+                    if(success){
+                        $(".alert-dismissible").slideDown(200, function() {
+                                
+                        });
+                    }
+                    setTimeout(() => {
+                        $(".alert-dismissible").slideUp(500, function() {
+                            document.body.removeChild(el);
+                        });
+                    }, 4000);
+                }
+            });
+        }); 
 
         //GENERATE RAVEN QUIZ LINK
         $('.btn-raven-quiz').on('click', function (ev) {
