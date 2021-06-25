@@ -2073,6 +2073,12 @@ class RecruitController extends Controller
         ];
         $evaluate = $quiz->evaluateResults($curr_quiz);
         print_r($evaluate);
+        echo '<br><br><br>';
+        if($evaluate['valid']){
+            echo 'VALID!';
+        }else{
+            echo 'INVALID!';
+        }
     }
 
     public function testMail(){
