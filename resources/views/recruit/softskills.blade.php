@@ -777,10 +777,20 @@
               title: "English",
               width: 50,
               formatter : function(value,rowData,index) { 
-                  var actions = rowData.fce_overall;
+                  var actions = '';
+
+                  if(rowData.fce_overall != '-'){
+                    actions += "<div class='ttip'>"+rowData.fce_overall+"<span class='ttiptext'>";
+                    actions += "Gramm & Voc: "+overallScore(rowData.grammar_vocabulary)+"<br>"
+                        + "Discourse Mgm: "+overallScore(rowData.discourse_management)+"<br>"
+                        + "Pronunciation: "+overallScore(rowData.pronunciation)+"<br>"
+                        + "Interactive Comm: "+overallScore(rowData.interactive_communication);
+                    actions += "</span></div>";
+                  }else{
+                    actions += rowData.fce_overall;
+                  }
 
                   actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-rpid="'+rowData.rp_id+'" data-recruit-id="'+rowData.recruit_id+'">';
-
                   return actions;
                 },
               class: 'frozencell',
@@ -1162,6 +1172,37 @@
                 }
             });
         });
+      }
+
+      function overallScore(score){
+        var scoreMap = {
+          "A1-": [0,2],
+          "A1" : [2,4],
+          "A1+": [4,6],
+          "A2-": [6,(22/3)],
+          "A2" : [(22/3),(26/3)],
+          "A2+": [(26/3),10],
+          "B1-": [10,(34/3)],
+          "B1" : [(34/3),(38/3)],
+          "B1+": [(38/3),14],
+          "B2-": [14,(44/3)],
+          "B2" : [(44/3),(46/3)],
+          "B2+": [(46/3),16],
+          "C1-": [16,(50/3)],
+          "C1" : [(50/3),(52/3)],
+          "C1+": [(52/3),18],
+          "C2-": [18,(56/3)],
+          "C2" : [(56/3),(58/3)],
+          "C2+": [(58/3),21],
+        }
+        var overall = '';
+        for (let key in scoreMap) {
+          var scores = scoreMap[key];
+          if(scores[0] <= score && scores[1] > score){
+            overall = key;
+          }
+        }
+        return overall;
       }
 
       function rankString(rank){
