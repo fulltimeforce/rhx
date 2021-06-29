@@ -10,9 +10,11 @@
          <div class="row">
             @if ($test)
             <div class="col-12 px-lg-5">
+               @if ($test->notes)
                <div class="alert alert-danger" role="alert">
                   {{$test->notes}}
                </div>
+               @endif
                <div class="mb-3">
                   <div style="display: flex; justify-content: space-between;">
                      <div class="ov-result-container ov-time">
