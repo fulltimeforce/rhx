@@ -379,10 +379,10 @@
             <div class='modal-body'>
                 <div class='row'>
                     <div class='col-12'>
-                        <h5>Evaluation Notes</h5>
+                        <h5>Test Notes</h5>
                     </div>
                     <div class='col-12'>
-                        <textarea class="form-control" id="expert_ev_notes" style="height: 150px;" disabled></textarea>
+                        <textarea class="form-control" id="expert_test_notes" style="height: 150px;" disabled></textarea>
                     </div>
                 </div>
                 <hr>
@@ -397,10 +397,10 @@
                 <hr>
                 <div class='row'>
                     <div class='col-12'>
-                        <h5>Test Notes</h5>
+                        <h5>Evaluation Notes</h5>
                     </div>
                     <div class='col-12'>
-                        <textarea class="form-control" id="expert_test_notes" style="height: 150px;" disabled></textarea>
+                        <textarea class="form-control" id="expert_ev_notes" style="height: 150px;" disabled></textarea>
                     </div>
                 </div>
             </div>
