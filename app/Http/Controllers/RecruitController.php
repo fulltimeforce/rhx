@@ -1965,9 +1965,14 @@ class RecruitController extends Controller
                 'raven_total' => 0,
                 'raven_overall' => 'I',
                 'raven_perc' => 0,
-                'raven_status'=>"invalid"
+                'raven_status'=>"mismatch_id"
             ]);
             $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
+            $curr_quiz['notes'] = "Se ha detectado una discrepancia entre el Id inicial ("
+                                        +session('recruit_id')+
+                                    ") y el último Id ("
+                                        +$request->rcn+
+                                    ") enviado por el postulante";
             $raven_test->update($curr_quiz);
             return [
                 'status' => "ended",

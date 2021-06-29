@@ -10,6 +10,21 @@
          <div class="row">
             @if ($test)
             <div class="col-12 px-lg-5">
+               <div class="alert alert-danger" role="alert">
+                  {{$test->notes}}
+               </div>
+               <div class="mb-3">
+                  <div style="display: flex; justify-content: space-between;">
+                     <div class="ov-result-container ov-time">
+                        <div class="container-title">
+                           DATE
+                        </div>
+                        <div class="container-append">
+                           {{$test->started_at?date("d/m/Y",strtotime($test->started_at)):'??'}}
+                        </div>
+                     </div>
+                  </div>
+               </div>
                <div id="ov-columns">
                   @foreach ($groups as $k => $group)
                   @php
@@ -45,21 +60,54 @@
             </div>
             @endif
             <div class="col-12 px-lg-5 my-3">
-               <div style="display: flex; justify-content: space-between;">
-                  <div class="ov-result-container" style="width: 210px">
-                     <div class="container-title">
-                        TOTAL SCORE
-                     </div>
-                     <div class="container-append">
-                        {{$recruit->raven_total?:'??'}}/60
+               <div class="row">
+                  <div class="col">
+                     <div style="display: flex; justify-content: space-between;">
+                        <div class="ov-result-container ov-score {{($test)?'w-100':''}}">
+                           <div class="container-title">
+                              TOTAL SCORE
+                           </div>
+                           <div class="container-append">
+                              {{$recruit->raven_total?:'??'}}/60
+                           </div>
+                        </div>
                      </div>
                   </div>
-                  @if ($recruit->raven_status == "invalid")
-                     <a class="btn btn-warning btn-quiz-restore" data-id="{{$recruit->id}}">Restore Test</a>
+                  @if ($test)
+                     <div class="col">
+                        <div style="display: flex; justify-content: space-between;">
+                           <div class="ov-result-container ov-time w-100">
+                              <div class="container-title">
+                                 START
+                              </div>
+                              <div class="container-append">
+                                 {{$test->started_at?date("h:i a",strtotime($test->started_at)):'??'}}
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col">
+                        <div style="display: flex; justify-content: space-between;">
+                           <div class="ov-result-container ov-time w-100">
+                              <div class="container-title">
+                                 END
+                              </div>
+                              <div class="container-append">
+                                 {{$test->ended_at?date("h:i a",strtotime($test->ended_at)):'??'}}
+                              </div>
+                           </div>
+                        </div>
+                     </div>
                   @endif
                </div>
-               
             </div>
+            @if ($recruit->raven_status != "completed")
+            <div class="col-12 px-lg-5">
+               <div class="text-right">
+                  <a class="btn btn-warning btn-quiz-restore" data-id="{{$recruit->id}}">Restore Test</a>
+               </div>
+            </div>
+            @endif
          </div>
       </div>
    </div>

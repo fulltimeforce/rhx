@@ -356,19 +356,36 @@ a.badge-primary:focus{
   display: flex;
   font-weight: bold;
 }
-.ov-result-container .container-title{
+
+.ov-result-container.ov-score .container-title{
   border-radius: 10px 0 0 10px;
   border: 1px solid #bbbbbb;
   padding: 0.5rem 0.75rem;
   text-align: center;
-  width: 100%;
 }
-.ov-result-container .container-append{
+.ov-result-container.ov-score .container-append{
   flex: 1;
   border-radius: 0 10px 10px 0;
   border: 1px solid #bbbbbb;
   background-color: #bbbbbb;
   padding: 0.5rem 0.75rem;
+  width: 100%;
+  text-align: center;
+}
+
+.ov-result-container.ov-time .container-title{
+  flex: 1;
+  border-radius: 10px 0 0 10px;
+  border: 1px solid #bbbbbb;
+  padding: 0.5rem 0.75rem;
+}
+.ov-result-container.ov-time .container-append{
+  border-radius: 0 10px 10px 0;
+  border: 1px solid #bbbbbb;
+  background-color: #bbbbbb;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  text-align: center;
 }
 </style>
 @endsection
@@ -878,8 +895,10 @@ a.badge-primary:focus{
                       actions += '<a class="badge badge-success btn-schedule-quiz" data-id="'+rowData.recruit_id+'" href="#">Schedule</a>';
                       break;
                     case 'invalid':
-                      // actions += '<a class="badge badge-secondary btn-quiz-restore" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
                       actions += '<a class="badge badge-secondary btn-overview" data-id="'+rowData.recruit_id+'" href="#">INVALID</a>';
+                      break;
+                    case 'mismatch_id':
+                      actions += '<a class="badge badge-danger btn-overview" data-id="'+rowData.recruit_id+'" href="#">ALTERED<br>QUIZ</a>';
                       break;
                     case 'in_progress':
                       actions += '<a class="badge badge-warning" data-id="'+rowData.recruit_id+'" href="#">IN PROGRESS</a>';
