@@ -371,6 +371,7 @@
   .ov-result-container.ov-score .container-title{
     border-radius: 10px 0 0 10px;
     border: 1px solid #bbbbbb;
+    background-color: #bbbbbb;
     padding: 0.5rem 0.75rem;
     text-align: center;
   }
@@ -378,7 +379,6 @@
     flex: 1;
     border-radius: 0 10px 10px 0;
     border: 1px solid #bbbbbb;
-    background-color: #bbbbbb;
     padding: 0.5rem 0.75rem;
     width: 100%;
     text-align: center;
@@ -388,12 +388,12 @@
     flex: 1;
     border-radius: 10px 0 0 10px;
     border: 1px solid #bbbbbb;
+    background-color: #bbbbbb;
     padding: 0.5rem 0.75rem;
   }
   .ov-result-container.ov-time .container-append{
     border-radius: 0 10px 10px 0;
     border: 1px solid #bbbbbb;
-    background-color: #bbbbbb;
     padding: 0.5rem 0.75rem;
     width: 100%;
     text-align: center;

@@ -362,12 +362,12 @@ a.badge-primary:focus{
   border: 1px solid #bbbbbb;
   padding: 0.5rem 0.75rem;
   text-align: center;
+  background-color: #bbbbbb;
 }
 .ov-result-container.ov-score .container-append{
   flex: 1;
   border-radius: 0 10px 10px 0;
   border: 1px solid #bbbbbb;
-  background-color: #bbbbbb;
   padding: 0.5rem 0.75rem;
   width: 100%;
   text-align: center;
@@ -378,11 +378,11 @@ a.badge-primary:focus{
   border-radius: 10px 0 0 10px;
   border: 1px solid #bbbbbb;
   padding: 0.5rem 0.75rem;
+  background-color: #bbbbbb;
 }
 .ov-result-container.ov-time .container-append{
   border-radius: 0 10px 10px 0;
   border: 1px solid #bbbbbb;
-  background-color: #bbbbbb;
   padding: 0.5rem 0.75rem;
   width: 100%;
   text-align: center;
