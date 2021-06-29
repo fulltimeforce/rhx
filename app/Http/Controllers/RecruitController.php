@@ -2882,10 +2882,11 @@ class RecruitController extends Controller
 
     public function getExpertNotes(Request $request){
         $position = RecruitPosition::where('recruit_id', $request->recruitId)->first();
-        
+        $test = RecruitTest::where('recruit_id',$request->recruitId)->first();
         return [
             "evaluation_notes" => $position->evaluation_notes,
             "audio_notes" => $position->audio_notes,
+            "test_notes" => $test->test_comments
         ];
     }
 

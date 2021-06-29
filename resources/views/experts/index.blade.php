@@ -394,6 +394,15 @@
                         <textarea class="form-control" id="expert_audio_notes" style="height: 150px;" disabled></textarea>
                     </div>
                 </div>
+                <hr>
+                <div class='row'>
+                    <div class='col-12'>
+                        <h5>Test Notes</h5>
+                    </div>
+                    <div class='col-12'>
+                        <textarea class="form-control" id="expert_test_notes" style="height: 150px;" disabled></textarea>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1036,8 +1045,10 @@
                     success:function(data){
                         var ev_notes = data.evaluation_notes ? data.evaluation_notes: 'No hay notas...';
                         var audio_notes = data.audio_notes ? data.audio_notes: 'No hay notas...';
+                        var test_notes = data.test_notes ? data.test_notes: 'No hay notas...';
                         $("#expert_ev_notes").html(ev_notes);
                         $("#expert_audio_notes").html(audio_notes);
+                        $("#expert_test_notes").html(test_notes);
                         $("#notes-expert").modal('show');
                     },
                 });
