@@ -2712,6 +2712,7 @@ class RecruitController extends Controller
         //     $_recruits->whereNull('recruit.audio_path');
         // }        
         $_recruits->leftJoin('recruit_test','recruit_test.recruit_id','=','recruit.id')
+                ->orderByDesc('recruit.status')
                 ->orderByDesc('recruit.created_at')
                 ->select(
                     'recruit.*',

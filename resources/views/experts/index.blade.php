@@ -1029,7 +1029,25 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
-                        $("#list-experts").bootstrapTable('removeByUniqueId',id);
+                        location.reload();
+                    }
+                });
+            });
+
+            //==========RESTORE EXPERT DB
+            $("table tbody").on('click', 'a.btn-restore-expert' , function(ev){
+                ev.preventDefault();
+                var id = $(this).data("id");
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("experts.btn.restore") }}',
+                    data: {recruitId : id},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
+                        location.reload();
                     }
                 });
             });
