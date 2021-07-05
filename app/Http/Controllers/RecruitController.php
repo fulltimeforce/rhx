@@ -383,6 +383,7 @@ class RecruitController extends Controller
         
         //create query to call recruits
         $recruits = Recruit::whereNotNull('recruit.id')->whereNull('recruit.agent_id');
+        $recruits->where('recruit.status',1);
         
         //check if $name route parameter is setted
         if(isset($query['name'])){
@@ -684,6 +685,7 @@ class RecruitController extends Controller
             $fces = [''];
         }
         $recruits = Recruit::where('fullname' , 'like' , '%'.$query['name'].'%');
+        $recruits->where('status',1);
 
         $recruits->whereIn('fce_overall' , $fces);
         $recruits->orderBy("fce_total","DESC");
@@ -720,6 +722,7 @@ class RecruitController extends Controller
         
         //create query to call recruits externals
         $recruits = Recruit::whereNotNull('recruit.agent_id');
+        $recruits->where('recruit.status',1);
         
         //check if $name route parameter is setted
         if(isset($query['name'])){
@@ -1233,6 +1236,7 @@ class RecruitController extends Controller
 
         //create query to call recruits
         $recruits = Recruit::whereNotNull('recruit.id');
+        $recruits->where('recruit.status',1);
         
         //check if $name route parameter is setted
         if(isset($query['name'])){

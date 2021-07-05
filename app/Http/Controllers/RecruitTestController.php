@@ -33,6 +33,7 @@ class RecruitTestController extends Controller
 
         //create query to call recruits
         $recruits = Recruit::whereNotNull('recruit.id');
+        $recruits->where('recruit.status',1);
         
         //check if $name route parameter is setted
         if(isset($query['name'])){
