@@ -2618,7 +2618,7 @@ class RecruitController extends Controller
         $query = $request->query();
 
         $search = isset( $query['search'] )? true : false;
-        $add_disqualified = isset($query['add_disqualified']) ? filter_var($query['add_disqualified'] , FILTER_VALIDATE_BOOLEAN) : true;
+        $add_disqualified = isset($query['add_disqualified']) ? filter_var($query['add_disqualified'] , FILTER_VALIDATE_BOOLEAN) : false;
         $deep_search = isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0;
         $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
         $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
