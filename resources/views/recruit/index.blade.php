@@ -1827,20 +1827,25 @@
                   var actions = '';
                   var status = '';
                   var badge = '';
-                  switch(rowData.status){
-                    case 'approve':
-                      if(rowData.reached == 'Seleccionados'){
-                        status = "SELECTED"
-                        badge = 'badge-success';
-                      }else{
-                        status = 'IN EVALUATION';
-                        badge = 'badge-primary';
-                      }
-                      break;
-                    case 'disapprove':
-                      status = 'DISAPPROVED';
-                      badge = 'badge-danger';
-                      break;
+                  if(!rowData.recruit_status){
+                    status = "DISQUALIFIED";
+                    badge = 'badge-danger';
+                  }else{
+                    switch(rowData.status){
+                      case 'approve':
+                        if(rowData.reached == 'Seleccionados'){
+                          status = "SELECTED";
+                          badge = 'badge-success';
+                        }else{
+                          status = 'IN EVALUATION';
+                          badge = 'badge-primary';
+                        }
+                        break;
+                      case 'disapprove':
+                        status = 'DISAPPROVED';
+                        badge = 'badge-danger';
+                        break;
+                    }
                   }
                   actions += '<span class="badge '+ badge + ' recruit-status" data-outstanding="approve" data-id="'+rowData.recruit_id+'">'+status+
                             '</span>';
@@ -1874,6 +1879,9 @@
                 }
                 if(rowData.status == 'disapprove'){
                   section_redirect = '{{route("experts.home")}}?search=true&name='+rowData.fullname+'&deep_search=true';
+                }
+                if(!rowData.recruit_status){
+                  section_redirect = '{{route("experts.home")}}?search=true&name='+rowData.fullname+'&add_disqualified=true';
                 }
                 actions +='<a class="btn btn-success" href="'+section_redirect+'">View</a>';
                 return actions;

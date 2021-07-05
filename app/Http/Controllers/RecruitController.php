@@ -568,6 +568,7 @@ class RecruitController extends Controller
                 ->whereNotNull('recruit_positions.recruit_id')
                 ->whereNotNull('recruit_positions.position_id')
                 ->select('recruit.*',
+                    'recruit.status AS recruit_status',
                     'positions.name AS position_name',
                     'users.name AS user_name',
                     'positions.id AS pos_id',
@@ -2671,17 +2672,21 @@ class RecruitController extends Controller
         if( isset( $query['intermediate'] ) ) $a_inter = ($query['intermediate'] != '')? explode("," , $query['intermediate']) : array();
         if( isset( $query['advanced'] ) ) $a_advan = ($query['advanced'] != '')? explode("," , $query['advanced']) : array();
         
-        if(isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0){
-            $_recruits = Recruit::whereNotNull('id');
+        if(
+            (isset($query['deep_search']) ? $query['deep_search'] : 0) || 
+            (isset($query['add_disqualified']) ? $query['add_disqualified'] : 0)
+        ){
+        //if(isset($query['add_disqualified']) ? $query['add_disqualified'] : 0){
+            $_recruits = Recruit::whereNotNull('recruit.id');
         }else{
             $_recruits = Recruit::where(function ($query) {
                 $query->where('recruit.phone_number', 'not like', '-')
                       ->orWhere('recruit.email_address', 'not like', '-');
             });
             $_recruits->where('recruit.tech_qtn', 'filled');
-            if(!(isset($query['add_disqualified']) ? $query['add_disqualified'] : 0)){
-                $_recruits->where('recruit.status',1);
-            }
+            // if(!(isset($query['add_disqualified']) ? $query['add_disqualified'] : 0)){
+            //     $_recruits->where('recruit.status',1);
+            // }
         }
 
         foreach ($a_basic as $basic) {
