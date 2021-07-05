@@ -198,6 +198,8 @@ Route::post('experts/notes','RecruitController@getExpertNotes')->name('experts.n
 Route::post('experts/btn/audio','RecruitController@getExpertAudio')->name('experts.btn.audio');
 Route::post('experts/btn/selection','RecruitController@updateExpertSelection')->name('experts.btn.selection');
 Route::post('experts/btn/delete', 'RecruitController@deleteExpert')->name('experts.btn.delete');
+Route::post('experts/btn/disqualify','RecruitController@disqualifyExpert')->name('experts.btn.disqualify');
+Route::post('experts/btn/restore','RecruitController@restoreExpert')->name('experts.btn.restore');
 Route::post('experts/btn/show','RecruitController@showExpert')->name('experts.btn.show');
 Route::post('experts/popup/edit','RecruitController@updateExpertPopup')->name('experts.popup.edit');
 Route::get('experts/select/technologies','RecruitController@getTechnologies')->name('experts.select.technologies');

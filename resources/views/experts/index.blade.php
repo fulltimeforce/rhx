@@ -632,6 +632,10 @@
                 <input type="text" placeholder="Search Profile Name (*)" class="form-control" id="save-search-name" name="save-search-name">
             </div>
             <div class="form-group d-inline-block mt-3">
+                <input type="checkbox" name="add_disqualified" id="add_disqualified" {{$add_disqualified ? 'checked':''}}>
+                <label for="add_disqualified">Include Disqualified | </label>
+            </div>
+            <div class="form-group d-inline-block mt-3">
                 <input type="checkbox" name="save-search" id="save-search">
                 <label for="save-search">Save Search</label>
             </div>
@@ -681,6 +685,7 @@
         var audios = [];
         var isSearch = false;
         var deepSearch = {{$deep_search}};
+        var add_disqualified = {{$add_disqualified ? $add_disqualified : 0}};
 
         $("#search-column-name").val( search_name );
 
@@ -694,6 +699,7 @@
                 'advanced' : advanced.join(','),
                 'name' : _search_name,
                 'deep_search': deep_search,
+                'add_disqualified': add_disqualified,
                 'selection' : $("#selection").val(),
                 'audio': $("#audio").is(":checked")
             };
@@ -748,11 +754,16 @@
                         var actions = '<a class="badge badge-primary" href=" '+ "{{ route('experts.btn.edit', ':id' ) }}"+ ' ">Edit</a>\n';
                         actions += (!rowData.file_path) ? '' : '<a class="badge badge-dark text-light" download href="'+rowData.file_path+'" target="_blank">Download</a>\n';
                         //actions += '<a class="badge badge-secondary btn-interviews" href="#" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'">Interviews</a>\n';
-                        actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
                         actions += (!rowData.audio_path) ? '' : '<a class="badge badge-info btn-fce" data-id="'+rowData.id+'" data-index="'+index+'" href="#">Audio</a>\n';
                         actions += '<a href="#" class="btn-show badge badge-warning" data-id="'+rowData.id+'" data-name="'+rowData.fullname+'" data-index="'+index+'">Show</a>';
                         actions += '<a href="#" class="badge btn-selection '+ ( rowData.selection == 1 ? 'badge-secondary': ( rowData.selection == 2 ? 'badge-danger' : ( rowData.selection == 3 ? 'badge-warning': 'badge-success') ) )+'" data-id="'+rowData.id+'" data-selection="'+rowData.selection+'" >Selected</a>';
                         actions += '<a href="#" class="badge btn-notes badge-info" data-id="'+rowData.id+'">Notes</a>';
+                        actions += '<a class="badge badge-danger btn-delete-expert" data-id="'+rowData.id+'" href="#">Delete</a>';
+                        if(rowData.status){
+                            actions += '<a href="#" class="badge badge-danger btn-disqualify-expert" data-id="'+rowData.id+'">Disqualify</>';
+                        }else{
+                            actions += '<a href="#" class="badge badge-success btn-restore-expert" data-id="'+rowData.id+'">Restore</>';
+                        }
                         actions += '<input class="bulk-input-value" type="hidden" data-index="'+index+'" data-id="'+rowData.id+'" data-fullname="'+rowData.fullname+'">';
 
                         actions = actions.replace(/:id/gi , rowData.id);
@@ -762,7 +773,20 @@
                     width: 100,
                     class: 'frozencell'
                 },
-                { field: 'fullname', title: "Name", width: 150 , class: 'frozencell'}
+                { 
+                    field: 'fullname', 
+                    title: "Name",
+                    width: 150, 
+                    class: 'frozencell',
+                    formatter: function(value, rowData, index){
+                        var name = '<span>'+rowData.fullname+'</span>';
+                        if(!rowData.status){
+                            name += '<br>';
+                            name += '<span class="badge badge-danger">DISQUALIFIED</span>'
+                        }
+                        return name;
+                    }
+                }
             ];
             var columns_temp = [];
             var columns_info = [
@@ -987,7 +1011,24 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success:function(data){
+                        $("#list-experts").bootstrapTable('removeByUniqueId',id);
+                    }
+                });
+            });
 
+            //==========DISQUALIFY EXPERT DB
+            $("table tbody").on('click', 'a.btn-disqualify-expert' , function(ev){
+                ev.preventDefault();
+                var id = $(this).data("id");
+                $.ajax({
+                    type:'POST',
+                    url: '{{ route("experts.btn.disqualify") }}',
+                    data: {recruitId : id},
+                    headers: {
+                        'Authorization':'Basic '+$('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success:function(data){
                         $("#list-experts").bootstrapTable('removeByUniqueId',id);
                     }
                 });
@@ -1493,6 +1534,7 @@
             name         = $('#search-column-name').val();
 
             save_search = $("#save-search").is(":checked");
+            add_disqualified = $("#add_disqualified").is(":checked");
 
             search_name           = $("#save-search-name").val();
             search_user_level     = $("#save-search-level").val();
@@ -1509,6 +1551,7 @@
                        selection: selection,
                        name: name,
                        save_search: save_search,
+                       add_disqualified: add_disqualified,
                        search_notify_options: search_notify_options,
                        search_user_level: search_user_level,
                        search_name: search_name
@@ -1527,6 +1570,7 @@
                             intermediate: intermediate,
                             advanced: advanced,
                             audio: audio,
+                            add_disqualified: add_disqualified,
                             selection: selection,
                             name: name
                         })

@@ -2015,66 +2015,16 @@ class RecruitController extends Controller
     public function testRaven(){
         $quiz = new Quiz;
         $curr_quiz = [
-            "q1" => "4",
-            "q2" => "5",
-            "q3" => "1",
-            "q4" => "2",
-            "q5" => "6",
-            "q6" => "3",
-            "q7" => "6",
-            "q8" => "2",
-            "q9" => "1",
-            "q10" => "3",
-            "q11" => "5",
-            "q12" => "4",
-            "q13" => "2",
-            "q14" => "6",
-            "q15" => "1",
-            "q16" => "2",
-            "q17" => "1",
-            "q18" => "3",
-            "q19" => "5",
-            "q20" => "6",
-            "q21" => "4",
-            "q22" => "3",
-            "q23" => "4",
-            "q24" => "5",
-            "q25" => "8",
-            "q26" => "2",
-            "q27" => "3",
-            "q28" => "8",
-            "q29" => "7",
-            "q30" => "4",
-            "q31" => "5",
-            "q32" => "1",
-            "q33" => "7",
-            "q34" => "6",
-            "q35" => "1",
-            "q36" => "1",
-            "q37" => "3",
-            "q38" => "4",
-            "q39" => "3",
-            "q40" => "7",
-            "q41" => "8",
-            "q42" => "6",
-            "q43" => "5",
-            "q44" => "4",
-            "q45" => "1",
-            "q46" => "2",
-            "q47" => "5",
-            "q48" => "6",
-            "q49" => "7",
-            "q50" => "6",
-            "q51" => "8",
-            "q52" => "2",
-            "q53" => "1",
-            "q54" => "5",
-            "q55" => "2",
-            "q56" => "3",
-            "q57" => "1",
-            "q58" => "6",
-            "q59" => "3",
-            "q60" => "2",
+            "q1" => "4","q2" => "5","q3" => "1","q4" => "2","q5" => "6","q6" => "3",
+            "q7" => "6","q8" => "2","q9" => "1","q10" => "3","q11" => "5","q12" => "4",
+            "q13" => "2","q14" => "6","q15" => "1","q16" => "2","q17" => "1","q18" => "3",
+            "q19" => "5","q20" => "6","q21" => "4","q22" => "3","q23" => "4","q24" => "5",
+            "q25" => "8","q26" => "2","q27" => "3","q28" => "8","q29" => "7","q30" => "4",
+            "q31" => "5","q32" => "1","q33" => "7","q34" => "6","q35" => "1","q36" => "1",
+            "q37" => "3","q38" => "4","q39" => "3","q40" => "7","q41" => "8","q42" => "6",
+            "q43" => "5","q44" => "4","q45" => "1","q46" => "2","q47" => "5","q48" => "6",
+            "q49" => "7","q50" => "6","q51" => "8","q52" => "2","q53" => "1","q54" => "5",
+            "q55" => "2","q56" => "3","q57" => "1","q58" => "6","q59" => "3","q60" => "2",
         ];
         $evaluate = $quiz->evaluateResults($curr_quiz);
         print_r($evaluate);
@@ -2664,6 +2614,7 @@ class RecruitController extends Controller
         $query = $request->query();
 
         $search = isset( $query['search'] )? true : false;
+        $add_disqualified = isset($query['add_disqualified']) ? filter_var($query['add_disqualified'] , FILTER_VALIDATE_BOOLEAN) : true;
         $deep_search = isset($query['deep_search']) ? ($query['deep_search'] ? 1 : 0) : 0;
         $a_basic = isset( $query['basic'] )? explode(",", $query['basic']) : array();
         $a_inter = isset( $query['intermediate'] )? explode(",", $query['intermediate']) : array();
@@ -2691,6 +2642,7 @@ class RecruitController extends Controller
         return view('experts.index',compact('recruits'))
             ->with('search', $search )
             ->with('deep_search', $deep_search)
+            ->with('add_disqualified', $add_disqualified)
             ->with('audio', $audio )
             ->with('selection', $selection )
             ->with('name', $name )
@@ -2723,6 +2675,9 @@ class RecruitController extends Controller
                       ->orWhere('recruit.email_address', 'not like', '-');
             });
             $_recruits->where('recruit.tech_qtn', 'filled');
+            if(!(isset($query['add_disqualified']) ? $query['add_disqualified'] : 0)){
+                $_recruits->where('recruit.status',1);
+            }
         }
 
         foreach ($a_basic as $basic) {
@@ -2917,6 +2872,16 @@ class RecruitController extends Controller
         $id = $request->input('recruitId');
 
         Recruit::where('id' , $id)->delete();
+    }
+
+    public function disqualifyExpert(Request $request){
+        $id = $request->recruitId;
+        Recruit::where('id',$id)->update(['status'=>0]);
+    }
+
+    public function restoreExpert(Request $request){
+        $id = $request->recruitId;
+        Recruit::where('id',$id)->update(['status'=>1]);
     }
 
     public function showExpert(Request $request){
