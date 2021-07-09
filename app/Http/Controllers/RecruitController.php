@@ -1628,7 +1628,7 @@ class RecruitController extends Controller
                     ->with('error', "Recruit didn't approve TEST");
             return;
         }
-        if($recruit['raven_status'] == 'invalid'){
+        if($recruit['raven_status'] == 'invalid' || $recruit['raven_status'] == 'mismatch_id'){
             redirect()->route('recruit.softskills')
                     ->with('error', 'Raven result was not valid for consideration.');
             return;
@@ -1862,17 +1862,29 @@ class RecruitController extends Controller
     }
 
     public function quizContinue(Request $request){
+        $quiz = new Quiz;
+        $curr_question = session('curr_question_number');
+        $curr_quiz = session('quiz');
+        $quiz_status = 'continue';
+        $recruit = Recruit::where('id',session('recruit_id'));
+        $raven_test = RavenTest::where('id',session('test_id'));
+
         if(session('recruit_id') != $request->rcn){
+            $recruit->update([
+                'raven_total' => 0,
+                'raven_overall' => 'I',
+                'raven_perc' => 0,
+                'raven_status'=>"mismatch_id"
+            ]);
+            $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
+            $curr_quiz['notes'] = "Se ha detectado una discrepancia entre el Id inicial [".session('recruit_id')."] y el último Id [".$request->rcn."] enviado por el postulante";
+            $raven_test->update($curr_quiz);
             return [
                 'success' => false,
                 'error' => 'the answer was registered under a different recruit code'
             ];
         }
-        $quiz = new Quiz;
-        $curr_question = session('curr_question_number');
-        $curr_quiz = session('quiz');
-        $quiz_status = 'continue';
-
+        
         // if time is already up
         if(session('endtime')<strtotime("now")){
             // END TEST - FILL EMPTY ANSWERS -  CALCULATE & SAVE RESULTS
@@ -1923,8 +1935,6 @@ class RecruitController extends Controller
             $quiz_status = 'ended';
             $quiz_result = $quiz->evaluateResults($curr_quiz);
 
-            $recruit = Recruit::where('id',session('recruit_id'));
-            $raven_test = RavenTest::where('id',session('test_id'));
             if($quiz_result['valid']){
                 $recruit->update([
                     'raven_total'=>$quiz_result['total'],
@@ -1973,11 +1983,7 @@ class RecruitController extends Controller
                 'raven_status'=>"mismatch_id"
             ]);
             $curr_quiz['ended_at'] = date("Y-m-d H:i:s");
-            $curr_quiz['notes'] = "Se ha detectado una discrepancia entre el Id inicial ("
-                                        +session('recruit_id')+
-                                    ") y el último Id ("
-                                        +$request->rcn+
-                                    ") enviado por el postulante";
+            $curr_quiz['notes'] = "Se ha detectado una discrepancia entre el Id inicial (".session('recruit_id').") y el último Id (".$request->rcn.") enviado por el postulante";
             $raven_test->update($curr_quiz);
             return [
                 'status' => "ended",
@@ -2077,6 +2083,7 @@ class RecruitController extends Controller
                 'raven_perc'    =>null,
                 'raven_status'  =>null,
             ]);
+            $raven_test = RavenTest::where('recruit_id',$request->id)->delete();
         }
     }
 
