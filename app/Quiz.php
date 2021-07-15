@@ -204,13 +204,17 @@ Class Quiz{
         }
 
         $i = 0;
+        $series_discrepancy = 0;
         foreach($series_result as $result){
-            $temp = $result - $expected_results[$i];
-            
+            $series_discrepancy += $result - $expected_results[$i];
+            /*$temp = $result - $expected_results[$i];
             if($temp < -2 || $temp > 2){
                 $valid = false;
-            }
+            }*/
             $i++;
+        }
+        if($series_discrepancy < -2 || $series_discrepancy > 2){
+            $valid = false;
         }
 
         return $valid;
