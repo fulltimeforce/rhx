@@ -70,6 +70,7 @@ Route::post('quiz/validate','RecruitController@quizContinue')->name('recruit.qui
 Route::post('quiz/end','RecruitController@quizEnd')->name('recruit.quiz.end');
 Route::get('quiz/test/mail','RecruitController@testMail');
 // Route::get('quiz/raven/testing','RecruitController@testRaven');
+Route::get('quiz/reevaluate/raven','RecruitController@reevaluateRaven');
 
 //===================================================================================================================================
 //====================================================SALES METHODS==================================================================

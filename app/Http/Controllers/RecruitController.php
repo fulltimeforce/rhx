@@ -2047,6 +2047,55 @@ class RecruitController extends Controller
         }
     }
 
+    public function reevaluateRaven(){
+        $quiz = new Quiz;
+        $tests = [];
+        $recruits = Recruit::whereNotNull("raven_status")
+                            ->where("raven_status","!=","mismatch_id")
+                            ->get();
+        foreach ($recruits as $k => $recruit) {
+            $raven_tests = RavenTest::where("recruit_id", $recruit->id)
+                                    ->where('status',1)
+                                    ->get();
+            foreach ($raven_tests as $k => $test) {
+                $quiz_answers = [];
+                for ($i=1; $i <= 60; $i++) { 
+                    $quiz_answers["q".$i] = $test["q".$i];
+                }
+                $test = [
+                    "quiz_id" => $test["id"],
+                    "recruit_id" => $test["recruit_id"],
+                ];
+                $evaluate = $quiz->evaluateResults($quiz_answers);
+                if($evaluate["valid"]){
+                    $test["raven_total"]    = $evaluate['total'];
+                    $test['raven_overall']  = $evaluate['raven_overall'];
+                    $test['raven_perc']     = $evaluate['raven_perc'];
+                    $test['raven_status']   = 'completed';
+                }else{
+                    $test["raven_total"]    = $evaluate['total'];
+                    $test['raven_overall']  = $evaluate['raven_overall'];
+                    $test['raven_perc']     = $evaluate['raven_perc'];
+                    $test['raven_status']   = 'invalid';
+                }
+                $tests[] = $test;
+            }
+        }
+
+        foreach ($tests as $k => $test) {
+            Recruit::where("id",$test["recruit_id"])->update([
+                'raven_total'   =>$test['raven_total'],
+                'raven_overall' =>$test['raven_overall'],
+                'raven_perc'    =>$test['raven_perc'],
+                'raven_status'  =>$test['raven_status'],
+            ]);
+        }
+
+        return [
+            "tests" => $tests
+        ];
+    }
+
     public function testMail(){
         try{
             MultiMail::to('alejandrodazaculqui@hotmail.com')
